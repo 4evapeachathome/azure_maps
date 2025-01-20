@@ -1,0 +1,34 @@
+<div class="daily-tips-container">
+  <h2>Daily Peace Tips</h2>
+  
+  <div class="month-year">
+    {{ currentDate | date:'MMM, yyyy' }}
+  </div>
+
+  <div class="calendar-strip">
+    <ion-button fill="clear" class="nav-button" (click)="navigateWeek('prev')">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-button>
+
+    <div class="calendar-wrapper">
+      <div class="weekdays" [class.slide-left]="slideDirection === 'left'" [class.slide-right]="slideDirection === 'right'">
+        <div *ngFor="let date of weekDates; let i = index" 
+             class="day-item" 
+             [class.selected]="selectedDay === i"
+             [class.current]="isCurrentDay(i)"
+             (click)="selectDay(i)">
+          <div class="day-name">{{ weekDays[i] }}</div>
+          <div class="day-number">{{ date | date:'d' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <ion-button fill="clear" class="nav-button" (click)="navigateWeek('next')">
+      <ion-icon name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="tip-container" [@tipFade]="currentTip">
+    {{ currentTip }}
+  </div>
+</div>
