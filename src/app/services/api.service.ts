@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 interface QueryOptions {
   fields?: string[];
@@ -20,6 +20,7 @@ interface QueryOptions {
 })
 export class ApiService {
   private apiUrl = 'http://localhost:1337'; // Change this to your API URL
+  private apitoken = '9d689662d625cea1c398e6cad3cf0e7387be9d29af8c6802fa837a034e38dd4b7dbcffd3afe7ba05903122e920bb1901570cd6b86c5004fd0e6f5c78837239797ffd42d4122299c1c3c6987c508c11c7a46ac0390223a9de7e5496d351d318dbe8a724dd383d42a0d859ab0a4b7e28816663e997c056924dc67ba5f32456b7d3';
 
   constructor(private http: HttpClient) {}
 
@@ -115,4 +116,91 @@ export class ApiService {
       sort: ['createdAt:desc']
     });
   }
+
+  //#region BannerSectionAPI Service 
+  getHappyHomeQuote(): Observable<any> {
+    const endpoint = '/api/home-banners?populate=*';
+    return this.http.get(`${this.apiUrl}${endpoint}`, { headers: this.createHeaders(this.apitoken) }).pipe(
+      map((res: any) => {
+        debugger;
+        console.log('data:', res.data);
+        return res.data.map((resData: any) => {
+          if (resData && resData.BannerWebImage && resData.BannerWebImage.url) {
+            resData.image = `${this.apiUrl}${resData.BannerWebImage.url}`;
+          } else {
+            resData.image = ''; 
+          }
+          return resData;
+        });
+      }),
+      catchError(error => {
+        console.error('Error fetching home quotes', error);
+        return throwError(error);
+      })
+    );
+  }
+  //#endregion
+  
+  //#region DailyPeaceTipsAPI Service
+
+  getDailyPeaceTipId(): Observable<any>{
+    const endpoint = '/api/daily-peace-tips/fields?fields=id';
+    return this.http.get(`${this.apiUrl}${endpoint}`, {
+      headers: this.createHeaders(this.apitoken)
+    }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('API error:', error);
+        return throwError(() => new Error('Failed to fetch daily peace tip ID'));
+      })
+    );
+  }
+
+  getDailyPeaceTipTitle() : Observable<any> {
+    const endpoint = '/api/daily-peace-tips/fields?fields=DailyPeaceTipsTitle';
+    return this.http.get(`${this.apiUrl}${endpoint}`, {
+      headers: this.createHeaders(this.apitoken)
+  }).pipe(catchError((error: HttpErrorResponse) =>{
+    console.error('API error:', error);
+    return throwError(() => new Error('Failed to fetch daily peace tip Title: '));
+  })
+  );
+}
+
+
+  getDailyTips(id: string): Observable<any> {
+    const endpoint = `/api/daily-peace-tips/${id}/fields?fields=DailyPeaceTipsDescrition`;
+    return this.http.get(`${this.apiUrl}${endpoint}`, {
+      headers: this.createHeaders(this.apitoken)
+    }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('API error:', error);
+        return throwError(() => new Error('Failed to fetch daily peace tip'));
+      })
+    );
+  }
+  //#endregion
+
+  getWellnessTip(): Observable<any> {
+    const endpoint = '/api/healthtips?populate=*';
+    return this.http.get(`${this.apiUrl}${endpoint}`, { headers: this.createHeaders(this.apitoken) }).pipe(
+      map((res: any) => {
+        debugger;
+        console.log('data:', res.data);
+        return res.data.map((resData: any) => {
+          if (resData && resData.HealthTipsWebImage && resData.HealthTipsWebImage.url) {
+            resData.image = `${this.apiUrl}${resData.HealthTipsWebImage.url}`;
+          } else {
+            resData.image = ''; 
+          }
+          return resData;
+        });
+      }),
+      catchError(error => {
+        console.error('Error fetching home quotes', error);
+        return throwError(error);
+      })
+    );
+  }
+
+
 }

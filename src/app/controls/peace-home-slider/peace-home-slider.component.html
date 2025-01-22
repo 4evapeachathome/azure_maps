@@ -1,0 +1,15 @@
+<div class="carousel">
+  <div class="card" *ngFor="let item of items; let i = index" [class.active]="currentIndex === i">
+    <div class="image-container">
+      <img [src]="item.image" [alt]="item.title" />
+    </div>
+    <h3 class="title">{{ item.title }}</h3>
+    <p class="description">{{ item.description }}</p>
+    <ion-button expand="block" class="read-more">Read More</ion-button>
+    <ion-icon name="chevron-back-outline" class="arrow left-arrow" (click)="prevSlide()"></ion-icon>
+    <ion-icon name="chevron-forward-outline" class="arrow right-arrow" (click)="nextSlide()"></ion-icon>
+    <div class="dots">
+      <div *ngFor="let dot of items; let i = index" class="dot" [class.active]="currentIndex === i"></div>
+    </div>
+  </div>
+</div>

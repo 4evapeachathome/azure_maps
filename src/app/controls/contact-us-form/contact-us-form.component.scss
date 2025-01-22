@@ -1,0 +1,70 @@
+.contact-container {
+   
+    width: 100%;
+    margin-top: 5px;
+  
+    h2 {
+      font-size: 1.8rem;
+      color: #813f95; 
+      margin-left: 0px;
+      width: 50%;
+      align-items: start;
+      text-align: left;
+      margin-bottom: 10px;
+    }
+  
+    p {
+      font-size: 1rem;
+      color: #555;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+  
+    .highlight {
+      font-weight: bold;
+      color: #813f95;
+    }
+  
+    form {
+      ion-item {
+        margin-bottom: 15px;
+      }
+  
+      .button-group {
+        display: flex;
+        justify-content: start;
+        ion-button {
+          width: 17%;
+          color: white;
+        }
+      }
+    }
+  
+    .footer-note {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #555;
+      .highlight {
+        color:  #813f95;
+      }
+    }
+  }
+  
+  ion-item{
+    border-radius: 7px;
+  }
+
+  .form-container{
+    background-color: #f5f5f5;
+    padding:30px;
+    width: 70%;
+  }
+
+  .btn-clr{
+    --background:#a0a0a0;
+  }
+
+  .btn-submit{
+    margin-left: 10px;
+    --background: #813f95;
+  }

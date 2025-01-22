@@ -1,0 +1,45 @@
+<div class="contact-container">
+  <h2>Contact Us</h2>
+  <p style="width: 90%;">
+    Whether <span class="highlight">YOU NEED HELP</span> with our app or want to
+    <span class="highlight">SUPPORT OUR MISSION</span>, reach out to us for assistance or to discuss funding opportunities.
+  </p>
+
+  <div class="form-container">
+  <form (ngSubmit)="onSubmit()" #contactForm="ngForm" >
+    <ion-item>
+      <ion-label position="floating">Name</ion-label>
+      <ion-input type="text" [(ngModel)]="formData.name" name="name" required style="font-size: 14px;"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input
+        type="email"
+        [(ngModel)]="formData.email"
+        name="email"
+        required
+        style="font-size: 14px;"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Your Feedback</ion-label>
+      <ion-textarea
+        [(ngModel)]="formData.feedback"
+        name="feedback"
+        style="font-size: 14px;"
+      ></ion-textarea>
+    </ion-item>
+
+    <div class="button-group">
+      <ion-button type="button" class="btn-clr" (click)="onClear()">Clear</ion-button>
+      <ion-button type="submit" class="btn-submit"  [disabled]="!contactForm.valid">Submit</ion-button>
+    </div>
+  </form>
+</div>
+
+  <p class="footer-note">
+    If you are in immediate danger, please <span class="highlight">CONTACT THE LOCAL LAW ENFORCEMENT</span> right away.
+  </p>
+</div>
