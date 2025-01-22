@@ -11,6 +11,7 @@ import { PeaceHarmonyComponent } from '../controls/peace-harmony/peace-harmony.c
 import { PeaceHomeSliderComponent } from '../controls/peace-home-slider/peace-home-slider.component';
 import { WellnessTipsComponent } from '../controls/wellness-tips/wellness-tips.component';
 import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
+import { FooterComponent } from "../controls/footer/footer.component";
 
 @NgModule({
   imports: [
@@ -23,9 +24,9 @@ import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-f
     PeaceHarmonyComponent,
     PeaceHomeSliderComponent,
     WellnessTipsComponent,
-    ContactUsFormComponent
-   
-  ],
+    ContactUsFormComponent,
+    FooterComponent
+],
   declarations: [
     HomePage
   ]
