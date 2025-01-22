@@ -14,6 +14,7 @@ import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-f
 import { FooterComponent } from "../controls/footer/footer.component";
 import { PeaceathomecardComponent } from "../controls/peaceathomecard/peaceathomecard.component";
 import { PeacehomestrengthenpowersComponent } from "../controls/peacehomestrengthenpowers/peacehomestrengthenpowers.component";
+import { PeaceathomecardwithimageComponent } from "../controls/peaceathomecardwithimage/peaceathomecardwithimage.component";
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { PeacehomestrengthenpowersComponent } from "../controls/peacehomestrengt
     ContactUsFormComponent,
     FooterComponent,
     PeaceathomecardComponent,
-    PeacehomestrengthenpowersComponent
+    PeacehomestrengthenpowersComponent,
+    PeaceathomecardwithimageComponent
 ],
   declarations: [
     HomePage
