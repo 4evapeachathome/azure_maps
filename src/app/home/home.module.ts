@@ -13,6 +13,7 @@ import { WellnessTipsComponent } from '../controls/wellness-tips/wellness-tips.c
 import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
 import { FooterComponent } from "../controls/footer/footer.component";
 import { PeaceathomecardComponent } from "../controls/peaceathomecard/peaceathomecard.component";
+import { PeacehomestrengthenpowersComponent } from "../controls/peacehomestrengthenpowers/peacehomestrengthenpowers.component";
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { PeaceathomecardComponent } from "../controls/peaceathomecard/peaceathom
     WellnessTipsComponent,
     ContactUsFormComponent,
     FooterComponent,
-    PeaceathomecardComponent
+    PeaceathomecardComponent,
+    PeacehomestrengthenpowersComponent
 ],
   declarations: [
     HomePage
