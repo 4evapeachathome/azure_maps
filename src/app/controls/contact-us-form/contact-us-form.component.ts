@@ -15,9 +15,9 @@ export class ContactUsFormComponent  implements OnInit {
   feedbackEmail: string = '';
   contactForm: any;
   formData = {
-    name: '',
-    email: '',
-    feedback: ''
+    ContactName: '',
+    ContactEmail: '',
+    ContactFeedback: ''
   };
 
  
@@ -27,46 +27,67 @@ export class ContactUsFormComponent  implements OnInit {
   ngOnInit() {
   }
 
-
   onSubmit() {
-    if (this.formData.name.length >= 3 && this.validateEmail(this.formData.email) && this.formData.feedback.length >= 3) {
-      const emailSubject = `Feedback from ${this.formData.name}`;
-      const emailContent = `
-        Name: ${this.formData.name}
-        Email: ${this.formData.email}
-        Feedback: ${this.formData.feedback}
-      `;
-      const emailData = {
-        to: this.feedbackEmail,
-        subject: emailSubject,
-        text: emailContent
-      };
-
-      // Send email api service call
-      this.apiService.sendEmail(emailData).subscribe(
+    if (this.validateForm()) {
+      debugger;
+      this.apiService.sendContactData(this.formData).subscribe(
         response => {
-          console.log('Email sent successfully', response);
+          console.log('Contact data sent successfully', response);
         },
         error => {
-          console.error('Error sending email', error);
+          console.error('Error sending contact data', error);
         }
       );
     } else {
       console.error('Form validation failed');
     }
+    // if (this.formData.ContactName.length >= 3 && this.validateEmail(this.formData.ContactEmail) && this.formData.ContactFeedback.length >= 3) {
+    //   const emailSubject = `Feedback from ${this.formData.ContactName}`;
+    //   const emailContent = `
+    //     Name: ${this.formData.ContactName}
+    //     Email: ${this.formData.ContactEmail}
+    //     Feedback: ${this.formData.ContactFeedback}
+    //   `;
+    //   const emailData = {
+    //     to: this.feedbackEmail,
+    //     subject: emailSubject,
+    //     text: emailContent
+    //   };
+
+    //   // Send email api service call
+    //   this.apiService.sendEmail(emailData).subscribe(
+    //     response => {
+    //       console.log('Email sent successfully', response);
+    //     },
+    //     error => {
+    //       console.error('Error sending email', error);
+    //     }
+    //   );
+    // } else {
+    //   console.error('Form validation failed');
+    // }
+  }
+
+  validateForm(): boolean {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return (
+      this.formData.ContactName.length >= 3 &&
+      emailPattern.test(this.formData.ContactEmail) &&
+      this.formData.ContactFeedback.length >= 3
+    );
   }
 
   validateEmail(email: string): boolean {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailPattern.test(email);
   }
-
+ 
 
   onClear() {
     this.formData = {
-      name: '',
-      email: '',
-      feedback: ''
+      ContactName: '',
+      ContactEmail: '',
+      ContactFeedback: ''
     };
   }
 
