@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 
 @Component({
-  selector: 'app-peacehomestrengthenpowers',
+  selector: 'pathome-peacehomestrengthenpowers',
   templateUrl: './peacehomestrengthenpowers.component.html',
   styleUrls: ['./peacehomestrengthenpowers.component.scss'],
     standalone: true,

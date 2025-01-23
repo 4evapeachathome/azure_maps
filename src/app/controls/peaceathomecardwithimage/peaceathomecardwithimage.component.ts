@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 
 @Component({
-  selector: 'app-peaceathomecardwithimage',
+  selector: 'pathome-peaceathomecardwithimage',
   templateUrl: './peaceathomecardwithimage.component.html',
   styleUrls: ['./peaceathomecardwithimage.component.scss'],
   standalone: true,

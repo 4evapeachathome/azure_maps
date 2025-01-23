@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 
 @Component({
-  selector: 'app-peace-harmony',
+  selector: 'pathome-peace-harmony',
   templateUrl: './peace-harmony.component.html',
   styleUrls: ['./peace-harmony.component.scss'],
   standalone: true,

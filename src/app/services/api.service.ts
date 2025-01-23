@@ -93,16 +93,28 @@ export class ApiService {
 
   getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string): Observable<any> {
     const params = this.buildQueryParams(options);
+    let headers = this.createHeaders(token);
+  
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+  
     return this.http.get(`${this.apiUrl}${endpoint}`, {
-      headers: this.createHeaders(token),
+      headers,
       params
     });
   }
 
   getDailyTip(): Observable<any> {
-    return this.getWithQuery('/api/daily-tips', {
-      fields: ['title', 'content', 'publishedAt']
-    });
+    return this.getWithQuery('/api/daily-peace-tips', {
+      fields: ['DailyPeaceTipsTitle'],
+      populate: {
+        HealthTipDescription: {
+          fields: ['Description']
+        }
+      },
+      sort: ['createdAt:desc']
+    }, this.apitoken);
   }
 
   getMenuItems(): Observable<any> {
@@ -113,8 +125,8 @@ export class ApiService {
           fields: ['Title', 'link', 'documentId']
         }
       },
-      sort: ['createdAt:desc']
-    });
+      sort: ['createdAt:asc']
+    },this.apitoken);
   }
 
   //#region BannerSectionAPI Service 
@@ -141,50 +153,23 @@ export class ApiService {
   }
   //#endregion
   
-  //#region DailyPeaceTipsAPI Service
-
-  getDailyPeaceTipId(): Observable<any>{
-    const endpoint = '/api/daily-peace-tips/fields?fields=id';
-    return this.http.get(`${this.apiUrl}${endpoint}`, {
-      headers: this.createHeaders(this.apitoken)
-    }).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('API error:', error);
-        return throwError(() => new Error('Failed to fetch daily peace tip ID'));
-      })
-    );
-  }
-
-  getDailyPeaceTipTitle() : Observable<any> {
-    const endpoint = '/api/daily-peace-tips/fields?fields=DailyPeaceTipsTitle';
-    return this.http.get(`${this.apiUrl}${endpoint}`, {
-      headers: this.createHeaders(this.apitoken)
-  }).pipe(catchError((error: HttpErrorResponse) =>{
-    console.error('API error:', error);
-    return throwError(() => new Error('Failed to fetch daily peace tip Title: '));
-  })
-  );
-}
-
-
-  getDailyTips(id: string): Observable<any> {
-    const endpoint = `/api/daily-peace-tips/${id}/fields?fields=DailyPeaceTipsDescrition`;
-    return this.http.get(`${this.apiUrl}${endpoint}`, {
-      headers: this.createHeaders(this.apitoken)
-    }).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('API error:', error);
-        return throwError(() => new Error('Failed to fetch daily peace tip'));
-      })
-    );
-  }
-  //#endregion
 
   getWellnessTip(): Observable<any> {
-    const endpoint = '/api/healthtips?populate=*';
-    return this.http.get(`${this.apiUrl}${endpoint}`, { headers: this.createHeaders(this.apitoken) }).pipe(
+    const endpoint = '/api/healthtips';
+    const options = {
+      fields: ['HealthTipsTitle', 'HealthTipsSubTitle'],
+      populate: {
+        HealthTipsDescription: {
+          fields: ['Description']
+        },
+        HealthTipsWebImage: {
+          fields: ['url'] 
+        }
+      },
+      sort: ['createdAt:desc']
+    };
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
       map((res: any) => {
-        debugger;
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
           if (resData && resData.HealthTipsWebImage && resData.HealthTipsWebImage.url) {
@@ -193,14 +178,17 @@ export class ApiService {
             resData.image = ''; 
           }
           return resData;
-        });
+        },this.apitoken);
       }),
       catchError(error => {
-        console.error('Error fetching home quotes', error);
+        console.error('Error fetching health tips', error);
         return throwError(error);
       })
     );
   }
 
+  sendEmail(emailData: any): Observable<any> {
+    return this.http.post(this.apiUrl, emailData);
+  }
 
 }

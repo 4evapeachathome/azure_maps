@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 
 @Component({
-  selector: 'app-peace-home-slider',
+  selector: 'pathome-peace-home-slider',
   templateUrl: './peace-home-slider.component.html',
   styleUrls: ['./peace-home-slider.component.scss'],
   standalone: true,

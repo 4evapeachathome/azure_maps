@@ -5,7 +5,7 @@ import { ApiService } from 'src/app/services/api.service';
 
 
 @Component({
-  selector: 'app-happy-home',
+  selector: 'pathome-happy-home',
   templateUrl: './happy-home.component.html',
   styleUrls: ['./happy-home.component.scss'],
   standalone: true,
