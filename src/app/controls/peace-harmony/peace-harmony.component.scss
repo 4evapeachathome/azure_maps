@@ -50,15 +50,17 @@
     margin:1px;
   }
   
-  .read-more {
-    background-color: #a349a4;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left : 180px;
-    margin-top: 10px;
+  ion-button{
+    margin-top: 15px;
+      align-items: center;
+      display: flex;
+      text-transform: none;
+      width: 25%;
+      --color: white;
+      --background:  #ab52c5;
+      justify-content: center;
+      margin-left: 170px;
+
   }
   
   .read-more:hover {

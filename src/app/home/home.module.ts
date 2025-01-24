@@ -15,6 +15,7 @@ import { FooterComponent } from "../controls/footer/footer.component";
 import { PeaceathomecardComponent } from "../controls/peaceathomecard/peaceathomecard.component";
 import { PeacehomestrengthenpowersComponent } from "../controls/peacehomestrengthenpowers/peacehomestrengthenpowers.component";
 import { PeaceathomecardwithimageComponent } from "../controls/peaceathomecardwithimage/peaceathomecardwithimage.component";
+import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.component";
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import { PeaceathomecardwithimageComponent } from "../controls/peaceathomecardwi
     FooterComponent,
     PeaceathomecardComponent,
     PeacehomestrengthenpowersComponent,
-    PeaceathomecardwithimageComponent
+    PeaceathomecardwithimageComponent,
+    PeaceathomeComponent
 ],
   declarations: [
     HomePage

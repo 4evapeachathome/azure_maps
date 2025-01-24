@@ -137,8 +137,8 @@ export class ApiService {
         debugger;
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
-          if (resData && resData.BannerWebImage && resData.BannerWebImage.url) {
-            resData.image = `${this.apiUrl}${resData.BannerWebImage.url}`;
+          if (resData && resData.HomeBannerWebImage && resData.HomeBannerWebImage.url) {
+            resData.image = `${this.apiUrl}${resData.HomeBannerWebImage.url}`;
           } else {
             resData.image = ''; 
           }
@@ -192,9 +192,12 @@ export class ApiService {
   }
 
   sendContactData(contactData: any): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
-    return this.http.post(this.apiUrl, { data: contactData }, { headers });
+    const endpoint = '/api/contacts'
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.apitoken}` 
+    });
+    return this.http.post(`${this.apiUrl}${endpoint}`, { data: contactData }, { headers });
   }
 
 }
