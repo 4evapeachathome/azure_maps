@@ -16,6 +16,7 @@ import { PeaceathomecardComponent } from "../controls/peaceathomecard/peaceathom
 import { PeacehomestrengthenpowersComponent } from "../controls/peacehomestrengthenpowers/peacehomestrengthenpowers.component";
 import { PeaceathomecardwithimageComponent } from "../controls/peaceathomecardwithimage/peaceathomecardwithimage.component";
 import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.component";
+import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.compon
     PeaceathomecardComponent,
     PeacehomestrengthenpowersComponent,
     PeaceathomecardwithimageComponent,
-    PeaceathomeComponent
+    PeaceathomeComponent,
+    HealthyrelatitonshipComponent
 ],
   declarations: [
     HomePage

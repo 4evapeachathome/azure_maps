@@ -200,4 +200,38 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}${endpoint}`, { data: contactData }, { headers });
   }
 
+  
+  getPeaceAtHome(): Observable<any> {
+    const endpoint = '/api/peaceathome';
+    const options: QueryOptions = {
+      populate: {
+        PeaceathomeWebImage: { fields: ['url'] },
+        PeaceathomeMobileImage: { fields: ['url'] },
+        ContentBlock: { fields: ['multilinerichtextbox'] }
+      }
+    };
+
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res);
+        const resData = res.data;
+        if (resData && resData.PeaceathomeWebImage && resData.PeaceathomeWebImage.url) {
+          resData.image = `${this.apiUrl}${resData.PeaceathomeWebImage.url}`;
+        } else {
+          resData.image = ''; 
+        }
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching peace at home data', error);
+        return throwError(error);
+      })
+    );
+  }
 }
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+
+ <ion-grid class="home-happiness-container">
+  <div class="heading-image-container" *ngIf="titleContent?.length > 0">
+    <h2 class="happyhome-title">
+      <ng-container *ngFor="let item of titleContent[0]?.children">
+        <ng-container [ngSwitch]="item.type">
+          <ion-text *ngSwitchCase="'text'" [ngClass]="{'highlight': item.bold}">
+            <strong *ngIf="item.bold">{{ item.text }}</strong>
+            <span *ngIf="!item.bold">{{ item.text }}</span>
+          </ion-text>
+        </ng-container>
+      </ng-container>
+    </h2>
+    <ion-img [src]="peaceathomeImg" alt="Happy Home Image"></ion-img>
+  </div>
+  <p class="paragraph-class" *ngIf="paragraphContent">
+    {{ paragraphContent }}
+  </p>
+<ion-grid class="content-section">
+  <ion-card *ngFor="let block of contentBlocks">
+    <ion-card-header *ngIf="block.multilinerichtextbox[0]?.type === 'paragraph'">
+      <ion-card-title>
+        <ng-container *ngFor="let item of block.multilinerichtextbox[0]?.children">
+          <ng-container [ngSwitch]="item.type">
+            <ion-text *ngSwitchCase="'text'" [ngClass]="{'cardhighlight': item.bold}">
+              <strong *ngIf="item.bold">{{ item.text }}</strong>
+              <span *ngIf="!item.bold">{{ item.text }}</span>
+            </ion-text>
+          </ng-container>
+        </ng-container>
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ng-container *ngFor="let item of block.multilinerichtextbox[1]?.children">
+        <ng-container [ngSwitch]="item.type">
+          <div *ngSwitchCase="'text'">{{ item.text }}</div>
+        </ng-container>
+      </ng-container>
+    </ion-card-content>
+  </ion-card>
+  </ion-grid>
+    </ion-grid>
