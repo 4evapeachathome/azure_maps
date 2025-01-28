@@ -2,8 +2,22 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
-  production: false
+import { LoggingConfig } from '../app/models/logging-config.interface';
+
+interface Environment {
+  production: boolean;
+  apiUrl: string;
+  logging: LoggingConfig;
+}
+
+export const environment: Environment = {
+  production: false,
+  apiUrl: 'http://localhost:1337',
+  logging: {
+    enabled: true,
+    storageType: 'local',
+    maxLogAge: 30 // Keep logs for 30 days
+  }
 };
 
 /*

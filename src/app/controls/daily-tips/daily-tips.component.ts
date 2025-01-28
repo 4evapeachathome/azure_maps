@@ -87,7 +87,7 @@ export class DailyTipsComponent implements OnInit {
   fetchDailyTip() {
     this.apiService.getDailyTip().subscribe(
       (response) => {
-        this.currentTip = response.tip;
+        this.currentTip = response.HealthTipDescription;
       },
       (error) => {
         console.error('Error fetching daily tip:', error);

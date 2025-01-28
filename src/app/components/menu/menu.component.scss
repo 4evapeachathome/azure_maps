@@ -60,6 +60,10 @@
     --background: transparent;
     --background-hover: rgba(var(--ion-color-primary-rgb), 0.1);
     --ripple-color: var(--ion-color-primary);
+    --min-height: 44px;
+    --padding-start: 16px;
+    --inner-padding-end: 16px;
+    margin: 4px 0;
     
     &.selected {
       --background: rgba(var(--ion-color-primary-rgb), 0.1);
@@ -67,17 +71,56 @@
       font-weight: 500;
     }
 
-    // Add indentation for nested levels
+    // Add indentation and styling for nested levels
     @for $i from 0 through 5 {
       &.level-#{$i} {
-        padding-left: #{$i * 16}px;
+        padding-left: #{($i + 1) * 20}px;
+        margin-top: if($i > 0, 8px, 0);
+        margin-bottom: if($i > 0, 8px, 0);
+        
+        &::before {
+          content: '';
+          position: absolute;
+          left: #{$i * 20}px;
+          height: 100%;
+          width: 2px;
+          background: transparent;
+          border-left: if($i > 0, 1px solid var(--ion-color-light-shade), none);
+        }
       }
     }
+
+    ion-label {
+      margin: 10px 0;
+      white-space: normal;
+      overflow: visible;
+      font-size: 14px;
+    }
+  }
+
+  // Special styling for first level items
+  ion-item.level-1 {
+    margin-left: 12px;
+    --background: rgba(var(--ion-color-light-rgb), 0.3);
+    border-radius: 4px;
+  }
+
+  ion-icon[slot="start"] {
+    margin-right: 12px;
+    color: var(--ion-color-medium);
+    font-size: 18px;
+  }
+
+  ion-icon[slot="end"] {
+    font-size: 16px;
+    color: var(--ion-color-medium);
+    margin-left: 8px;
   }
 
   ion-icon[slot="start"] {
     margin-right: 8px;
     color: var(--ion-color-medium);
+    font-size: 18px;
   }
 
   ion-icon[slot="end"] {

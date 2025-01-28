@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { LoggingService } from './logging.service';
 
 interface QueryOptions {
   fields?: string[];
@@ -15,13 +18,24 @@ interface QueryOptions {
   pageSize?: number;
 }
 
+interface ApiResponse {
+  success: boolean;
+  data?: any;
+  error?: string;
+}
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root'  
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:1337'; // Change this to your API URL
+  private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private loggingService: LoggingService
+  ) {
+    this.loggingService.setConfig(environment.logging);
+  }
 
   private createHeaders(token?: string): HttpHeaders {
     let headers = new HttpHeaders();
@@ -74,28 +88,47 @@ export class ApiService {
     return params;
   }
 
-  get(endpoint: string, token?: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${endpoint}`, { headers: this.createHeaders(token) });
+  private logApiCall(method: string, endpoint: string, response: any) {
+    this.loggingService.logActivity({
+      dateTime: new Date().toISOString(),
+      requestedBy: 'user', // You can replace this with actual user info from your auth service
+      activityType: `${method} ${endpoint}`,
+      response: JSON.stringify(response)
+    });
   }
 
-  post(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${endpoint}`, body, { headers: this.createHeaders(token) });
+  get<T>(endpoint: string, token?: string): Observable<T> {
+    return this.http.get<T>(`${this.apiUrl}${endpoint}`, { headers: this.createHeaders(token) }).pipe(
+      tap(response => this.logApiCall('GET', endpoint, response))
+    );
   }
 
-  put(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${endpoint}`, body, { headers: this.createHeaders(token) });
+  post<T>(endpoint: string, body: any, token?: string): Observable<T> {
+    return this.http.post<T>(`${this.apiUrl}${endpoint}`, body, { headers: this.createHeaders(token) }).pipe(
+      tap(response => this.logApiCall('POST', endpoint, response))
+    );
   }
 
-  patch(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${endpoint}`, body, { headers: this.createHeaders(token) });
+  put<T>(endpoint: string, body: any, token?: string): Observable<T> {
+    return this.http.put<T>(`${this.apiUrl}${endpoint}`, body, { headers: this.createHeaders(token) }).pipe(
+      tap(response => this.logApiCall('PUT', endpoint, response))
+    );
   }
 
-  getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string): Observable<any> {
+  patch<T>(endpoint: string, body: any, token?: string): Observable<T> {
+    return this.http.patch<T>(`${this.apiUrl}${endpoint}`, body, { headers: this.createHeaders(token) }).pipe(
+      tap(response => this.logApiCall('PATCH', endpoint, response))
+    );
+  }
+
+  getWithQuery<T>(endpoint: string, options: QueryOptions = {}, token?: string): Observable<T> {
     const params = this.buildQueryParams(options);
-    return this.http.get(`${this.apiUrl}${endpoint}`, {
+    return this.http.get<T>(`${this.apiUrl}${endpoint}`, {
       headers: this.createHeaders(token),
       params
-    });
+    }).pipe(
+      tap(response => this.logApiCall('GET', endpoint, response))
+    );
   }
 
   getDailyTip(): Observable<any> {
