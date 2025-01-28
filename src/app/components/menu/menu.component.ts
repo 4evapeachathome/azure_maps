@@ -9,9 +9,9 @@ import { filter } from 'rxjs/operators';
 interface MenuItem {
   id: number;
   documentId: string;
-  Title: string;
+  title: string;
   link: string | null;
-  Parent: MenuItem | null;
+  parentMenu: MenuItem | null;
   children?: MenuItem[];
   expanded?: boolean;
 }
@@ -25,9 +25,9 @@ interface MenuItem {
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class MenuComponent implements OnInit {
-  @Input() fields: string[] = ['Title', 'link'];
-  @Input() populate: string[] = ['Parent'];
-  @Input() sort: string[] = ['createdAt:desc'];
+  @Input() fields: string[] = ['title', 'link'];
+  @Input() populate: string[] = ['parentMenu'];
+  @Input() sort: string[] = ['createdAt:asc'];
 
   menuItems: MenuItem[] = [];
   processedMenu: MenuItem[] = [];
@@ -58,7 +58,7 @@ export class MenuComponent implements OnInit {
 
   buildMenuTree(items: MenuItem[]): MenuItem[] {
     // First, find the root items (items with no parent)
-    const rootItems = items.filter(item => !item.Parent);
+    const rootItems = items.filter(item => !item.parentMenu);
 
     // Create a map for quick lookup of items by their id
     const itemMap = new Map<number, MenuItem>();
@@ -68,8 +68,8 @@ export class MenuComponent implements OnInit {
 
     // Build the tree structure
     items.forEach(item => {
-      if (item.Parent) {
-        const parent = itemMap.get(item.Parent.id);
+      if (item.parentMenu) {
+        const parent = itemMap.get(item.parentMenu.id);
         if (parent && parent.children) {
           parent.children.push(itemMap.get(item.id)!);
         }

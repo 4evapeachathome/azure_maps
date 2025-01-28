@@ -8,9 +8,9 @@
       </ion-header>
       <ion-content>
         <app-menu 
-          [fields]="['Title', 'link']"
-          [populate]="['Parent']"
-          [sort]="['createdAt:desc']">
+          [fields]="['title', 'link']"
+          [populate]="['parentMenu']"
+          [sort]="['createdAt:asc']">
         </app-menu>
       </ion-content>
     </ion-menu>

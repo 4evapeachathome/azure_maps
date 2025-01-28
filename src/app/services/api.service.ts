@@ -19,6 +19,7 @@ interface QueryOptions {
   providedIn: 'root'
 })
 export class ApiService {
+  //private apiUrl = 'https://af12-115-242-135-158.ngrok-free.app'; // Change this to your API URL
   private apiUrl = 'http://localhost:1337'; // Change this to your API URL
   private apitoken = '9d689662d625cea1c398e6cad3cf0e7387be9d29af8c6802fa837a034e38dd4b7dbcffd3afe7ba05903122e920bb1901570cd6b86c5004fd0e6f5c78837239797ffd42d4122299c1c3c6987c508c11c7a46ac0390223a9de7e5496d351d318dbe8a724dd383d42a0d859ab0a4b7e28816663e997c056924dc67ba5f32456b7d3';
 
@@ -26,6 +27,7 @@ export class ApiService {
 
   private createHeaders(token?: string): HttpHeaders {
     let headers = new HttpHeaders();
+    //let headers = new HttpHeaders().set('ngrok-skip-browser-warning', 'true'); //for ngrok setup
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
@@ -107,9 +109,9 @@ export class ApiService {
 
   getDailyTip(): Observable<any> {
     return this.getWithQuery('/api/daily-peace-tips', {
-      fields: ['DailyPeaceTipsTitle'],
+      fields: ['title'],
       populate: {
-        HealthTipDescription: {
+        description: {
           fields: ['Description']
         }
       },
@@ -119,10 +121,10 @@ export class ApiService {
 
   getMenuItems(): Observable<any> {
     return this.getWithQuery('/api/menucontrols', {
-      fields: ['Title', 'link', 'documentId'],
+      fields: ['title', 'link', 'documentId'],
       populate: {
-        Parent: {
-          fields: ['Title', 'link', 'documentId']
+        parentMenu: {
+          fields: ['title', 'link', 'documentId']
         }
       },
       sort: ['createdAt:asc']
@@ -137,8 +139,8 @@ export class ApiService {
         debugger;
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
-          if (resData && resData.HomeBannerWebImage && resData.HomeBannerWebImage.url) {
-            resData.image = `${this.apiUrl}${resData.HomeBannerWebImage.url}`;
+          if (resData && resData.webImage && resData.webImage.url) {
+            resData.image = `${this.apiUrl}${resData.webImage.url}`;
           } else {
             resData.image = ''; 
           }
@@ -153,16 +155,15 @@ export class ApiService {
   }
   //#endregion
   
-
   getWellnessTip(): Observable<any> {
     const endpoint = '/api/healthtips';
     const options = {
-      fields: ['HealthTipsTitle', 'HealthTipsSubTitle'],
+      fields: ['title', 'subtitle'],
       populate: {
-        HealthTipsDescription: {
+        description: {
           fields: ['Description']
         },
-        HealthTipsWebImage: {
+        webImage: {
           fields: ['url'] 
         }
       },
@@ -172,8 +173,8 @@ export class ApiService {
       map((res: any) => {
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
-          if (resData && resData.HealthTipsWebImage && resData.HealthTipsWebImage.url) {
-            resData.image = `${this.apiUrl}${resData.HealthTipsWebImage.url}`;
+          if (resData && resData.webImage && resData.webImage.url) {
+            resData.image = `${this.apiUrl}${resData.webImage.url}`;
           } else {
             resData.image = ''; 
           }
@@ -185,10 +186,6 @@ export class ApiService {
         return throwError(error);
       })
     );
-  }
-
-  sendEmail(emailData: any): Observable<any> {
-    return this.http.post(this.apiUrl, emailData);
   }
 
   sendContactData(contactData: any): Observable<any> {
@@ -205,8 +202,8 @@ export class ApiService {
     const endpoint = '/api/peaceathome';
     const options: QueryOptions = {
       populate: {
-        PeaceathomeWebImage: { fields: ['url'] },
-        PeaceathomeMobileImage: { fields: ['url'] },
+        webImage: { fields: ['url'] },
+        mobileImage: { fields: ['url'] },
         ContentBlock: { fields: ['multilinerichtextbox'] }
       }
     };
@@ -215,8 +212,8 @@ export class ApiService {
       map((res: any) => {
         console.log('data:', res);
         const resData = res.data;
-        if (resData && resData.PeaceathomeWebImage && resData.PeaceathomeWebImage.url) {
-          resData.image = `${this.apiUrl}${resData.PeaceathomeWebImage.url}`;
+        if (resData && resData.webImage && resData.webImage.url) {
+          resData.image = `${this.apiUrl}${resData.webImage.url}`;
         } else {
           resData.image = ''; 
         }

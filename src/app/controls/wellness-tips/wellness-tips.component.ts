@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
+import { getConstant } from 'src/shared/constants';
 
 @Component({
   selector: 'pathome-wellness-tips',
@@ -13,6 +14,7 @@ import { ApiService } from 'src/app/services/api.service';
 export class WellnessTipsComponent  implements OnInit {
   tips: { id: number; wellnesstips: string }[] = [];
   currentTip: string = '';
+  Healthsubtitle: string = '';
   HealthTipTitle: string = '';
   HealthTipImageUrl: string = '';
   allTips: any[] = [];
@@ -27,14 +29,17 @@ export class WellnessTipsComponent  implements OnInit {
     this.fetchWellnessTip();
   }
 
+  
+
   fetchWellnessTip() {
     this.apiService.getWellnessTip().subscribe(
       (response) => {
         if (response && response.length > 0) {
           const firstTip = response[0];
-          this.HealthTipTitle = firstTip.HealthTipsTitle;
+          this.HealthTipTitle = firstTip.title;
           this.HealthTipImageUrl = firstTip.image;
-          this.allTips = firstTip.HealthTipsDescription;
+          this.Healthsubtitle = firstTip.subtitle;
+          this.allTips = firstTip.description;
           
           if (this.allTips && this.allTips.length > 0) {
             this.generateRandomTip();
@@ -51,6 +56,7 @@ export class WellnessTipsComponent  implements OnInit {
       }
     );
   }
+
 
   generateRandomTip() {
     if (this.allTips.length === 1) {
@@ -72,9 +78,13 @@ export class WellnessTipsComponent  implements OnInit {
   }
 
   setDefaultTip() {
-    this.currentTip = 'Take deep breaths. Inhale deep, hold breath for 3 seconds, Exhale. Pause for 3 seconds. Repeat 6-10 times, preferably with your eyes closed';
-    this.HealthTipTitle = 'Health and Wellness Tips';
-    this.HealthTipImageUrl = '';
+    const peaceTip = getConstant('DAILY_PEACE_TIPS', 'DEFAULT_TIP');
+    if (peaceTip) {
+      this.currentTip = peaceTip.message;
+      this.HealthTipTitle = peaceTip.title;
+      this.HealthTipImageUrl = peaceTip.imageUrl || '';
+      this.Healthsubtitle = peaceTip.subtitle;
+    }
   }
 
 

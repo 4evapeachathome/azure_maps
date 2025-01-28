@@ -3,6 +3,7 @@ import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { getConstant } from 'src/shared/constants';
 
 @Component({
   selector: 'pathome-daily-tips',
@@ -96,10 +97,11 @@ export class DailyTipsComponent implements OnInit {
   fetchDailyTipData() {
     this.apiService.getDailyTip().subscribe(
       (response) => {
+        debugger;
         // Check if there are any health tips available
         if (response.data && response.data.length > 0) {
-          this.allTips = response.data[0].HealthTipDescription;
-          this.dailyPeaceTitle = response.data[0].DailyPeaceTipsTitle;
+          this.allTips = response.data[0].description;
+          this.dailyPeaceTitle = response.data[0].title;
           
           if (this.allTips && this.allTips.length > 0) {
             this.generateRandomTip();
@@ -118,8 +120,11 @@ export class DailyTipsComponent implements OnInit {
   }
 
   setDefaultTip() {
-    this.currentTip = 'Take deep breaths. Inhale deep, hold breath for 3 seconds, Exhale. Pause for 3 seconds. Repeat 6-10 times, preferably with your eyes closed';
-    this.dailyPeaceTitle = 'Daily Peace Tip';
+    const healthTip = getConstant('HEALTH_TIPS', 'DEFAULT_TIP');
+    if (healthTip) {
+      this.currentTip = healthTip.message;
+      this.dailyPeaceTitle = healthTip.title;
+    }
   }
 
   generateRandomTip() {
