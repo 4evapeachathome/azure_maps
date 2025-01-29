@@ -3,6 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { getConstant } from 'src/shared/constants';
+import { WellnessTipQuery } from '../../state/wellness-tip.query';
+import { WellnessTipService } from './services/wellness-tip.service';
+
 
 @Component({
   selector: 'pathome-wellness-tips',
@@ -12,81 +15,16 @@ import { getConstant } from 'src/shared/constants';
   imports: [CommonModule, IonicModule],
 })
 export class WellnessTipsComponent  implements OnInit {
+  title$ = this.wellnessTipQuery.title$;
+  subtitle$ = this.wellnessTipQuery.subtitle$;
+  imageUrl$ = this.wellnessTipQuery.imageUrl$;
+  currentTip$ = this.wellnessTipQuery.currentTip$;
   tips: { id: number; wellnesstips: string }[] = [];
-  currentTip: string = '';
-  Healthsubtitle: string = '';
-  HealthTipTitle: string = '';
-  HealthTipImageUrl: string = '';
-  allTips: any[] = [];
-  private previousTipIndex: number | null = null;
-  private storageKey: string = 'previousHealthTipIndex';
 
-  constructor(private apiService: ApiService) { }
+
+  constructor(private wellnessTipService: WellnessTipService, private wellnessTipQuery: WellnessTipQuery) { }
 
   ngOnInit() {
-    const storedIndex = localStorage.getItem(this.storageKey);
-    this.previousTipIndex = storedIndex ? parseInt(storedIndex, 10) : null;
-    this.fetchWellnessTip();
+    this.wellnessTipService.fetchWellnessTip();
   }
-
-  
-
-  fetchWellnessTip() {
-    this.apiService.getWellnessTip().subscribe(
-      (response) => {
-        if (response && response.length > 0) {
-          const firstTip = response[0];
-          this.HealthTipTitle = firstTip.title;
-          this.HealthTipImageUrl = firstTip.image;
-          this.Healthsubtitle = firstTip.subtitle;
-          this.allTips = firstTip.description;
-          
-          if (this.allTips && this.allTips.length > 0) {
-            this.generateRandomTip();
-          } else {
-            this.setDefaultTip();
-          }
-        } else {
-          this.setDefaultTip();
-        }
-      },
-      (error) => {
-        console.error('Error fetching health tips:', error);
-        this.setDefaultTip();
-      }
-    );
-  }
-
-
-  generateRandomTip() {
-    if (this.allTips.length === 1) {
-      this.currentTip = this.allTips[0].Description;
-      return;
-    }
-
-    let randomIndex: number;
-    do {
-      randomIndex = Math.floor(Math.random() * this.allTips.length);
-    } while (randomIndex === this.previousTipIndex);
-    
-    const randomTip = this.allTips[randomIndex];
-    this.currentTip = randomTip.Description;
-    this.previousTipIndex = randomIndex;
-
-    
-    localStorage.setItem(this.storageKey, randomIndex.toString());
-  }
-
-  setDefaultTip() {
-    const peaceTip = getConstant('DAILY_PEACE_TIPS', 'DEFAULT_TIP');
-    if (peaceTip) {
-      this.currentTip = peaceTip.message;
-      this.HealthTipTitle = peaceTip.title;
-      this.HealthTipImageUrl = peaceTip.imageUrl || '';
-      this.Healthsubtitle = peaceTip.subtitle;
-    }
-  }
-
-
-
 }

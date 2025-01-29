@@ -1,13 +1,13 @@
 <ion-card class="wellness-container">
-  <h2>{{ HealthTipTitle }}</h2>
+  <h2>{{ (title$ | async) }}</h2>
 
   <ion-row class="wellness-content">
     <ion-col size-md="5" class="wellness-img">
-      <ion-img [src]="HealthTipImageUrl" alt="Doctor Icon"></ion-img>
+      <ion-img [src]="(imageUrl$ | async)" alt="Doctor Icon"></ion-img>
     </ion-col>
     <ion-col size-md="4" class="wellness-tip">
-      <h4>{{Healthsubtitle}}</h4>
-      <p>{{ currentTip }}</p>
+      <h4>{{ (subtitle$ | async) }}</h4>
+      <p>{{ (currentTip$ | async) }}</p>
     </ion-col>
   </ion-row>
 </ion-card>

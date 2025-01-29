@@ -1,5 +1,5 @@
 <div class="daily-tips-container">
-  <h2>{{dailyPeaceTitle}}</h2>
+  <h2>{{ title$ | async }}</h2>
   
   <div class="month-year">
     {{ currentDate | date:'MMM, yyyy' }}
@@ -29,6 +29,6 @@
   </div>
 
   <div class="tip-container" [@tipFade]="currentTip">
-    {{ currentTip }}
+    {{ currentTip$ | async }}
   </div>
 </div>
