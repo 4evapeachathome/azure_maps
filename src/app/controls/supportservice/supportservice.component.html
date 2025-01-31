@@ -19,7 +19,7 @@
 </ion-toolbar>
 
 <div class="cards-container">
-  <ion-card class="locations-card">
+  <ion-card class="locations-card" *ngIf="geolocationEnabled">
     <ion-card-header>
       <ion-card-title>Support Services near you</ion-card-title>
     </ion-card-header>

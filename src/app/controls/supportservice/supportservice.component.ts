@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { Geolocation } from '@capacitor/geolocation';
 
 declare var google: any;
 
@@ -20,12 +21,15 @@ export class SupportserviceComponent  implements OnInit {
   selectedLocation: any = null;
   activeTab: string = 'about';
   segment: string = 'about';
+  latitude: number | undefined;
+  longitude: number | undefined;
+  geolocationEnabled: boolean = false;
 
   constructor(private http: HttpClient) { }
 
 
   ngOnInit() {
-    
+    this.getCurrentPosition();
   }
   center: google.maps.LatLngLiteral = { lat: 47.6062, lng: -122.3321 };
   zoom = 12;
@@ -99,6 +103,15 @@ export class SupportserviceComponent  implements OnInit {
     return this.filterOptions.filter(option =>
       option.label.toLowerCase().includes(this.filterSearchTerm.toLowerCase())
     );
+  }
+
+  async getCurrentPosition() {
+    debugger;
+    const coordinates = await Geolocation.getCurrentPosition();
+    this.latitude = coordinates.coords.latitude;
+    this.longitude = coordinates.coords.longitude;
+    this.geolocationEnabled = true;
+    console.log('Current position:', this.latitude, this.longitude);
   }
 
   // Toggle filter widget
