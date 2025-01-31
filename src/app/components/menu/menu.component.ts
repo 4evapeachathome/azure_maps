@@ -50,22 +50,36 @@ export class MenuComponent implements OnInit {
   }
 
   loadMenuItems() {
-    this.apiService.getMenuItems().subscribe(response => {
-      this.menuItems = response.data;
-      this.processedMenu = this.buildMenuTree(this.menuItems);
-    });
+    this.apiService.getMenuItems().subscribe(
+      (response: any) => {
+        if (Array.isArray(response)) {
+          this.menuItems = response;
+          this.processedMenu = this.buildMenuTree(this.menuItems);
+        } else {
+          console.error('Invalid response format:', response);
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching menu items:', error);
+      }
+    );
   }
-
+  
   buildMenuTree(items: MenuItem[]): MenuItem[] {
+    if (!items) {
+      console.error('Invalid items:', items);
+      return [];
+    }
+  
     // First, find the root items (items with no parent)
     const rootItems = items.filter(item => !item.parentMenu);
-
+  
     // Create a map for quick lookup of items by their id
     const itemMap = new Map<number, MenuItem>();
     items.forEach(item => {
       itemMap.set(item.id, { ...item, children: [], expanded: false });
     });
-
+  
     // Build the tree structure
     items.forEach(item => {
       if (item.parentMenu) {
@@ -75,7 +89,7 @@ export class MenuComponent implements OnInit {
         }
       }
     });
-
+  
     // Return only the root items with their nested children
     return rootItems.map(item => itemMap.get(item.id)!);
   }

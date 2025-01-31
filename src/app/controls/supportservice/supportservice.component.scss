@@ -1,0 +1,205 @@
+/* General Styling */
+ion-toolbar {
+    --background: #ffffff;
+    --color: #6a1b9a;
+  }
+  
+  ion-searchbar {
+    --background: white;
+    --border-radius: 8px;
+    padding: 8px;
+  }
+  
+  .search-toolbar {
+    width: 62%;
+    border-radius: 8px;
+    margin-top: 5px;
+  }
+
+  .locations-card{
+    width: 30%;
+    margin-left: 0px;
+    height: 550px;
+    overflow-y: auto;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  }
+
+    .locations-card::-webkit-scrollbar {
+        display: none;
+    }
+  .support-center-item{
+    cursor: pointer;
+    width: 100%;
+  }
+
+  
+  
+  ion-button {
+    --border-radius: 8px;
+    --color: white;
+  }
+
+  .close-btn{
+    cursor: pointer;
+    position: absolute; /* Position the close button absolutely */
+    top: 10px; /* Adjust the top position */
+    right: 10px; /* Adjust the right position */
+    cursor: pointer;
+  }
+  
+.support-center-lst{
+    cursor: pointer;
+}
+
+.details-card{
+    width: 30%;
+    margin-left: 0px;
+    height: 550px;
+}
+
+.button-group ion-button{
+    color: rgb(5, 5, 5);
+    border: 2px solid #813f95;
+    border-radius: 15px;
+}
+
+
+  /* Filters Card */
+  ion-card {
+    border-radius: 12px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .filter-card{
+    width: 30%;
+    height: 550px;
+    overflow-y: auto;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; 
+  }
+
+  .filter-card::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cards-container {
+    display: flex;
+    margin-top: 10px; 
+  }
+  
+  .button-group{
+    display: flex;
+  }
+
+
+  ion-card-header {
+    background-color: #f3e5f5;
+    color: #6a1b9a;
+    font-weight: bold;
+  }
+  
+  ion-card-content {
+    padding: 16px;
+  }
+  
+  ion-list {
+    background: transparent;
+  }
+  
+  ion-item {
+    --border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #e1bee7;
+  }
+  
+  ion-checkbox {
+    --background: white;
+    --border-radius: 5px;
+  }
+  
+  /* Map Container */
+  .map-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Ensure it is behind other elements */
+  }
+  
+  /* Support Services List */
+ 
+  ion-list {
+    display: block;
+  }
+  
+  /* Add spacing between list items */
+  .support-center-item {
+    margin-bottom: 16px; /* Adjust as needed */
+  }
+
+  .filter-header{
+    display: flex;
+    gap: 10px;
+  }
+  
+  /* Make the inner content horizontally scrollable */
+  .scrollable-content {
+    display: block;
+    overflow-x: auto;
+    align-items: center; 
+    gap: 10px; 
+    padding: 5px 0; /* Add some padding for better spacing */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  }
+
+  .scrollable-content::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Ensure the button group doesn't wrap */
+  .button-group {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1px;
+  }
+  
+  /* Optional: Style the buttons to ensure they are visible */
+  .action-button {
+    white-space: nowrap;
+  }
+  
+
+  ion-checkbox {
+    --border-color: #813f95; /* Change the border color to purple */
+    --background: white; /* Background color when unchecked */
+    ----checkmark-color : #813f95; /* Background color when checked */
+    --checkbox-background-checked : #813f95;
+    --border-color-checked: #813f95;
+}
+
+ion-segment{
+    width: 50%;
+}
+
+.about-section {
+    margin:10px;
+}
+
+.services-section{
+    margin:10px;
+}
+
+ion-segment{
+    --color-checked: black;
+}
+
+.filter-header ion-icon{
+    margin-top: 5px;
+}
+
+.btn-closefilter{
+    cursor: pointer;
+}

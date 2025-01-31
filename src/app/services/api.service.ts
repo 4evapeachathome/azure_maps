@@ -4,7 +4,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 
 interface QueryOptions {
   fields?: string[];
-  populate?: string[] | Record<string, { fields: string[] }>;
+  populate?: string[] | Record<string, { fields: string[], populate?: Record<string, { fields: string[] }> }>;
   filters?: Record<string, any>;
   sort?: string[];
   pagination?: {
@@ -19,7 +19,6 @@ interface QueryOptions {
   providedIn: 'root'
 })
 export class ApiService {
-  //private apiUrl = 'https://af12-115-242-135-158.ngrok-free.app'; // Change this to your API URL
   private apiUrl = 'http://localhost:1337'; // Change this to your API URL
   private apitoken = '9d689662d625cea1c398e6cad3cf0e7387be9d29af8c6802fa837a034e38dd4b7dbcffd3afe7ba05903122e920bb1901570cd6b86c5004fd0e6f5c78837239797ffd42d4122299c1c3c6987c508c11c7a46ac0390223a9de7e5496d351d318dbe8a724dd383d42a0d859ab0a4b7e28816663e997c056924dc67ba5f32456b7d3';
 
@@ -27,7 +26,6 @@ export class ApiService {
 
   private createHeaders(token?: string): HttpHeaders {
     let headers = new HttpHeaders();
-    //let headers = new HttpHeaders().set('ngrok-skip-browser-warning', 'true'); //for ngrok setup
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
@@ -36,31 +34,38 @@ export class ApiService {
 
   private buildQueryParams(options: QueryOptions): HttpParams {
     let params = new HttpParams();
-
+  
     if (options.fields?.length) {
       params = params.set('fields', options.fields.join(','));
     }
-
+  
     if (options.populate) {
       if (Array.isArray(options.populate)) {
         params = params.set('populate', options.populate.join(','));
       } else {
         Object.entries(options.populate).forEach(([key, value]) => {
-          params = params.set(`populate[${key}][fields]`, value.fields.join(','));
+          if (typeof value === 'object' && value.fields) {
+            params = params.set(`populate[${key}][fields]`, value.fields.join(','));
+          }
+          if (typeof value === 'object' && 'populate' in value) {
+            Object.entries(value.populate as Record<string, { fields: string[] }>).forEach(([nestedKey, nestedValue]) => {
+              params = params.set(`populate[${key}][populate][${nestedKey}][fields]`, nestedValue.fields.join(','));
+            });
+          }
         });
       }
     }
-
+  
     if (options.filters) {
       Object.entries(options.filters).forEach(([key, value]) => {
         params = params.set(`filters[${key}]`, value);
       });
     }
-
+  
     if (options.sort?.length) {
       params = params.set('sort', options.sort.join(','));
     }
-
+  
     if (options.pagination) {
       if (options.pagination.page) {
         params = params.set('pagination[page]', options.pagination.page.toString());
@@ -73,7 +78,7 @@ export class ApiService {
     } else if (options.pageSize) {
       params = params.set('pagination[pageSize]', options.pageSize.toString());
     }
-
+  
     return params;
   }
 
@@ -123,20 +128,49 @@ export class ApiService {
     return this.getWithQuery('/api/menucontrols', {
       fields: ['title', 'link', 'documentId'],
       populate: {
+        icon: {
+          fields: ['url']
+        },
         parentMenu: {
-          fields: ['title', 'link', 'documentId']
+          fields: ['title', 'link', 'documentId'],
+          populate: {
+            icon: {
+              fields: ['url']
+            }
+          }
         }
       },
       sort: ['createdAt:asc']
-    },this.apitoken);
+    }, this.apitoken).pipe(
+      map((res: any) => {
+        if (res && res.data) {
+          return res.data.map((item: any) => {
+            if (item.icon && item.icon.url) {
+              item.icon.url = `${this.apiUrl}${item.icon.url}`;
+            }
+            if (item.parentMenu && item.parentMenu.icon && item.parentMenu.icon.url) {
+              item.parentMenu.icon.url = `${this.apiUrl}${item.parentMenu.icon.url}`;
+            }
+            return item;
+          });
+        } else {
+          console.error('Invalid API response:', res);
+          return [];
+        }
+      }),
+      catchError(error => {
+        console.error('Error fetching menu items', error);
+        return throwError(error);
+      })
+    );
   }
+
 
   //#region BannerSectionAPI Service 
   getHappyHomeQuote(): Observable<any> {
     const endpoint = '/api/home-banners?populate=*';
     return this.http.get(`${this.apiUrl}${endpoint}`, { headers: this.createHeaders(this.apitoken) }).pipe(
       map((res: any) => {
-        debugger;
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
           if (resData && resData.webImage && resData.webImage.url) {
@@ -204,7 +238,7 @@ export class ApiService {
       populate: {
         webImage: { fields: ['url'] },
         mobileImage: { fields: ['url'] },
-        ContentBlock: { fields: ['multilinerichtextbox'] }
+        ContentBlocks: { fields: ['multilinerichtextbox'] }
       }
     };
 

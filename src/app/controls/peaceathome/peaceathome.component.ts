@@ -25,11 +25,11 @@ export class PeaceathomeComponent  implements OnInit {
     this.apiService.getPeaceAtHome().subscribe(
       (response) => {
         debugger;
-        if (response && response.image && response.Title && response.ContentBlock) {
+        if (response && response.image && response.title && response.ContentBlocks) {
           this.peaceathomeImg = response.image;
-          this.titleContent = response.Title;
-          this.contentBlocks = response.ContentBlock;
-        this.paragraphContent = response.Title[1]?.children[0]?.text || '';
+          this.titleContent = response.title;
+          this.contentBlocks = response.ContentBlocks;
+        this.paragraphContent = response.title[1]?.children[0]?.text || '';
         }
       },
       (error) => {

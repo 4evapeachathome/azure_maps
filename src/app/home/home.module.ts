@@ -17,6 +17,8 @@ import { PeacehomestrengthenpowersComponent } from "../controls/peacehomestrengt
 import { PeaceathomecardwithimageComponent } from "../controls/peaceathomecardwithimage/peaceathomecardwithimage.component";
 import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.component";
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
+import { BrowserModule } from '@angular/platform-browser';
+import { SupportserviceComponent } from '../controls/supportservice/supportservice.component';
 
 @NgModule({
   imports: [
@@ -35,7 +37,8 @@ import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/
     PeacehomestrengthenpowersComponent,
     PeaceathomecardwithimageComponent,
     PeaceathomeComponent,
-    HealthyrelatitonshipComponent
+    HealthyrelatitonshipComponent,
+    SupportserviceComponent
 ],
   declarations: [
     HomePage

@@ -1,0 +1,160 @@
+<ion-toolbar style="margin: 0px;">
+  <ion-title>Support Service</ion-title>
+</ion-toolbar>
+
+<ion-toolbar class="search-toolbar">
+  <ion-searchbar
+    [(ngModel)]="searchQuery"
+    (keyup.enter)="onSearch()"
+    placeholder="Type your current location"
+  ></ion-searchbar>
+  <ion-buttons slot="end">
+    <ion-button (click)="onSearch()">
+      <ion-icon name="search-outline"></ion-icon>
+    </ion-button>
+    <ion-button (click)="toggleFilter()">
+      <ion-icon name="filter-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
+<div class="cards-container">
+  <ion-card class="locations-card">
+    <ion-card-header>
+      <ion-card-title>Support Services near you</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item class="support-center-item" *ngFor="let location of filteredLocations" (click)="onLocationClick(location)">
+          <div class="scrollable-content">
+            <div class="location-info">
+              <h2>{{ location.name }}</h2>
+              <p>Hours of operation: 24/7</p>
+            </div>
+            <div class="button-group">
+              <ion-button fill="clear" class="action-button">
+                <ion-icon name="navigate-outline"></ion-icon>
+                Direction
+              </ion-button>
+              <ion-button fill="clear" class="action-button">
+                <ion-icon name="list-outline"></ion-icon>
+                Services
+              </ion-button>
+              <ion-button fill="clear" class="action-button">
+                <ion-icon name="people-outline"></ion-icon>
+                Support
+              </ion-button>
+              <ion-button fill="clear" class="action-button">
+                <ion-icon name="call-outline"></ion-icon>
+                Phone
+              </ion-button>
+            </div>
+          </div>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+
+  
+<ion-card *ngIf="filterOpen" class="filter-card">
+  <ion-card-header>
+    <div class="filter-header">
+      <ion-icon name="arrow-back" class="btn-closefilter" (click)="closeFilter()"></ion-icon>
+      <ion-card-title>Filters</ion-card-title>
+    </div>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-buttons class="ion-justify-content-between">
+      <ion-button fill="clear" (click)="clearFilters()">Clear</ion-button>
+      <ion-button fill="solid" (click)="applyFilters()">Submit</ion-button>
+    </ion-buttons>
+
+    <ion-searchbar [(ngModel)]="filterSearchTerm" placeholder="Search"></ion-searchbar>
+
+    <ion-list>
+      <ion-item *ngFor="let option of filteredFilterOptions">
+        <ion-checkbox [(ngModel)]="option.selected"></ion-checkbox>
+        <ion-label class="ion-padding-start">{{ option.label }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+
+
+<ion-card *ngIf="selectedLocation" class="details-card">
+  <ion-card-header>
+    <ion-card-title>{{ selectedLocation.name }}</ion-card-title>
+    <ion-icon class="close-btn" name="close-outline" (click)="closeDetails()"></ion-icon>
+  </ion-card-header>
+
+  <ion-card-content>
+    <div class="location-info">
+      <p>Hours of operation: 24/7</p>
+    </div>
+
+    <div class="scrollable-content">
+      <div class="button-group">
+        <ion-button fill="clear" size="small" class="action-button">
+          <ion-icon name="navigate-outline"></ion-icon>
+          Direction
+        </ion-button>
+        <ion-button fill="clear" size="small" class="action-button">
+          <ion-icon name="list-outline"></ion-icon>
+          Services
+        </ion-button>
+        <ion-button fill="clear" size="small" class="action-button">
+          <ion-icon name="people-outline"></ion-icon>
+          Support
+        </ion-button>
+        <ion-button fill="clear" size="small" class="action-button">
+          <ion-icon name="call-outline"></ion-icon>
+          Phone
+        </ion-button>
+      </div>
+
+      <ion-segment [(ngModel)]="segment" class="custom-segment">
+        <ion-segment-button value="about">
+          About
+        </ion-segment-button>
+        <ion-segment-button value="services">
+          Services
+        </ion-segment-button>
+      </ion-segment>
+
+      <div *ngIf="segment === 'about'" class="about-section">
+        <p>
+          Thrive Together was originally established in 1999 as Iowa Deaf Women’s Advocacy Services (IDWAS) by four local Deaf women, primarily to provide support, information, and peer counseling services to Deaf, Hard of Hearing, and Deaf-Blind women throughout Iowa.
+        </p>
+        <p>
+          In 2004, the name was changed to Deaf Women of Iowa Against Abuse (DWIAA) and then later to just Deaf Iowans Against Abuse (DIAA).
+        </p>
+        <p><strong>Address:</strong><br>
+          4225 Glass Rd NE, Cedar Rapids, IA 52402
+        </p>
+      </div>
+
+      <div *ngIf="segment === 'services'" class="services-section">
+        <div class="services-header">
+          <h3>Providing Services</h3>
+        </div>
+        <div class="services-list">
+          <ol>
+            <li>Hotline - <a href="tel:319-531-7719">319-531-7719</a></li>
+            <li>Counseling</li>
+            <li>Community Outreach</li>
+            <li>Referral Services</li>
+            <li>Shelter</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </ion-card-content>
+</ion-card>
+</div>
+
+<div class="map-container">
+  <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
+    <map-marker *ngFor="let location of filteredLocations" [position]="location" [label]="location.name"></map-marker>
+  </google-map>
+</div>
