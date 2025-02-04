@@ -19,6 +19,8 @@ import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.compon
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
 import { BrowserModule } from '@angular/platform-browser';
 import { SupportserviceComponent } from '../controls/supportservice/supportservice.component';
+import { ScenarioCardComponent } from "../controls/scenario-card/scenario-card.component";
+import { PlainCardComponent } from "../controls/plain-card/plain-card.component";
 
 @NgModule({
   imports: [
@@ -38,7 +40,9 @@ import { SupportserviceComponent } from '../controls/supportservice/supportservi
     PeaceathomecardwithimageComponent,
     PeaceathomeComponent,
     HealthyrelatitonshipComponent,
-    SupportserviceComponent
+    SupportserviceComponent,
+    ScenarioCardComponent,
+    PlainCardComponent
 ],
   declarations: [
     HomePage
