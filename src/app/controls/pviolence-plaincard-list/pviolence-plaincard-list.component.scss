@@ -1,0 +1,38 @@
+.ipv-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    background: #f5f5f5;
+  
+    .card-content {
+      h3 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+  
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 1rem;
+      }
+  
+      h4 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-top: 1rem;
+      }
+  
+      ul {
+        margin-top: 0.5rem;
+        padding-left: 1.2rem;
+  
+        li {
+          font-size: 1rem;
+          line-height: 1.5;
+          margin-bottom: 0.5rem;
+        }
+      }
+    }
+  }
+  

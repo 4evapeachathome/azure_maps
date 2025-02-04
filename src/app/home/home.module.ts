@@ -21,6 +21,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { SupportserviceComponent } from '../controls/supportservice/supportservice.component';
 import { ScenarioCardComponent } from "../controls/scenario-card/scenario-card.component";
 import { PlainCardComponent } from "../controls/plain-card/plain-card.component";
+import { PartnerViolenceProgressbarComponent } from "../controls/partner-violence-progressbar/partner-violence-progressbar.component";
+import { PviolencePlaincardListComponent } from "../controls/pviolence-plaincard-list/pviolence-plaincard-list.component";
+import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typesof-abuse-card.component";
 
 @NgModule({
   imports: [
@@ -42,7 +45,10 @@ import { PlainCardComponent } from "../controls/plain-card/plain-card.component"
     HealthyrelatitonshipComponent,
     SupportserviceComponent,
     ScenarioCardComponent,
-    PlainCardComponent
+    PlainCardComponent,
+    PartnerViolenceProgressbarComponent,
+    PviolencePlaincardListComponent,
+    TypesofAbuseCardComponent
 ],
   declarations: [
     HomePage

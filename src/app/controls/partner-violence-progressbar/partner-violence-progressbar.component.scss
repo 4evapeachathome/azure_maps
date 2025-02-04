@@ -1,0 +1,56 @@
+.level-three-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    background: #ffffff;
+  
+    .card-header {
+      font-size: 1rem;
+      font-weight: bold;
+      padding-bottom: 0.5rem;
+    }
+  
+    .progress-bar {
+      display: flex;
+      width: 50%;
+      height: 5px;
+      margin-bottom: 1rem;
+  
+      .progress-segment {
+        flex-grow: 1;
+        height: 100%;
+      }
+  
+      .yellow {
+        background-color: #facc15;
+        width: 30%;
+      }
+  
+      .orange {
+        background-color: #f97316;
+        width: 30%;
+      }
+  
+      .red {
+        background-color: #dc2626;
+        width: 40%;
+      }
+    }
+  
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #333;
+    }
+  
+    ul {
+      margin-top: 0.5rem;
+      padding-left: 1.2rem;
+  
+      li {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+  
