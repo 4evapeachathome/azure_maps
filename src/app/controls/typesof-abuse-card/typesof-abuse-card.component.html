@@ -30,10 +30,12 @@
 
       <!-- Read More / Read Less Button -->
       <div class="button-container">
-        <ion-button fill="clear" class="read-more" (click)="toggleReadMore()">
-          {{ isExpanded ? 'Read Less' : 'Read More' }}
-        </ion-button>
-        <ion-icon name="chevron-down-outline"></ion-icon>
+        <div class="button-icon-wrapper">
+          <ion-button fill="clear" class="read-more" (click)="toggleReadMore()">
+            {{ isExpanded ? 'Read Less' : 'Read More' }}
+          </ion-button>
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </div>
       </div>
     </div>
   </div>

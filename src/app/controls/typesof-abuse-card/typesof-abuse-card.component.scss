@@ -72,26 +72,33 @@
             }
           }
         }
-  
-        /* Align Button to the Right */
-        .button-container {
-          display: flex;
-          justify-content: flex-end;
-          margin-top: 0.5rem;
         }
-
-        .button-container ion-button {
-            margin-left: -20px;
-        }
-  
-        .read-more {
-          color: #9333ea;
-          font-weight: bold;
-          width: 12%;
-          text-transform: none;
-          font-size: 0.9rem;
-        }
-      }
     }
+  }
+
+  .button-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  
+  .button-icon-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  
+  .read-more {
+    background: transparent;
+    border: none;
+    color: #9333ea;
+    font-weight: bold;
+    width: 100%;
+    text-transform: none;
+    padding: 0;
+    margin-right: 4px; /* Adjust margin as needed */
+  }
+  
+  ion-icon {
+    font-size: 24px; /* Adjust icon size as needed */
   }
   
