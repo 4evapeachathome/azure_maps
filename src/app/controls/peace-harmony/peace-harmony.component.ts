@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'pathome-peace-harmony',
@@ -10,9 +11,37 @@ import { IonicModule } from '@ionic/angular';
     imports: [CommonModule, IonicModule]
 })
 export class PeaceHarmonyComponent  implements OnInit {
+title: any;
+description:any;
+image:any;
 
-  constructor() { }
+  constructor(private apiService:ApiService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getExpertAdviceData();
+  }
+
+
+  getExpertAdviceData() {
+   this.apiService.getExpertAdvice().subscribe(
+      (response) => {
+        if (response && response.length > 0) {
+          const firstBanner = response[0];
+      
+          this.title = firstBanner.title || ''; 
+          this.description = firstBanner.description || '';
+          this.image = firstBanner.image || ''; 
+        } else {
+          console.warn('No data found in the response.');
+          this.title = '';
+          this.description = '';
+          this.image = '';
+        }
+      },
+      (error) => {
+        console.error('Error fetching expert advice data:', error);
+      }
+    );
+  }
 
 }

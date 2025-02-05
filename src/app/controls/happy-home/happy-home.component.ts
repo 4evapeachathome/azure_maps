@@ -3,6 +3,16 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
+interface RichTextBox {
+  type: string;
+  text: string;
+  bold?: boolean;
+  children: RichTextBox[];
+}
+
+interface BannerTitle {
+  multilinerichtextbox: RichTextBox[];
+}
 
 @Component({
   selector: 'pathome-happy-home',
@@ -16,10 +26,11 @@ import { ApiService } from 'src/app/services/api.service';
 
 
 export class HappyHomeComponent  implements OnInit {
-   bannerTitle: string ='';
+   bannerTitle: BannerTitle | null = null;
    bannerTitleHighlight: string = '';
+   content: any;
    bannerDescription: string= '';
-   bannerWebImage: any = '';
+   peaceathomeImg: any = '';
   constructor(private apiService: ApiService) { }
 
   ngOnInit() {
@@ -29,21 +40,9 @@ export class HappyHomeComponent  implements OnInit {
   fetchHappyHomeData(): void {
     this.apiService.getHappyHomeQuote().subscribe(
       (response) => {
-
-        if (response && response.length > 0) {
-          const firstBanner = response[0];
-      
-          this.bannerTitle = firstBanner.BannerTitle || ''; 
-          this.bannerTitleHighlight = firstBanner.BannerTitleHighlight || '';
-          this.bannerDescription = firstBanner.BannerDescription || '';
-          this.bannerWebImage = firstBanner.image || ''; 
-        } else {
-          console.warn('No banners found in the response.');
-          this.bannerTitle = '';
-          this.bannerTitleHighlight = '';
-          this.bannerDescription = '';
-          this.bannerWebImage = '';
-        }
+        const happyHomeData = response[0];
+        this.bannerTitle = happyHomeData.content;
+        this.peaceathomeImg = happyHomeData.image;
       },
       (error) => {
         console.error('Error fetching happy home data:', error);

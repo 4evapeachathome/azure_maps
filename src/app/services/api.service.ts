@@ -168,25 +168,36 @@ export class ApiService {
 
   //#region BannerSectionAPI Service 
   getHappyHomeQuote(): Observable<any> {
-    const endpoint = '/api/home-banners?populate=*';
-    return this.http.get(`${this.apiUrl}${endpoint}`, { headers: this.createHeaders(this.apitoken) }).pipe(
-      map((res: any) => {
-        console.log('data:', res.data);
-        return res.data.map((resData: any) => {
-          if (resData && resData.webImage && resData.webImage.url) {
-            resData.image = `${this.apiUrl}${resData.webImage.url}`;
-          } else {
-            resData.image = ''; 
-          }
-          return resData;
-        });
-      }),
-      catchError(error => {
-        console.error('Error fetching home quotes', error);
-        return throwError(error);
-      })
+    const endpoint = '/api/home-banners';
+    const options = {
+        populate: {
+            content: {
+                fields: ['*']
+            },
+            webImage: {
+                fields: ['url']
+            }
+        },
+        sort: ['createdAt:desc']
+    };
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+        map((res: any) => {
+            console.log('data:', res.data);
+            return res.data.map((resData: any) => {
+                if (resData && resData.webImage && resData.webImage.url) {
+                    resData.image = `${this.apiUrl}${resData.webImage.url}`;
+                } else {
+                    resData.image = '';
+                }
+                return resData;
+            });
+        }),
+        catchError(error => {
+            console.error('Error fetching home banners', error);
+            return throwError(error);
+        })
     );
-  }
+}
   //#endregion
   
   getWellnessTip(): Observable<any> {
@@ -222,6 +233,37 @@ export class ApiService {
     );
   }
 
+  //Get expert advice
+  getExpertAdvice(): Observable<any> {
+    const endpoint = '/api/expert-advices';
+    const options = {
+        fields: ['title', 'description'],
+        populate: {
+            webImage: {
+                fields: ['url']
+            }
+        },
+        sort: ['createdAt:desc']
+    };
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+        map((res: any) => {
+            console.log('data:', res.data);
+            return res.data.map((resData: any) => {
+                if (resData && resData.webImage && resData.webImage.url) {
+                    resData.image = `${this.apiUrl}${resData.webImage.url}`;
+                } else {
+                    resData.image = '';
+                }
+                return resData;
+            });
+        }),
+        catchError(error => {
+            console.error('Error fetching expert advice', error);
+            return throwError(error);
+        })
+    );
+}
+
   sendContactData(contactData: any): Observable<any> {
     const endpoint = '/api/contacts'
     const headers = new HttpHeaders({
@@ -241,6 +283,42 @@ export class ApiService {
     return this.http.get<any>(`${this.apiUrl}${endpoint}`, { headers });
   }
   
+  //Home slider api service method
+  getHomeSliderData(): Observable<any> {
+    const endpoint = '/api/home-sliders';
+    const options: QueryOptions = {
+      populate: {
+        homeslider: {
+          fields: ['title'],
+          populate: {
+            webImage: { fields: ['url'] },
+            description: {
+              fields: ['multilineRichTextBox']
+            }
+          }
+        }
+      }
+    };
+
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res);
+        const resData = res.data;
+        if (resData && resData.homeslider && resData.homeslider.webImage && resData.homeslider.webImage.url) {
+          resData.homeslider.image = `${this.apiUrl}${resData.homeslider.webImage.url}`;
+        } else {
+          resData.homeslider.image = ''; 
+        }
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching home slider data', error);
+        return throwError(error);
+      })
+    );
+}
+
+  //Peace at home component service
   getPeaceAtHome(): Observable<any> {
     const endpoint = '/api/peaceathome';
     const options: QueryOptions = {
