@@ -231,6 +231,15 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}${endpoint}`, { data: contactData }, { headers });
   }
 
+  // Fetch Relational, which includes both personal and interpersonal items
+  getRelationalContent(): Observable<any> {
+    const endpoint = '/api/relationals?populate=*';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.apitoken}` 
+    });
+    return this.http.get<any>(`${this.apiUrl}${endpoint}`, { headers });
+  }
   
   getPeaceAtHome(): Observable<any> {
     const endpoint = '/api/peaceathome';

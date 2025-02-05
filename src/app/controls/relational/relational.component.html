@@ -1,0 +1,26 @@
+<div>
+  <h3>There are ways in which you can strengthen individual and interpersonal powers toward peace</h3>
+  
+  <div class="header">
+    
+    <!-- Personal Section -->
+    <div class="column">
+      <h2>Personal</h2>
+      <div class="list">
+        <div *ngFor="let item of personalItems" class="list-item">
+          <label class="curved-label">{{ item.textContent }}</label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Interpersonal Section -->
+    <div class="column">
+      <h2>Interpersonal</h2>
+      <div class="list">
+        <div *ngFor="let item of interpersonalItems" class="list-item">
+          <label class="curved-label">{{ item.textContent }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

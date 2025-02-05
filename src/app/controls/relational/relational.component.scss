@@ -1,0 +1,54 @@
+/* General styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.column {
+  width: 48%;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 15px;  
+}
+
+h3 {
+  font-size: 24px;
+  margin-left: 15px;
+}
+
+.text-content {
+  margin-top: 10px;
+}
+
+/* Curved label styles */
+.curved-label {
+  padding: 10px 20px;
+  background-color: white;
+  color: gray;
+  border: 1px solid #1E3A8A;
+  border-radius: 30px;
+  font-size: 12px;
+  text-transform: capitalize;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Container for the list to display items horizontally */
+.list {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line if they exceed container width */
+  gap: 15px; /* Optional: Adds spacing between the items */
+}
+
+/* Individual list items */
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
