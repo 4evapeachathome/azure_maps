@@ -273,15 +273,20 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}${endpoint}`, { data: contactData }, { headers });
   }
 
-  // Fetch Relational, which includes both personal and interpersonal items
-  getRelationalContent(): Observable<any> {
-    const endpoint = '/api/relationals?populate=*';
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.apitoken}` 
-    });
-    return this.http.get<any>(`${this.apiUrl}${endpoint}`, { headers });
-  }
+    // Fetch Relational, which includes both personal and interpersonal items
+    getRelationalContent(): Observable<any> {
+      return this.getWithQuery('/api/relationals', {
+        populate: 
+        {
+          Personal: {
+            fields: ['textContent']
+          },
+          Interpersonal: {
+            fields: ['textContent']
+          }
+        }
+      }, this.apitoken);
+    }
   
   //Home slider api service method
   getHomeSliderData(): Observable<any> {

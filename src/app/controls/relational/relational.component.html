@@ -1,26 +1,27 @@
-<div>
-  <h3>There are ways in which you can strengthen individual and interpersonal powers toward peace</h3>
-  
-  <div class="header">
-    
-    <!-- Personal Section -->
-    <div class="column">
-      <h2>Personal</h2>
-      <div class="list">
-        <div *ngFor="let item of personalItems" class="list-item">
-          <label class="curved-label">{{ item.textContent }}</label>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Interpersonal Section -->
-    <div class="column">
-      <h2>Interpersonal</h2>
-      <div class="list">
-        <div *ngFor="let item of interpersonalItems" class="list-item">
-          <label class="curved-label">{{ item.textContent }}</label>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+   
+  <ion-grid>
+    <ion-row>
+        <h3>There are ways in which you can strengthen individual and interpersonal powers toward peace</h3>
+    </ion-row>
+    <ion-row>
+      <!-- Personal Section -->
+      <ion-col size="6">
+        <h2>Personal</h2>
+        <ion-list>
+          <ion-item *ngFor="let item of personalItems">
+            <ion-label class="curved-label">{{ item.textContent }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+
+      <!-- Interpersonal Section -->
+      <ion-col size="6">
+        <h2>Interpersonal</h2>
+        <ion-list>
+          <ion-item *ngFor="let item of interpersonalItems">
+            <ion-label class="curved-label">{{ item.textContent }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
