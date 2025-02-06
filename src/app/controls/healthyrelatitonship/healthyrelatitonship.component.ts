@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'pathome-healthyrelatitonship',
@@ -10,9 +11,34 @@ import { IonicModule } from '@ionic/angular';
       imports: [CommonModule, IonicModule]
 })
 export class HealthyrelatitonshipComponent  implements OnInit {
+  img: any;
+  contentBlocks: any[] = [];
+  title: any;
+  paragraphContent: any;
 
-  constructor() { }
+  constructor(private apiService:ApiService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getHealthyRelationshipData();
+  }
+
+
+
+  getHealthyRelationshipData(){
+    this.apiService.getHealthyRelationship().subscribe(
+      (response) => {
+        debugger;
+        if (response && response.image && response.title && response.ContentBlocks) {
+          this.img = response.image;
+          this.title = response.title;
+          this.contentBlocks = response.ContentBlocks;
+        this.paragraphContent = response.title[1]?.children[0]?.text || '';
+        }
+      },
+      (error) => {
+        console.error('Error fetching peace at home:', error);
+      }
+    );
+  }
 
 }

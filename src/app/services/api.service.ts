@@ -429,6 +429,37 @@ export class ApiService {
       })
     );
   }
+
+
+  //get healthy relationship data
+  getHealthyRelationship(): Observable<any> {
+    const endpoint = '/api/healthy-relationship';
+    const options: QueryOptions = {
+      populate: {
+        webImage: { fields: ['url'] },
+        mobileImage: { fields: ['url'] },
+        contentBlocks: { fields: ['multilinerichtextbox'] }
+      }
+    };
+  
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res);
+        const resData = res.data;
+        if (resData && resData.webImage && resData.webImage.url) {
+          resData.image = `${this.apiUrl}${resData.webImage.url}`;
+        } else {
+          resData.image = ''; 
+        }
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching healthy relationship data', error);
+        return throwError(error);
+      })
+    );
+  }
+
 }
 
 

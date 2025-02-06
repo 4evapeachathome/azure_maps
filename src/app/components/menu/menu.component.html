@@ -1,5 +1,5 @@
 <div class="menu-container">
-  <ion-list>
+  <ion-list lines="none">
     <ng-container *ngFor="let item of processedMenu">
       <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item, level: 0 }"></ng-container>
     </ng-container>

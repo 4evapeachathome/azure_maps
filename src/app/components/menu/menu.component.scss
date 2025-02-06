@@ -4,6 +4,7 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  padding:25px 25px 25px 50px;
 
   ion-item {
     --min-height: 40px;
@@ -58,13 +59,27 @@
 
   ion-item {
     --background: transparent;
-    --background-hover: rgba(var(--ion-color-primary-rgb), 0.1);
-    --ripple-color: var(--ion-color-primary);
+    --background-hover: var(--menu-selected-color);
+    --ripple-color: var(--ion-color-primary--contrast);
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size:var(--font-size-base);
     
     &.selected {
-      --background: rgba(var(--ion-color-primary-rgb), 0.1);
-      --color: var(--ion-color-primary);
+      --background: var(--menu-selected-color);
+      --color: var(--ion-color-primary-contrast);
       font-weight: 500;
+      ion-icon {
+        color: var(--ion-color-primary-contrast);
+      }
+    }
+    &:hover {
+      --background: var(--menu-selected-color);
+      --color: var(--ion-color-primary-contrast);
+      font-weight: 500;
+      ion-icon {
+        color: var(--ion-color-primary-contrast);
+      }
     }
 
     // Add indentation for nested levels
@@ -77,14 +92,15 @@
 
   ion-icon[slot="start"] {
     margin-right: 8px;
-    color: var(--ion-color-medium);
+    color: var(--ion-color-dark);
   }
 
   ion-icon[slot="end"] {
     font-size: 16px;
-    color: var(--ion-color-medium);
+    color: var(--ion-color-dark);
   }
 }
+
 
 .submenu, .submenu-l2, .submenu-l3 {
   overflow: hidden;
@@ -122,7 +138,7 @@ ion-menu {
     --padding-start: 16px;
     --min-height: 40px;
     font-size: 14px;
-
+   
     &.selected {
       --background: var(--ion-color-primary-tint);
       --color: var(--ion-color-primary-contrast);
