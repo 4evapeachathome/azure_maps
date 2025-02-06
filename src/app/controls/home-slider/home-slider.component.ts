@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -20,22 +20,23 @@ interface Description {
 }
 
 @Component({
-  selector: 'pathome-peace-home-slider',
-  templateUrl: './peace-home-slider.component.html',
-  styleUrls: ['./peace-home-slider.component.scss'],
+  selector: 'pathome-home-slider',
+  templateUrl: './home-slider.component.html',
+  styleUrls: ['./home-slider.component.scss'],
   standalone: true,
     imports: [CommonModule, IonicModule]
 })
-export class PeaceHomeSliderComponent  implements OnInit {
+export class HomeSliderComponent  implements OnInit {
   currentIndex = 0;
+  showButton: boolean = true;
   sliderData: any;
   descriptions: Description[] = [];
   mainTitle: any;
   webImage: any;
-  constructor(private cdr: ChangeDetectorRef,private apiService:ApiService) { }
+  constructor(private apiService:ApiService) { }
 
   ngOnInit() {
-    this. getHomeSlidersData();
+    this.getHomeSlidersData();
   }
 
   getHomeSlidersData() {
@@ -50,7 +51,7 @@ export class PeaceHomeSliderComponent  implements OnInit {
         
        },
        (error) => {
-         console.error('Error fetching expert advice data:', error);
+         console.error('Error fetching home slider component:', error);
        }
      );
    }

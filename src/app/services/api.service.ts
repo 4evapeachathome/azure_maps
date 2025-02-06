@@ -303,6 +303,45 @@ export class ApiService {
     );
   }
 
+  //peace at home slider component
+  getPeaceatHomeSliders(): Observable<any> {
+    const endpoint = '/api/peace-at-home-sliders';
+    const options = {
+      populate: {
+        peaceathomeslider: {
+          fields: ['*'],
+          populate: {
+            description: {
+              fields: ['*']
+            },
+            webImage: {
+              fields: ['url']
+            }
+          }
+        }
+      },
+      sort: ['createdAt:desc']
+    };
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res.data);
+        return res.data.map((resData: any) => {
+          if (resData.peaceathomeslider && resData.peaceathomeslider.webImage && resData.peaceathomeslider.webImage.url) {
+            resData.image = `${this.apiUrl}${resData.peaceathomeslider.webImage.url}`;
+          } else {
+            resData.image = '';
+          }
+          return resData;
+        });
+      }),
+      catchError(error => {
+        console.error('Error fetching peace at home slider', error);
+        return throwError(error);
+      })
+    );
+  }
+
+
   sendContactData(contactData: any): Observable<any> {
     const endpoint = '/api/contacts'
     const headers = new HttpHeaders({

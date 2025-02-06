@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { PeaceHomeSliderComponent } from './peace-home-slider.component';
+import { HomeSliderComponent } from './home-slider.component';
 
-describe('PeaceHomeSliderComponent', () => {
-  let component: PeaceHomeSliderComponent;
-  let fixture: ComponentFixture<PeaceHomeSliderComponent>;
+describe('HomeSliderComponent', () => {
+  let component: HomeSliderComponent;
+  let fixture: ComponentFixture<HomeSliderComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PeaceHomeSliderComponent ],
+      declarations: [ HomeSliderComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PeaceHomeSliderComponent);
+    fixture = TestBed.createComponent(HomeSliderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

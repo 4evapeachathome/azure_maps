@@ -8,7 +8,7 @@ import { DailyTipsComponent } from '../controls/daily-tips/daily-tips.component'
 import { HomePageRoutingModule } from './home-routing.module';
 import { HappyHomeComponent } from '../controls/happy-home/happy-home.component';
 import { PeaceHarmonyComponent } from '../controls/peace-harmony/peace-harmony.component';
-import { PeaceHomeSliderComponent } from '../controls/peace-home-slider/peace-home-slider.component';
+import { HomeSliderComponent } from '../controls/home-slider/home-slider.component';
 import { WellnessTipsComponent } from '../controls/wellness-tips/wellness-tips.component';
 import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
 import { FooterComponent } from "../controls/footer/footer.component";
@@ -23,6 +23,7 @@ import { PlainCardComponent } from "../controls/plain-card/plain-card.component"
 import { PartnerViolenceProgressbarComponent } from "../controls/partner-violence-progressbar/partner-violence-progressbar.component";
 import { PviolencePlaincardListComponent } from "../controls/pviolence-plaincard-list/pviolence-plaincard-list.component";
 import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typesof-abuse-card.component";
+import { PeaceHomeSliderComponent } from '../controls/peaceat-home-slider/peace-at-homeslide';
 
 @NgModule({
   imports: [
@@ -33,8 +34,9 @@ import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typeso
     DailyTipsComponent,
     HappyHomeComponent,
     PeaceHarmonyComponent,
-    PeaceHomeSliderComponent,
+    HomeSliderComponent,
     WellnessTipsComponent,
+    PeaceHomeSliderComponent,
     ContactUsFormComponent,
     FooterComponent,
     PeaceathomecardComponent,
