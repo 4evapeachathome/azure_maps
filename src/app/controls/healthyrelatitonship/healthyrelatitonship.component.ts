@@ -28,15 +28,15 @@ export class HealthyrelatitonshipComponent  implements OnInit {
     this.apiService.getHealthyRelationship().subscribe(
       (response) => {
         debugger;
-        if (response && response.image && response.title && response.ContentBlocks) {
+        if (response && response.image && response.title && response.contentBlocks) {
           this.img = response.image;
           this.title = response.title;
-          this.contentBlocks = response.ContentBlocks;
+          this.contentBlocks = response.contentBlocks;
         this.paragraphContent = response.title[1]?.children[0]?.text || '';
         }
       },
       (error) => {
-        console.error('Error fetching peace at home:', error);
+        console.error('Error fetching healthy relationship data:', error);
       }
     );
   }
