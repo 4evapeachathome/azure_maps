@@ -264,6 +264,45 @@ export class ApiService {
     );
 }
 
+//Home slider component api method
+
+  getHomeSliders(): Observable<any> {
+    const endpoint = '/api/home-sliders';
+    const options = {
+      populate: {
+        homeslider: {
+          fields: ['*'],
+          populate: {
+            description: {
+              fields: ['*']
+            },
+            webImage: {
+              fields: ['url']
+            }
+          }
+        }
+      },
+      sort: ['createdAt:desc']
+    };
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res.data);
+        return res.data.map((resData: any) => {
+          if (resData.homeslider && resData.homeslider.webImage && resData.homeslider.webImage.url) {
+            resData.image = `${this.apiUrl}${resData.homeslider.webImage.url}`;
+          } else {
+            resData.image = '';
+          }
+          return resData;
+        });
+      }),
+      catchError(error => {
+        console.error('Error fetching home sliders', error);
+        return throwError(error);
+      })
+    );
+  }
+
   sendContactData(contactData: any): Observable<any> {
     const endpoint = '/api/contacts'
     const headers = new HttpHeaders({

@@ -13,7 +13,6 @@ import { WellnessTipsComponent } from '../controls/wellness-tips/wellness-tips.c
 import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
 import { FooterComponent } from "../controls/footer/footer.component";
 import { PeaceathomecardComponent } from "../controls/peaceathomecard/peaceathomecard.component";
-import { PeacehomestrengthenpowersComponent } from "../controls/peacehomestrengthenpowers/peacehomestrengthenpowers.component";
 import { PeaceathomecardwithimageComponent } from "../controls/peaceathomecardwithimage/peaceathomecardwithimage.component";
 import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.component";
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
@@ -39,7 +38,6 @@ import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typeso
     ContactUsFormComponent,
     FooterComponent,
     PeaceathomecardComponent,
-    PeacehomestrengthenpowersComponent,
     PeaceathomecardwithimageComponent,
     PeaceathomeComponent,
     HealthyrelatitonshipComponent,
