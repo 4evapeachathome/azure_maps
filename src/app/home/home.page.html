@@ -25,31 +25,40 @@
 
 <ion-content [fullscreen]="true">
   <ion-grid>
+
+    <!-- First Row: Single Component -->
     <ion-row>
-      <!-- <ion-col size="auto">
-        sd
-        </ion-col> -->
-      <ion-col>
-    <!-- <pathome-scenario-card></pathome-scenario-card>
-    <pathome-plain-card></pathome-plain-card>
-    <pathome-partner-violence-progressbar></pathome-partner-violence-progressbar>
-    <pathome-pviolence-plaincard-list></pathome-pviolence-plaincard-list>
-    <pathome-typesof-abuse-card></pathome-typesof-abuse-card> -->
-    <!-- <pathome-peaceathome></pathome-peaceathome> -->
-    <!-- <pathome-healthyrelatitonship></pathome-healthyrelatitonship> -->
-    <pathome-happy-home></pathome-happy-home>
-    <pathome-daily-tips></pathome-daily-tips>
-      <!-- <pathome-contact-us-form></pathome-contact-us-form> -->
-       <!-- <pathome-supportservice></pathome-supportservice> -->
-      <!-- <pathome-footer></pathome-footer> -->
-      <!-- <pathome-peaceathomecard></pathome-peaceathomecard> -->
-        <!-- <pathome-peaceathomecardwithimage></pathome-peaceathomecardwithimage> -->
-     <pathome-wellness-tips></pathome-wellness-tips>
-       <!-- <pathome-peace-home-slider></pathome-peace-home-slider> -->
-        <pathome-peace-harmony></pathome-peace-harmony>
-        <pathome-home-slider></pathome-home-slider>
-        <app-relational></app-relational>
+      <ion-col size="12">
+        <pathome-happy-home></pathome-happy-home>
       </ion-col>
-      </ion-row>
-      </ion-grid>
+    </ion-row>
+
+    <!-- Second Row: Three Components in Flex Display -->
+    <ion-row class="flex-row">
+      <ion-col size="4">
+        <pathome-daily-tips></pathome-daily-tips>
+      </ion-col>
+      <ion-col size="4">
+        <pathome-wellness-tips></pathome-wellness-tips>
+      </ion-col>
+      <ion-col size="4">
+        <pathome-peace-harmony></pathome-peace-harmony>
+      </ion-col>
+    </ion-row>
+
+    <!-- Third Row: Full-Width Slide Component -->
+    <ion-row>
+      <ion-col size="12">
+        <pathome-home-slider></pathome-home-slider>
+      </ion-col>
+    </ion-row>
+
+    <!-- Fourth Row: Footer Component -->
+    <ion-row>
+      <ion-col size="12">
+        <pathome-footer></pathome-footer>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
 </ion-content>
