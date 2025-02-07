@@ -1,19 +1,7 @@
-<!-- <ion-grid class="happyhome-container">
-  <ion-row>
-    <ion-col size-md="7" class="peacehome-content">
-      <h1 class="banner-title">{{ bannerTitle }}</h1>
-      <h1 class="banner-title-highlight">{{ bannerTitleHighlight }}</h1>
-      <p class="banner-description">{{ bannerDescription }}</p>
-      <ion-button>Read More</ion-button>
-    </ion-col>
-    <ion-col size-md="4">
-      <ion-img [src]="bannerWebImage" alt="Doctor Icon"></ion-img>
-    </ion-col>
-  </ion-row>
-</ion-grid> -->
-
 <ion-grid class="home-happiness-container">
   <!-- Heading and Image Section -->
+   <ion-row>
+    <ion-col>
   <div class="heading-image-container" *ngIf="bannerTitle && bannerTitle?.multilinerichtextbox">
     <h2 class="happyhome-title">
       <ng-container *ngFor="let item of bannerTitle.multilinerichtextbox[0]?.children">
@@ -25,21 +13,23 @@
         </ng-container>
       </ng-container>
     </h2>
-    <ion-img [src]="peaceathomeImg" alt="Happy Home Image"></ion-img>
-  </div>
-  
-  <!-- Paragraph Section -->
-  <div *ngFor="let paragraph of bannerTitle?.multilinerichtextbox?.slice(1)">
-    <p class="paragraph-class">
-      <ng-container *ngFor="let item of paragraph.children">
-        <ng-container [ngSwitch]="item.type">
-          <ion-text *ngSwitchCase="'text'" [ngClass]="{'highlight': item.bold}">
-            <strong *ngIf="item.bold">{{ item.text }}</strong>
-            <span *ngIf="!item.bold">{{ item.text }}</span>
-          </ion-text>
+    <div *ngFor="let paragraph of bannerTitle?.multilinerichtextbox?.slice(1)">
+      <p class="paragraph-class">
+        <ng-container *ngFor="let item of paragraph.children">
+          <ng-container [ngSwitch]="item.type">
+            <ion-text *ngSwitchCase="'text'" [ngClass]="{'highlight': item.bold}">
+              <strong *ngIf="item.bold">{{ item.text }}</strong>
+              <span *ngIf="!item.bold">{{ item.text }}</span>
+            </ion-text>
+          </ng-container>
         </ng-container>
-      </ng-container>
-    </p>
-  </div>
-  <ion-button>Read More</ion-button>
+      </p>
+    </div>
+    <ion-button>Read More</ion-button>
+  </div> 
+</ion-col>
+<ion-col>
+  <ion-img [src]="peaceathomeImg" alt="Happy Home Image"></ion-img>  
+</ion-col> 
+</ion-row>
 </ion-grid>

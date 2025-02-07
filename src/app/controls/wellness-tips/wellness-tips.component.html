@@ -2,10 +2,10 @@
   <h2>{{ (title$ | async) }}</h2>
 
   <ion-row class="wellness-content">
-    <ion-col size-md="5" class="wellness-img">
+    <ion-col size-md="4" class="wellness-img">
       <ion-img [src]="(imageUrl$ | async)" alt="Doctor Icon"></ion-img>
     </ion-col>
-    <ion-col size-md="4" class="wellness-tip">
+    <ion-col size-md="7" class="wellness-tip">
       <h4>{{ (subtitle$ | async) }}</h4>
       <p>{{ (currentTip$ | async) }}</p>
     </ion-col>

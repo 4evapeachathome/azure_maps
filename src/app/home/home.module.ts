@@ -12,7 +12,6 @@ import { HomeSliderComponent } from '../controls/home-slider/home-slider.compone
 import { WellnessTipsComponent } from '../controls/wellness-tips/wellness-tips.component';
 import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
 import { FooterComponent } from "../controls/footer/footer.component";
-import { PeaceathomecardComponent } from "../controls/peaceathomecard/peaceathomecard.component";
 import { PeaceathomecardwithimageComponent } from "../controls/peaceathomecardwithimage/peaceathomecardwithimage.component";
 import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.component";
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
@@ -40,7 +39,6 @@ import { RelationalComponent } from '../controls/relational/relational.component
     PeaceHomeSliderComponent,
     ContactUsFormComponent,
     FooterComponent,
-    PeaceathomecardComponent,
     PeaceathomecardwithimageComponent,
     PeaceathomeComponent,
     HealthyrelatitonshipComponent,
