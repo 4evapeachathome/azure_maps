@@ -1,0 +1,61 @@
+.bullet {
+    font-size: 1.5rem; /* Make the bullet point larger */
+    color: #007acc; /* Change the color of the bullet point */
+    margin-right: 4px; /* Add space between the bullet and the text */
+  }
+
+  .map-container {
+    text-align: center;
+    margin-left: 10px; /* Add 10px space from the left */
+    padding-top: 10px; /* Optional: Add top padding if needed for spacing */
+  }
+
+  .button-label-row {
+    display: flex;
+    align-items: center;   /* Vertically center the button and label */
+    justify-content: flex-start; /* Align items to the left */
+  }
+  
+  .us-map {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    object-fit: contain; 
+    object-position: center;
+  }
+  
+  .state-title {
+    font-size: 16px;   /* Adjust font size for the label */
+    white-space: nowrap;
+    color: purple;
+    margin-left: 10px;    
+  }
+  .stateLawContent {
+    font-size: 14;
+    margin-top: 30px;
+    text-align: justify;
+    line-height: 2;
+  }
+
+  ion-grid {
+    margin-top: 10px;
+    padding-left: 10px;
+    margin-left: 0 !important; /* Remove any default left margin */
+    padding-left: 0 !important; /* Remove any default left padding */
+  }
+  
+  ion-col {
+    padding: 15px;
+    border-radius: 8px;  
+  }
+  
+  .lowercase-links {
+    text-transform: lowercase;
+  }
+
+  ion-content {
+    display: flex;
+    justify-content: center; /* Horizontally center the content */
+    align-items: center;     /* Vertically center the content */
+    height: 100vh;           /* Make sure the container takes full screen height */
+  }

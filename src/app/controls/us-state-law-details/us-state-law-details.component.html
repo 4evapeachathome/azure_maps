@@ -1,0 +1,30 @@
+<ion-grid>
+  <ion-row class="button-label-row">
+    <ion-button [routerLink]="['/uslawsbystate']" fill="clear">
+      US Laws by State
+    </ion-button>
+    <ion-label class="state-title">   >   {{ stateName }}</ion-label>
+  </ion-row>
+  <ion-row>
+    <ion-col size="6">
+      <ion-label class="stateLawContent">{{ stateLawContent }}</ion-label>
+      <ion-button class="lowercase-links" href="https://www.ncsl.org/human-services/domestic-violence-domestic-abuse-definitions-and-relationships" target="_blank" fill="clear">
+        <span class="bullet">•</span>
+        https://www.ncsl.org/human-services/domestic-violence-domestic-abuse-definitions-and-relationships
+      </ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <div class="map-container">
+        <img [src]="imgPath" alt="US Map" class="us-map" />
+      </div>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+
+
+<!-- <object id="us-map-object"
+type="image/svg+xml"
+data="../../../assets/states_map/CA.svg"
+class="us-map">
+</object> -->

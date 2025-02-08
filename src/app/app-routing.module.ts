@@ -6,6 +6,8 @@ import { ContactUsFormComponent } from './controls/contact-us-form/contact-us-fo
 import { RelationalComponent } from './controls/relational/relational.component';
 import { TypesofAbuseCardComponent } from './controls/typesof-abuse-card/typesof-abuse-card.component';
 import { HealthyrelatitonshipComponent } from './controls/healthyrelatitonship/healthyrelatitonship.component';
+import { UsMapComponent } from './controls/us-map/us-map.component';
+import { UsStateLawDetailsComponent  } from './controls/us-state-law-details/us-state-law-details.component';
 
 
 const routes: Routes = [
@@ -19,7 +21,9 @@ const routes: Routes = [
   { path: 'relational', component: RelationalComponent },
   { path: 'typesofabuse', component: TypesofAbuseCardComponent },
   { path: 'healthyrelationship', component: HealthyrelatitonshipComponent },
-  
+  { path: 'uslawsbystate', component: UsMapComponent },
+  { path: 'us-state-law-details/:stateName', component: UsStateLawDetailsComponent },
+    
   {
     path: '',
     redirectTo: 'home',
@@ -28,7 +32,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
+  imports: [ 
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule]

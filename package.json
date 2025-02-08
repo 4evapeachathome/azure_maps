@@ -33,6 +33,8 @@
     "@datorama/akita-ngdevtools": "^7.0.0",
     "@ionic/angular": "^8.0.0",
     "ionicons": "^7.0.0",
+    "leaflet": "^1.9.4",
+    "ngx-leaflet": "^0.0.16",
     "rxjs": "~7.8.0",
     "tslib": "2.4.1",
     "zone.js": "~0.15.0"

@@ -1,0 +1,31 @@
+.map-container {
+    text-align: center;
+    margin-left: 10px; /* Add 10px space from the left */
+    padding-top: 10px; /* Optional: Add top padding if needed for spacing */
+  }
+  
+  .us-map {
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+  }
+  
+  ion-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: purple;
+    margin-left: 10px;
+  }
+
+  ion-grid {
+    margin-top: 10px;
+    padding-left: 10px;
+    margin-left: 0 !important; /* Remove any default left margin */
+    padding-left: 0 !important; /* Remove any default left padding */
+  }
+  
+  ion-col {
+    padding: 15px;
+    border-radius: 8px;  
+  }
+  
