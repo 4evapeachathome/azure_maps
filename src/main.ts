@@ -6,9 +6,13 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app/app-routing.module';
+import { provideEffects } from '@ngrx/effects';
+import { provideStore } from '@ngrx/store';
+import { appEffects, appStore } from './app/store/store';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideStore(appStore), provideEffects(appEffects), 
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     importProvidersFrom(
       BrowserAnimationsModule,
