@@ -7,14 +7,28 @@ import { IonicModule } from '@ionic/angular';
 import { HealthyrelationshipPageRoutingModule } from './healthyrelationship-routing.module';
 
 import { HealthyrelationshipPage } from './healthyrelationship.page';
+import { HeaderComponent } from "../controls/header/header.component";
+import { FooterComponent } from "../controls/footer/footer.component";
+import { HealthyrelatitonshipComponent } from '../controls/healthyrelatitonship/healthyrelatitonship.component';
+import { HealthyrelationshipcontentComponent } from "../controls/healthyrelationshipcontent/healthyrelationshipcontent.component";
+import { PeaceHomeSliderComponent } from "../controls/peaceat-home-slider/peace-at-homeslide";
+import { UnHealthyrelationshipcontentComponent } from "../controls/unhealthyrelationshipcontent/unhealthyrelationshipcontent";
+import { HealthyRelationshipSliderComponent } from "../controls/healthyrelationshipslider/healthyrelationshipslider";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    HealthyrelationshipPageRoutingModule
-  ],
+    HealthyrelationshipPageRoutingModule,
+    HealthyrelatitonshipComponent,
+    HeaderComponent,
+    FooterComponent,
+    HealthyrelationshipcontentComponent,
+    PeaceHomeSliderComponent,
+    UnHealthyrelationshipcontentComponent,
+    HealthyRelationshipSliderComponent
+],
   declarations: [HealthyrelationshipPage]
 })
 export class HealthyrelationshipPageModule {}

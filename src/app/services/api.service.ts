@@ -342,6 +342,43 @@ export class ApiService {
     );
   }
 
+  //Healthyrelationship slider
+  getHealthyRelationshipSliders(): Observable<any> {
+    const endpoint = '/api/healthy-relationship-sliders';
+    const options = {
+      populate: {
+        HealthyRelationshipSlider: {
+          fields: ['*'],
+          populate: {
+            description: {
+              fields: ['*']
+            },
+            webImage: {
+              fields: ['url']
+            }
+          }
+        }
+      },
+      sort: ['createdAt:desc']
+    };
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res.data);
+        return res.data.map((resData: any) => {
+          if (resData.HealthyRelationshipSlider && resData.HealthyRelationshipSlider.webImage && resData.HealthyRelationshipSlider.webImage.url) {
+            resData.image = `${this.apiUrl}${resData.HealthyRelationshipSlider.webImage.url}`;
+          } else {
+            resData.image = '';
+          }
+          return resData;
+        });
+      }),
+      catchError(error => {
+        console.error('Error fetching peace at home slider', error);
+        return throwError(error);
+      })
+    );
+  }
 
   sendContactData(contactData: any): Observable<any> {
     const endpoint = '/api/contacts'

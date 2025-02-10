@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { PeaceathomeComponent } from './controls/peaceathome/peaceathome.component';
 import { SupportserviceComponent } from './controls/supportservice/supportservice.component';
 import { ContactUsFormComponent } from './controls/contact-us-form/contact-us-form.component';
 import { RelationalComponent } from './controls/relational/relational.component';
@@ -33,14 +32,6 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
-  },
-  {
-    path: 'peaceathome',
-    loadChildren: () => import('./peaceathome/peaceathome.module').then( m => m.PeaceathomePageModule)
-  },
-  {
-    path: 'healthyrelationship',
-    loadChildren: () => import('./healthyrelationship/healthyrelationship.module').then( m => m.HealthyrelationshipPageModule)
   },
 
 
