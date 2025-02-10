@@ -12,6 +12,7 @@ import { PeaceHomeSliderComponent } from "../controls/peaceat-home-slider/peace-
 import { FooterComponent } from "../controls/footer/footer.component";
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
 import { RelationalComponent } from "../controls/relational/relational.component";
+import { HeaderComponent } from "../controls/header/header.component";
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { RelationalComponent } from "../controls/relational/relational.component
     PeaceHomeSliderComponent,
     FooterComponent,
     HealthyrelatitonshipComponent,
-    RelationalComponent
+    RelationalComponent,
+    HeaderComponent
 ],
   declarations: [PeaceathomePage]
 })
