@@ -18,6 +18,9 @@ const routes: Routes = [
   { path: 'peaceathome', 
     loadChildren: () => import('./peaceathome/peaceathome.module').then( m => m.PeaceathomePageModule)
   },
+  { path: 'healthyrelationship', 
+    loadChildren: () => import('./healthyrelationship/healthyrelationship.module').then( m => m.HealthyrelationshipPageModule)
+  },
   { path: 'supportservice', component: SupportserviceComponent },
   { path: 'contactus', component: ContactUsFormComponent },
   { path: 'relational', component: RelationalComponent },
@@ -35,6 +38,11 @@ const routes: Routes = [
     path: 'peaceathome',
     loadChildren: () => import('./peaceathome/peaceathome.module').then( m => m.PeaceathomePageModule)
   },
+  {
+    path: 'healthyrelationship',
+    loadChildren: () => import('./healthyrelationship/healthyrelationship.module').then( m => m.HealthyrelationshipPageModule)
+  },
+
 
 ];
 
