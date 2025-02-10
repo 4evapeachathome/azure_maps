@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { ApiService } from '../../services/api.service'; 
 
 @Component({
-  selector: 'app-relational',
+  selector: 'pathome-relational',
   templateUrl: './relational.component.html',
   styleUrls: ['./relational.component.scss'],
   standalone: true,

@@ -15,7 +15,9 @@ const routes: Routes = [
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
-  { path: 'peaceathome', component: PeaceathomeComponent },
+  { path: 'peaceathome', 
+    loadChildren: () => import('./peaceathome/peaceathome.module').then( m => m.PeaceathomePageModule)
+  },
   { path: 'supportservice', component: SupportserviceComponent },
   { path: 'contactus', component: ContactUsFormComponent },
   { path: 'relational', component: RelationalComponent },
@@ -29,6 +31,11 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  {
+    path: 'peaceathome',
+    loadChildren: () => import('./peaceathome/peaceathome.module').then( m => m.PeaceathomePageModule)
+  },
+
 ];
 
 @NgModule({

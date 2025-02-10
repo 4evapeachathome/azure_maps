@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
@@ -24,7 +25,25 @@ interface Description {
   templateUrl: '../home-slider/home-slider.component.html',
   styleUrls: ['../home-slider/home-slider.component.scss'],
   standalone: true,
-    imports: [CommonModule, IonicModule]
+    imports: [CommonModule, IonicModule],
+     animations: [
+          trigger('fadeAnimation', [
+            transition(':enter', [
+              style({ opacity: 0, transform: 'translateX(20px)' }),
+              animate('500ms ease-in-out', style({ opacity: 1, transform: 'translateX(0)' }))
+            ]),
+            transition(':leave', [
+              animate('500ms ease-in-out', style({ opacity: 0, transform: 'translateX(-20px)' }))
+            ])
+          ]),
+          trigger('slideAnimation', [
+            transition(':enter', [
+              style({ opacity: 0, transform: 'scale(0.9)' }),
+              animate('600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)', 
+                style({ opacity: 1, transform: 'scale(1)' }))
+            ])
+          ])
+        ]
 })
 export class PeaceHomeSliderComponent  implements OnInit {
   currentIndex = 0;

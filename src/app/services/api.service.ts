@@ -20,6 +20,7 @@ interface QueryOptions {
 })
 export class ApiService {
   private apiUrl = 'http://localhost:1337'; // Change this to your API URL
+  //private apiUrl = 'https://peaceathomecms.loca.lt'; // Change this to your API URL
   private apitoken = '9d689662d625cea1c398e6cad3cf0e7387be9d29af8c6802fa837a034e38dd4b7dbcffd3afe7ba05903122e920bb1901570cd6b86c5004fd0e6f5c78837239797ffd42d4122299c1c3c6987c508c11c7a46ac0390223a9de7e5496d351d318dbe8a724dd383d42a0d859ab0a4b7e28816663e997c056924dc67ba5f32456b7d3';
 
   constructor(private http: HttpClient) {}
@@ -460,6 +461,18 @@ export class ApiService {
     );
   }
 
+  //Get healthy relationship content
+  getHealthyRelationShipContent(): Observable<any> {
+    return this.getWithQuery('/api/healthyrelationshipcontents', {
+      fields: ['content']
+    }, this.apitoken);
+  }
+
+  getUnHealthyRelationShipContent(): Observable<any> {
+    return this.getWithQuery('/api/unhealthurelationshipcontents', {
+      fields: ['content']
+    }, this.apitoken);
+  }
 }
 
 
