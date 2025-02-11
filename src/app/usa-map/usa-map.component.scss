@@ -1,0 +1,254 @@
+.map-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+
+  .map-view {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+      width: 100%;
+      height: auto;
+      max-width: 800px;
+
+      path {
+        fill: #ccc;
+        stroke: #fff;
+        stroke-width: 0.5;
+        cursor: pointer;
+        transition: fill 0.3s;
+
+        &:hover {
+          fill: #999;
+          & + text {
+            fill: #333;
+          }
+        }
+      }
+
+      text.state-label {
+        font-size: 8px;
+        fill: #666;
+        text-anchor: middle;
+        pointer-events: none;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        user-select: none;
+      }
+    }
+  }
+
+  .state-view {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+
+    .content-wrapper {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      gap: 40px;
+
+      .map-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        
+        svg {
+          width: 100%;
+          height: auto;
+
+          path {
+            fill: #e0e0e0;
+            stroke: #fff;
+            stroke-width: 0.5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &.active {
+              fill: #007bff;
+            }
+
+            &.inactive {
+              opacity: 0.5;
+            }
+          }
+
+          text.state-label {
+            font-size: 8px;
+            fill: #666;
+            text-anchor: middle;
+            pointer-events: none;
+            user-select: none;
+          }
+        }
+      }
+
+      .state-side {
+        width: 800px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background: #f8f9fa;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        .state-header {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 24px;
+          width: 100%;
+
+          ion-icon {
+            font-size: 28px;
+            color: #007bff;
+            margin-right: 12px;
+          }
+
+          h2 {
+            margin: 0;
+            font-size: 32px;
+            color: #333;
+            font-weight: 600;
+          }
+        }
+
+        .selected-state-map {
+          width: 100%;
+          margin: 20px 0;
+          
+          svg {
+            width: 100%;
+            height: auto;
+
+            path {
+              fill: #007bff;
+              stroke: #fff;
+              stroke-width: 1;
+              filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            }
+
+            text.state-label.selected {
+              font-size: 16px;
+              fill: #fff;
+              text-anchor: middle;
+              font-weight: bold;
+              text-transform: uppercase;
+              filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+            }
+          }
+        }
+
+        .state-law-container {
+          display: flex;
+          gap: 30px;
+          margin: 20px 0;
+          flex: 1;
+          min-height: 0;
+
+          .state-law-info {
+            flex: 1;
+            min-width: 0;
+            overflow-y: auto;
+
+            .law-header {
+              margin-bottom: 24px;
+
+              h3 {
+                font-size: 24px;
+                color: #333;
+                margin: 0 0 16px 0;
+                font-weight: 600;
+              }
+
+              .law-metadata {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                font-size: 14px;
+                color: #666;
+
+                span {
+                  display: flex;
+                  align-items: center;
+
+                  ion-icon {
+                    margin-right: 6px;
+                    font-size: 16px;
+                  }
+                }
+              }
+            }
+
+            .law-content {
+              background: #fff;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+              p {
+                margin: 0;
+                white-space: pre-line;
+                line-height: 1.6;
+                color: #444;
+              }
+            }
+          }
+
+          .state-map-side {
+            width: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 48px;
+
+            .selected-state-map {
+              margin: 0;
+              background: #fff;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+              svg {
+                path {
+                  fill: #007bff;
+                }
+
+                text.state-label.selected {
+                  font-size: 14px;
+                }
+              }
+            }
+          }
+        }
+
+        ion-button {
+          margin-top: 24px;
+          align-self: center;
+          --background: #007bff;
+          --background-hover: #0056b3;
+          --color: #ffffff;
+          --padding-start: 24px;
+          --padding-end: 24px;
+          --border-radius: 25px;
+          font-size: 16px;
+          
+          ion-icon {
+            margin-right: 8px;
+            font-size: 20px;
+          }
+        }
+      }
+    }
+  }
+}
