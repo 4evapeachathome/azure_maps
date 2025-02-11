@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
+import * as CryptoJS from 'crypto-js';
 
 interface QueryOptions {
   fields?: string[];
@@ -381,12 +382,16 @@ export class ApiService {
   }
 
   sendContactData(contactData: any): Observable<any> {
-    const endpoint = '/api/contacts'
+    const endpoint = '/api/contacts';
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.apitoken}` 
+      'Authorization': `Bearer ${this.apitoken}`
     });
-    return this.http.post(`${this.apiUrl}${endpoint}`, { data: contactData }, { headers });
+  
+    const secretKey = '0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9'; // Use a secure key, store it safely
+    const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(contactData), secretKey).toString();
+  
+    return this.http.post(`${this.apiUrl}${endpoint}`, { data: encryptedData }, { headers });
   }
 
     // Fetch Relational, which includes both personal and interpersonal items

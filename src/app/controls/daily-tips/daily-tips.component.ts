@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { DailyPeaceTipService } from './services/dailypeace-tip.service';
-import { DailyPeaceTipQuery } from '../../state/dailypeace-tip.query';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { trigger, state, style, animate, transition } from '@angular/animations';
@@ -23,8 +21,6 @@ import { getConstant } from 'src/shared/constants';
   ]
 })
 export class DailyTipsComponent implements OnInit {
-  title$ = this.healthTipQuery.title$;
-  currentTip$ = this.healthTipQuery.currentTip$;
   currentDate: Date;
   allTips: any[] = [];
   quotes : string = '';
@@ -40,7 +36,7 @@ export class DailyTipsComponent implements OnInit {
   private previousTipIndex: number | null = null;
   private storageKey: string = 'previousDailyTipIndex';
 
-  constructor(private apiService: ApiService,private healthTipService: DailyPeaceTipService, private healthTipQuery: DailyPeaceTipQuery) {
+  constructor(private apiService: ApiService) {
     this.userDateTime = new Date();
     this.currentDate = this.userDateTime;
     this.selectedDay = this.userDateTime.getDay();
@@ -50,7 +46,7 @@ export class DailyTipsComponent implements OnInit {
     const storedIndex = localStorage.getItem(this.storageKey);
     this.previousTipIndex = storedIndex ? parseInt(storedIndex, 10) : null;
     this.calculateWeekDates();
-    this.healthTipService.fetchDailyPeaceTip();
+    this.fetchDailyTipData();
   }
 
   calculateWeekDates() {
@@ -74,6 +70,58 @@ export class DailyTipsComponent implements OnInit {
     }
   }
 
+  fetchDailyTipData() {
+    this.apiService.getDailyTip().subscribe(
+      (response) => {
+        debugger;
+        // Check if there are any health tips available
+        if (response.data && response.data.length > 0) {
+          this.allTips = response.data[0].description ;
+          this.dailyPeaceTitle = response.data[0].title;
+          
+          if (this.allTips && this.allTips.length > 0) {
+            this.generateRandomTip();
+          } else {
+            this.setDefaultTip();
+          }
+        } else {
+          this.setDefaultTip();
+        }
+      },
+      (error) => {
+        console.error('Error fetching daily tip:', error);
+        this.setDefaultTip();
+      }
+    );
+  }
+
+  setDefaultTip() {
+    const peaceTip = getConstant('HEALTH_TIPS', 'DEFAULT_TIP');
+    if (peaceTip) {
+      this.currentTip = peaceTip.message,
+      this.dailyPeaceTitle = peaceTip.title
+    }
+  }
+
+  generateRandomTip() {
+    if (this.allTips.length === 1) {
+      this.currentTip = this.allTips[0].Description;
+      return;
+    }
+
+    let randomIndex: number;
+    do {
+      randomIndex = Math.floor(Math.random() * this.allTips.length);
+    } while (randomIndex === this.previousTipIndex);
+    
+    const randomTip = this.allTips[randomIndex];
+    this.currentTip = randomTip.Description;
+    this.previousTipIndex = randomIndex;
+
+    
+    localStorage.setItem(this.storageKey, randomIndex.toString());
+  }
+
 
   navigateWeek(direction: 'prev' | 'next') {
     this.slideDirection = direction === 'next' ? 'left' : 'right';
@@ -89,7 +137,7 @@ export class DailyTipsComponent implements OnInit {
     
     setTimeout(() => {
       this.calculateWeekDates();
-      this.healthTipService.fetchDailyPeaceTip();
+      this.fetchDailyTipData();
       
       // Remove the slide class after animation
       setTimeout(() => {
@@ -112,6 +160,6 @@ export class DailyTipsComponent implements OnInit {
   selectDay(index: number) {
     console.log(`Day selected: ${index}`);
     this.selectedDay = index;
-    this.healthTipService.selectDay();
+    this.generateRandomTip()
   }
 }

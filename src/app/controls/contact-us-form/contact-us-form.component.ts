@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
+import { NgxCaptchaModule } from 'ngx-captcha';
 import { ApiService } from 'src/app/services/api.service';
 import { getConstant } from 'src/shared/constants';
 import { presentToast, validateEmail } from 'src/shared/utility';
@@ -11,10 +12,11 @@ import { presentToast, validateEmail } from 'src/shared/utility';
   templateUrl: './contact-us-form.component.html',
   styleUrls: ['./contact-us-form.component.scss'],
   standalone: true,
-    imports: [CommonModule, IonicModule,FormsModule]
+    imports: [CommonModule, IonicModule,FormsModule, NgxCaptchaModule]
 })
 export class ContactUsFormComponent  implements OnInit {
   @ViewChild('contactForm') ContactForm!: NgForm;
+  captchaVerified: boolean = false;
   feedbackEmail: string = '';
   contactForm: any;
   formData = {
@@ -52,6 +54,10 @@ export class ContactUsFormComponent  implements OnInit {
     }
   }
 
+  captchaResolved(token: any | null) {
+    this.captchaVerified = !!token; // Converts token to true if exists, false otherwise
+  }
+  
 
 
   validateForm(): boolean {
