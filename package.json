@@ -32,12 +32,8 @@
     "@datorama/akita": "^8.0.1",
     "@datorama/akita-ngdevtools": "^7.0.0",
     "@ionic/angular": "^8.0.0",
-    "@ngrx/effects": "^19.0.1",
-    "@ngrx/store": "^19.0.1",
-    "@ngrx/store-devtools": "^19.0.1",
+    "@svg-maps/usa": "^1.1.1",
     "ionicons": "^7.0.0",
-    "leaflet": "^1.9.4",
-    "ngx-leaflet": "^0.0.16",
     "rxjs": "~7.8.0",
     "tslib": "2.4.1",
     "zone.js": "~0.15.0"
