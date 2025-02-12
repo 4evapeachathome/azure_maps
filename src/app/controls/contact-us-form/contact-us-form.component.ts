@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { NgxCaptchaModule } from 'ngx-captcha';
@@ -16,25 +16,39 @@ import { presentToast, validateEmail } from 'src/shared/utility';
 })
 export class ContactUsFormComponent  implements OnInit {
   @ViewChild('contactForm') ContactForm!: NgForm;
-  captchaVerified: boolean = false;
+  @ViewChild('recaptcha', { static: true }) recaptchaElement!: ElementRef;
+  isCaptchaVerified: boolean = false;
+  captchaToken: string = '';
+  widgetId: number = -1;
   feedbackEmail: string = '';
   contactForm: any;
   formData = {
     name: '',
     email: '',
-    feedback: ''
+    feedback: '',
   };
 
  
 
-  constructor(private apiService: ApiService,private toastController: ToastController) { }
+  constructor(private apiService: ApiService,private toastController: ToastController,private ngZone: NgZone) { }
 
   ngOnInit() {
+    this.renderReCaptcha();
   }
 
 
   async onSubmit() {
     if (this.validateForm()) {
+      if (this.isCaptchaVerified && this.captchaToken) {
+        console.log('Form submitted with captcha token:', this.captchaToken);
+        this.resetCaptcha();
+        this.onClear();
+        this.ContactForm.resetForm();
+      } else {
+        console.error('Please complete the captcha first');
+        this.onClear();
+        this.ContactForm.resetForm();
+      }
       this.apiService.sendContactData(this.formData).subscribe(
         async response => {
           console.log('Contact data sent successfully', response);
@@ -53,11 +67,8 @@ export class ContactUsFormComponent  implements OnInit {
       console.error('Form validation failed');
     }
   }
-
-  captchaResolved(token: any | null) {
-    this.captchaVerified = !!token; // Converts token to true if exists, false otherwise
-  }
   
+
 
 
   validateForm(): boolean {
@@ -74,6 +85,40 @@ export class ContactUsFormComponent  implements OnInit {
       email: '',
       feedback: ''
     };
+  }
+
+  //Captcha
+  renderReCaptcha() {
+    if (typeof window !== 'undefined' && (window as any).grecaptcha) {
+      this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
+        sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+        callback: (response: string) => {
+          this.ngZone.run(() => {
+            this.captchaToken = response;
+            this.isCaptchaVerified = true;
+            console.log('Captcha verified with token:', response);
+          });
+        },
+        'expired-callback': () => {
+          this.ngZone.run(() => {
+            this.isCaptchaVerified = false;
+            this.captchaToken = '';
+            console.log('Captcha expired');
+          });
+        }
+      });
+    } else {
+      // If grecaptcha is not available, try again in 500ms
+      setTimeout(() => this.renderReCaptcha(), 500);
+    }
+  }
+
+  resetCaptcha() {
+    this.isCaptchaVerified = false;
+    this.captchaToken = '';
+    if (typeof window !== 'undefined' && (window as any).grecaptcha && this.widgetId !== -1) {
+      (window as any).grecaptcha.reset(this.widgetId);
+    }
   }
 
 }

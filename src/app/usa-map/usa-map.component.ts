@@ -104,10 +104,27 @@ export class UsaMapComponent {
   getStateViewBox(): string {
     if (!this.selectedState) return '0 0 100 100';
     const bbox = this.calculateBoundingBox(this.getSelectedStatePath());
-    const padding = 10;
-    const width = bbox.maxX - bbox.minX + (2 * padding);
-    const height = bbox.maxY - bbox.minY + (2 * padding);
-    return `${bbox.minX - padding} ${bbox.minY - padding} ${width} ${height}`;
+    
+    // Calculate the center of the bounding box
+    const centerX = (bbox.minX + bbox.maxX) / 2;
+    const centerY = (bbox.minY + bbox.maxY) / 2;
+    
+    // Calculate the current width and height
+    const width = bbox.maxX - bbox.minX;
+    const height = bbox.maxY - bbox.minY;
+    
+    // Use the larger dimension to maintain aspect ratio
+    const size = Math.max(width, height);
+    
+    // Add padding (20% of size)
+    const padding = size * 0.2;
+    const totalSize = size + (padding * 2);
+    
+    // Calculate new coordinates to center the state
+    const newMinX = centerX - (totalSize / 2);
+    const newMinY = centerY - (totalSize / 2);
+    
+    return `${newMinX} ${newMinY} ${totalSize} ${totalSize}`;
   }
 
   getStateCenter(pathData: string): Point {

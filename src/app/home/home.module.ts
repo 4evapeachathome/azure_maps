@@ -25,6 +25,7 @@ import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typeso
 import { PeaceHomeSliderComponent } from '../controls/peaceat-home-slider/peace-at-homeslide';
 import { RelationalComponent } from '../controls/relational/relational.component';
 import { UsaMapComponent } from '../usa-map/usa-map.component';
+import { HeaderComponent } from "../controls/header/header.component";
 
 @NgModule({
   imports: [
@@ -50,7 +51,8 @@ import { UsaMapComponent } from '../usa-map/usa-map.component';
     PviolencePlaincardListComponent,
     TypesofAbuseCardComponent,
     UsaMapComponent,
-    RelationalComponent
+    RelationalComponent,
+    HeaderComponent
 ],
   declarations: [
     HomePage
