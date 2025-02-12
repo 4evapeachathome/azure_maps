@@ -209,23 +209,44 @@
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
+            align-items: center;
             justify-content: flex-start;
             padding-top: 48px;
+            position: relative;
 
             .selected-state-map {
+              width: 100%;
+              aspect-ratio: 1;
               margin: 0;
               background: #fff;
               padding: 20px;
               border-radius: 8px;
               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              position: relative;
 
               svg {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+
                 path {
                   fill: #007bff;
+                  transform-origin: center;
                 }
 
                 text.state-label.selected {
                   font-size: 14px;
+                  fill: #fff;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
                 }
               }
             }
