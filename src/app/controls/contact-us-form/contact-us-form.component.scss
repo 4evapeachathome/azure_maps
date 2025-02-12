@@ -78,21 +78,6 @@
       margin-bottom: 10px;
     }
   
-    ion-button {
-      --background: #4285f4;
-      --background-hover: #357abd;
-      --background-activated: #357abd;
-      --padding-top: 20px;
-      --padding-bottom: 20px;
-      font-weight: 500;
-      width: 250px;
-  
-      &[disabled] {
-        --background: #cccccc;
-        --background-hover: #cccccc;
-        --background-activated: #cccccc;
-      }
-    }
   }
   
 }
