@@ -22,6 +22,7 @@
                 [(ngModel)]="formData.name"
                 name="name"
                 required
+                 placeholder="Please enter your name here..."
                 minlength="3"
                 #name="ngModel"
                 class="custom-input">
@@ -40,8 +41,9 @@
                 name="email"
                 required
                 email
-                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                 #email="ngModel"
+                 placeholder="Please enter your email here..."
                 class="custom-input">
               </ion-input>
             </ion-item>
@@ -58,7 +60,9 @@
                 required
                 minlength="3"
                 #feedback="ngModel"
+                placeholder="Please enter your feedback here..."
                 class="custom-input">
+                
               </ion-textarea>
             </ion-item>
             <ion-text color="danger" *ngIf="feedback.invalid && (feedback.dirty || feedback.touched)" class="validation-error">

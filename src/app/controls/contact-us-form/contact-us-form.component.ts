@@ -41,9 +41,7 @@ export class ContactUsFormComponent  implements OnInit {
     if (this.validateForm()) {
       if (this.isCaptchaVerified && this.captchaToken) {
         console.log('Form submitted with captcha token:', this.captchaToken);
-        this.resetCaptcha();
-        this.onClear();
-        this.ContactForm.resetForm();
+       
       } else {
         console.error('Please complete the captcha first');
         this.onClear();
@@ -56,6 +54,7 @@ export class ContactUsFormComponent  implements OnInit {
           await presentToast(this.toastController, successMessage);
           this.onClear();
           this.ContactForm.resetForm();
+          this.resetCaptcha();
         },
         async error => {
           console.error('Error sending contact data', error);
