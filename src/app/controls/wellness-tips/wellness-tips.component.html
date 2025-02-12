@@ -1,13 +1,22 @@
 <ion-card class="wellness-container">
-  <h2>{{ HealthTipTitle }}</h2>
+  <ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col>  <h2>{{ HealthTipTitle }}</h2></ion-col>
+      
+      </ion-row>
+      <ion-row class="wellness-content">
+        <ion-col size-md="4" class="wellness-img">
+          <ion-img [src]="HealthTipImageUrl" alt="Doctor Icon"></ion-img>
+        </ion-col>
+        <ion-col size-md="7" class="wellness-tip">
+          <h4>{{ HealthytipSubtitle }}</h4>
+          <p>{{ currentTip }}</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
-  <ion-row class="wellness-content">
-    <ion-col size-md="4" class="wellness-img">
-      <ion-img [src]="HealthTipImageUrl" alt="Doctor Icon"></ion-img>
-    </ion-col>
-    <ion-col size-md="7" class="wellness-tip">
-      <h4>{{ HealthytipSubtitle }}</h4>
-      <p>{{ currentTip }}</p>
-    </ion-col>
-  </ion-row>
+
+ 
+</ion-card-content>
 </ion-card>

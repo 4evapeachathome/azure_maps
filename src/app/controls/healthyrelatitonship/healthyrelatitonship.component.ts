@@ -27,7 +27,7 @@ export class HealthyrelatitonshipComponent  implements OnInit {
   getHealthyRelationshipData(){
     this.apiService.getHealthyRelationship().subscribe(
       (response) => {
-        debugger;
+     //   debugger;
         if (response && response.image && response.title && response.contentBlocks) {
           this.img = response.image;
           this.title = response.title;

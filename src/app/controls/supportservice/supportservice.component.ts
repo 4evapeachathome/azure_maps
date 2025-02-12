@@ -106,7 +106,7 @@ export class SupportserviceComponent  implements OnInit {
   }
 
   async getCurrentPosition() {
-    debugger;
+    //debugger;
     const coordinates = await Geolocation.getCurrentPosition();
     this.latitude = coordinates.coords.latitude;
     this.longitude = coordinates.coords.longitude;

@@ -10,6 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { appStore, appEffects } from './store/store';
+import { FooterComponent } from './controls/footer/footer.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,6 +29,8 @@ import { appStore, appEffects } from './store/store';
       trace: false,
       traceLimit: 75,
     }),
+    FooterComponent,
+    MenuComponent,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

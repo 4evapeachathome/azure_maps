@@ -73,7 +73,7 @@ export class DailyTipsComponent implements OnInit {
   fetchDailyTipData() {
     this.apiService.getDailyTip().subscribe(
       (response) => {
-        debugger;
+      //  debugger;
         // Check if there are any health tips available
         if (response.data && response.data.length > 0) {
           this.allTips = response.data[0].description ;

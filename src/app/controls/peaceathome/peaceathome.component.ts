@@ -24,7 +24,7 @@ export class PeaceathomeComponent  implements OnInit {
   getPeaceAtHome(){
     this.apiService.getPeaceAtHome().subscribe(
       (response) => {
-        debugger;
+      //  debugger;
         if (response && response.image && response.title && response.ContentBlocks) {
           this.peaceathomeImg = response.image;
           this.titleContent = response.title;
