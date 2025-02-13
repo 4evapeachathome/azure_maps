@@ -21,7 +21,7 @@ interface QueryOptions {
 })
 export class ApiService {
   private apiUrl = 'http://localhost:1337'; // Change this to your API URL
-  //private apiUrl = 'https://peaceathomecms.loca.lt'; // Change this to your API URL
+  //private apiUrl = 'https://peaceathome.loca.lt'; // Change this to your API URL
   private apitoken = '9d689662d625cea1c398e6cad3cf0e7387be9d29af8c6802fa837a034e38dd4b7dbcffd3afe7ba05903122e920bb1901570cd6b86c5004fd0e6f5c78837239797ffd42d4122299c1c3c6987c508c11c7a46ac0390223a9de7e5496d351d318dbe8a724dd383d42a0d859ab0a4b7e28816663e997c056924dc67ba5f32456b7d3';
 
   constructor(private http: HttpClient) {}
@@ -268,42 +268,44 @@ export class ApiService {
 
 //Home slider component api method
 
-  getHomeSliders(): Observable<any> {
-    const endpoint = '/api/home-sliders';
-    const options = {
-      populate: {
-        homeslider: {
-          fields: ['*'],
-          populate: {
-            description: {
-              fields: ['*']
-            },
-            webImage: {
-              fields: ['url']
-            }
+getHomeSliders(): Observable<any> {
+  const endpoint = '/api/home-sliders';
+  const options = {
+    populate: {
+      homeslider: {
+        fields: ['*'],
+        populate: {
+          description: {
+            fields: ['*']
+          },
+          webImage: {
+            fields: ['url']
           }
         }
-      },
-      sort: ['createdAt:desc']
-    };
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
-      map((res: any) => {
-        console.log('data:', res.data);
-        return res.data.map((resData: any) => {
-          if (resData.homeslider && resData.homeslider.webImage && resData.homeslider.webImage.url) {
-            resData.image = `${this.apiUrl}${resData.homeslider.webImage.url}`;
-          } else {
-            resData.image = '';
-          }
-          return resData;
-        });
-      }),
-      catchError(error => {
-        console.error('Error fetching home sliders', error);
-        return throwError(error);
-      })
-    );
-  }
+      }
+    },
+    sort: ['createdAt:desc']
+  };
+  return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+    map((res: any) => {
+      console.log('data:', res.data);
+      return res.data.map((resData: any) => {
+        if (resData.homeslider && resData.homeslider.webImage) {
+          resData.images = resData.homeslider.webImage.map((image: any) => 
+            image?.url ? `${this.apiUrl}${image.url}` : ''
+          );
+        } else {
+          resData.images = [];
+        }
+        return resData;
+      });
+    }),
+    catchError(error => {
+      console.error('Error fetching home sliders', error);
+      return throwError(error);
+    })
+  );
+}
 
   //peace at home slider component
   getPeaceatHomeSliders(): Observable<any> {
@@ -328,10 +330,12 @@ export class ApiService {
       map((res: any) => {
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
-          if (resData.peaceathomeslider && resData.peaceathomeslider.webImage && resData.peaceathomeslider.webImage.url) {
-            resData.image = `${this.apiUrl}${resData.peaceathomeslider.webImage.url}`;
+          if (resData.peaceathomeslider && resData.peaceathomeslider.webImage) {
+            resData.images = resData.peaceathomeslider.webImage.map((image: any) => 
+              image?.url ? `${this.apiUrl}${image.url}` : ''
+            );
           } else {
-            resData.image = '';
+            resData.images = [];
           }
           return resData;
         });
@@ -366,10 +370,12 @@ export class ApiService {
       map((res: any) => {
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
-          if (resData.HealthyRelationshipSlider && resData.HealthyRelationshipSlider.webImage && resData.HealthyRelationshipSlider.webImage.url) {
-            resData.image = `${this.apiUrl}${resData.HealthyRelationshipSlider.webImage.url}`;
+          if (resData.HealthyRelationshipSlider && resData.HealthyRelationshipSlider.webImage) {
+            resData.images = resData.HealthyRelationshipSlider.webImage.map((image: any) => 
+              image?.url ? `${this.apiUrl}${image.url}` : ''
+            );
           } else {
-            resData.image = '';
+            resData.images = [];
           }
           return resData;
         });

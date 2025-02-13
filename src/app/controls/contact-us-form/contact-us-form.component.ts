@@ -39,29 +39,36 @@ export class ContactUsFormComponent  implements OnInit {
 
   async onSubmit() {
     if (this.validateForm()) {
-      if (this.isCaptchaVerified && this.captchaToken) {
-        console.log('Form submitted with captcha token:', this.captchaToken);
-       
-      } else {
+      if (!this.isCaptchaVerified || !this.captchaToken) {
         console.error('Please complete the captcha first');
         this.onClear();
         this.ContactForm.resetForm();
+        return;
       }
-      this.apiService.sendContactData(this.formData).subscribe(
-        async response => {
+  
+      this.apiService.sendContactData(this.formData).subscribe({
+        next: async (response) => {
           console.log('Contact data sent successfully', response);
-          const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
-          await presentToast(this.toastController, successMessage);
-          this.onClear();
-          this.ContactForm.resetForm();
-          this.resetCaptcha();
+          
+          // Check if response contains data and id
+          if (response?.data?.id) {
+            const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
+            await presentToast(this.toastController, successMessage);
+            this.onClear();
+            this.ContactForm.resetForm();
+            this.resetCaptcha();
+          } else {
+            console.error('Invalid response format - missing ID');
+            const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
+            await presentToast(this.toastController, errorMessage);
+          }
         },
-        async error => {
+        error: async (error) => {
           console.error('Error sending contact data', error);
           const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
           await presentToast(this.toastController, errorMessage);
         }
-      );
+      });
     } else {
       console.error('Form validation failed');
     }

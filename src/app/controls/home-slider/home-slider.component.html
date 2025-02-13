@@ -8,12 +8,13 @@
       *ngFor="let description of descriptions; let i = index"
       [class.active]="currentIndex === i"
       [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
-      [@slideAnimation]
-    >
-      <div class="image-container">
+      [@slideAnimation]>
+      
+      <!-- Display Only One Image at a Time -->
+      <div class="image-container" *ngIf="webImage?.length">
         <ion-img 
-          [src]="webImage" 
-          [alt]="sliderData.title" 
+          [src]="webImage[currentIndex]" 
+          [alt]="sliderData.title || 'Slider Image'" 
           class="carousel-image"
         ></ion-img>
       </div>
@@ -37,6 +38,7 @@
         Read More
       </ion-button>
 
+      <!-- Navigation Arrows -->
       <ion-icon
         name="chevron-back-outline"
         class="arrow left-arrow"
@@ -48,9 +50,10 @@
         (click)="nextSlide()"
       ></ion-icon>
 
+      <!-- Dots for Indicators -->
       <div class="dots">
         <div 
-          *ngFor="let dot of descriptions; let j = index" 
+          *ngFor="let dot of webImage; let j = index" 
           [class.active]="currentIndex === j"
           (click)="currentIndex = j"
         ></div>

@@ -52,6 +52,7 @@ export class HealthyRelationshipSliderComponent  implements OnInit {
   descriptions: Description[] = [];
   mainTitle: any;
   webImage: any;
+currentImageIndex: any;
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
@@ -64,8 +65,8 @@ export class HealthyRelationshipSliderComponent  implements OnInit {
         if(response && response.length > 0){
           this.sliderData = response[0].HealthyRelationshipSlider;
           this.descriptions = this.sliderData.description;
-          this.mainTitle = response[0].peaceathomeslider.title; 
-          this.webImage = response[0].image;
+          this.mainTitle = response[0].HealthyRelationshipSlider.title; 
+          this.webImage = Array.isArray(response[0].images) ? response[0].images : [response[0].images];
         }
         
        },

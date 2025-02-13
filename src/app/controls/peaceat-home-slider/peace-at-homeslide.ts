@@ -65,7 +65,7 @@ export class PeaceHomeSliderComponent  implements OnInit {
           this.sliderData = response[0].peaceathomeslider;
           this.descriptions = this.sliderData.description;
           this.mainTitle = response[0].peaceathomeslider.title; 
-          this.webImage = response[0].image;
+          this.webImage = Array.isArray(response[0].images) ? response[0].images : [response[0].images];
         }
         
        },

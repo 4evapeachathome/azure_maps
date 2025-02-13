@@ -51,7 +51,7 @@ export class HomeSliderComponent  implements OnInit {
   sliderData: any;
   descriptions: Description[] = [];
   mainTitle: any;
-  webImage: any;
+  webImage: string[] = [];
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
@@ -60,29 +60,31 @@ export class HomeSliderComponent  implements OnInit {
 
   getHomeSlidersData() {
     this.apiService.getHomeSliders().subscribe(
-       (response) => {
-        if(response && response.length > 0){
+      (response) => {
+        if (response && response.length > 0) {
           this.sliderData = response[0].homeslider;
           this.descriptions = this.sliderData.description;
           this.mainTitle = response[0].homeslider.title; 
-          this.webImage = response[0].image;
+          this.webImage = Array.isArray(response[0].images) ? response[0].images : [response[0].images];
+          console.log('Image URLs:', this.webImage); // Debugging
         }
-        
-       },
-       (error) => {
-         console.error('Error fetching home slider component:', error);
-       }
-     );
-   }
+      },
+      (error) => {
+        console.error('Error fetching home slider component:', error);
+      }
+    );
+  }
+  
 
 
-   prevSlide() {
+  prevSlide() {
     this.currentIndex = this.currentIndex === 0 ? this.descriptions.length - 1 : this.currentIndex - 1;
   }
-
+  
   nextSlide() {
     this.currentIndex = this.currentIndex === this.descriptions.length - 1 ? 0 : this.currentIndex + 1;
   }
+  
 
   
   getStyledText(child: any): string {
