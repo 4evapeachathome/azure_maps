@@ -1,8 +1,3 @@
-// For information on how to create your own theme, please see:
-// http://ionicframework.com/docs/theming/
-
-
-
 // Font Variables
 $font-Inter         :   'Inter', sans-serif;
 
@@ -22,10 +17,13 @@ $icon-dark-Gray     :   #5F6368;
 $color-container    :   #F1F1F1;
 
 :root{  
-    --ion-default-font: $font-Inter;
-    --ion-font-family:$font-Inter;
+    --ion-default-font              : $font-Inter;
+    --ion-font-family               : $font-Inter;
 
-    --menu-selected-color:#AB52C5;
-    --content-background-color:#F1F1F1;
-    --icon-color-dark:#5F6368;
+    --menu-selected-color           : #AB52C5;
+    --content-background-color      : #F1F1F1;
+    --icon-color-dark               : #5F6368;
+
+    --ion-color-primary             : #AB52C5;
+  
     }
