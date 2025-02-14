@@ -49,9 +49,9 @@ export class HealthyRelationshipSliderComponent  implements OnInit {
   currentIndex = 0;
   showButton: boolean= false;
   sliderData: any;
-  descriptions: Description[] = [];
+  descriptions: any[] = [];
   mainTitle: any;
-  webImage: any;
+  imageUrls: any;
 currentImageIndex: any;
   constructor(private apiService:ApiService) { }
 
@@ -61,21 +61,34 @@ currentImageIndex: any;
 
   getHealthyRelationshipSlidersData() {
     this.apiService.getHealthyRelationshipSliders().subscribe(
-       (response) => {
-        if(response && response.length > 0){
-          this.sliderData = response[0].HealthyRelationshipSlider;
-          this.descriptions = this.sliderData.description;
-          this.mainTitle = response[0].HealthyRelationshipSlider.title; 
-          this.webImage = Array.isArray(response[0].images) ? response[0].images : [response[0].images];
+      (response) => {
+        if (response && response.length > 0) {
+          const sliderData = response[0].HealthyRelationshipSlider; // Get the first slider object
+  
+          // Set the main title
+          this.mainTitle = sliderData.title || '';
+  
+          // Map the descriptions dynamically
+          this.descriptions = sliderData.sliderContent.map((content: any) => 
+            Array.isArray(content.slidercontent) ? content.slidercontent : []
+          );
+  
+          // Extract and format image URLs correctly
+          this.imageUrls = sliderData.sliderContent.map((content: any) => content.imageUrl).filter((url:any) => url);
+  
+          // Set default index to show first image & text
+          this.currentIndex = 0;
+  
+          console.log('Main Title:', this.mainTitle);
+          console.log('Descriptions:', this.descriptions);
+          console.log('Image URLs:', this.imageUrls);
         }
-        
-       },
-       (error) => {
-         console.error('Error fetching peace at home slider component:', error);
-       }
-     );
-   }
-
+      },
+      (error) => {
+        console.error('Error fetching home slider component:', error);
+      }
+    );
+  }
 
    prevSlide() {
     this.currentIndex = this.currentIndex === 0 ? this.descriptions.length - 1 : this.currentIndex - 1;

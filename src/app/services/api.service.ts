@@ -36,38 +36,64 @@ export class ApiService {
 
   private buildQueryParams(options: QueryOptions): HttpParams {
     let params = new HttpParams();
-  
+   
     if (options.fields?.length) {
       params = params.set('fields', options.fields.join(','));
     }
-  
+   
     if (options.populate) {
       if (Array.isArray(options.populate)) {
         params = params.set('populate', options.populate.join(','));
       } else {
+        const handleNestedPopulate = (parentKey: string, value: any) => {
+          if (typeof value === 'object') {
+            if (value.fields) {
+              params = params.set(`populate[${parentKey}][fields]`, value.fields.join(','));
+            }
+            if (value.populate) {
+              Object.entries(value.populate).forEach(([nestedKey, nestedValue]: [string, any]) => {
+                if (typeof nestedValue === 'object') {
+                  // Handle fields at this level
+                  if (nestedValue.fields) {
+                    params = params.set(
+                      `populate[${parentKey}][populate][${nestedKey}][fields]`,
+                      nestedValue.fields.join(',')
+                    );
+                  }
+                  // Recursively handle deeper populate
+                  if (nestedValue.populate) {
+                    Object.entries(nestedValue.populate).forEach(([deepKey, deepValue]: [string, any]) => {
+                      if (deepValue.fields) {
+                        params = params.set(
+                          `populate[${parentKey}][populate][${nestedKey}][populate][${deepKey}][fields]`,
+                          deepValue.fields.join(',')
+                        );
+                      }
+                    });
+                  }
+                }
+              });
+            }
+          }
+        };
+
         Object.entries(options.populate).forEach(([key, value]) => {
-          if (typeof value === 'object' && value.fields) {
-            params = params.set(`populate[${key}][fields]`, value.fields.join(','));
-          }
-          if (typeof value === 'object' && 'populate' in value) {
-            Object.entries(value.populate as Record<string, { fields: string[] }>).forEach(([nestedKey, nestedValue]) => {
-              params = params.set(`populate[${key}][populate][${nestedKey}][fields]`, nestedValue.fields.join(','));
-            });
-          }
+          handleNestedPopulate(key, value);
         });
       }
     }
-  
+   
+    // Keep existing functionality for filters, sort, and pagination
     if (options.filters) {
       Object.entries(options.filters).forEach(([key, value]) => {
         params = params.set(`filters[${key}]`, value);
       });
     }
-  
+   
     if (options.sort?.length) {
       params = params.set('sort', options.sort.join(','));
     }
-  
+   
     if (options.pagination) {
       if (options.pagination.page) {
         params = params.set('pagination[page]', options.pagination.page.toString());
@@ -80,9 +106,9 @@ export class ApiService {
     } else if (options.pageSize) {
       params = params.set('pagination[pageSize]', options.pageSize.toString());
     }
-  
+   
     return params;
-  }
+}
 
   get(endpoint: string, token?: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/${endpoint}`, { headers: this.createHeaders(token) });
@@ -101,6 +127,7 @@ export class ApiService {
   }
 
   getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string): Observable<any> {
+    debugger;
     const params = this.buildQueryParams(options);
     let headers = this.createHeaders(token);
   
@@ -268,44 +295,60 @@ export class ApiService {
 
 //Home slider component api method
 
-getHomeSliders(): Observable<any> {
+getHomeSliders(): Observable<any[]> {
   const endpoint = '/api/home-sliders';
   const options = {
     populate: {
       homeslider: {
-        fields: ['*'],
+        fields: ['title'],
         populate: {
-          description: {
-            fields: ['*']
-          },
-          webImage: {
-            fields: ['url']
+          sliderContent: {
+            fields: ['slidercontent'],
+            populate: {
+              webImage: {
+                fields: ['url']
+              }
+            }
           }
         }
       }
     },
     sort: ['createdAt:desc']
   };
+
   return this.getWithQuery(endpoint, options, this.apitoken).pipe(
     map((res: any) => {
-      console.log('data:', res.data);
+      console.log('Raw API Response:', res.data);
+      
       return res.data.map((resData: any) => {
-        if (resData.homeslider && resData.homeslider.webImage) {
-          resData.images = resData.homeslider.webImage.map((image: any) => 
-            image?.url ? `${this.apiUrl}${image.url}` : ''
-          );
-        } else {
-          resData.images = [];
-        }
-        return resData;
+        const sliderContent = resData.homeslider?.sliderContent 
+          ? resData.homeslider.sliderContent.map((content: any) => ({
+              slidercontent: content.slidercontent || [],
+              imageUrl: content.webImage?.url 
+                ? `${this.apiUrl}${content.webImage.url}` 
+                : null
+            }))
+          : [];
+
+        return {
+          homeslider: {
+            title: resData.homeslider?.title || '',
+            sliderContent
+          }
+        };
       });
     }),
     catchError(error => {
-      console.error('Error fetching home sliders', error);
-      return throwError(error);
+      console.error('Error fetching home sliders:', error);
+      return throwError(() => new Error('Failed to fetch home sliders'));
     })
   );
 }
+
+
+
+
+
 
   //peace at home slider component
   getPeaceatHomeSliders(): Observable<any> {
@@ -313,31 +356,42 @@ getHomeSliders(): Observable<any> {
     const options = {
       populate: {
         peaceathomeslider: {
-          fields: ['*'],
+          fields: ['title'],
           populate: {
-            description: {
-              fields: ['*']
-            },
-            webImage: {
-              fields: ['url']
+            sliderContent: {
+              fields: ['slidercontent'],
+              populate: {
+                webImage: {
+                  fields: ['url']
+                }
+              }
             }
           }
         }
       },
       sort: ['createdAt:desc']
     };
+
     return this.getWithQuery(endpoint, options, this.apitoken).pipe(
       map((res: any) => {
-        console.log('data:', res.data);
+        console.log('Raw API Response:', res.data);
+        
         return res.data.map((resData: any) => {
-          if (resData.peaceathomeslider && resData.peaceathomeslider.webImage) {
-            resData.images = resData.peaceathomeslider.webImage.map((image: any) => 
-              image?.url ? `${this.apiUrl}${image.url}` : ''
-            );
-          } else {
-            resData.images = [];
-          }
-          return resData;
+          const sliderContent = resData.peaceathomeslider?.sliderContent 
+            ? resData.peaceathomeslider.sliderContent.map((content: any) => ({
+                slidercontent: content.slidercontent || [],
+                imageUrl: content.webImage?.url 
+                  ? `${this.apiUrl}${content.webImage.url}` 
+                  : null
+              }))
+            : [];
+  
+          return {
+            peaceathomeslider: {
+              title: resData.peaceathomeslider?.title || '',
+              sliderContent
+            }
+          };
         });
       }),
       catchError(error => {
@@ -353,13 +407,15 @@ getHomeSliders(): Observable<any> {
     const options = {
       populate: {
         HealthyRelationshipSlider: {
-          fields: ['*'],
+          fields: ['title'],
           populate: {
-            description: {
-              fields: ['*']
-            },
-            webImage: {
-              fields: ['url']
+            sliderContent: {
+              fields: ['slidercontent'],
+              populate: {
+                webImage: {
+                  fields: ['url']
+                }
+              }
             }
           }
         }
@@ -368,16 +424,24 @@ getHomeSliders(): Observable<any> {
     };
     return this.getWithQuery(endpoint, options, this.apitoken).pipe(
       map((res: any) => {
-        console.log('data:', res.data);
+        console.log('Raw API Response:', res.data);
+        
         return res.data.map((resData: any) => {
-          if (resData.HealthyRelationshipSlider && resData.HealthyRelationshipSlider.webImage) {
-            resData.images = resData.HealthyRelationshipSlider.webImage.map((image: any) => 
-              image?.url ? `${this.apiUrl}${image.url}` : ''
-            );
-          } else {
-            resData.images = [];
-          }
-          return resData;
+          const sliderContent = resData.HealthyRelationshipSlider?.sliderContent 
+            ? resData.HealthyRelationshipSlider.sliderContent.map((content: any) => ({
+                slidercontent: content.slidercontent || [],
+                imageUrl: content.webImage?.url 
+                  ? `${this.apiUrl}${content.webImage.url}` 
+                  : null
+              }))
+            : [];
+  
+          return {
+            HealthyRelationshipSlider: {
+              title: resData.HealthyRelationshipSlider?.title || '',
+              sliderContent
+            }
+          };
         });
       }),
       catchError(error => {

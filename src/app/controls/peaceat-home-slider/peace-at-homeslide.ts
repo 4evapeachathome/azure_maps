@@ -49,9 +49,9 @@ export class PeaceHomeSliderComponent  implements OnInit {
   currentIndex = 0;
   showButton: boolean= false;
   sliderData: any;
-  descriptions: Description[] = [];
+  descriptions: any[] = [];
   mainTitle: any;
-  webImage: any;
+  imageUrls: string[] = [];
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
@@ -60,20 +60,34 @@ export class PeaceHomeSliderComponent  implements OnInit {
 
   getpeaceatHomeSlidersData() {
     this.apiService.getPeaceatHomeSliders().subscribe(
-       (response) => {
-        if(response && response.length > 0){
-          this.sliderData = response[0].peaceathomeslider;
-          this.descriptions = this.sliderData.description;
-          this.mainTitle = response[0].peaceathomeslider.title; 
-          this.webImage = Array.isArray(response[0].images) ? response[0].images : [response[0].images];
+      (response) => {
+        if (response && response.length > 0) {
+          const sliderData = response[0].peaceathomeslider; // Get the first slider object
+  
+          // Set the main title
+          this.mainTitle = sliderData.title || '';
+  
+          // Map the descriptions dynamically
+          this.descriptions = sliderData.sliderContent.map((content: any) => 
+            Array.isArray(content.slidercontent) ? content.slidercontent : []
+          );
+  
+          // Extract and format image URLs correctly
+          this.imageUrls = sliderData.sliderContent.map((content: any) => content.imageUrl).filter((url:any) => url);
+  
+          // Set default index to show first image & text
+          this.currentIndex = 0;
+  
+          console.log('Main Title:', this.mainTitle);
+          console.log('Descriptions:', this.descriptions);
+          console.log('Image URLs:', this.imageUrls);
         }
-        
-       },
-       (error) => {
-         console.error('Error fetching peace at home slider component:', error);
-       }
-     );
-   }
+      },
+      (error) => {
+        console.error('Error fetching home slider component:', error);
+      }
+    );
+  }
 
 
    prevSlide() {

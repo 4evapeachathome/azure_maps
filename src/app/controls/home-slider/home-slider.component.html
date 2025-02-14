@@ -1,5 +1,6 @@
-<ion-grid class="carousel" *ngIf="sliderData">
+<ion-grid class="carousel" *ngIf="descriptions && descriptions.length > 0">
   <h3 class="maintitle">{{ mainTitle }}</h3>
+  
   <ion-row>
     <ion-col
       size-md="10"
@@ -10,16 +11,17 @@
       [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
       [@slideAnimation]>
       
-      <!-- Display Only One Image at a Time -->
-      <div class="image-container" *ngIf="webImage?.length">
+      <!-- Display Only the Current Image -->
+      <div class="image-container" *ngIf="imageUrls?.length">
         <ion-img 
-          [src]="webImage[currentIndex]" 
-          [alt]="sliderData.title || 'Slider Image'" 
+          [src]="imageUrls[currentIndex]" 
+          [alt]="mainTitle || 'Slider Image'" 
           class="carousel-image"
         ></ion-img>
       </div>
 
-      <div *ngFor="let content of description.multilinerichtextbox">
+      <!-- Dynamic Text Content -->
+      <div *ngFor="let content of description">
         <h3
           *ngIf="content.type === 'heading'"
           class="title"
@@ -30,11 +32,11 @@
         </p>
       </div>
 
+      <!-- Read More Button -->
       <ion-button 
         *ngIf="i === 0 && showButton" 
         expand="block" 
-        class="read-more"
-      >
+        class="read-more">
         Read More
       </ion-button>
 
@@ -53,7 +55,7 @@
       <!-- Dots for Indicators -->
       <div class="dots">
         <div 
-          *ngFor="let dot of webImage; let j = index" 
+          *ngFor="let dot of descriptions; let j = index" 
           [class.active]="currentIndex === j"
           (click)="currentIndex = j"
         ></div>

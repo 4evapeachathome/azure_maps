@@ -46,12 +46,13 @@ interface Description {
     ]
 })
 export class HomeSliderComponent  implements OnInit {
-  currentIndex = 0;
+  mainTitle: string = ''; // Stores the main title
+descriptions: any[] = []; // Stores slider content
+imageUrls: string[] = []; // Stores image URLs
+currentIndex: number = 0; // To track active slider index
   showButton: boolean = true;
   sliderData: any;
-  descriptions: Description[] = [];
-  mainTitle: any;
-  webImage: string[] = [];
+ 
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
@@ -62,11 +63,27 @@ export class HomeSliderComponent  implements OnInit {
     this.apiService.getHomeSliders().subscribe(
       (response) => {
         if (response && response.length > 0) {
-          this.sliderData = response[0].homeslider;
-          this.descriptions = this.sliderData.description;
-          this.mainTitle = response[0].homeslider.title; 
-          this.webImage = Array.isArray(response[0].images) ? response[0].images : [response[0].images];
-          console.log('Image URLs:', this.webImage); // Debugging
+          const sliderData = response[0].homeslider;
+  
+          // Set the main title
+          this.mainTitle = sliderData.title || '';
+  
+          // Map the descriptions dynamically
+          this.descriptions = sliderData.sliderContent.map((content: any) => 
+            Array.isArray(content.slidercontent) ? content.slidercontent : []
+          );
+  
+          // Extract image URLs correctly
+          this.imageUrls = sliderData.sliderContent
+            .map((content: any) => content.imageUrl)
+            .filter((url: any) => !!url); // Fix: Filters out any null/undefined values
+  
+          // Set default index to show first image & text
+          this.currentIndex = 0;
+  
+          console.log('Main Title:', this.mainTitle);
+          console.log('Descriptions:', this.descriptions);
+          console.log('Image URLs:', this.imageUrls);
         }
       },
       (error) => {
@@ -74,6 +91,9 @@ export class HomeSliderComponent  implements OnInit {
       }
     );
   }
+  
+  
+  
   
 
 
