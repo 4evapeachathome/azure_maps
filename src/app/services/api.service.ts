@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
+import { environmentdev } from 'src/environments/environment';
 
 interface QueryOptions {
   fields?: string[];
@@ -458,7 +459,8 @@ getHomeSliders(): Observable<any[]> {
       'Authorization': `Bearer ${this.apitoken}`
     });
   
-    const secretKey = '0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9'; // Use a secure key, store it safely
+    //const secretKey = '0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9'; // Use a secure key, store it safely
+    const secretKey = environmentdev.secretKey; // Use a secure key, store it safely
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(contactData), secretKey).toString();
   
     return this.http.post(`${this.apiUrl}${endpoint}`, { data: encryptedData }, { headers });
