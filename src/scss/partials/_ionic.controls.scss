@@ -2,3 +2,11 @@
     --box-shadow: none;
     --ion-color-base: var(--ion-color-primary);;  
 }
+ion-card-content {
+    color: $color-dark-Gray;
+    font-size: $font-size-md !important;
+    padding-inline-start: 16px !important;
+    padding-inline-end: 16px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
