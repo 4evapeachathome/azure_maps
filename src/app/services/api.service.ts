@@ -587,6 +587,78 @@ getHomeSliders(): Observable<any[]> {
       fields: ['content']
     }, this.apitoken);
   }
+
+  //No peace athome slider
+  getNoPeaceatHomeSliderData(): Observable<any> {
+    const endpoint = '/api/no-peaceat-home-sliders';
+    const options: QueryOptions = {
+      populate: {
+        nopeaceathome: {
+          fields: ['title'],
+          populate: {
+            webImage: { fields: ['url'] },
+            description: {
+              fields: ['multilineRichTextBox']
+            }
+          }
+        }
+      }
+    };
+
+    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res);
+        const resData = res.data;
+        if (resData && resData.homeslider && resData.homeslider.webImage && resData.homeslider.webImage.url) {
+          resData.homeslider.image = `${this.apiUrl}${resData.homeslider.webImage.url}`;
+        } else {
+          resData.homeslider.image = ''; 
+        }
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching no peace at home slider data', error);
+        return throwError(error);
+      })
+    );
+}
+
+//No Peaceathome partner violence
+getNopeacepartnerViolence(): Observable<any> {
+  return this.getWithQuery('/api/no-peace-home-contents', {
+    fields: ['content']
+  }, this.apitoken);
+}
+
+//Nopeace athome title content
+getNoPeaceHomeTitleContent(): Observable<any> {
+  const endpoint = '/api/no-peaceat-home';
+  const options: QueryOptions = {
+    populate: {
+      webImage: { fields: ['url'] },
+      mobileImage: { fields: ['url'] },
+      contentBlocks: { fields: ['multilinerichtextbox'] }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+    map((res: any) => {
+      console.log('data:', res);
+      const resData = res.data;
+      if (resData && resData.webImage && resData.webImage.url) {
+        resData.image = `${this.apiUrl}${resData.webImage.url}`;
+      } else {
+        resData.image = ''; 
+      }
+      return resData;
+    }),
+    catchError(error => {
+      console.error('Error fetching healthy relationship data', error);
+      return throwError(error);
+    })
+  );
+}
+
 }
 
 

@@ -6,7 +6,7 @@ import { ApiService } from 'src/app/services/api.service';
 
 
 @Component({
-  selector: 'pathome-healthyrelationship-slider',
+  selector: 'pathome-nopeaceathome-slider',
   templateUrl: '../home-slider/home-slider.component.html',
   styleUrls: ['../home-slider/home-slider.component.scss'],
   standalone: true,
@@ -30,9 +30,9 @@ import { ApiService } from 'src/app/services/api.service';
           ])
         ]
 })
-export class HealthyRelationshipSliderComponent  implements OnInit {
+export class NoPeaceHomeSliderComponent  implements OnInit {
   currentIndex = 0;
-  showButton: boolean= false;
+  showButton: boolean= true;
   sliderData: any;
   descriptions: any[] = [];
   mainTitle: any;
@@ -41,11 +41,11 @@ currentImageIndex: any;
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
-    this.getHealthyRelationshipSlidersData();
+    this.getNoPeaceatHomeSlidersData();
   }
 
-  getHealthyRelationshipSlidersData() {
-    this.apiService.getHealthyRelationshipSliders().subscribe(
+  getNoPeaceatHomeSlidersData() {
+    this.apiService.getNoPeaceatHomeSliderData().subscribe(
       (response) => {
         if (response && response.length > 0) {
           const sliderData = response[0].HealthyRelationshipSlider; // Get the first slider object
@@ -70,7 +70,7 @@ currentImageIndex: any;
         }
       },
       (error) => {
-        console.error('Error fetching healthy relationship slider component:', error);
+        console.error('Error fetching no peace at home slider component:', error);
       }
     );
   }

@@ -4,22 +4,6 @@ import {Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
-interface MultilineRichText {
-  type: string;
-  level?: number;
-  children: {
-    text: string;
-    type: string;
-    bold?: boolean;
-    italic?: boolean;
-  }[];
-}
-
-interface Description {
-  id: number;
-  multilinerichtextbox: MultilineRichText[];
-}
-
 @Component({
   selector: 'pathome-peaceat-home-slider',
   templateUrl: '../home-slider/home-slider.component.html',
@@ -84,7 +68,7 @@ export class PeaceHomeSliderComponent  implements OnInit {
         }
       },
       (error) => {
-        console.error('Error fetching home slider component:', error);
+        console.error('Error fetching peace at home slider component:', error);
       }
     );
   }

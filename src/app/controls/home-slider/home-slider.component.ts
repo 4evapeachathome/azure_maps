@@ -4,21 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
-interface MultilineRichText {
-  type: string;
-  level?: number;
-  children: {
-    text: string;
-    type: string;
-    bold?: boolean;
-    italic?: boolean;
-  }[];
-}
 
-interface Description {
-  id: number;
-  multilinerichtextbox: MultilineRichText[];
-}
 
 @Component({
   selector: 'pathome-home-slider',

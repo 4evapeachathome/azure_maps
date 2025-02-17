@@ -159,7 +159,12 @@ export class DailyTipsComponent implements OnInit {
 
   selectDay(index: number) {
     console.log(`Day selected: ${index}`);
-    this.selectedDay = index;
-    this.generateRandomTip()
-  }
+    
+    if (this.selectedDay !== index) {
+        this.selectedDay = index; 
+        this.generateRandomTip();
+    } else {
+        console.log(`Day ${index} is already selected. No new tip generated.`);
+    }
+}
 }
