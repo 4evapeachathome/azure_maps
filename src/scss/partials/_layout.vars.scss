@@ -5,16 +5,38 @@ $font-regular       :   400;
 $font-semibold      :   600;
 $font-bold          :   700;
 
-$font-size-base     :   16px;
-$font-size-content  :   $font-size-base - 2px;
-$font-size-banner   :   75px;
+$font-size-xlll     :   1.5em; //24px;
+$font-size-xll      :   1.375em; //22px;
+$font-size-xl       :   1.25em; //20px
+$font-size-l        :   1.125em; //18px
+$font-size-base     :   1em; //16px;
+$font-size-md       :   0.875em; //14px
+$font-size-sm       :   0.75em; //12px
+$font-size-xs       :   0.625em; //10px
+$font-size-xxs      :   0.5em; //8px
+$font-size-head-xll :   4.688em; //75px;
+$font-size-head-xl  :   3em; //42px;
+$font-size-head-md  :   2.625em; //42px;
+
 
 $color-primary      :   #AB52C5;
 $color-secondary    :   #A0A0A0;
-$color-Deep-Gray    :   #202020;
+$color-deep-Gray    :   #202020;
 $color-dark-Gray    :   #4D4D4D;
 $icon-dark-Gray     :   #5F6368;
+$icon-tint-Gray     :   #7C7C7C;
 $color-container    :   #F1F1F1;
+$color-dark-magenta :   #813F95;
+$color-primary-contrast        :   #ffffff;
+
+$colors: () !default;
+$colors: map-merge(
+(
+    "color-primary":     $color-primary,
+   
+),
+  $colors
+);
 
 :root{  
     --ion-default-font              : $font-Inter;
@@ -25,5 +47,7 @@ $color-container    :   #F1F1F1;
     --icon-color-dark               : #5F6368;
 
     --ion-color-primary             : #AB52C5;
-  
+    --background-activated          : #AB52C5;
+    --background-focused            : #AB52C5
+    --background-hover              : #AB52C5
     }

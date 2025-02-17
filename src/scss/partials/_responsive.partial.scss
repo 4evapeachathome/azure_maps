@@ -1,0 +1,21 @@
+
+@media (max-width: 768px) {
+    .container-banner {
+        ion-card-content {
+          .cb-header {
+            font-size: $font-size-head-md !important;
+          }         
+
+        }
+      }
+    .calendar-strip {
+        .weekdays {
+         // gap: 4px;
+          
+          .day-item {
+            min-width: 35px !important;
+            padding: 4px !important;
+          }
+        }
+      }
+  }
