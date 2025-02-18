@@ -1,44 +1,26 @@
-<!-- <div class="card">
-  <h2>Bringing Peace & Harmony</h2>
-  <div class="image-container">
-    <img src="path-to-your-image.jpg" alt="Peace and Harmony Image" />
-    <div class="overlay">
-      <p>
-        Discover resources and tools to build a peaceful and supportive home
-        environment
-      </p>
-    </div>
-  </div>
-  <button class="read-more">Read More</button>
-</div> -->
-<ion-card>
+<ion-card class="card-small cs-fixed-height expert-advice">
+  <ion-card-header>
+    <ion-card-title>{{ title }}</ion-card-title>
+  </ion-card-header>
   <ion-card-content>
-    <ion-grid>
-   <ion-row>
-    <ion-col>
-      <h2>{{title}}</h2>
-      </ion-col>
-      </ion-row>
+    <ion-grid class="ion-no-padding">
       <ion-row>
-        <ion-col>
-          <ion-row class="image-container">
+        <ion-col class="plr-0">
+          <div class="image-container">
             <ion-img [src]="image" alt="Peace and Harmony Image"></ion-img>
             <!-- <div class="overlay">
               <p>
                {{description}}
               </p>
             </div> -->
-        </ion-row>
-          </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-button>Read More</ion-button>
-              </ion-col>
-              </ion-row>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button color="primary">Read More</ion-button>
+        </ion-col>
+      </ion-row>
     </ion-grid>
-    </ion-card-content>
-
-
- 
+  </ion-card-content>
 </ion-card>
