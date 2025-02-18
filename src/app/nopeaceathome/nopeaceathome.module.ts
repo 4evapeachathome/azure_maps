@@ -10,6 +10,8 @@ import { NopeaceathomePage } from './nopeaceathome.page';
 import { HeaderComponent } from "../controls/header/header.component";
 import { HomeSliderComponent } from "../controls/home-slider/home-slider.component";
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
+import { HealthyrelationshipcontentComponent } from "../controls/healthyrelationshipcontent/healthyrelationshipcontent.component";
+import { FooterComponent } from "../controls/footer/footer.component";
 
 @NgModule({
   imports: [
@@ -19,7 +21,9 @@ import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/
     NopeaceathomePageRoutingModule,
     HeaderComponent,
     HomeSliderComponent,
-    HealthyrelatitonshipComponent
+    HealthyrelatitonshipComponent,
+    HealthyrelationshipcontentComponent,
+    FooterComponent
 ],
   declarations: [NopeaceathomePage]
 })

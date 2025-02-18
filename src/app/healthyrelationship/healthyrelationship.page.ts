@@ -9,6 +9,8 @@ import { Component, OnInit } from '@angular/core';
 export class HealthyrelationshipPage implements OnInit {
 healthyrelationslider:string = '/api/healthy-relationship-sliders';
 healtyrelationTitleContent:string = '/api/healthy-relationship';
+healthyrelationcontentwithoutbutton = '/api/healthyrelationshipcontents';
+healthyrelationcontentwithbutton = '/api/unhealthurelationshipcontents';
   constructor() { }
 
   ngOnInit() {

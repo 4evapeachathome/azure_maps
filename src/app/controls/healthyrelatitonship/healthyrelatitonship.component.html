@@ -7,7 +7,7 @@
           <ng-container *ngIf="item.type === 'heading'">
             <h2 class="title-highlight" [ngClass]="{'ion-heading': true}">
               <ng-container *ngFor="let child of item.children">
-                <ion-text class="highlighted-text" *ngIf="child.bold" [style.color]="'purple'"><strong>{{ child.text }}</strong></ion-text>
+                <ion-text class="highlighted-text" *ngIf="child.bold"><strong>{{ child.text }}</strong></ion-text>
                 <span *ngIf="!child.bold">{{ child.text }}</span>
               </ng-container>
             </h2>

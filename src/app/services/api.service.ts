@@ -439,17 +439,17 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
   }
 
   //Get healthy relationship content
-  getHealthyRelationShipContent(): Observable<any> {
-    return this.getWithQuery('/api/healthyrelationshipcontents', {
+  getHealthyRelationShipContent(endpoint: string): Observable<any> {
+    return this.getWithQuery(endpoint, {
       fields: ['content']
-    }, this.apitoken);
+    }, this.apitoken).pipe(
+      catchError((error: any) => {
+        console.error('Error fetching Api content:', error);
+        return throwError('An error occurred while fetching Api content. Please try again later.');
+      })
+    );
   }
 
-  getUnHealthyRelationShipContent(): Observable<any> {
-    return this.getWithQuery('/api/unhealthurelationshipcontents', {
-      fields: ['content']
-    }, this.apitoken);
-  }
 
   //No peace athome slider
   getNoPeaceatHomeSliderData(): Observable<any> {

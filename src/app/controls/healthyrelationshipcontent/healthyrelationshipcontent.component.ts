@@ -12,15 +12,16 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class HealthyrelationshipcontentComponent  implements OnInit {
   content: any[] = [];
-  isBtnVisible: boolean = false;
+ @Input() isBtnVisible: boolean = false;
+ @Input() endpoint: string='';
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
-    this.getHealthyRelationshipContent();
+    this.getHealthyRelationshipContent(this.endpoint);
   }
 
-  getHealthyRelationshipContent(){
-    this.apiService.getHealthyRelationShipContent().subscribe(
+  getHealthyRelationshipContent(endpoint: string){
+    this.apiService.getHealthyRelationShipContent(endpoint).subscribe(
       (response) => {
       //  debugger;
         if (response?.data?.length > 0) {
