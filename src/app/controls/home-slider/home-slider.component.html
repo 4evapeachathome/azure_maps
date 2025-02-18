@@ -1,65 +1,74 @@
-<ion-grid class="carousel" *ngIf="descriptions && descriptions.length > 0">
-  <h3 class="maintitle">{{ mainTitle }}</h3>
+
+<ion-card-header class="carousel-header">
+  <ion-card-title>{{ mainTitle }}</ion-card-title>
+</ion-card-header>
+<ion-card-content class="carousel-container">
+  <div class="carousel" *ngIf="descriptions && descriptions.length > 0">
   
-  <ion-row>
-    <ion-col
-      size-md="10"
-      offset-md="1"
-      class="card"
-      *ngFor="let description of descriptions; let i = index"
-      [class.active]="currentIndex === i"
-      [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
-      [@slideAnimation]>
-      
-      <!-- Display Only the Current Image -->
-      <div class="image-container" *ngIf="imageUrls?.length">
-        <ion-img 
-          [src]="imageUrls[currentIndex]" 
-          [alt]="mainTitle || 'Slider Image'" 
-          class="carousel-image"
-        ></ion-img>
-      </div>
-
-      <!-- Dynamic Text Content -->
-      <div *ngFor="let content of description">
-        <h3
-          *ngIf="content.type === 'heading'"
-          class="title"
-          [innerHTML]="getStyledText(content.children[0])"
-        ></h3>
-        <p *ngIf="content.type === 'paragraph'" class="description">
-          <span *ngFor="let child of content.children" [innerHTML]="getStyledText(child)"></span>
-        </p>
-      </div>
-
-      <!-- Read More Button -->
-      <ion-button 
+      <div
+        class="card"
+        *ngFor="let description of descriptions; let i = index"
+        [class.active]="currentIndex === i"
+        [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
+        [@slideAnimation]>
+        
+        <!-- Display Only the Current Image -->
+        <div class="image-container" *ngIf="imageUrls?.length">
+          <ion-img 
+            [src]="imageUrls[currentIndex]" 
+            [alt]="mainTitle || 'Slider Image'" 
+            class="carousel-image"
+          ></ion-img>
+        </div>
+  
+        <!-- Dynamic Text Content -->
+        <div class="carousel-description" *ngFor="let content of description">
+          <div class="description">
+          <h3
+            *ngIf="content.type === 'heading'"
+           
+            [innerHTML]="getStyledText(content.children[0])"
+          ></h3>
+          <p *ngIf="content.type === 'paragraph'">
+            <span *ngFor="let child of content.children" [innerHTML]="getStyledText(child)"></span>
+          </p>
+           <!-- Read More Button -->
+        <ion-button  color="primary"
         *ngIf="i === 0 && showButton" 
-        expand="block" 
-        class="read-more">
+       
+       >
         Read More
       </ion-button>
-
-      <!-- Navigation Arrows -->
-      <ion-icon
-        name="chevron-back-outline"
-        class="arrow left-arrow"
-        (click)="prevSlide()"
-      ></ion-icon>
-      <ion-icon
-        name="chevron-forward-outline"
-        class="arrow right-arrow"
-        (click)="nextSlide()"
-      ></ion-icon>
-
-      <!-- Dots for Indicators -->
-      <div class="dots">
-        <div 
-          *ngFor="let dot of descriptions; let j = index" 
-          [class.active]="currentIndex === j"
-          (click)="currentIndex = j"
-        ></div>
+        <!-- Dots for Indicators -->
+        <div class="dots">
+          <div 
+            *ngFor="let dot of descriptions; let j = index" 
+            [class.active]="currentIndex === j"
+            (click)="currentIndex = j"
+          ></div>
+        </div>
+        </div>
+        
+       
+  
+        <!-- Navigation Arrows -->
+        <ion-icon
+          name="chevron-back-outline"
+          class="arrow left-arrow"
+          (click)="prevSlide()"
+        ></ion-icon>
+        <ion-icon
+          name="chevron-forward-outline"
+          class="arrow right-arrow"
+          (click)="nextSlide()"
+        ></ion-icon>
+  
+      
+        </div>
+  
       </div>
-    </ion-col>
-  </ion-row>
-</ion-grid>
+
+  </div>
+</ion-card-content>
+
+
