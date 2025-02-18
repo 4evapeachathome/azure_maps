@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
   standalone: false,
 })
 export class PeaceathomePage implements OnInit {
-
+  peaceathomeslider:string = '/api/peace-at-home-sliders';
   constructor() { }
 
   ngOnInit() {

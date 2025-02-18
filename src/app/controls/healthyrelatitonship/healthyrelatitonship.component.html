@@ -1,16 +1,32 @@
 <ion-grid class="relationship-container">
   <h4 class="subtitle">Healthy Relationship</h4>
-  <div class="heading-img-container">
-    <h2 class="title-highlight">
-      <ng-container *ngFor="let item of title">
-        <ng-container *ngFor="let child of item.children">
-          <ion-text class="highlighted-text" *ngIf="child.bold"><strong>{{ child.text }}</strong></ion-text>
-          <span *ngIf="!child.bold">{{ child.text }}</span>
+  <ion-row>
+    <div class="heading-img-container">
+      <ion-col size="7">
+        <ng-container *ngFor="let item of title">
+          <ng-container *ngIf="item.type === 'heading'">
+            <h2 class="title-highlight" [ngClass]="{'ion-heading': true}">
+              <ng-container *ngFor="let child of item.children">
+                <ion-text class="highlighted-text" *ngIf="child.bold" [style.color]="'purple'"><strong>{{ child.text }}</strong></ion-text>
+                <span *ngIf="!child.bold">{{ child.text }}</span>
+              </ng-container>
+            </h2>
+          </ng-container>
+          <ng-container *ngIf="item.type === 'paragraph'">
+            <ion-text class="paragraph-text">
+              <ng-container *ngFor="let child of item.children">
+                {{ child.text }}
+              </ng-container>
+            </ion-text>
+          </ng-container>
         </ng-container>
-      </ng-container>
-    </h2>
-    <ion-img [src]="img" alt="Healthy Relationship Illustration"></ion-img>
-  </div>
+      </ion-col>
+      <ion-col>
+        <ion-img [src]="img" alt="Healthy Relationship Illustration"></ion-img>
+      </ion-col>
+    </div>
+  </ion-row>
+  <ion-row>
   <ion-card *ngFor="let block of contentBlocks">
     <ion-card-header *ngIf="block.multilinerichtextbox[0]?.type === 'heading'">
       <ion-card-title>{{ block.multilinerichtextbox[0]?.children[0]?.text }}</ion-card-title>
@@ -21,4 +37,5 @@
       </ng-container>
     </ion-card-content>
   </ion-card>
+</ion-row>
 </ion-grid>

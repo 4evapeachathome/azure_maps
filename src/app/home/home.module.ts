@@ -17,15 +17,14 @@ import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.compon
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
 import { BrowserModule } from '@angular/platform-browser';
 import { SupportserviceComponent } from '../controls/supportservice/supportservice.component';
-import { ScenarioCardComponent } from "../controls/scenario-card/scenario-card.component";
 import { PlainCardComponent } from "../controls/plain-card/plain-card.component";
 import { PartnerViolenceProgressbarComponent } from "../controls/partner-violence-progressbar/partner-violence-progressbar.component";
 import { PviolencePlaincardListComponent } from "../controls/pviolence-plaincard-list/pviolence-plaincard-list.component";
 import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typesof-abuse-card.component";
-import { PeaceHomeSliderComponent } from '../controls/peaceat-home-slider/peace-at-homeslide';
 import { RelationalComponent } from '../controls/relational/relational.component';
 import { UsaMapComponent } from '../usa-map/usa-map.component';
 import { HeaderComponent } from "../controls/header/header.component";
+import { NopeacehomescenariooneComponent } from "../controls/nopeacehome-scenario-one/nopeacehomescenarioone.component";
 
 @NgModule({
   imports: [
@@ -38,21 +37,20 @@ import { HeaderComponent } from "../controls/header/header.component";
     PeaceHarmonyComponent,
     HomeSliderComponent,
     WellnessTipsComponent,
-    PeaceHomeSliderComponent,
     ContactUsFormComponent,
     FooterComponent,
     PeaceathomecardwithimageComponent,
     PeaceathomeComponent,
     HealthyrelatitonshipComponent,
     SupportserviceComponent,
-    ScenarioCardComponent,
     PlainCardComponent,
     PartnerViolenceProgressbarComponent,
     PviolencePlaincardListComponent,
     TypesofAbuseCardComponent,
     UsaMapComponent,
     RelationalComponent,
-    HeaderComponent
+    HeaderComponent,
+    NopeacehomescenariooneComponent
 ],
   declarations: [
     HomePage

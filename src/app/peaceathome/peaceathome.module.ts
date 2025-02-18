@@ -8,11 +8,11 @@ import { PeaceathomePageRoutingModule } from './peaceathome-routing.module';
 
 import { PeaceathomePage } from './peaceathome.page';
 import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.component";
-import { PeaceHomeSliderComponent } from "../controls/peaceat-home-slider/peace-at-homeslide";
 import { FooterComponent } from "../controls/footer/footer.component";
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
 import { RelationalComponent } from "../controls/relational/relational.component";
 import { HeaderComponent } from "../controls/header/header.component";
+import { HomeSliderComponent } from "../controls/home-slider/home-slider.component";
 
 @NgModule({
   imports: [
@@ -21,11 +21,11 @@ import { HeaderComponent } from "../controls/header/header.component";
     IonicModule,
     PeaceathomePageRoutingModule,
     PeaceathomeComponent,
-    PeaceHomeSliderComponent,
     FooterComponent,
     HealthyrelatitonshipComponent,
     RelationalComponent,
-    HeaderComponent
+    HeaderComponent,
+    HomeSliderComponent
 ],
   declarations: [PeaceathomePage]
 })

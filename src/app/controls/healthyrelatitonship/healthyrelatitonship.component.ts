@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -15,19 +15,20 @@ export class HealthyrelatitonshipComponent  implements OnInit {
   contentBlocks: any[] = [];
   title: any;
   paragraphContent: any;
+  @Input() endpoint:string = '';
 
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
-    this.getHealthyRelationshipData();
+    this.getHealthyRelationshipData(this.endpoint);
   }
 
 
 
-  getHealthyRelationshipData(){
-    this.apiService.getHealthyRelationship().subscribe(
+  getHealthyRelationshipData(endpoint : string){
+    this.apiService.getHealthyRelationship(endpoint).subscribe(
       (response) => {
-     //   debugger;
+        debugger;
         if (response && response.image && response.title && response.contentBlocks) {
           this.img = response.image;
           this.title = response.title;

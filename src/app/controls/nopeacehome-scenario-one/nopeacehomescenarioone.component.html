@@ -1,0 +1,40 @@
+<ion-card *ngFor="let scenario of scenarioData">
+  <ion-row>
+    <!-- First column - conditionally appears as text or image based on imagePosition property -->
+    <ion-col [size]="6" *ngIf="contentPlacement === 'left'">
+      <ion-card-content>
+        <ion-card-title class="header-title">{{ scenario.title }}</ion-card-title>
+        <ion-text class="content-paragraph" *ngFor="let paragraph of scenario.description">
+          <p>
+            <ng-container *ngFor="let part of paragraph">
+              <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+              <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+              <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+            </ng-container>
+          </p>
+        </ion-text>
+      </ion-card-content>
+    </ion-col>
+
+    <!-- Image column - appears either first or second based on imagePosition property -->
+    <ion-col [size]="5" *ngIf="webImage">
+      <ion-img class="class-image" [src]="webImage" alt="Scenario Image"></ion-img>
+    </ion-col>
+
+    <!-- Text column - conditionally appears as first or second based on imagePosition property -->
+    <ion-col [size]="6" *ngIf="contentPlacement === 'right'">
+      <ion-card-content>
+        <ion-card-title class="header-title">{{ scenario.title }}</ion-card-title>
+        <ion-text class="content-paragraph" *ngFor="let paragraph of scenario.description">
+          <p>
+            <ng-container *ngFor="let part of paragraph">
+              <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+              <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+              <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+            </ng-container>
+          </p>
+        </ion-text>
+      </ion-card-content>
+    </ion-col>
+  </ion-row>
+</ion-card>

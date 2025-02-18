@@ -6,7 +6,7 @@ import { environmentdev } from 'src/environments/environment';
 
 interface QueryOptions {
   fields?: string[];
-  populate?: string[] | Record<string, { fields: string[], populate?: Record<string, { fields: string[] }> }>;
+  populate?: string[] | Record<string, any>;
   filters?: Record<string, any>;
   sort?: string[];
   pagination?: {
@@ -294,13 +294,11 @@ export class ApiService {
     );
 }
 
-//Home slider component api method
-
-getHomeSliders(): Observable<any[]> {
-  const endpoint = '/api/home-sliders';
+//Common slider service component
+getSliders(endpoint: string, mainParam: string): Observable<any[]> {
   const options = {
     populate: {
-      homeslider: {
+      [mainParam]: {
         fields: ['title'],
         populate: {
           sliderContent: {
@@ -322,8 +320,8 @@ getHomeSliders(): Observable<any[]> {
       console.log('Raw API Response:', res.data);
       
       return res.data.map((resData: any) => {
-        const sliderContent = resData.homeslider?.sliderContent 
-          ? resData.homeslider.sliderContent.map((content: any) => ({
+        const sliderContent = resData[mainParam]?.sliderContent 
+          ? resData[mainParam].sliderContent.map((content: any) => ({
               slidercontent: content.slidercontent || [],
               imageUrl: content.webImage?.url 
                 ? `${this.apiUrl}${content.webImage.url}` 
@@ -332,16 +330,16 @@ getHomeSliders(): Observable<any[]> {
           : [];
 
         return {
-          homeslider: {
-            title: resData.homeslider?.title || '',
+          [mainParam]: {
+            title: resData[mainParam]?.title || '',
             sliderContent
           }
         };
       });
     }),
     catchError(error => {
-      console.error('Error fetching home sliders:', error);
-      return throwError(() => new Error('Failed to fetch home sliders'));
+      console.error(`Error fetching ${mainParam} sliders:`, error);
+      return throwError(() => new Error(`Failed to fetch ${mainParam} sliders`));
     })
   );
 }
@@ -349,108 +347,7 @@ getHomeSliders(): Observable<any[]> {
 
 
 
-
-
-  //peace at home slider component
-  getPeaceatHomeSliders(): Observable<any> {
-    const endpoint = '/api/peace-at-home-sliders';
-    const options = {
-      populate: {
-        peaceathomeslider: {
-          fields: ['title'],
-          populate: {
-            sliderContent: {
-              fields: ['slidercontent'],
-              populate: {
-                webImage: {
-                  fields: ['url']
-                }
-              }
-            }
-          }
-        }
-      },
-      sort: ['createdAt:desc']
-    };
-
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
-      map((res: any) => {
-        console.log('Raw API Response:', res.data);
-        
-        return res.data.map((resData: any) => {
-          const sliderContent = resData.peaceathomeslider?.sliderContent 
-            ? resData.peaceathomeslider.sliderContent.map((content: any) => ({
-                slidercontent: content.slidercontent || [],
-                imageUrl: content.webImage?.url 
-                  ? `${this.apiUrl}${content.webImage.url}` 
-                  : null
-              }))
-            : [];
   
-          return {
-            peaceathomeslider: {
-              title: resData.peaceathomeslider?.title || '',
-              sliderContent
-            }
-          };
-        });
-      }),
-      catchError(error => {
-        console.error('Error fetching peace at home slider', error);
-        return throwError(error);
-      })
-    );
-  }
-
-  //Healthyrelationship slider
-  getHealthyRelationshipSliders(): Observable<any> {
-    const endpoint = '/api/healthy-relationship-sliders';
-    const options = {
-      populate: {
-        HealthyRelationshipSlider: {
-          fields: ['title'],
-          populate: {
-            sliderContent: {
-              fields: ['slidercontent'],
-              populate: {
-                webImage: {
-                  fields: ['url']
-                }
-              }
-            }
-          }
-        }
-      },
-      sort: ['createdAt:desc']
-    };
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
-      map((res: any) => {
-        console.log('Raw API Response:', res.data);
-        
-        return res.data.map((resData: any) => {
-          const sliderContent = resData.HealthyRelationshipSlider?.sliderContent 
-            ? resData.HealthyRelationshipSlider.sliderContent.map((content: any) => ({
-                slidercontent: content.slidercontent || [],
-                imageUrl: content.webImage?.url 
-                  ? `${this.apiUrl}${content.webImage.url}` 
-                  : null
-              }))
-            : [];
-  
-          return {
-            HealthyRelationshipSlider: {
-              title: resData.HealthyRelationshipSlider?.title || '',
-              sliderContent
-            }
-          };
-        });
-      }),
-      catchError(error => {
-        console.error('Error fetching peace at home slider', error);
-        return throwError(error);
-      })
-    );
-  }
 
   sendContactData(contactData: any): Observable<any> {
     const endpoint = '/api/contacts';
@@ -481,41 +378,7 @@ getHomeSliders(): Observable<any[]> {
       }, this.apitoken);
     }
   
-  //Home slider api service method
-  getHomeSliderData(): Observable<any> {
-    const endpoint = '/api/home-sliders';
-    const options: QueryOptions = {
-      populate: {
-        homeslider: {
-          fields: ['title'],
-          populate: {
-            webImage: { fields: ['url'] },
-            description: {
-              fields: ['multilineRichTextBox']
-            }
-          }
-        }
-      }
-    };
-
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
-      map((res: any) => {
-        console.log('data:', res);
-        const resData = res.data;
-        if (resData && resData.homeslider && resData.homeslider.webImage && resData.homeslider.webImage.url) {
-          resData.homeslider.image = `${this.apiUrl}${resData.homeslider.webImage.url}`;
-        } else {
-          resData.homeslider.image = ''; 
-        }
-        return resData;
-      }),
-      catchError(error => {
-        console.error('Error fetching home slider data', error);
-        return throwError(error);
-      })
-    );
-}
-
+  
   //Peace at home component service
   getPeaceAtHome(): Observable<any> {
     const endpoint = '/api/peaceathome';
@@ -547,8 +410,7 @@ getHomeSliders(): Observable<any[]> {
 
 
   //get healthy relationship data
-  getHealthyRelationship(): Observable<any> {
-    const endpoint = '/api/healthy-relationship';
+  getHealthyRelationship(endpoint: string): Observable<any> {
     const options: QueryOptions = {
       populate: {
         webImage: { fields: ['url'] },
@@ -561,6 +423,7 @@ getHomeSliders(): Observable<any[]> {
       map((res: any) => {
         console.log('data:', res);
         const resData = res.data;
+        debugger;
         if (resData && resData.webImage && resData.webImage.url) {
           resData.image = `${this.apiUrl}${resData.webImage.url}`;
         } else {
@@ -630,34 +493,42 @@ getNopeacepartnerViolence(): Observable<any> {
   }, this.apitoken);
 }
 
-//Nopeace athome title content
-getNoPeaceHomeTitleContent(): Observable<any> {
-  const endpoint = '/api/no-peaceat-home';
+
+//No peace at home scneario once content
+getNoPeaceHomeScenarioOne(): Observable<any> {
+  const endpoint = '/api/no-peace-home-scenario-ones';
   const options: QueryOptions = {
     populate: {
-      webImage: { fields: ['url'] },
-      mobileImage: { fields: ['url'] },
-      contentBlocks: { fields: ['multilinerichtextbox'] }
-    }
+      content: {
+        populate: {
+          webImage: { fields: ['url'] },
+          mobileImage: { fields: ['url'] }
+        }
+      }
+    },
+    sort: ['createdAt:desc']
   };
 
   return this.getWithQuery(endpoint, options, this.apitoken).pipe(
     map((res: any) => {
-      console.log('data:', res);
       const resData = res.data;
-      if (resData && resData.webImage && resData.webImage.url) {
-        resData.image = `${this.apiUrl}${resData.webImage.url}`;
+      debugger
+      if (resData[0] && resData[0]?.content?.webImage?.url) {
+        resData.image = `${this.apiUrl}${resData[0].content.webImage.url}`;
       } else {
         resData.image = ''; 
       }
       return resData;
     }),
     catchError(error => {
-      console.error('Error fetching healthy relationship data', error);
-      return throwError(error);
+      console.error('Error fetching data:', error);
+      return throwError(() => new Error('Failed to fetch No Peace Home Scenario One'));
     })
   );
 }
+
+
+
 
 }
 

@@ -1,6 +1,7 @@
 
  <ion-grid class="home-happiness-container">
-  <div class="heading-image-container" *ngIf="titleContent?.length > 0">
+  <ion-row>
+  <ion-col *ngIf="titleContent?.length > 0">
     <h2 class="happyhome-title">
       <ng-container *ngFor="let item of titleContent[0]?.children">
         <ng-container [ngSwitch]="item.type">
@@ -11,11 +12,17 @@
         </ng-container>
       </ng-container>
     </h2>
+    </ion-col>
+    <ion-col>
     <ion-img [src]="peaceathomeImg" alt="Happy Home Image"></ion-img>
-  </div>
+  </ion-col>
+</ion-row>
+  <ion-row>
   <p class="paragraph-class" *ngIf="paragraphContent">
     {{ paragraphContent }}
   </p>
+</ion-row>
+
 <ion-grid class="content-section">
   <ion-card *ngFor="let block of contentBlocks">
     <ion-card-header *ngIf="block.multilinerichtextbox[0]?.type === 'paragraph'">

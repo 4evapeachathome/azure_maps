@@ -11,9 +11,8 @@ import { HeaderComponent } from "../controls/header/header.component";
 import { FooterComponent } from "../controls/footer/footer.component";
 import { HealthyrelatitonshipComponent } from '../controls/healthyrelatitonship/healthyrelatitonship.component';
 import { HealthyrelationshipcontentComponent } from "../controls/healthyrelationshipcontent/healthyrelationshipcontent.component";
-import { PeaceHomeSliderComponent } from "../controls/peaceat-home-slider/peace-at-homeslide";
 import { UnHealthyrelationshipcontentComponent } from "../controls/unhealthyrelationshipcontent/unhealthyrelationshipcontent";
-import { HealthyRelationshipSliderComponent } from "../controls/healthyrelationshipslider/healthyrelationshipslider";
+import { HomeSliderComponent } from "../controls/home-slider/home-slider.component";
 
 @NgModule({
   imports: [
@@ -25,9 +24,8 @@ import { HealthyRelationshipSliderComponent } from "../controls/healthyrelations
     HeaderComponent,
     FooterComponent,
     HealthyrelationshipcontentComponent,
-    PeaceHomeSliderComponent,
     UnHealthyrelationshipcontentComponent,
-    HealthyRelationshipSliderComponent
+    HomeSliderComponent
 ],
   declarations: [HealthyrelationshipPage]
 })

@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -32,24 +32,26 @@ import { ApiService } from 'src/app/services/api.service';
     ]
 })
 export class HomeSliderComponent  implements OnInit {
-  mainTitle: string = ''; // Stores the main title
+mainTitle: string = ''; // Stores the main title
 descriptions: any[] = []; // Stores slider content
 imageUrls: string[] = []; // Stores image URLs
 currentIndex: number = 0; // To track active slider index
-  showButton: boolean = true;
-  sliderData: any;
+showButton: boolean = true;
+sliderData: any;
+@Input() endpoint: string ='';
+@Input() paramName:string = '';
  
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
-    this.getHomeSlidersData();
+    this.getHomeSlidersData(this.endpoint, this.paramName);
   }
 
-  getHomeSlidersData() {
-    this.apiService.getHomeSliders().subscribe(
+  getHomeSlidersData(endpoint: string, paramName: string) {
+    this.apiService.getSliders(endpoint,paramName).subscribe(
       (response) => {
         if (response && response.length > 0) {
-          const sliderData = response[0].homeslider;
+          const sliderData = response[0][paramName];
   
           // Set the main title
           this.mainTitle = sliderData.title || '';

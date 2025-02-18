@@ -5,7 +5,7 @@ import { FooterComponent } from './controls/footer/footer.component';
 
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html',
+  templateUrl: './app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
   imports: [IonicModule, MenuComponent]

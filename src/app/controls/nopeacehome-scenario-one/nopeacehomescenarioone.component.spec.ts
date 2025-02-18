@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { ScenarioCardComponent } from './scenario-card.component';
+import { NopeacehomescenariooneComponent } from './nopeacehomescenarioone.component';
 
-describe('ScenarioCardComponent', () => {
-  let component: ScenarioCardComponent;
-  let fixture: ComponentFixture<ScenarioCardComponent>;
+describe('NopeacehomescenariooneComponent', () => {
+  let component: NopeacehomescenariooneComponent;
+  let fixture: ComponentFixture<NopeacehomescenariooneComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ScenarioCardComponent ],
+      declarations: [ NopeacehomescenariooneComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ScenarioCardComponent);
+    fixture = TestBed.createComponent(NopeacehomescenariooneComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

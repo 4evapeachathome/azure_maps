@@ -20,6 +20,9 @@ const routes: Routes = [
   { path: 'healthyrelationship', 
     loadChildren: () => import('./healthyrelationship/healthyrelationship.module').then( m => m.HealthyrelationshipPageModule)
   },
+  { path: 'nopeaceathome', 
+    loadChildren: () => import('./nopeaceathome/nopeaceathome.module').then( m => m.NopeaceathomePageModule)
+  },
   { path: 'supportservice', component: SupportserviceComponent },
   { path: 'contactus', component: ContactUsFormComponent },
   { path: 'relational', component: RelationalComponent },
@@ -32,7 +35,7 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
-  },
+  }
 
 
 ];

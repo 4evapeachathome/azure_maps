@@ -7,7 +7,8 @@ import { Component, OnInit } from '@angular/core';
   standalone: false,
 })
 export class HealthyrelationshipPage implements OnInit {
-
+healthyrelationslider:string = '/api/healthy-relationship-sliders';
+healtyrelationTitleContent:string = '/api/healthy-relationship';
   constructor() { }
 
   ngOnInit() {
