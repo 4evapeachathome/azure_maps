@@ -155,6 +155,10 @@
 
 <div class="map-container">
   <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
-    <map-marker *ngFor="let location of filteredLocations" [position]="location" [label]="location.name"></map-marker>
+    <map-marker 
+      *ngFor="let location of filteredLocations" 
+      [position]="{ lat: location.lat, lng: location.lng }" 
+      [label]="location.name">
+    </map-marker>
   </google-map>
 </div>

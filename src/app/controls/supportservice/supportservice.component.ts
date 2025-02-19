@@ -106,11 +106,16 @@ export class SupportserviceComponent  implements OnInit {
   }
 
   async getCurrentPosition() {
-    //debugger;
     const coordinates = await Geolocation.getCurrentPosition();
     this.latitude = coordinates.coords.latitude;
     this.longitude = coordinates.coords.longitude;
     this.geolocationEnabled = true;
+    //this.center = { lat: this.latitude, lng: this.longitude };
+
+    console.log('Current position:', this.center);
+    
+    // Now filter nearby locations
+    this.filterNearbySupportCenters();
     console.log('Current position:', this.latitude, this.longitude);
   }
 
@@ -148,33 +153,33 @@ export class SupportserviceComponent  implements OnInit {
     );
   }
 
-  getDirectionsAndDistance(origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) {
-    const directionsApiUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=AIzaSyAJ_ySiFipBP82xYIin5o0_rpfPYPNKaa0`;
-    const distanceMatrixApiUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&key=AIzaSyAJ_ySiFipBP82xYIin5o0_rpfPYPNKaa0`;
+  // getDirectionsAndDistance(origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) {
+  //   const directionsApiUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=AIzaSyAJ_ySiFipBP82xYIin5o0_rpfPYPNKaa0`;
+  //   const distanceMatrixApiUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&key=AIzaSyAJ_ySiFipBP82xYIin5o0_rpfPYPNKaa0`;
 
-    // Get directions
-    this.http.get(directionsApiUrl).subscribe((directionsResponse: any) => {
-      if (directionsResponse.routes && directionsResponse.routes.length > 0) {
-        const route = directionsResponse.routes[0];
-        console.log('Directions:', route);
-      }
-    });
+  //   // Get directions
+  //   this.http.get(directionsApiUrl).subscribe((directionsResponse: any) => {
+  //     if (directionsResponse.routes && directionsResponse.routes.length > 0) {
+  //       const route = directionsResponse.routes[0];
+  //       console.log('Directions:', route);
+  //     }
+  //   });
 
-    // Get distance
-    this.http.get(distanceMatrixApiUrl).subscribe((distanceResponse: any) => {
-      if (distanceResponse.rows && distanceResponse.rows.length > 0) {
-        const distance = distanceResponse.rows[0].elements[0].distance.text;
-        console.log('Distance:', distance);
-      }
-    });
-  }
+  //   // Get distance
+  //   this.http.get(distanceMatrixApiUrl).subscribe((distanceResponse: any) => {
+  //     if (distanceResponse.rows && distanceResponse.rows.length > 0) {
+  //       const distance = distanceResponse.rows[0].elements[0].distance.text;
+  //       console.log('Distance:', distance);
+  //     }
+  //   });
+  // }
 
-  // Handle direction button click
-  onDirectionsClick(location: any) {
-    const origin = this.center; // Use the current map center as the origin
-    const destination = { lat: location.lat, lng: location.lng };
-    this.getDirectionsAndDistance(origin, destination);
-  }
+  // // Handle direction button click
+  // onDirectionsClick(location: any) {
+  //   const origin = this.center; // Use the current map center as the origin
+  //   const destination = { lat: location.lat, lng: location.lng };
+  //   this.getDirectionsAndDistance(origin, destination);
+  // }
 
   onLocationClick(location: any) {
     this.selectedLocation = location; // Set the selected location
@@ -191,5 +196,39 @@ export class SupportserviceComponent  implements OnInit {
   changeSegment(segmentValue: string) {
     this.segment = segmentValue;
   }
+
+  calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = this.degreesToRadians(lat2 - lat1);
+    const dLon = this.degreesToRadians(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.degreesToRadians(lat1)) * Math.cos(this.degreesToRadians(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  }
+
+  // Convert degrees to radians
+  degreesToRadians(degrees: number) {
+    return degrees * (Math.PI / 180);
+  }
+
+  // Filter support centers within 10km
+  filterNearbySupportCenters() {
+    if (!this.geolocationEnabled || !this.center.lat || !this.center.lng) {
+      console.error('Geolocation is not available or not set');
+      return;
+    }
+  
+    this.filteredLocations = this.locations.filter(location => {
+      const distance = this.calculateDistance(this.center.lat, this.center.lng, location.lat, location.lng);
+      console.log(`Distance to ${location.name}: ${distance.toFixed(2)} km`);
+      return distance <= 10; // Keep locations within 10km
+    });
+  
+    console.log('Filtered support centers:', this.filteredLocations);
+  }
+  
 
 }

@@ -10,10 +10,15 @@ ion-toolbar {
     padding: 8px;
   }
   
+
+
   .search-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10; /* Ensure it stays above other content */
     width: 62%;
     border-radius: 8px;
-    margin-top: 5px;
+    margin-top: 5px; /* Ensure no margin at the top */
   }
 
   .locations-card{
