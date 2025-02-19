@@ -1,9 +1,9 @@
-<ion-card class="card-small cs-fixed-height daily-tips-container">
+<ion-card class="card-small daily-tips-container">
   <ion-card-header>
     <ion-card-title>{{dailyPeaceTitle}}</ion-card-title>
   </ion-card-header>
   <ion-card-content>
-    <ion-grid class="ion-no-padding">
+    <ion-grid class="ion-no-padding d-flex-h-100 ion-align-items-stretch">
       <ion-row>
        <ion-col> 
           <h3 class="ion-text-center">
@@ -37,7 +37,7 @@
           </div>
         </ion-col>
         </ion-row>
-        <ion-row>
+        <ion-row class="h-100">
           <ion-col class="cs-footer">
             <p [@tipFade]="currentTip">
               {{ currentTip }}

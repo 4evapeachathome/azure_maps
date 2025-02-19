@@ -52,16 +52,36 @@ html,
 body {
   font-family: $font-Inter;
 }
-.plr-0{
+.plr-0 {
   padding-left: 0;
   padding-right: 0;
+}
+.pls-0{
+  padding-inline-start: 0;
 }
 ion-card {
   box-shadow: none;
   border-radius: 8px;
   margin: 0;
 }
-
+.h-100{
+  height: 100%;
+}
+.d-flex-ion{
+  display: flex;
+  flex-direction: column;
+}
+.d-flex-h-100{
+  height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.comp-space {
+  margin: 16px 0;
+}
+.com-space-top-16 {
+  margin-top: 16px;
+}
 .menu-content {
   box-shadow: none !important;
   background: $color-container;
@@ -89,6 +109,9 @@ ion-card {
   }
 }
 .card-small {
+  display: flex  ;
+      flex-direction: column;
+      height: 100%;
   ion-card-title {
     color: $color-deep-Gray;
     font-size: $font-size-xll;
@@ -104,26 +127,44 @@ ion-card {
     // font-weight: $font-semibold ;
     margin-bottom: 5px;
   }
+  ion-card-content{
+    height: 100%;
+  }
   .cs-footer {
+    display: flex;
     background-color: $color-dark-magenta;
     border-top: 5px solid $color-primary;
     color: $color-primary-contrast;
     font-size: $font-size-md;
     padding: 30px 15px;
     text-align: center;
+    align-items: center;
+    justify-content: center;
   }
 }
-.cs-fixed-height{
-height: 100%;
-ion-card-content{
-  max-height: 250px;
-}
+.cs-fixed-height {
+  height: 100%;
+  ion-card-content {
+    max-height: 250px;
+  }
 }
 .daily-tips-container {
   ion-card-content {
     padding-inline-start: 0 !important;
     padding-inline-end: 0 !important;
     padding-bottom: 0 !important;
+  }
+}
+.hc-spacing {
+  .hcs {
+    padding-inline-start: 8px;
+    padding-inline-end: 8px;
+  }
+  .hcs-r {
+    padding-inline-end: 8px;
+  }
+  .hcs-l {
+    padding-inline-start: 8px;
   }
 }
 .calendar-strip {
@@ -226,8 +267,8 @@ ion-card-content{
 }
 
 .wellness-container {
-  .ion-img {
-    width: 120px;
+  ion-img {
+  
     height: 120px;
     object-fit: contain;
   }
@@ -240,27 +281,27 @@ ion-card-content{
   }
 }
 .expert-advice {
-  ion-card-title{
+  ion-card-title {
     font-size: $font-size-xl;
   }
-  ion-card-header{
+  ion-card-header {
     padding-bottom: 0;
   }
   .image-container {
     position: relative;
     width: 100%;
     height: 150px;
-  //  max-height: 150px;
+    //  max-height: 150px;
     background: $color-white-smoke;
     border-radius: 8px;
-    ion-img{
+    ion-img {
       height: 100%;
       img {
-      //  max-height: 150px;
+        //  max-height: 150px;
         object-fit: cover;
       }
     }
-   
+
     .overlay {
       position: absolute;
       bottom: 0;
@@ -276,86 +317,129 @@ ion-card-content{
     }
   }
 }
-.carousel-header{
-  ion-card-title{
-  font-size: $font-size-head-xl;
-      font-weight: $font-bold;
-      color: $color-primary;
-      text-align: center;
-    }
-}
-.carousel-container{
-.carousel {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  .card {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-  
-    &.active {
-      display: block;
-      opacity: 1;
-    }
-  }
-  .image-container {
-    width: 225px;  
-    height: 225px; 
-    margin: 0 auto; 
-    .carousel-image {
-      // width: 100%;
-      // height: 300px;
-      // object-fit: cover;
-      // border-radius: 10px;
-      // box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-  }
-  .carousel-description{
-    background: $color-primary-contrast;
+.carousel-header {
+  ion-card-title {
+    font-size: $font-size-head-xl;
+    font-weight: $font-bold;
+    color: $color-primary;
     text-align: center;
-    position: relative;
-    padding: 36px;
-    .description{
-      width: 80%;
-      margin: 0 auto;
-    h3{
-      font-size: $font-size-xll;
-      font-weight: $font-bold;
-      color: $color-deep-Gray;
-    }
-    p{
-      font-size: $font-size-base;
-      color: $color-dark-Gray;
-      font-style: italic;
-    }
-  }
-  .dots {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    
-    div {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: $color-Gray84;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      
-      &.active {
-        background: $color-primary;
-       //  width: 10px;
-      }
-  
-      &:hover {
-        background: $color-primary;
-      }
-    }
-  }
   }
 }
+
+.carousel-container {
+  padding-inline-start: 0 !important;
+  padding-inline-end: 0 !important;
+  .carousel {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    .carousel-card {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      position: relative;
+      &.active {
+        display: block;
+        opacity: 1;
+      }
+    }
+    .image-container {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+      position: absolute;
+      top: -110px;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      // .carousel-image {
+      //   // width: 100%;
+      //   // height: 300px;
+      //   // object-fit: cover;
+      //   // border-radius: 10px;
+      //   // box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      // }
+    }
+    .carousel-des-container {
+      background: $color-primary-contrast;
+      margin-top: 110px;
+      padding-top: 110px;
+      .carousel-description {
+        text-align: center;
+        position: relative;
+        padding: 36px;
+
+        .description {
+          width: 80%;
+          margin: 0 auto;
+          min-height: 200px;
+          position: relative;
+          padding-bottom: 20px;
+          h3 {
+            font-size: $font-size-xll;
+            font-weight: $font-bold;
+            color: $color-deep-Gray;
+          }
+          p {
+            font-size: $font-size-base;
+            color: $color-dark-Gray;
+            font-style: italic;
+          }
+        }
+        .dots {
+          display: flex;
+          justify-content: center;
+          gap: 0.5rem;
+          margin-top: 1rem;
+          position: absolute;
+          bottom: 0;
+          z-index: 1;
+          left: 0;
+          right: 0;
+          div {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: $color-Gray84;
+            cursor: pointer;
+            transition: background 0.3s ease;
+
+            &.active {
+              background: $color-primary;
+              //  width: 10px;
+            }
+
+            &:hover {
+              background: $color-primary;
+            }
+          }
+        }
+      }
+
+      .arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        cursor: pointer;
+        z-index: 2;
+        color: #ab52c5;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: darken(#ab52c5, 10%);
+        }
+
+        &.left-arrow {
+          left: 1rem;
+        }
+
+        &.right-arrow {
+          right: 1rem;
+        }
+      }
+    }
+  }
 }
