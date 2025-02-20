@@ -332,6 +332,7 @@ ion-card {
 .carousel-container {
   padding-inline-start: 0 !important;
   padding-inline-end: 0 !important;
+  padding-top: 0 !important;
   .carousel {
     position: relative;
     overflow: hidden;
@@ -372,7 +373,7 @@ ion-card {
       .carousel-description {
         text-align: center;
         position: relative;
-        padding: 36px;
+        padding: 16px;
 
         .description {
           width: 80%;
@@ -384,6 +385,7 @@ ion-card {
             font-size: $font-size-xll;
             font-weight: $font-bold;
             color: $color-deep-Gray;
+            margin-bottom: 16px;
           }
           p {
             font-size: $font-size-base;
