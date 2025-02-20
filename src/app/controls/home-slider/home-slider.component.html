@@ -4,73 +4,68 @@
 </ion-card-header>
 <ion-card-content class="carousel-container">
   <div class="carousel" *ngIf="descriptions && descriptions.length > 0">
-  
-      <div
-        class="carousel-card"
-        *ngFor="let description of descriptions; let i = index"
-        [class.active]="currentIndex === i"
-        [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
-        [@slideAnimation]>
-        
-        <!-- Display Only the Current Image -->
-        <div class="image-container" *ngIf="imageUrls?.length">
-          <ion-img 
-            [src]="imageUrls[currentIndex]" 
-            [alt]="mainTitle || 'Slider Image'" 
-            class="carousel-image"
-          ></ion-img>
-        </div>
-  
-        <!-- Dynamic Text Content -->
-         <div class="carousel-des-container">
-        <div class="carousel-description" *ngFor="let content of description">
-          <div class="description">
-          <h3
-            *ngIf="content.type === 'heading'"
-           
-            [innerHTML]="getStyledText(content.children[0])"
-          ></h3>
-          <p *ngIf="content.type === 'paragraph'">
-            <span *ngFor="let child of content.children" [innerHTML]="getStyledText(child)"></span>
-          </p>
-           <!-- Read More Button -->
-        <ion-button  color="primary"
-        *ngIf="i === 0 && showButton" 
-       
-       >
-        Read More
-      </ion-button>
-        <!-- Dots for Indicators -->
-        <div class="dots">
-          <div 
-            *ngFor="let dot of descriptions; let j = index" 
-            [class.active]="currentIndex === j"
-            (click)="currentIndex = j"
-          ></div>
-        </div>
-        </div>
-        
-        <!-- Navigation Arrows -->
-        <ion-icon
-          name="chevron-back-outline"
-          class="arrow left-arrow"
-          (click)="prevSlide()"
-        ></ion-icon>
-        <ion-icon
-          name="chevron-forward-outline"
-          class="arrow right-arrow"
-          (click)="nextSlide()"
-        ></ion-icon>
-  
+    <div
+      class="carousel-card"
+      *ngFor="let description of descriptions; let i = index"
+      [class.active]="currentIndex === i"
+      [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
+      [@slideAnimation]
+    >
+      <!-- Display Only the Current Image -->
+      <div class="image-container" *ngIf="imageUrls?.length">
+        <ion-img 
+          [src]="imageUrls[currentIndex]" 
+          [alt]="mainTitle || 'Slider Image'" 
+          class="carousel-image"
+        ></ion-img>
       </div>
-        
-       
   
-      
+      <!-- Dynamic Text Content -->
+      <div class="carousel-des-container">
+        <div class="carousel-description">
+          <!-- Render heading if it exists -->
+          <ng-container *ngFor="let content of description">
+            <h3 *ngIf="content.type === 'heading'"
+                [innerHTML]="getStyledText(content.children[0])">
+            </h3>
+          </ng-container>
+          
+          <!-- Render paragraphs -->
+          <ng-container *ngFor="let content of description">
+            <p *ngIf="content.type === 'paragraph'">
+              <span *ngFor="let child of content.children" 
+                    [innerHTML]="getStyledText(child)">
+              </span>
+            </p>
+          </ng-container>
+          
+          <!-- Read More Button (only once per slide) -->
+          <ion-button color="primary" 
+                      *ngIf="i === 0 && showButton">
+            Read More
+          </ion-button>
+          
+          <!-- Dots for Indicators (only once per slide) -->
+          <div class="dots">
+            <div *ngFor="let dot of descriptions; let j = index" 
+                 [class.active]="currentIndex === j"
+                 (click)="currentIndex = j">
+            </div>
+          </div>
         </div>
-  
+              <!-- Navigation Arrows -->
+        <ion-icon
+        name="chevron-back-outline"
+        class="arrow left-arrow"
+        (click)="prevSlide()"
+      ></ion-icon>
+      <ion-icon
+        name="chevron-forward-outline"
+        class="arrow right-arrow"
+        (click)="nextSlide()"
+      ></ion-icon>
       </div>
-
+    </div>
   </div>
 </ion-card-content>
 

@@ -57,10 +57,10 @@ sliderData: any;
           this.mainTitle = sliderData.title || '';
   
           // Map the descriptions dynamically
-          this.descriptions = sliderData.sliderContent.map((content: any) => 
-            Array.isArray(content.slidercontent) ? content.slidercontent : []
-          );
-  
+          this.descriptions = sliderData.sliderContent.map((content: any) => {
+            // Ensure slidercontent is an array, and return it as is (one description per sliderContent)
+            return Array.isArray(content.slidercontent) ? content.slidercontent : [];
+          });
           // Extract image URLs correctly
           this.imageUrls = sliderData.sliderContent
             .map((content: any) => content.imageUrl)
