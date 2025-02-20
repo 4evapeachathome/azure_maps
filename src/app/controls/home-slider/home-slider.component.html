@@ -23,6 +23,7 @@
       <!-- Dynamic Text Content -->
       <div class="carousel-des-container">
         <div class="carousel-description">
+          <div class="description">
           <!-- Render heading if it exists -->
           <ng-container *ngFor="let content of description">
             <h3 *ngIf="content.type === 'heading'"
@@ -52,6 +53,7 @@
                  (click)="currentIndex = j">
             </div>
           </div>
+        </div>
         </div>
               <!-- Navigation Arrows -->
         <ion-icon
