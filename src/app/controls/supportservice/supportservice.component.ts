@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, ElementRef, NgModule, OnInit, ViewChild } from '@angular/core';
+import { IonicModule, Platform } from '@ionic/angular';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -24,12 +24,16 @@ export class SupportserviceComponent  implements OnInit {
   latitude: number | undefined;
   longitude: number | undefined;
   geolocationEnabled: boolean = false;
+  userLocation: any = null;
+  private readonly phoneNumber = '+1234567890';
+  private readonly websiteUrl = 'https://your-services-website.com';
+  private readonly supportUrl = 'https://your-support-website.com';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private platform: Platform) { }
 
 
   ngOnInit() {
-    this.getCurrentPosition();
+    //this.getCurrentPosition();
   }
   center: google.maps.LatLngLiteral = { lat: 47.6062, lng: -122.3321 };
   zoom = 12;
@@ -73,7 +77,7 @@ export class SupportserviceComponent  implements OnInit {
       tags: ['Counseling', 'Hotline'],
     },
   ];
-  filteredLocations = [...this.locations];
+  filteredLocations: any[] | undefined ;
 
   filteredLocationss = [
     { 
@@ -118,6 +122,7 @@ export class SupportserviceComponent  implements OnInit {
     this.filterNearbySupportCenters();
     console.log('Current position:', this.latitude, this.longitude);
   }
+  
 
   // Toggle filter widget
   toggleFilter() {
@@ -153,33 +158,12 @@ export class SupportserviceComponent  implements OnInit {
     );
   }
 
-  // getDirectionsAndDistance(origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) {
-  //   const directionsApiUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=AIzaSyAJ_ySiFipBP82xYIin5o0_rpfPYPNKaa0`;
-  //   const distanceMatrixApiUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&key=AIzaSyAJ_ySiFipBP82xYIin5o0_rpfPYPNKaa0`;
-
-  //   // Get directions
-  //   this.http.get(directionsApiUrl).subscribe((directionsResponse: any) => {
-  //     if (directionsResponse.routes && directionsResponse.routes.length > 0) {
-  //       const route = directionsResponse.routes[0];
-  //       console.log('Directions:', route);
-  //     }
-  //   });
-
-  //   // Get distance
-  //   this.http.get(distanceMatrixApiUrl).subscribe((distanceResponse: any) => {
-  //     if (distanceResponse.rows && distanceResponse.rows.length > 0) {
-  //       const distance = distanceResponse.rows[0].elements[0].distance.text;
-  //       console.log('Distance:', distance);
-  //     }
-  //   });
-  // }
-
-  // // Handle direction button click
-  // onDirectionsClick(location: any) {
-  //   const origin = this.center; // Use the current map center as the origin
-  //   const destination = { lat: location.lat, lng: location.lng };
-  //   this.getDirectionsAndDistance(origin, destination);
-  // }
+  onIconClick() {
+    console.log('Icon clicked!');
+    if (!this.userLocation) { // Only request location if we don’t already have it
+      this.getCurrentPosition();
+    }
+  }
 
   onLocationClick(location: any) {
     this.selectedLocation = location; // Set the selected location
@@ -224,11 +208,32 @@ export class SupportserviceComponent  implements OnInit {
     this.filteredLocations = this.locations.filter(location => {
       const distance = this.calculateDistance(this.center.lat, this.center.lng, location.lat, location.lng);
       console.log(`Distance to ${location.name}: ${distance.toFixed(2)} km`);
-      return distance <= 10; // Keep locations within 10km
+      return distance <= 100; // Keep locations within 100km
     });
   
     console.log('Filtered support centers:', this.filteredLocations);
   }
   
+  openGoogleMaps() {
+    // Opens Google Maps in a new tab with specified coordinates
+    const mapsUrl = `https://www.google.com/maps?q=${this.latitude},${this.longitude}`;
+    window.open(mapsUrl, '_blank');
+  }
+
+  openServices() {
+    // Opens services website in a new tab
+    window.open(this.websiteUrl, '_blank');
+  }
+
+  openSupport() {
+    // Opens support website in a new tab
+    window.open(this.supportUrl, '_blank');
+  }
+
+  openPhone() {
+    // Opens phone app with specified number
+    window.location.href = `tel:${this.phoneNumber}`;
+  }
+
 
 }

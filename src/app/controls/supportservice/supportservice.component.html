@@ -3,10 +3,16 @@
 </ion-toolbar>
 
 <ion-toolbar class="search-toolbar">
+  <ion-icon 
+        slot="start" 
+        name="location-outline" 
+        (click)="onIconClick()">
+      </ion-icon>
   <ion-searchbar
     [(ngModel)]="searchQuery"
     (keyup.enter)="onSearch()"
     placeholder="Type your current location"
+    class="custom-searchbar"
   ></ion-searchbar>
   <ion-buttons slot="end">
     <ion-button (click)="onSearch()">
@@ -18,7 +24,7 @@
   </ion-buttons>
 </ion-toolbar>
 
-<div class="cards-container">
+<ion-grid class="cards-container">
   <ion-card class="locations-card" *ngIf="geolocationEnabled">
     <ion-card-header>
       <ion-card-title>Support Services near you</ion-card-title>
@@ -32,19 +38,22 @@
               <p>Hours of operation: 24/7</p>
             </div>
             <div class="button-group">
-              <ion-button fill="clear" class="action-button">
+              <ion-button fill="clear" size="small" class="action-button" (click)=" openGoogleMaps()">
                 <ion-icon name="navigate-outline"></ion-icon>
                 Direction
               </ion-button>
-              <ion-button fill="clear" class="action-button">
+              
+              <ion-button fill="clear" size="small" class="action-button" (click)="openServices()">
                 <ion-icon name="list-outline"></ion-icon>
                 Services
               </ion-button>
-              <ion-button fill="clear" class="action-button">
+              
+              <ion-button fill="clear" size="small" class="action-button" (click)="openSupport()">
                 <ion-icon name="people-outline"></ion-icon>
                 Support
               </ion-button>
-              <ion-button fill="clear" class="action-button">
+              
+              <ion-button fill="clear" size="small" class="action-button" (click)="openPhone()">
                 <ion-icon name="call-outline"></ion-icon>
                 Phone
               </ion-button>
@@ -95,19 +104,22 @@
 
     <div class="scrollable-content">
       <div class="button-group">
-        <ion-button fill="clear" size="small" class="action-button">
+        <ion-button fill="clear" size="small" class="action-button" (click)=" openGoogleMaps()">
           <ion-icon name="navigate-outline"></ion-icon>
           Direction
         </ion-button>
-        <ion-button fill="clear" size="small" class="action-button">
+        
+        <ion-button fill="clear" size="small" class="action-button" (click)="openServices()">
           <ion-icon name="list-outline"></ion-icon>
           Services
         </ion-button>
-        <ion-button fill="clear" size="small" class="action-button">
+        
+        <ion-button fill="clear" size="small" class="action-button" (click)="openSupport()">
           <ion-icon name="people-outline"></ion-icon>
           Support
         </ion-button>
-        <ion-button fill="clear" size="small" class="action-button">
+        
+        <ion-button fill="clear" size="small" class="action-button" (click)="openPhone()">
           <ion-icon name="call-outline"></ion-icon>
           Phone
         </ion-button>
@@ -151,9 +163,9 @@
     </div>
   </ion-card-content>
 </ion-card>
-</div>
+</ion-grid>
 
-<div class="map-container">
+<ion-grid class="map-container">
   <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
     <map-marker 
       *ngFor="let location of filteredLocations" 
@@ -161,4 +173,4 @@
       [label]="location.name">
     </map-marker>
   </google-map>
-</div>
+</ion-grid>
