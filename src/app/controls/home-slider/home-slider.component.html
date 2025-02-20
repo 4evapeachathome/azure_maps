@@ -6,7 +6,7 @@
   <div class="carousel" *ngIf="descriptions && descriptions.length > 0">
   
       <div
-        class="card"
+        class="carousel-card"
         *ngFor="let description of descriptions; let i = index"
         [class.active]="currentIndex === i"
         [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
@@ -22,6 +22,7 @@
         </div>
   
         <!-- Dynamic Text Content -->
+         <div class="carousel-des-container">
         <div class="carousel-description" *ngFor="let content of description">
           <div class="description">
           <h3
@@ -49,8 +50,6 @@
         </div>
         </div>
         
-       
-  
         <!-- Navigation Arrows -->
         <ion-icon
           name="chevron-back-outline"
@@ -62,6 +61,10 @@
           class="arrow right-arrow"
           (click)="nextSlide()"
         ></ion-icon>
+  
+      </div>
+        
+       
   
       
         </div>
