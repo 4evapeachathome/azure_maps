@@ -110,19 +110,42 @@ export class SupportserviceComponent  implements OnInit {
   }
 
   async getCurrentPosition() {
-    const coordinates = await Geolocation.getCurrentPosition();
-    this.latitude = coordinates.coords.latitude;
-    this.longitude = coordinates.coords.longitude;
-    this.geolocationEnabled = true;
-    //this.center = { lat: this.latitude, lng: this.longitude };
-
-    console.log('Current position:', this.center);
-    
-    // Now filter nearby locations
-    this.filterNearbySupportCenters();
-    console.log('Current position:', this.latitude, this.longitude);
-  }
+    try {
+      const coordinates = await Geolocation.getCurrentPosition();
+      this.latitude = coordinates.coords.latitude;
+      this.longitude = coordinates.coords.longitude;
+      this.geolocationEnabled = true;
+      // this.center = { lat: this.latitude, lng: this.longitude };
   
+      console.log('Current position:', this.center);
+      console.log('Latitude:', this.latitude, 'Longitude:', this.longitude);
+  
+      this.filterNearbySupportCenters();
+    } catch (error: any) { // Explicitly type the error
+      if (error.code === error.PERMISSION_DENIED) {
+        console.log('Location access denied by user.');
+        this.handleLocationPermissionDenied();
+      } else if (error.code === error.POSITION_UNAVAILABLE) {
+        console.log('Location information is unavailable.');
+      } else if (error.code === error.TIMEOUT) {
+        console.log('The request to get user location timed out.');
+      } else {
+        console.log('An unknown error occurred:', error.message);
+      }
+    }
+  }
+
+  handleLocationPermissionDenied() {
+  this.geolocationEnabled = false;
+  const userConfirmed = confirm(
+    'Location access is blocked. Would you like to enable it in your browser settings?'
+  );
+  if (userConfirmed) {
+    alert(
+      'Please go to your browser settings and allow location access for this site, then refresh the page.'
+    );
+  }
+}
 
   // Toggle filter widget
   toggleFilter() {
