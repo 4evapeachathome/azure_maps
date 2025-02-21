@@ -23,7 +23,6 @@ export class HealthyrelationshipcontentComponent  implements OnInit {
   getHealthyRelationshipContent(endpoint: string){
     this.apiService.getHealthyRelationShipContent(endpoint).subscribe(
       (response) => {
-      //  debugger;
         if (response?.data?.length > 0) {
           // Filter out empty paragraphs
           this.content = response.data[0].content.filter((item:any) => 

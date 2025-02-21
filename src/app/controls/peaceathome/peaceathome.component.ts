@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
+import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
 
 @Component({
   selector: 'pathome-peaceathome',
   templateUrl: './peaceathome.component.html',
   styleUrls: ['./peaceathome.component.scss'],
   standalone: true,
-      imports: [CommonModule, IonicModule]
+      imports: [CommonModule, IonicModule, BreadcrumbComponent]
 })
 export class PeaceathomeComponent  implements OnInit {
  peaceathomeImg: string='';
@@ -24,7 +25,6 @@ export class PeaceathomeComponent  implements OnInit {
   getPeaceAtHome(){
     this.apiService.getPeaceAtHome().subscribe(
       (response) => {
-      //  debugger;
         if (response && response.image && response.title && response.ContentBlocks) {
           this.peaceathomeImg = response.image;
           this.titleContent = response.title;

@@ -24,7 +24,6 @@ export class NopeacehomescenariooneComponent  implements OnInit {
   GetNoPeaceHomeScenarioOne() {
     this.apiService.getNoPeaceHomeScenarioOne().subscribe(
       (data) => {
-        debugger;
         this.webImage = data.image;
         this.scenarioData = data.map((item: any) => ({
           title: item.content.content.find((c: any) => 

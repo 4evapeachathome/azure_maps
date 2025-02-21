@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { MenuService } from 'src/shared/menu.service';
 
 interface MenuItem {
   id: number;
@@ -35,7 +36,8 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    private menuService: MenuService
   ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -55,6 +57,7 @@ export class MenuComponent implements OnInit {
         if (Array.isArray(response)) {
           this.menuItems = response;
           this.processedMenu = this.buildMenuTree(this.menuItems);
+          this.menuService.setMenuItems(this.menuItems);
         } else {
           console.error('Invalid response format:', response);
         }

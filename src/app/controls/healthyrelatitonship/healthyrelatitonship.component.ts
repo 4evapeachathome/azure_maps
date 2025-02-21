@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
+import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
 
 @Component({
   selector: 'pathome-healthyrelatitonship',
   templateUrl: './healthyrelatitonship.component.html',
   styleUrls: ['./healthyrelatitonship.component.scss'],
    standalone: true,
-      imports: [CommonModule, IonicModule]
+      imports: [CommonModule, IonicModule, BreadcrumbComponent]
 })
 export class HealthyrelatitonshipComponent  implements OnInit {
   img: any;
@@ -28,7 +29,6 @@ export class HealthyrelatitonshipComponent  implements OnInit {
   getHealthyRelationshipData(endpoint : string){
     this.apiService.getHealthyRelationship(endpoint).subscribe(
       (response) => {
-        debugger;
         if (response && response.image && response.title && response.contentBlocks) {
           this.img = response.image;
           this.title = response.title;

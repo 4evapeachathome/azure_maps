@@ -22,6 +22,7 @@ import { RelationalComponent } from '../controls/relational/relational.component
 import { UsaMapComponent } from '../usa-map/usa-map.component';
 import { HeaderComponent } from "../controls/header/header.component";
 import { NopeacehomescenariooneComponent } from "../controls/nopeacehome-scenario-one/nopeacehomescenarioone.component";
+import { BreadcrumbComponent } from "../controls/breadcrumb/breadcrumb.component";
 
 @NgModule({
   imports: [
@@ -44,7 +45,8 @@ import { NopeacehomescenariooneComponent } from "../controls/nopeacehome-scenari
     UsaMapComponent,
     RelationalComponent,
     HeaderComponent,
-    NopeacehomescenariooneComponent
+    NopeacehomescenariooneComponent,
+    BreadcrumbComponent
 ],
   declarations: [
     HomePage

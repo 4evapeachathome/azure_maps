@@ -31,7 +31,6 @@ export class WellnessTipsComponent  implements OnInit {
     const storedIndex = localStorage.getItem(this.storageKey);
     this.previousTipIndex = storedIndex ? parseInt(storedIndex, 10) : null;
     this.fetchWellnessTip();
-    //debugger;
   }
 
   

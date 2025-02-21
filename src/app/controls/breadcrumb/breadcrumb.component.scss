@@ -1,0 +1,20 @@
+.breadcrumb {
+    font-size: 14px;
+    color: #888; // Default color for parent items
+  
+    .breadcrumb-link {
+      cursor: pointer;
+      color: #aaa; // Light grey for parent
+      text-decoration: none;
+    }
+  
+    .breadcrumb-link:hover {
+      text-decoration: underline;
+    }
+  
+    .breadcrumb-current {
+      font-weight: bold;
+      color: var(--ion-color-primary); // Primary color for the current page
+    }
+  }
+  

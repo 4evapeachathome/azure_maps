@@ -128,7 +128,6 @@ export class ApiService {
   }
 
   getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string): Observable<any> {
-  //  debugger;
     const params = this.buildQueryParams(options);
     let headers = this.createHeaders(token);
   
@@ -423,7 +422,6 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
       map((res: any) => {
         console.log('data:', res);
         const resData = res.data;
-        debugger;
         if (resData && resData.webImage && resData.webImage.url) {
           resData.image = `${this.apiUrl}${resData.webImage.url}`;
         } else {
@@ -512,7 +510,6 @@ getNoPeaceHomeScenarioOne(): Observable<any> {
   return this.getWithQuery(endpoint, options, this.apitoken).pipe(
     map((res: any) => {
       const resData = res.data;
-      debugger
       if (resData[0] && resData[0]?.content?.webImage?.url) {
         resData.image = `${this.apiUrl}${resData[0].content.webImage.url}`;
       } else {
