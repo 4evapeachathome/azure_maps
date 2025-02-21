@@ -81,7 +81,9 @@ sliderData: any;
   }
   
   
-  
+  onImageLoad(index: number) {
+    console.log(`Image ${index} loaded`);
+  }
   
 
 

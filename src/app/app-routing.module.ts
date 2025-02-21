@@ -7,6 +7,7 @@ import { TypesofAbuseCardComponent } from './controls/typesof-abuse-card/typesof
 import { HealthyrelatitonshipComponent } from './controls/healthyrelatitonship/healthyrelatitonship.component';
 import { UsMapComponent } from './controls/us-map/us-map.component';
 import { UsStateLawDetailsComponent  } from './controls/us-state-law-details/us-state-law-details.component';
+import { UsaMapComponent } from './usa-map/usa-map.component';
 
 
 const routes: Routes = [
@@ -28,7 +29,7 @@ const routes: Routes = [
   { path: 'relational', component: RelationalComponent },
   { path: 'typesofabuse', component: TypesofAbuseCardComponent },
   { path: 'healthyrelationship', component: HealthyrelatitonshipComponent },
-  { path: 'uslawsbystate', component: UsMapComponent },
+  { path: 'uslawsbystate', component: UsaMapComponent },
   { path: 'us-state-law-details/:stateName', component: UsStateLawDetailsComponent },
     
   {

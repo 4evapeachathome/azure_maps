@@ -14,9 +14,10 @@
       <!-- Display Only the Current Image -->
       <div class="image-container" *ngIf="imageUrls?.length">
         <ion-img 
-          [src]="imageUrls[currentIndex]" 
+          [src]="imageUrls[i]" 
           [alt]="mainTitle || 'Slider Image'" 
           class="carousel-image"
+          (ionImgDidLoad)="onImageLoad(i)"
         ></ion-img>
       </div>
   
