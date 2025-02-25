@@ -1,23 +1,31 @@
 <ion-app>
-  <ion-split-pane contentId="main-content">
-    <ion-menu type="push" contentId="main-content">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Menu</ion-title>
-          <!-- <ion-menu-toggle slot="start" >
-            <ion-menu-button></ion-menu-button>
-          </ion-menu-toggle> -->
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <app-menu 
-          [fields]="['title', 'link']"
-          [populate]="['parentMenu']"
-          [sort]="['createdAt:asc']">
-        </app-menu>
-      </ion-content>
-    </ion-menu>
+  <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" checked />
+  <label for="sidebar-toggle" class="sidebar-toggle-label">
+    <ion-icon name="menu-outline"></ion-icon>
+  </label>
+
+  <!-- <label for="sidebar-toggle" class="sidebar-toggle-label">&#9776;</label> -->
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <!-- <ion-icon
+      name="menu-outline" 
+     
     
-    <ion-router-outlet id="main-content"></ion-router-outlet>
-  </ion-split-pane>
+    ></ion-icon> -->
+      <!-- <span class="material-symbols-outlined"> menu </span> -->
+      <h2>Menu</h2>
+    </div>
+    <app-menu
+      [fields]="['title', 'link']"
+      [populate]="['parentMenu']"
+      [sort]="['createdAt:asc']"
+    >
+    </app-menu>
+  </aside>
+
+  <ion-router-outlet
+    id="main-content"
+    class="slider-content"
+  ></ion-router-outlet>
 </ion-app>
