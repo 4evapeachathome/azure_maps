@@ -5,102 +5,103 @@ import { GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { Geolocation } from '@capacitor/geolocation';
+import { ApiService } from 'src/app/services/api.service';
+import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
+import { FilterOption, SERVICE_FILTER_OPTIONS } from 'src/shared/filterconstant';
 
 declare var google: any;
+
+export interface OrganizationResponse {
+  data: Organization[];
+  meta: Meta;
+}
+
+export interface Organization {
+  id: number;
+  documentId: string;
+  OrgName: string;
+  PhoneNumber: string;
+  OrgWebUrl: string;
+  OrgAddress: string;
+  OrgCity: string;
+  OrgZipCode: string;
+  OrgHotline: string;
+  OrgLatitude: number;
+  OrgLongitude: number;
+  ServiceHours: string;
+  AboutOrg: AboutOrgItem[];
+  IsHotline: boolean | null;
+  
+  // Service flags
+  isCounseling: boolean;
+  isCommunityOutreach: boolean;
+  isReferralServices: boolean;
+  isShelter: boolean;
+  isCourtServices: boolean;
+  isOther: boolean;
+  isChildrenServices: boolean;
+  isSupportGroups: boolean;
+  isMedicalServices: boolean;
+  isBasicNeedsAssistance: boolean;
+  isSafetyPlanning: boolean;
+  isTranslationServices: boolean;
+}
+
+export interface AboutOrgItem {
+  type: string;
+  children: AboutOrgChild[];
+}
+
+export interface AboutOrgChild {
+  text: string;
+  type: string;
+  bold?: boolean;
+}
+
+export interface Meta {
+  pagination: Pagination;
+}
+
+export interface Pagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
 
 @Component({
   selector: 'pathome-supportservice',
   templateUrl: './supportservice.component.html',
   styleUrls: ['./supportservice.component.scss'],
     standalone: true,
-    imports: [CommonModule, IonicModule, GoogleMapsModule, FormsModule ],
+    imports: [CommonModule, IonicModule, GoogleMapsModule, FormsModule, BreadcrumbComponent],
 })
 export class SupportserviceComponent  implements OnInit {
   searchQuery: string = '';
   filterOpen: boolean = false;
-  selectedLocation: any = null;
+  selectedLocation: Organization | null = null;
   activeTab: string = 'about';
   segment: string = 'about';
   latitude: number | undefined;
   longitude: number | undefined;
   geolocationEnabled: boolean = false;
   userLocation: any = null;
-  private readonly phoneNumber = '+1234567890';
-  private readonly websiteUrl = 'https://your-services-website.com';
-  private readonly supportUrl = 'https://your-support-website.com';
+  organizations: Organization[] = [];
+  private readonly endPoint : string = '/api/support-services';
 
-  constructor(private http: HttpClient,private platform: Platform) { }
+  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService) { }
 
 
   ngOnInit() {
-    //this.getCurrentPosition();
+    this.filterOptions = JSON.parse(JSON.stringify(SERVICE_FILTER_OPTIONS));
+    this.getSupportServiceData(this.endPoint);
   }
-  center: google.maps.LatLngLiteral = { lat: 47.6062, lng: -122.3321 };
+  center: google.maps.LatLngLiteral = { lat: 42.0162261, lng: -91.701811 };
   zoom = 12;
-
-  // Locations and filters
-  locations = [
-    {
-      lat: 47.608,
-      lng: -122.335,
-      name: 'Thrive Together',
-      tags: ['Child support', 'Medical'],
-    },
-    {
-      lat: 47.603,
-      lng: -122.330,
-      name: 'Los Angeles Center',
-      tags: ['Community outreach'],
-    },
-    {
-      lat: 27.609,
-      lng: -152.340,
-      name: 'Thrive Together',
-      tags: ['Counseling', 'Hotline'],
-    },
-    {
-      lat: 50.609,
-      lng: -142.340,
-      name: 'Health and Justice',
-      tags: ['Counseling', 'Hotline'],
-    },
-    {
-      lat: 23.609,
-      lng: -12.340,
-      name: 'Thrive Together',
-      tags: ['Counseling', 'Hotline'],
-    },
-    {
-      lat: 49.609,
-      lng: -162.340,
-      name: 'Wellness Center',
-      tags: ['Counseling', 'Hotline'],
-    },
-  ];
   filteredLocations: any[] | undefined ;
-
-  filteredLocationss = [
-    { 
-      name: "Thrive Together",
-      hours: "24/7",
-      description: "Thrive Together was originally established in 1999 as Iowa Deaf Women’s Advocacy Services...",
-      address: "4225 Glass Rd NE, Cedar Rapids, IA 52402",
-      about: "Thrive Together was originally established in 1999 as Iowa Deaf Women’s Advocacy Services (IDWAS) by four local Deaf women, primarily to provide support, information, and peer counseling services to Deaf, Hard of Hearing, and Deaf-Blind women throughout Iowa.",
-      services: "Providing legal aid, counseling, shelter services, and support for domestic abuse survivors."
-    }
-  ];
-  // Filter functionality
-
+  filterOptions: FilterOption[] = [];
   filterSearchTerm: string = '';
-  filterOptions = [
-    { label: 'Basic needs assistance', selected: false },
-    { label: 'Child support', selected: false },
-    { label: 'Community outreach', selected: false },
-    { label: 'Counseling', selected: false },
-    { label: 'Court-based', selected: false },
-    { label: 'Hotline', selected: false },
-    { label: 'Medical', selected: false },
-  ];
+
 
   // Filtered options for search within the filter widget
   get filteredFilterOptions() {
@@ -147,6 +148,25 @@ export class SupportserviceComponent  implements OnInit {
   }
 }
 
+getSupportServiceData(endpoint:string) {
+  this.apiService.getAllSupportServices(endpoint).subscribe(
+     (response : OrganizationResponse) => {
+      debugger;
+       if (response.data.length>0) {
+        this.organizations = response.data;
+         
+      
+       } else {
+         console.warn('No data found in the response.');
+        
+       }
+     },
+     (error) => {
+       console.error('Error fetching support service data:', error);
+     }
+   );
+ }
+
   // Toggle filter widget
   toggleFilter() {
     this.filterOpen = !this.filterOpen;
@@ -154,30 +174,38 @@ export class SupportserviceComponent  implements OnInit {
 
   // Clear filters
   clearFilters() {
-    this.filterOptions.forEach(option => (option.selected = false));
+    this.filterOptions.forEach(option => option.selected = false);
+    this.filterSearchTerm = '';
+  }
+  
+  closeFilter() {
+    this.filterOpen = false;
   }
 
   // Apply filters
   applyFilters() {
-    const selectedFilters = this.filterOptions
+    // Get selected filter keys
+    const selectedFilterKeys = this.filterOptions
       .filter(option => option.selected)
-      .map(option => option.label);
-
-    if (selectedFilters.length === 0) {
-      this.filteredLocations = [...this.locations];
-    } else {
-      this.filteredLocations = this.locations.filter(location =>
-        location.tags.some(tag => selectedFilters.includes(tag))
-      );
-    }
-
-    this.filterOpen = false;
+      .map(option => option.key as keyof Organization); 
+    debugger;
+    // Filter organizations based on selected filters
+    const filteredOrgs = this.organizations.filter(org => {
+      return selectedFilterKeys.some(key => {
+        return org[key] === true;
+      });
+    });
+    
+    // Update the displayed organizations
+    this.filteredLocations = filteredOrgs;
+    this.closeFilter();
   }
+
 
   // Search functionality
   onSearch() {
-    this.filteredLocations = this.locations.filter(location =>
-      location.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+    this.filteredLocations = this.organizations.filter(location =>
+      location.OrgName.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
@@ -196,8 +224,87 @@ export class SupportserviceComponent  implements OnInit {
     this.selectedLocation = null; // Hide the details card
   }
   
-  closeFilter(){
-    this.filterOpen = false;
+  getAboutText(location: Organization): string {
+    if (!location.AboutOrg || location.AboutOrg.length === 0) return '';
+
+    let aboutText = '';
+    let hasAddress = false;
+
+    // Process AboutOrg to build the text, checking for an address
+    location.AboutOrg.forEach(item => {
+      if (item.children && item.children.length > 0) {
+        item.children.forEach(child => {
+          if (child.text) {
+            if (child.bold) {
+              aboutText += `<strong>${child.text.trim()}</strong>`;
+            } else {
+              aboutText += child.text.trim();
+            }
+            // Check if this text contains an address (e.g., "Address:" followed by text)
+            if (child.text.toLowerCase().includes('address:')) {
+              hasAddress = true;
+            }
+            aboutText += '\n'; // Add a newline for paragraph breaks
+          }
+        });
+      }
+    });
+
+    // If no address was found in AboutOrg, append the address from Organization properties
+    // Format address to match Figma design (e.g., "4225 Glass Rd NE, Cedar Rapids, IA 52402")
+    if (!hasAddress) {
+      const addressParts = [
+        location.OrgAddress.trim(),
+        location.OrgCity.trim(),
+        `${location.OrgZipCode.trim()}}`
+      ].filter(part => part && part !== 'DNK'); // Exclude "DNK" placeholders
+      const address = addressParts.join(', ');
+      if (address) {
+        aboutText += `\n\n<strong>Address:</strong>\n${address}`;
+      }
+    } else {
+      // If address is already in AboutOrg, clean it up to match Figma format
+      aboutText = aboutText.replace(/\n\n/g, '\n').trim(); // Ensure proper spacing
+    }
+
+    return aboutText.trim().replace(/\n\s*\n/g, '\n'); // Clean up extra newlines
+  }
+
+  // Helper method to get list of services dynamically from SERVICE_FILTER_OPTIONS, prioritizing OrgHotline
+  getServices(location: Organization): { name: string, value: string | boolean | null, isHotline?: boolean }[] {
+    if (!location) return [];
+
+    let services: { name: string, value: string | boolean | null, isHotline?: boolean }[] = [];
+
+    // Add OrgHotline as the first service if it exists, marked as a hotline
+    if (location.OrgHotline && typeof location.OrgHotline === 'string' && location.OrgHotline.trim().length > 0) {
+      services.push({
+        name: 'Hotline',
+        value: location.OrgHotline,
+        isHotline: true // Flag to indicate this is the hotline for styling
+      });
+    }
+
+    // Add other services from SERVICE_FILTER_OPTIONS, excluding IsHotline to avoid duplication
+    services = services.concat(
+      SERVICE_FILTER_OPTIONS
+        .filter(option => option.key !== 'IsHotline') // Exclude IsHotline to avoid duplication with OrgHotline
+        .filter(option => {
+          // Map the key from SERVICE_FILTER_OPTIONS to the corresponding property in the Organization
+          const value = location[option.key as keyof Organization];
+          // Include the service only if the value is true (for booleans) or a non-empty string
+          // Exclude null, false, or empty strings
+          return (typeof value === 'boolean' && value === true) || 
+                 (typeof value === 'string' && value.trim().length > 0);
+        })
+        .map(option => ({
+          name: option.label,
+          value: location[option.key as keyof Organization] as string | boolean | null,
+          isHotline: false // Not a hotline
+        }))
+    );
+
+    return services;
   }
 
   changeSegment(segmentValue: string) {
@@ -228,34 +335,34 @@ export class SupportserviceComponent  implements OnInit {
       return;
     }
   
-    this.filteredLocations = this.locations.filter(location => {
-      const distance = this.calculateDistance(this.center.lat, this.center.lng, location.lat, location.lng);
-      console.log(`Distance to ${location.name}: ${distance.toFixed(2)} km`);
-      return distance <= 100; // Keep locations within 100km
+    this.filteredLocations = this.organizations.filter(location => {
+      const distance = this.calculateDistance(this.center.lat, this.center.lng, location.OrgLatitude, location.OrgLongitude);
+      console.log(`Distance to ${location.OrgName}: ${distance.toFixed(2)} km`);
+      return distance <= 10000; // Keep locations within 100km
     });
   
     console.log('Filtered support centers:', this.filteredLocations);
   }
   
-  openGoogleMaps() {
+  openGoogleMaps(latitude:any,longitude:any) {
     // Opens Google Maps in a new tab with specified coordinates
-    const mapsUrl = `https://www.google.com/maps?q=${this.latitude},${this.longitude}`;
+    const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
     window.open(mapsUrl, '_blank');
   }
 
-  openServices() {
-    // Opens services website in a new tab
-    window.open(this.websiteUrl, '_blank');
+  openServices(location: any) {
+    this.selectedLocation = location;
+    this.segment = 'services';
   }
 
-  openSupport() {
+  openSupport(supportUrl:string) {
     // Opens support website in a new tab
-    window.open(this.supportUrl, '_blank');
+    window.open(supportUrl, '_blank');
   }
 
-  openPhone() {
+  openPhone(phoneNumber:any) {
     // Opens phone app with specified number
-    window.location.href = `tel:${this.phoneNumber}`;
+    window.location.href = `tel:${phoneNumber}`;
   }
 
 

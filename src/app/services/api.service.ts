@@ -524,6 +524,42 @@ getNoPeaceHomeScenarioOne(): Observable<any> {
   );
 }
 
+//Support Service api
+getAllSupportServices(endpoint: string): Observable<any> {
+  return this.getWithQuery(endpoint, {
+    fields: [
+      'OrgName',
+      'PhoneNumber',
+      'OrgWebUrl',
+      'OrgAddress',
+      'OrgCity',
+      'OrgZipCode',
+      'OrgHotline',
+      'isCounseling',
+      'isCommunityOutreach',
+      'isReferralServices',
+      'isShelter',
+      'isCourtServices',
+      'isOther',
+      'isChildrenServices',
+      'isSupportGroups',
+      'isMedicalServices',
+      'isBasicNeedsAssistance',
+      'isSafetyPlanning',
+      'isTranslationServices',
+      'OrgLatitude',
+      'OrgLongitude',
+      'ServiceHours',
+      'AboutOrg',
+      'IsHotline'
+    ]
+  }, this.apitoken).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching support services:', error);
+      return throwError('An error occurred while fetching support services. Please try again later.');
+    })
+  );
+}
 
 
 

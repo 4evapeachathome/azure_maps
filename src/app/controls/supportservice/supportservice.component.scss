@@ -210,6 +210,7 @@ ion-segment{
 
 .services-section{
     margin:10px;
+    width: 100%;
 }
 
 ion-segment{
@@ -226,4 +227,27 @@ ion-segment{
 
 ion-icon {
   font-size: 20px; 
+}
+
+.about-section {
+  font-size: 14px; 
+  line-height: 1.5; 
+  color: #333;
+  white-space: pre-wrap; 
+  padding: 0; 
+  margin: 0; 
+}
+
+
+
+.about-section strong {
+  font-weight: 600; 
+  display: block; 
+  margin-bottom: 4px;
+}
+
+.about-section br {
+  display: block; 
+  content: " ";
+  margin: 4px 0; 
 }
