@@ -24,8 +24,8 @@ const routes: Routes = [
   { path: 'nopeaceathome', 
     loadChildren: () => import('./nopeaceathome/nopeaceathome.module').then( m => m.NopeaceathomePageModule)
   },
-  { path: 'supportservice', component: SupportserviceComponent },
-  { path: 'contactus', component: ContactUsFormComponent },
+  // { path: 'supportservice', component: SupportserviceComponent },
+  // { path: 'contactus', component: ContactUsFormComponent },
   { path: 'relational', component: RelationalComponent },
   { path: 'typesofabuse', component: TypesofAbuseCardComponent },
   { path: 'healthyrelationship', component: HealthyrelatitonshipComponent },
@@ -36,7 +36,16 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },
+  {
+    path: 'contactus',
+    loadChildren: () => import('./contactus/contactus.module').then( m => m.ContactusPageModule)
+  },
+  {
+    path: 'supportservice',
+    loadChildren: () => import('./supportservice/supportservice.module').then( m => m.SupportservicePageModule)
   }
+
 
 
 ];

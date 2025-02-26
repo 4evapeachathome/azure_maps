@@ -68,46 +68,50 @@
           </svg>
         </div>
 
-        <div *ngIf="showLawInfo" class="state-law-container">
-          <div class="state-law-info">
-            <div class="law-header">
-              <h3>{{ getStateLaw().title }}</h3>
-              <div class="law-metadata">
-                <span class="last-updated">
-                  <ion-icon name="calendar-outline"></ion-icon>
-                  Last Updated: {{ getStateLaw().lastUpdated }}
-                </span>
-                <span class="source">
-                  <ion-icon name="document-text-outline"></ion-icon>
-                  Source: {{ getStateLaw().source }}
-                </span>
+        <ion-grid *ngIf="showLawInfo" class="state-law-container">
+          <ion-row>
+            <ion-col class="state-law-info">
+              <div class="law-header">
+                <h3>{{ getStateLaw().title }}</h3>
+                <div class="law-metadata">
+                  <span class="last-updated">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    Last Updated: {{ getStateLaw().lastUpdated }}
+                  </span>
+                  <span class="source">
+                    <ion-icon name="document-text-outline"></ion-icon>
+                    Source: {{ getStateLaw().source }}
+                  </span>
+                </div>
               </div>
-            </div>
-            <div class="law-content">
-              <p [innerHTML]="getStateLaw().description | json"></p>
-            </div>
-          </div>
+              <div class="law-content">
+                <p [innerHTML]="getStateLaw().description | json"></p>
+              </div>
+            </ion-col>
+  
+            <ion-col class="state-map-side">
+              <div class="selected-state-map">
+                <svg [attr.viewBox]="getStateViewBox()">
+                  <path
+                    [attr.d]="getSelectedStatePath()"
+                    class="active"
+                  />
+                  <text
+                    [attr.x]="50"
+                    [attr.y]="50"
+                    class="state-label selected"
+                    text-anchor="middle"
+                    dominant-baseline="middle"
+                  >
+                    {{ selectedState.name }}
+                  </text>
+                </svg>
+              </div>
+            </ion-col>
+          </ion-row>          
+        </ion-grid>
 
-          <div class="state-map-side">
-            <div class="selected-state-map">
-              <svg [attr.viewBox]="getStateViewBox()">
-                <path
-                  [attr.d]="getSelectedStatePath()"
-                  class="active"
-                />
-                <text
-                  [attr.x]="50"
-                  [attr.y]="50"
-                  class="state-label selected"
-                  text-anchor="middle"
-                  dominant-baseline="middle"
-                >
-                  {{ selectedState.name }}
-                </text>
-              </svg>
-            </div>
-          </div>
-        </div>
+
 
         <ion-button (click)="resetState()">
           <ion-icon name="arrow-back" slot="start"></ion-icon>
