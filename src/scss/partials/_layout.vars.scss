@@ -34,6 +34,8 @@ $color-dark-magenta :   #813F95;
 $color-Gray84       :   #D6D6D6;
 $color-Gray64       :   #D7D7D7;
 $color-primary-contrast        :   #ffffff;
+$color-error        :   red;
+$color-white        :   #ffffff;
 
 $colors: () !default;
 $colors: map-merge(
