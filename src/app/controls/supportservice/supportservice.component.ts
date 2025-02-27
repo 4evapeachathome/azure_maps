@@ -7,7 +7,6 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { FilterOption, SERVICE_FILTER_OPTIONS } from 'src/shared/filterconstant';
 
 declare var google: any;
 
@@ -69,6 +68,12 @@ export interface Pagination {
   total: number;
 }
 
+export interface FilterOption {
+  label: string;
+  key: string;
+  selected: boolean;
+}
+
 @Component({
   selector: 'pathome-supportservice',
   templateUrl: './supportservice.component.html',
@@ -87,19 +92,19 @@ export class SupportserviceComponent  implements OnInit {
   geolocationEnabled: boolean = false;
   userLocation: any = null;
   organizations: Organization[] = [];
+  filterOptions: FilterOption[] = [];
   private readonly endPoint : string = '/api/support-services';
 
   constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService) { }
 
 
   ngOnInit() {
-    this.filterOptions = JSON.parse(JSON.stringify(SERVICE_FILTER_OPTIONS));
+    this.getSupportServiceFilterOptions();
     this.getSupportServiceData(this.endPoint);
   }
   center: google.maps.LatLngLiteral = { lat: 42.0162261, lng: -91.701811 };
   zoom = 12;
   filteredLocations: any[] | undefined ;
-  filterOptions: FilterOption[] = [];
   filterSearchTerm: string = '';
 
 
@@ -109,6 +114,8 @@ export class SupportserviceComponent  implements OnInit {
       option.label.toLowerCase().includes(this.filterSearchTerm.toLowerCase())
     );
   }
+
+
 
   async getCurrentPosition() {
     try {
@@ -148,10 +155,28 @@ export class SupportserviceComponent  implements OnInit {
   }
 }
 
+getSupportServiceFilterOptions() {
+  this.apiService.getServiceFilterOptions().subscribe(
+    (response: any) => {
+      debugger;
+      if (response.data && response.data.length > 0) {        
+        this.filterOptions = response.data; 
+        console.log('Fetched filter options:', this.filterOptions);
+      } else {
+        console.warn('No filter options found in the Strapi response.');
+        this.filterOptions = []; 
+      }
+    },
+    (error) => {
+      console.error('Error fetching service filter options:', error);
+      this.filterOptions = []; 
+    }
+  );
+ }
+
 getSupportServiceData(endpoint:string) {
   this.apiService.getAllSupportServices(endpoint).subscribe(
      (response : OrganizationResponse) => {
-      debugger;
        if (response.data.length>0) {
         this.organizations = response.data;
          
@@ -250,8 +275,6 @@ getSupportServiceData(endpoint:string) {
       }
     });
 
-    // If no address was found in AboutOrg, append the address from Organization properties
-    // Format address to match Figma design (e.g., "4225 Glass Rd NE, Cedar Rapids, IA 52402")
     if (!hasAddress) {
       const addressParts = [
         location.OrgAddress.trim(),
@@ -263,14 +286,13 @@ getSupportServiceData(endpoint:string) {
         aboutText += `\n\n<strong>Address:</strong>\n${address}`;
       }
     } else {
-      // If address is already in AboutOrg, clean it up to match Figma format
       aboutText = aboutText.replace(/\n\n/g, '\n').trim(); // Ensure proper spacing
     }
 
     return aboutText.trim().replace(/\n\s*\n/g, '\n'); // Clean up extra newlines
   }
 
-  // Helper method to get list of services dynamically from SERVICE_FILTER_OPTIONS, prioritizing OrgHotline
+  //Get the sevices from the constants
   getServices(location: Organization): { name: string, value: string | boolean | null, isHotline?: boolean }[] {
     if (!location) return [];
 
@@ -285,15 +307,12 @@ getSupportServiceData(endpoint:string) {
       });
     }
 
-    // Add other services from SERVICE_FILTER_OPTIONS, excluding IsHotline to avoid duplication
+    // Add other services from dynamically fetched filterOptions, excluding IsHotline to avoid duplication
     services = services.concat(
-      SERVICE_FILTER_OPTIONS
+      this.filterOptions
         .filter(option => option.key !== 'IsHotline') // Exclude IsHotline to avoid duplication with OrgHotline
         .filter(option => {
-          // Map the key from SERVICE_FILTER_OPTIONS to the corresponding property in the Organization
           const value = location[option.key as keyof Organization];
-          // Include the service only if the value is true (for booleans) or a non-empty string
-          // Exclude null, false, or empty strings
           return (typeof value === 'boolean' && value === true) || 
                  (typeof value === 'string' && value.trim().length > 0);
         })

@@ -561,6 +561,41 @@ getAllSupportServices(endpoint: string): Observable<any> {
   );
 }
 
+//Get support service filter options
+
+getServiceFilterOptions(): Observable<any> {
+  const endpoint = '/api/service-filteroptions';
+  const options: QueryOptions = {
+    populate: {
+      filterOptions: {
+        fields: ['label', 'key', 'selected'] // Populate the fields of the FilterConstant component
+      }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+    map((res: any) => {
+      console.log('Service filter options data:', res);
+      debugger;
+      if (res.data && res.data.length > 0 && res.data[0] && res.data[0].filterOptions) {
+        // Extract and flatten the filterOptions from res.data[0].attributes.filterOptions
+        const filterOptions = res.data[0].filterOptions.map((item: any) => ({
+          label: item.label,
+          key: item.key,
+          selected: item.selected
+        }));
+        return { data: filterOptions }; // Return just the filterOptions array for simplicity
+      } else {
+        return { data: [] }; // Return empty array if no data or structure is incorrect
+      }
+    }),
+    catchError(error => {
+      console.error('Error fetching service filter options:', error);
+      return throwError(error);
+    })
+  );
+}
+
 
 
 }
