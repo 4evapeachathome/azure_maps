@@ -1,0 +1,24 @@
+import { environmentdev } from "src/environments/environment";
+
+export const APIEndpoints = {
+    menu: `${environmentdev.apiHost}/api/menucontrols`,
+    dailytip: `${environmentdev.apiHost}/api/daily-peace-tips`,
+    homebanner: `${environmentdev.apiHost}/api/home-banners`,
+    healthtips: `${environmentdev.apiHost}/api/healthtips`,
+    expertadvice: `${environmentdev.apiHost}/api/expert-advices`,
+    contactus: `${environmentdev.apiHost}/api/contacts`,
+    relations: `${environmentdev.apiHost}/api/relationals`,
+    peaceathome: `${environmentdev.apiHost}/api/peaceathome`,
+    nopeacepartnerviolence: `${environmentdev.apiHost}/api/no-peace-home-contents`,
+    nopeacescnarioone: `${environmentdev.apiHost}/api/no-peace-home-scenario-ones`,
+    servicefilteroptions: `${environmentdev.apiHost}/api/service-filteroptions`,
+    sliderapi: `${environmentdev.apiHost}/api/home-sliders`,
+    healthyrelationslider: `${environmentdev.apiHost}/api/healthy-relationship-sliders`,
+    healtyrelationTitleContent: `${environmentdev.apiHost}/api/healthy-relationship`,
+    healthyrelationcontentwithoutbutton: `${environmentdev.apiHost}/api/healthyrelationshipcontents`,
+    healthyrelationcontentwithbutton: `${environmentdev.apiHost}/api/unhealthurelationshipcontents`,
+    nopeaceathomeslider: `${environmentdev.apiHost}/api/no-peaceat-home-sliders`,
+    nopeaceathometitlecontent: `${environmentdev.apiHost}/api/no-peaceat-home`,
+    nopeacepartnerviolencecontent: `${environmentdev.apiHost}/api/no-peace-home-contents`,
+    peaceathomeslider: `${environmentdev.apiHost}/api/peace-at-home-sliders`, 
+  }

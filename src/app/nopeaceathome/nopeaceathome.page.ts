@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
   selector: 'app-nopeaceathome',
@@ -7,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
   standalone: false
 })
 export class NopeaceathomePage implements OnInit {
-  nopeaceathomeslider:string='/api/no-peaceat-home-sliders';
-  nopeaceathometitlecontent:string= '/api/no-peaceat-home';
-  nopeacepartnerviolencecontent:string='/api/no-peace-home-contents';
+  nopeaceathomeslider:string=APIEndpoints.nopeaceathomeslider;
+  nopeaceathometitlecontent:string= APIEndpoints.nopeaceathometitlecontent;
+  nopeacepartnerviolencecontent:string=APIEndpoints.nopeacepartnerviolencecontent;
   constructor() { }
 
   ngOnInit() {

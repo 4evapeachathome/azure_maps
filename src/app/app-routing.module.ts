@@ -1,11 +1,8 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { SupportserviceComponent } from './controls/supportservice/supportservice.component';
-import { ContactUsFormComponent } from './controls/contact-us-form/contact-us-form.component';
 import { RelationalComponent } from './controls/relational/relational.component';
 import { TypesofAbuseCardComponent } from './controls/typesof-abuse-card/typesof-abuse-card.component';
 import { HealthyrelatitonshipComponent } from './controls/healthyrelatitonship/healthyrelatitonship.component';
-import { UsMapComponent } from './controls/us-map/us-map.component';
 import { UsStateLawDetailsComponent  } from './controls/us-state-law-details/us-state-law-details.component';
 import { UsaMapComponent } from './usa-map/usa-map.component';
 
@@ -24,11 +21,8 @@ const routes: Routes = [
   { path: 'nopeaceathome', 
     loadChildren: () => import('./nopeaceathome/nopeaceathome.module').then( m => m.NopeaceathomePageModule)
   },
-  // { path: 'supportservice', component: SupportserviceComponent },
-  // { path: 'contactus', component: ContactUsFormComponent },
   { path: 'relational', component: RelationalComponent },
   { path: 'typesofabuse', component: TypesofAbuseCardComponent },
-  { path: 'healthyrelationship', component: HealthyrelatitonshipComponent },
   { path: 'uslawsbystate', component: UsaMapComponent },
   { path: 'us-state-law-details/:stateName', component: UsStateLawDetailsComponent },
     
@@ -45,9 +39,6 @@ const routes: Routes = [
     path: 'supportservice',
     loadChildren: () => import('./supportservice/supportservice.module').then( m => m.SupportservicePageModule)
   }
-
-
-
 ];
 
 @NgModule({

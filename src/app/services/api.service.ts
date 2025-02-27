@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { catchError, map, Observable, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environmentdev } from 'src/environments/environment';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 interface QueryOptions {
   fields?: string[];
@@ -21,10 +22,6 @@ interface QueryOptions {
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:1337'; // Change this to your API URL
-  //private apiUrl = 'https://peaceathome.loca.lt'; // Change this to your API URL
-  private apitoken = '9d689662d625cea1c398e6cad3cf0e7387be9d29af8c6802fa837a034e38dd4b7dbcffd3afe7ba05903122e920bb1901570cd6b86c5004fd0e6f5c78837239797ffd42d4122299c1c3c6987c508c11c7a46ac0390223a9de7e5496d351d318dbe8a724dd383d42a0d859ab0a4b7e28816663e997c056924dc67ba5f32456b7d3';
-
   constructor(private http: HttpClient) {}
 
   private createHeaders(token?: string): HttpHeaders {
@@ -112,19 +109,19 @@ export class ApiService {
 }
 
   get(endpoint: string, token?: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${endpoint}`, { headers: this.createHeaders(token) });
+    return this.http.get(`${environmentdev.apiHost}/${endpoint}`, { headers: this.createHeaders(token) });
   }
 
   post(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${endpoint}`, body, { headers: this.createHeaders(token) });
+    return this.http.post(`${environmentdev.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
   }
 
   put(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${endpoint}`, body, { headers: this.createHeaders(token) });
+    return this.http.put(`${environmentdev.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
   }
 
   patch(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${endpoint}`, body, { headers: this.createHeaders(token) });
+    return this.http.patch(`${environmentdev.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
   }
 
   getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string): Observable<any> {
@@ -135,14 +132,14 @@ export class ApiService {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
   
-    return this.http.get(`${this.apiUrl}${endpoint}`, {
+    return this.http.get(endpoint, {
       headers,
       params
     });
   }
 
   getDailyTip(): Observable<any> {
-    return this.getWithQuery('/api/daily-peace-tips', {
+    return this.getWithQuery(APIEndpoints.dailytip, {
       fields: ['title'],
       populate: {
         description: {
@@ -150,11 +147,11 @@ export class ApiService {
         }
       },
       sort: ['createdAt:desc']
-    }, this.apitoken);
+    }, environmentdev.apitoken);
   }
 
   getMenuItems(): Observable<any> {
-    return this.getWithQuery('/api/menucontrols', {
+    return this.getWithQuery(APIEndpoints.menu, {
       fields: ['title', 'link', 'documentId'],
       populate: {
         icon: {
@@ -170,15 +167,15 @@ export class ApiService {
         }
       },
       sort: ['createdAt:asc']
-    }, this.apitoken).pipe(
+    }, environmentdev.apitoken).pipe(
       map((res: any) => {
         if (res && res.data) {
           return res.data.map((item: any) => {
             if (item.icon && item.icon.url) {
-              item.icon.url = `${this.apiUrl}${item.icon.url}`;
+              item.icon.url = `${environmentdev.apiHost}${item.icon.url}`;
             }
             if (item.parentMenu && item.parentMenu.icon && item.parentMenu.icon.url) {
-              item.parentMenu.icon.url = `${this.apiUrl}${item.parentMenu.icon.url}`;
+              item.parentMenu.icon.url = `${environmentdev.apiHost}${item.parentMenu.icon.url}`;
             }
             return item;
           });
@@ -197,7 +194,8 @@ export class ApiService {
 
   //#region BannerSectionAPI Service 
   getHappyHomeQuote(): Observable<any> {
-    const endpoint = '/api/home-banners';
+    const endpoint = APIEndpoints.homebanner;
+    debugger;
     const options = {
         populate: {
             content: {
@@ -209,12 +207,12 @@ export class ApiService {
         },
         sort: ['createdAt:desc']
     };
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
         map((res: any) => {
             console.log('data:', res.data);
             return res.data.map((resData: any) => {
                 if (resData && resData.webImage && resData.webImage.url) {
-                    resData.image = `${this.apiUrl}${resData.webImage.url}`;
+                    resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
                 } else {
                     resData.image = '';
                 }
@@ -230,7 +228,7 @@ export class ApiService {
   //#endregion
   
   getWellnessTip(): Observable<any> {
-    const endpoint = '/api/healthtips';
+    const endpoint = APIEndpoints.healthtips;
     const options = {
       fields: ['title', 'subtitle'],
       populate: {
@@ -243,17 +241,17 @@ export class ApiService {
       },
       sort: ['createdAt:desc']
     };
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
       map((res: any) => {
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
           if (resData && resData.webImage && resData.webImage.url) {
-            resData.image = `${this.apiUrl}${resData.webImage.url}`;
+            resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
           } else {
             resData.image = ''; 
           }
           return resData;
-        },this.apitoken);
+        },environmentdev.apitoken);
       }),
       catchError(error => {
         console.error('Error fetching health tips', error);
@@ -264,7 +262,7 @@ export class ApiService {
 
   //Get expert advice
   getExpertAdvice(): Observable<any> {
-    const endpoint = '/api/expert-advices';
+    const endpoint = APIEndpoints.expertadvice;
     const options = {
         fields: ['title', 'description'],
         populate: {
@@ -274,12 +272,12 @@ export class ApiService {
         },
         sort: ['createdAt:desc']
     };
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
         map((res: any) => {
             console.log('data:', res.data);
             return res.data.map((resData: any) => {
                 if (resData && resData.webImage && resData.webImage.url) {
-                    resData.image = `${this.apiUrl}${resData.webImage.url}`;
+                    resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
                 } else {
                     resData.image = '';
                 }
@@ -314,7 +312,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
     sort: ['createdAt:desc']
   };
 
-  return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+  return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
     map((res: any) => {
       console.log('Raw API Response:', res.data);
       
@@ -323,7 +321,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
           ? resData[mainParam].sliderContent.map((content: any) => ({
               slidercontent: content.slidercontent || [],
               imageUrl: content.webImage?.url 
-                ? `${this.apiUrl}${content.webImage.url}` 
+                ? `${environmentdev.apiHost}${content.webImage.url}` 
                 : null
             }))
           : [];
@@ -349,22 +347,22 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
   
 
   sendContactData(contactData: any): Observable<any> {
-    const endpoint = '/api/contacts';
+    const endpoint = APIEndpoints.contactus;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.apitoken}`
+      'Authorization': `Bearer ${environmentdev.apitoken}`
     });
   
     //const secretKey = '0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9'; // Use a secure key, store it safely
     const secretKey = environmentdev.secretKey; // Use a secure key, store it safely
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(contactData), secretKey).toString();
   
-    return this.http.post(`${this.apiUrl}${endpoint}`, { data: encryptedData }, { headers });
+    return this.http.post(`${environmentdev.apiHost}${endpoint}`, { data: encryptedData }, { headers });
   }
 
     // Fetch Relational, which includes both personal and interpersonal items
     getRelationalContent(): Observable<any> {
-      return this.getWithQuery('/api/relationals', {
+      return this.getWithQuery(APIEndpoints.relations, {
         populate: 
         {
           Personal: {
@@ -374,13 +372,13 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
             fields: ['textContent']
           }
         }
-      }, this.apitoken);
+      }, environmentdev.apitoken);
     }
   
   
   //Peace at home component service
   getPeaceAtHome(): Observable<any> {
-    const endpoint = '/api/peaceathome';
+    const endpoint = APIEndpoints.peaceathome;
     const options: QueryOptions = {
       populate: {
         webImage: { fields: ['url'] },
@@ -389,12 +387,12 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
       }
     };
 
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
       map((res: any) => {
         console.log('data:', res);
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
-          resData.image = `${this.apiUrl}${resData.webImage.url}`;
+          resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
         } else {
           resData.image = ''; 
         }
@@ -418,12 +416,12 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
       }
     };
   
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
       map((res: any) => {
         console.log('data:', res);
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
-          resData.image = `${this.apiUrl}${resData.webImage.url}`;
+          resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
         } else {
           resData.image = ''; 
         }
@@ -440,7 +438,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
   getHealthyRelationShipContent(endpoint: string): Observable<any> {
     return this.getWithQuery(endpoint, {
       fields: ['content']
-    }, this.apitoken).pipe(
+    }, environmentdev.apitoken).pipe(
       catchError((error: any) => {
         console.error('Error fetching Api content:', error);
         return throwError('An error occurred while fetching Api content. Please try again later.');
@@ -448,53 +446,17 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
     );
   }
 
-
-  //No peace athome slider
-  getNoPeaceatHomeSliderData(): Observable<any> {
-    const endpoint = '/api/no-peaceat-home-sliders';
-    const options: QueryOptions = {
-      populate: {
-        nopeaceathome: {
-          fields: ['title'],
-          populate: {
-            webImage: { fields: ['url'] },
-            description: {
-              fields: ['multilineRichTextBox']
-            }
-          }
-        }
-      }
-    };
-
-    return this.getWithQuery(endpoint, options, this.apitoken).pipe(
-      map((res: any) => {
-        console.log('data:', res);
-        const resData = res.data;
-        if (resData && resData.homeslider && resData.homeslider.webImage && resData.homeslider.webImage.url) {
-          resData.homeslider.image = `${this.apiUrl}${resData.homeslider.webImage.url}`;
-        } else {
-          resData.homeslider.image = ''; 
-        }
-        return resData;
-      }),
-      catchError(error => {
-        console.error('Error fetching no peace at home slider data', error);
-        return throwError(error);
-      })
-    );
-}
-
 //No Peaceathome partner violence
 getNopeacepartnerViolence(): Observable<any> {
-  return this.getWithQuery('/api/no-peace-home-contents', {
+  return this.getWithQuery(APIEndpoints.nopeacepartnerviolence, {
     fields: ['content']
-  }, this.apitoken);
+  }, environmentdev.apitoken);
 }
 
 
 //No peace at home scneario once content
 getNoPeaceHomeScenarioOne(): Observable<any> {
-  const endpoint = '/api/no-peace-home-scenario-ones';
+  const endpoint = APIEndpoints.nopeacescnarioone;
   const options: QueryOptions = {
     populate: {
       content: {
@@ -507,11 +469,11 @@ getNoPeaceHomeScenarioOne(): Observable<any> {
     sort: ['createdAt:desc']
   };
 
-  return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+  return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
     map((res: any) => {
       const resData = res.data;
       if (resData[0] && resData[0]?.content?.webImage?.url) {
-        resData.image = `${this.apiUrl}${resData[0].content.webImage.url}`;
+        resData.image = `${environmentdev.apiHost}${resData[0].content.webImage.url}`;
       } else {
         resData.image = ''; 
       }
@@ -553,7 +515,7 @@ getAllSupportServices(endpoint: string): Observable<any> {
       'AboutOrg',
       'IsHotline'
     ]
-  }, this.apitoken).pipe(
+  }, environmentdev.apitoken).pipe(
     catchError((error: any) => {
       console.error('Error fetching support services:', error);
       return throwError('An error occurred while fetching support services. Please try again later.');
@@ -564,7 +526,7 @@ getAllSupportServices(endpoint: string): Observable<any> {
 //Get support service filter options
 
 getServiceFilterOptions(): Observable<any> {
-  const endpoint = '/api/service-filteroptions';
+  const endpoint = APIEndpoints.servicefilteroptions;
   const options: QueryOptions = {
     populate: {
       filterOptions: {
@@ -573,7 +535,7 @@ getServiceFilterOptions(): Observable<any> {
     }
   };
 
-  return this.getWithQuery(endpoint, options, this.apitoken).pipe(
+  return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
     map((res: any) => {
       console.log('Service filter options data:', res);
       debugger;

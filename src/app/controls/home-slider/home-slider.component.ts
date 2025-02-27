@@ -1,6 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -11,7 +12,7 @@ import { ApiService } from 'src/app/services/api.service';
   templateUrl: './home-slider.component.html',
   styleUrls: ['./home-slider.component.scss'],
   standalone: true,
-    imports: [CommonModule, IonicModule],
+    imports: [CommonModule, IonicModule, RouterModule],
     animations: [
       trigger('fadeAnimation', [
         transition(':enter', [

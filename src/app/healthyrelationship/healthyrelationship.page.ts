@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
   selector: 'app-healthyrelationship',
@@ -7,10 +8,10 @@ import { Component, OnInit } from '@angular/core';
   standalone: false,
 })
 export class HealthyrelationshipPage implements OnInit {
-healthyrelationslider:string = '/api/healthy-relationship-sliders';
-healtyrelationTitleContent:string = '/api/healthy-relationship';
-healthyrelationcontentwithoutbutton = '/api/healthyrelationshipcontents';
-healthyrelationcontentwithbutton = '/api/unhealthurelationshipcontents';
+healthyrelationslider:string = APIEndpoints.healthyrelationslider;
+healtyrelationTitleContent:string = APIEndpoints.healtyrelationTitleContent;
+healthyrelationcontentwithoutbutton = APIEndpoints.healthyrelationcontentwithoutbutton;
+healthyrelationcontentwithbutton = APIEndpoints.healthyrelationcontentwithbutton;
   constructor() { }
 
   ngOnInit() {

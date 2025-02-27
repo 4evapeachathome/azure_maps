@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
   selector: 'app-peaceathome',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
   standalone: false,
 })
 export class PeaceathomePage implements OnInit {
-  peaceathomeslider:string = '/api/peace-at-home-sliders';
+  peaceathomeslider:string = APIEndpoints.peaceathomeslider;
   constructor() { }
 
   ngOnInit() {
