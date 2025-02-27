@@ -11,7 +11,7 @@
            
           ></ion-img></ion-col>
           <ion-col class="ion-text-end" *ngIf="showExitButton">
-            <ion-button>
+            <ion-button [routerLink]="['/home']">
               <ion-icon slot="start" name="close"></ion-icon>
               Exit
             </ion-button>
