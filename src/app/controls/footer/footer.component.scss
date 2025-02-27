@@ -4,6 +4,19 @@ ion-footer {
   background-color: $color-dark-Gray;
   --color: $color-Gray64;
   font-size: $font-size-md;
+
+  a {
+    cursor: pointer; 
+    &.active { 
+      text-decoration: underline; 
+      color: darken($color-Gray64, 20%); 
+    }
+  }
+
+  ul li {
+    cursor: pointer;
+  }
+
   ion-text {
     color: $color-Gray64;
     font-size: $font-size-md;
