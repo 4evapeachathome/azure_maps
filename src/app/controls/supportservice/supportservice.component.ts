@@ -7,6 +7,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
+import { APIEndpoints } from 'src/shared/endpoints';
 
 declare var google: any;
 
@@ -93,7 +94,7 @@ export class SupportserviceComponent  implements OnInit {
   userLocation: any = null;
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
-  private readonly endPoint : string = '/api/support-services';
+  private readonly endPoint : string = APIEndpoints.supportService;
 
   constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService) { }
 

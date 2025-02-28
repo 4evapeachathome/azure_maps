@@ -21,4 +21,5 @@ export const APIEndpoints = {
     nopeaceathometitlecontent: `${environmentdev.apiHost}/api/no-peaceat-home`,
     nopeacepartnerviolencecontent: `${environmentdev.apiHost}/api/no-peace-home-contents`,
     peaceathomeslider: `${environmentdev.apiHost}/api/peace-at-home-sliders`, 
+    supportService: `${environmentdev.apiHost}/api/support-services`, 
   }
