@@ -1,167 +1,181 @@
-<ion-toolbar style="margin: 0px;">
+<ion-card class="common-container">
+
   <pathome-breadcrumb></pathome-breadcrumb>
-</ion-toolbar>
-
-<ion-toolbar class="search-toolbar">
-  <ion-icon 
-        slot="start" 
-        name="location-outline" 
-        (click)="onIconClick()">
-      </ion-icon>
-  <ion-searchbar
-    [(ngModel)]="searchQuery"
-    (keyup.enter)="onSearch()"
-    placeholder="Type your current location"
-    class="custom-searchbar"
-  ></ion-searchbar>
-  <ion-buttons slot="end">
-    <ion-button (click)="onSearch()">
-      <ion-icon name="search-outline"></ion-icon>
-    </ion-button>
-    <ion-button (click)="toggleFilter()">
-      <ion-icon name="filter-outline"></ion-icon>
-    </ion-button>
-  </ion-buttons>
-</ion-toolbar>
-
-<ion-grid class="cards-container">
-  <ion-card class="locations-card" *ngIf="geolocationEnabled">
-    <ion-card-header>
-      <ion-card-title>Support Services near you</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item class="support-center-item" *ngFor="let location of filteredLocations" (click)="onLocationClick(location)">
-          <div class="scrollable-content">
-            <div class="location-info">
-              <h2>{{ location.OrgName }}</h2>
-              <p>{{location.ServiceHours}}</p>
-            </div>
-            <div class="button-group">
-              <ion-button fill="clear" size="small" class="action-button" (click)="openGoogleMaps(location.OrgLatitude,location.OrgLongitude)">
-                <ion-icon name="navigate-outline"></ion-icon>
-                Direction
-              </ion-button>
+<ion-grid>
+    <ion-row>
+      <ion-col>
+       
+       
+        <div class="support-map-container">
+          <div class="search-container">
+            <ion-toolbar class="search-toolbar">
+      
+              <ion-icon 
+                    slot="start" 
+                    name="locate" 
+                    (click)="onIconClick()">
+                  </ion-icon>
+              <ion-searchbar
+                [(ngModel)]="searchQuery"
+                (keyup.enter)="onSearch()"
+                placeholder="Type your current location"
               
-              <ion-button fill="clear" size="small" class="action-button" (click)="openServices(location)">
-                <ion-icon name="list-outline"></ion-icon>
-                Services
-              </ion-button>
+              ></ion-searchbar>
+              <ion-buttons slot="end">
+                <ion-button (click)="onSearch()">
+                  <ion-icon name="search-outline"></ion-icon>
+                </ion-button>
+                <ion-button (click)="toggleFilter()">
+                  <ion-icon name="filter-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+   
+            </ion-toolbar>
+            <div class="cards-container">
+              <ion-card class="locations-card" *ngIf="geolocationEnabled">
+                <ion-card-header>
+                  <ion-card-title>Support Services near you</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-list>
+                    <ion-item class="support-center-item" *ngFor="let location of filteredLocations" (click)="onLocationClick(location)">
+                      <div class="scrollable-content">
+                        <div class="location-info">
+                          <h2>{{ location.OrgName }}</h2>
+                          <p>{{location.ServiceHours}}</p>
+                        </div>
+                        <div class="button-group">
+                          <ion-button fill="clear" size="small" class="action-button" (click)="openGoogleMaps(location.OrgLatitude,location.OrgLongitude)">
+                            <ion-icon name="navigate-outline"></ion-icon>
+                            Direction
+                          </ion-button>
+                          
+                          <ion-button fill="clear" size="small" class="action-button" (click)="openServices(location)">
+                            <ion-icon name="list-outline"></ion-icon>
+                            Services
+                          </ion-button>
+                          
+                          <ion-button fill="clear" size="small" class="action-button" (click)="openSupport(location.OrgWebUrl)">
+                            <ion-icon name="people-outline"></ion-icon>
+                            Website
+                          </ion-button>
+                          
+                          <ion-button fill="clear" size="small" class="action-button" (click)="openPhone(location.PhoneNumber)">
+                            <ion-icon name="call-outline"></ion-icon>
+                            Phone
+                          </ion-button>
+                        </div>
+                      </div>
+                    </ion-item>
+                  </ion-list>
+                </ion-card-content>
+              </ion-card>
+            
+            
               
-              <ion-button fill="clear" size="small" class="action-button" (click)="openSupport(location.OrgWebUrl)">
-                <ion-icon name="people-outline"></ion-icon>
-                Website
-              </ion-button>
-              
-              <ion-button fill="clear" size="small" class="action-button" (click)="openPhone(location.PhoneNumber)">
-                <ion-icon name="call-outline"></ion-icon>
-                Phone
-              </ion-button>
+            <ion-card *ngIf="filterOpen" class="filter-card">
+              <ion-card-header class="filter-header ion-align-items-center">
+                <!-- <div class="filter-header"> -->
+                  <ion-icon name="arrow-back" class="btn-closefilter" (click)="closeFilter()"></ion-icon>
+                  <ion-card-title>Filters</ion-card-title>
+                <!-- </div> -->
+              </ion-card-header>
+              <ion-card-content>
+                <ion-buttons class="ion-justify-content-between">
+                  <ion-button fill="clear" (click)="clearFilters()">Clear</ion-button>
+                  <ion-button fill="solid" (click)="applyFilters()">Submit</ion-button>
+                </ion-buttons>
+            
+                <ion-searchbar [(ngModel)]="filterSearchTerm" placeholder="Search"></ion-searchbar>
+            
+                <ion-list>
+                  <ion-item *ngFor="let option of filteredFilterOptions">
+                    <ion-checkbox [(ngModel)]="option.selected"></ion-checkbox>
+                    <ion-label class="ion-padding-start">{{ option.label }}</ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+            
+            
+            <ion-card *ngIf="selectedLocation" class="details-card">
+              <ion-card-header>
+                <ion-card-title>{{ selectedLocation.OrgName }}</ion-card-title>
+                <ion-icon class="close-btn" name="close-outline" (click)="closeDetails()"></ion-icon>
+              </ion-card-header>
+            
+              <ion-card-content>
+                <div class="location-info">
+                  <p>{{ selectedLocation.ServiceHours }}</p>
+                </div>
+            
+                <div class="scrollable-content">
+                  <div class="button-group">
+                    <ion-button fill="clear" size="small" class="action-button" (click)="openGoogleMaps(selectedLocation.OrgLatitude, selectedLocation.OrgLongitude)">
+                      <ion-icon name="navigate-outline"></ion-icon>
+                      Direction
+                    </ion-button>
+                    
+                    <ion-button fill="clear" size="small" class="action-button" (click)="openServices(selectedLocation)">
+                      <ion-icon name="list-outline"></ion-icon>
+                      Services
+                    </ion-button>
+                    
+                    <ion-button fill="clear" size="small" class="action-button" (click)="openSupport(selectedLocation.OrgWebUrl)">
+                      <ion-icon name="people-outline"></ion-icon>
+                      Website
+                    </ion-button>
+                    
+                    <ion-button fill="clear" size="small" class="action-button" (click)="openPhone(selectedLocation.PhoneNumber)">
+                      <ion-icon name="call-outline"></ion-icon>
+                      Phone
+                    </ion-button>
+                  </div>
+            
+                  <ion-segment [(ngModel)]="segment" class="custom-segment">
+                    <ion-segment-button value="about">
+                      About
+                    </ion-segment-button>
+                    <ion-segment-button value="services">
+                      Services
+                    </ion-segment-button>
+                  </ion-segment>
+            
+                  <div *ngIf="segment === 'about'" class="about-section" [innerHTML]="getAboutText(selectedLocation)"></div>
+            
+                  <div *ngIf="segment === 'services'" class="services-section">
+                    <div class="services-header">
+                      <h3>Providing Services</h3>
+                    </div>
+                    <div class="details-card services-list">
+                      <ol>
+                        <li *ngFor="let service of getServices(selectedLocation)">
+                          <span [ngClass]="{'underlined': service.isHotline}">{{ service.name }}</span>
+                          <ng-container *ngIf="typeof service.value === 'string' && service.value">
+                            - <a href="tel:{{ service.value }}">{{ service.value }}</a>
+                          </ng-container>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
             </div>
           </div>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
-
-
-  
-<ion-card *ngIf="filterOpen" class="filter-card">
-  <ion-card-header>
-    <div class="filter-header">
-      <ion-icon name="arrow-back" class="btn-closefilter" (click)="closeFilter()"></ion-icon>
-      <ion-card-title>Filters</ion-card-title>
-    </div>
-  </ion-card-header>
-  <ion-card-content>
-    <ion-buttons class="ion-justify-content-between">
-      <ion-button fill="clear" (click)="clearFilters()">Clear</ion-button>
-      <ion-button fill="solid" (click)="applyFilters()">Submit</ion-button>
-    </ion-buttons>
-
-    <ion-searchbar [(ngModel)]="filterSearchTerm" placeholder="Search"></ion-searchbar>
-
-    <ion-list>
-      <ion-item *ngFor="let option of filteredFilterOptions">
-        <ion-checkbox [(ngModel)]="option.selected"></ion-checkbox>
-        <ion-label class="ion-padding-start">{{ option.label }}</ion-label>
-      </ion-item>
-    </ion-list>
-  </ion-card-content>
-</ion-card>
-
-
-<ion-card *ngIf="selectedLocation" class="details-card">
-  <ion-card-header>
-    <ion-card-title>{{ selectedLocation.OrgName }}</ion-card-title>
-    <ion-icon class="close-btn" name="close-outline" (click)="closeDetails()"></ion-icon>
-  </ion-card-header>
-
-  <ion-card-content>
-    <div class="location-info">
-      <p>{{ selectedLocation.ServiceHours }}</p>
-    </div>
-
-    <div class="scrollable-content">
-      <div class="button-group">
-        <ion-button fill="clear" size="small" class="action-button" (click)="openGoogleMaps(selectedLocation.OrgLatitude, selectedLocation.OrgLongitude)">
-          <ion-icon name="navigate-outline"></ion-icon>
-          Direction
-        </ion-button>
+        <div class="gmap-container">
         
-        <ion-button fill="clear" size="small" class="action-button" (click)="openServices(selectedLocation)">
-          <ion-icon name="list-outline"></ion-icon>
-          Services
-        </ion-button>
-        
-        <ion-button fill="clear" size="small" class="action-button" (click)="openSupport(selectedLocation.OrgWebUrl)">
-          <ion-icon name="people-outline"></ion-icon>
-          Website
-        </ion-button>
-        
-        <ion-button fill="clear" size="small" class="action-button" (click)="openPhone(selectedLocation.PhoneNumber)">
-          <ion-icon name="call-outline"></ion-icon>
-          Phone
-        </ion-button>
-      </div>
-
-      <ion-segment [(ngModel)]="segment" class="custom-segment">
-        <ion-segment-button value="about">
-          About
-        </ion-segment-button>
-        <ion-segment-button value="services">
-          Services
-        </ion-segment-button>
-      </ion-segment>
-
-      <div *ngIf="segment === 'about'" class="about-section" [innerHTML]="getAboutText(selectedLocation)"></div>
-
-      <div *ngIf="segment === 'services'" class="services-section">
-        <div class="services-header">
-          <h3>Providing Services</h3>
-        </div>
-        <div class="details-card services-list">
-          <ol>
-            <li *ngFor="let service of getServices(selectedLocation)">
-              <span [ngClass]="{'underlined': service.isHotline}">{{ service.name }}</span>
-              <ng-container *ngIf="typeof service.value === 'string' && service.value">
-                - <a href="tel:{{ service.value }}">{{ service.value }}</a>
-              </ng-container>
-            </li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </ion-card-content>
-</ion-card>
-</ion-grid>
-
-<ion-grid class="map-container">
-  <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
+  <google-map height="100%" width="100%" [zoom]="zoom">
     <map-marker 
       *ngFor="let location of filteredLocations" 
       [position]="{ lat: location.OrgLatitude, lng: location.OrgLongitude }" 
       [label]="location.OrgName">
     </map-marker>
   </google-map>
+</div>
+</div>
+  </ion-col>
+  </ion-row>
 </ion-grid>
+
+</ion-card>

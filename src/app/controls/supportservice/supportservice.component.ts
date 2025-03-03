@@ -159,7 +159,7 @@ export class SupportserviceComponent  implements OnInit {
 getSupportServiceFilterOptions() {
   this.apiService.getServiceFilterOptions().subscribe(
     (response: any) => {
-      debugger;
+    //  debugger;
       if (response.data && response.data.length > 0) {        
         this.filterOptions = response.data; 
         console.log('Fetched filter options:', this.filterOptions);
@@ -214,7 +214,7 @@ getSupportServiceData(endpoint:string) {
     const selectedFilterKeys = this.filterOptions
       .filter(option => option.selected)
       .map(option => option.key as keyof Organization); 
-    debugger;
+    //debugger;
     // Filter organizations based on selected filters
     const filteredOrgs = this.organizations.filter(org => {
       return selectedFilterKeys.some(key => {
