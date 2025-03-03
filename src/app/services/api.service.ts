@@ -195,7 +195,7 @@ export class ApiService {
   //#region BannerSectionAPI Service 
   getHappyHomeQuote(): Observable<any> {
     const endpoint = APIEndpoints.homebanner;
-    debugger;
+ //   debugger;
     const options = {
         populate: {
             content: {
@@ -537,7 +537,7 @@ getServiceFilterOptions(): Observable<any> {
   return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
     map((res: any) => {
       console.log('Service filter options data:', res);
-      debugger;
+    //  debugger;
       if (res.data && res.data.length > 0 && res.data[0] && res.data[0].filterOptions) {
         // Extract and flatten the filterOptions from res.data[0].attributes.filterOptions
         const filterOptions = res.data[0].filterOptions.map((item: any) => ({

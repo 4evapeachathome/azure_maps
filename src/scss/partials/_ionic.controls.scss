@@ -10,3 +10,8 @@ ion-card-content {
     padding-top: 10px !important;
     padding-bottom: 10px !important;
 }
+
+.searchbar-input.sc-ion-searchbar-md{
+  border: 1px solid $color-Gray54;
+  box-shadow: none;
+}
