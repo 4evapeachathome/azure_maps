@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { NopeacehomescenariooneComponent } from './nopeacehomescenarioone.component';
+import { UnhealthyRelationshipContent } from './unhealthyrelationshipcontent';
 
 describe('NopeacehomescenariooneComponent', () => {
-  let component: NopeacehomescenariooneComponent;
-  let fixture: ComponentFixture<NopeacehomescenariooneComponent>;
+  let component: UnhealthyRelationshipContent;
+  let fixture: ComponentFixture<UnhealthyRelationshipContent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ NopeacehomescenariooneComponent ],
+      declarations: [ UnhealthyRelationshipContent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(NopeacehomescenariooneComponent);
+    fixture = TestBed.createComponent(UnhealthyRelationshipContent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

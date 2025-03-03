@@ -37,7 +37,7 @@ mainTitle: string = ''; // Stores the main title
 descriptions: any[] = []; // Stores slider content
 imageUrls: string[] = []; // Stores image URLs
 currentIndex: number = 0; // To track active slider index
-showButton: boolean = true;
+@Input() showButton: boolean = true;
 sliderData: any;
 @Input() endpoint: string ='';
 @Input() paramName:string = '';

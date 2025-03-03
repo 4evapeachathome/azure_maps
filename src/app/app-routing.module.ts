@@ -38,7 +38,11 @@ const routes: Routes = [
   {
     path: 'supportservice',
     loadChildren: () => import('./supportservice/supportservice.module').then( m => m.SupportservicePageModule)
+  },  {
+    path: 'unhealthyrelationship',
+    loadChildren: () => import('./unhealthyrelationship/unhealthyrelationship.module').then( m => m.UnhealthyrelationshipPageModule)
   }
+
 ];
 
 @NgModule({

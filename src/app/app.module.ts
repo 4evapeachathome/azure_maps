@@ -14,12 +14,13 @@ import { FooterComponent } from './controls/footer/footer.component';
 import { MenuComponent } from './components/menu/menu.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [],
   imports: [
     BrowserModule,
     HttpClientModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    AppComponent,
     StoreModule.forRoot(appStore),
     EffectsModule.forRoot(appEffects),
     StoreDevtoolsModule.instrument({
@@ -35,6 +36,6 @@ import { MenuComponent } from './components/menu/menu.component';
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [],
 })
 export class AppModule { }

@@ -455,11 +455,10 @@ getNopeacepartnerViolence(): Observable<any> {
 
 
 //No peace at home scneario once content
-getNoPeaceHomeScenarioOne(): Observable<any> {
-  const endpoint = APIEndpoints.nopeacescnarioone;
+UnhealthyRelationshipContents(endPoint: string): Observable<any> {
   const options: QueryOptions = {
     populate: {
-      content: {
+      Content: {
         populate: {
           webImage: { fields: ['url'] },
           mobileImage: { fields: ['url'] }
@@ -469,11 +468,11 @@ getNoPeaceHomeScenarioOne(): Observable<any> {
     sort: ['createdAt:desc']
   };
 
-  return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
+  return this.getWithQuery(endPoint, options, environmentdev.apitoken).pipe(
     map((res: any) => {
       const resData = res.data;
-      if (resData[0] && resData[0]?.content?.webImage?.url) {
-        resData.image = `${environmentdev.apiHost}${resData[0].content.webImage.url}`;
+      if (resData[0] && resData[0]?.Content?.webImage?.url) {
+        resData.image = `${environmentdev.apiHost}${resData[0].Content.webImage.url}`;
       } else {
         resData.image = ''; 
       }

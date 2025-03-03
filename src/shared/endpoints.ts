@@ -10,7 +10,6 @@ export const APIEndpoints = {
     relations: `${environmentdev.apiHost}/api/relationals`,
     peaceathome: `${environmentdev.apiHost}/api/peaceathome`,
     nopeacepartnerviolence: `${environmentdev.apiHost}/api/no-peace-home-contents`,
-    nopeacescnarioone: `${environmentdev.apiHost}/api/no-peace-home-scenario-ones`,
     servicefilteroptions: `${environmentdev.apiHost}/api/service-filteroptions`,
     sliderapi: `${environmentdev.apiHost}/api/home-sliders`,
     healthyrelationslider: `${environmentdev.apiHost}/api/healthy-relationship-sliders`,
@@ -22,4 +21,9 @@ export const APIEndpoints = {
     nopeacepartnerviolencecontent: `${environmentdev.apiHost}/api/no-peace-home-contents`,
     peaceathomeslider: `${environmentdev.apiHost}/api/peace-at-home-sliders`, 
     supportService: `${environmentdev.apiHost}/api/support-services`, 
+    unhealthyrelationshipbanner: `${environmentdev.apiHost}/api/unhealthy-relationship`, 
+    unhealthyrelationshipslider: `${environmentdev.apiHost}/api/unhealthyrelationsliders`, 
+    unhealthyrelationcontentone: `${environmentdev.apiHost}/api/unhealthyrelationfirstcontents`, 
+    unhealthyrelationcontenttwo: `${environmentdev.apiHost}/api/unhealthyrelationsecondcontents`, 
+    unhealthyrelationcontentthree: `${environmentdev.apiHost}/api/unhealthyrelationthirdcontents`, 
   }

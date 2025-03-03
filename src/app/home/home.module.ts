@@ -21,7 +21,7 @@ import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typeso
 import { RelationalComponent } from '../controls/relational/relational.component';
 import { UsaMapComponent } from '../usa-map/usa-map.component';
 import { HeaderComponent } from "../controls/header/header.component";
-import { NopeacehomescenariooneComponent } from "../controls/nopeacehome-scenario-one/nopeacehomescenarioone.component";
+import { UnhealthyRelationshipContent } from "../controls/unhealthyrelationship-contents/unhealthyrelationshipcontent";
 import { BreadcrumbComponent } from "../controls/breadcrumb/breadcrumb.component";
 import { MenuComponent } from "../components/menu/menu.component";
 
@@ -46,7 +46,7 @@ import { MenuComponent } from "../components/menu/menu.component";
     UsaMapComponent,
     RelationalComponent,
     HeaderComponent,
-    NopeacehomescenariooneComponent,
+    UnhealthyRelationshipContent,
     BreadcrumbComponent,
     MenuComponent
 ],
