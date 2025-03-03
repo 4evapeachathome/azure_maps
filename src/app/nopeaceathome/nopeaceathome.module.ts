@@ -12,6 +12,7 @@ import { HomeSliderComponent } from "../controls/home-slider/home-slider.compone
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
 import { HealthyrelationshipcontentComponent } from "../controls/healthyrelationshipcontent/healthyrelationshipcontent.component";
 import { FooterComponent } from "../controls/footer/footer.component";
+import { UnhealthyRelationshipContent } from "../controls/unhealthyrelationship-contents/unhealthyrelationshipcontent";
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { FooterComponent } from "../controls/footer/footer.component";
     HomeSliderComponent,
     HealthyrelatitonshipComponent,
     HealthyrelationshipcontentComponent,
-    FooterComponent
+    FooterComponent,
+    UnhealthyRelationshipContent
 ],
   declarations: [NopeaceathomePage]
 })

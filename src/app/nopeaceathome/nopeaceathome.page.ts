@@ -11,6 +11,8 @@ export class NopeaceathomePage implements OnInit {
   nopeaceathomeslider:string=APIEndpoints.nopeaceathomeslider;
   nopeaceathometitlecontent:string= APIEndpoints.nopeaceathometitlecontent;
   nopeacepartnerviolencecontent:string=APIEndpoints.nopeacepartnerviolencecontent;
+  nopeacehouseholdconflicts:string=APIEndpoints.nopeacehouseholdconflicts;
+  nopeacetoxicrelationship:string=APIEndpoints.nopeacetoxicrelationship;
   constructor() { }
 
   ngOnInit() {

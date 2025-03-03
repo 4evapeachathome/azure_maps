@@ -1,39 +1,115 @@
 <ion-card *ngFor="let scenario of scenarioData">
   <ion-row>
-    <!-- First column - conditionally appears as text or image based on imagePosition property -->
+    <!-- First column - content (text/lists) based on contentPlacement -->
     <ion-col [size]="6" *ngIf="contentPlacement === 'left'">
       <ion-card-content>
-        <ion-card-title class="header-title">{{ scenario.title }}</ion-card-title>
-        <ion-text class="content-paragraph" *ngFor="let paragraph of scenario.description">
-          <p>
-            <ng-container *ngFor="let part of paragraph">
-              <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
-              <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
-              <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
-            </ng-container>
-          </p>
-        </ion-text>
+        <div class="content-wrapper">
+          <!-- Loop through content items (headings, paragraphs, lists) -->
+          <ng-container *ngFor="let content of scenario.content">
+            <!-- Handle headings -->
+            <ion-text class="content-heading" *ngIf="content.type === 'heading'">
+              <h3 *ngIf="content.level === 3">
+                <ng-container *ngFor="let part of content.children">
+                  <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                  <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                  <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+                </ng-container>
+              </h3>
+            </ion-text>
+
+            <!-- Handle paragraphs -->
+            <ion-text class="content-paragraph" *ngIf="content.type === 'paragraph'">
+              <p>
+                <ng-container *ngFor="let part of content.children">
+                  <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                  <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                  <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+                </ng-container>
+              </p>
+            </ion-text>
+
+            <!-- Handle lists (unordered or ordered) -->
+            <ion-text class="content-list" *ngIf="content.type === 'list'">
+              <ul *ngIf="content.format === 'unordered'">
+                <li *ngFor="let item of content.items">
+                  <ng-container *ngFor="let part of item.children">
+                    <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                    <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                    <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+                  </ng-container>
+                </li>
+              </ul>
+              <ol *ngIf="content.format === 'ordered'">
+                <li *ngFor="let item of content.items">
+                  <ng-container *ngFor="let part of item.children">
+                    <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                    <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                    <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+                  </ng-container>
+                </li>
+              </ol>
+            </ion-text>
+          </ng-container>
+        </div>
       </ion-card-content>
     </ion-col>
 
-    <!-- Image column - appears either first or second based on imagePosition property -->
+    <!-- Image column - appears either first or second based on contentPlacement -->
     <ion-col [size]="5" *ngIf="webImage">
       <ion-img class="class-image" [src]="webImage" alt="Scenario Image"></ion-img>
     </ion-col>
 
-    <!-- Text column - conditionally appears as first or second based on imagePosition property -->
+    <!-- Text column - conditionally appears as first or second based on contentPlacement -->
     <ion-col [size]="6" *ngIf="contentPlacement === 'right'">
       <ion-card-content>
-        <ion-card-title class="header-title">{{ scenario.title }}</ion-card-title>
-        <ion-text class="content-paragraph" *ngFor="let paragraph of scenario.description">
-          <p>
-            <ng-container *ngFor="let part of paragraph">
-              <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
-              <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
-              <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
-            </ng-container>
-          </p>
-        </ion-text>
+        <div class="content-wrapper">
+          <!-- Loop through content items (headings, paragraphs, lists) -->
+          <ng-container *ngFor="let content of scenario.content">
+            <!-- Handle headings -->
+            <ion-text class="content-heading" *ngIf="content.type === 'heading'">
+              <h3 *ngIf="content.level === 3">
+                <ng-container *ngFor="let part of content.children">
+                  <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                  <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                  <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+                </ng-container>
+              </h3>
+            </ion-text>
+
+            <!-- Handle paragraphs -->
+            <ion-text class="content-paragraph" *ngIf="content.type === 'paragraph'">
+              <p>
+                <ng-container *ngFor="let part of content.children">
+                  <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                  <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                  <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+                </ng-container>
+              </p>
+            </ion-text>
+
+            <!-- Handle lists (unordered or ordered) -->
+            <ion-text class="content-list" *ngIf="content.type === 'list'">
+              <ul *ngIf="content.format === 'unordered'">
+                <li *ngFor="let item of content.items">
+                  <ng-container *ngFor="let part of item.children">
+                    <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                    <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                    <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+                  </ng-container>
+                </li>
+              </ul>
+              <ol *ngIf="content.format === 'ordered'">
+                <li *ngFor="let item of content.items">
+                  <ng-container *ngFor="let part of item.children">
+                    <ion-text *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                    <ion-text *ngIf="part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                    <ion-text *ngIf="!part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
+                  </ng-container>
+                </li>
+              </ol>
+            </ion-text>
+          </ng-container>
+        </div>
       </ion-card-content>
     </ion-col>
   </ion-row>

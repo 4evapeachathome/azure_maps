@@ -19,6 +19,8 @@ export const APIEndpoints = {
     nopeaceathomeslider: `${environmentdev.apiHost}/api/no-peaceat-home-sliders`,
     nopeaceathometitlecontent: `${environmentdev.apiHost}/api/no-peaceat-home`,
     nopeacepartnerviolencecontent: `${environmentdev.apiHost}/api/no-peace-home-contents`,
+    nopeacehouseholdconflicts: `${environmentdev.apiHost}/api/no-peace-home-house-conflicts`,
+    nopeacetoxicrelationship: `${environmentdev.apiHost}/api/no-peaceat-home-toxic-relationships`,
     peaceathomeslider: `${environmentdev.apiHost}/api/peace-at-home-sliders`, 
     supportService: `${environmentdev.apiHost}/api/support-services`, 
     unhealthyrelationshipbanner: `${environmentdev.apiHost}/api/unhealthy-relationship`, 

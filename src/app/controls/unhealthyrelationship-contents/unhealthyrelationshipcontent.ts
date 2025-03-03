@@ -24,21 +24,45 @@ export class UnhealthyRelationshipContent  implements OnInit {
 
   GetUnhealthyrelationcontentone(endPoint: string) {
     this.apiService.UnhealthyRelationshipContents(endPoint).subscribe(
-      (data) => {
+      (data: any) => {
+        // Extract webImage from the first item in data
         this.webImage = data.image;
+
+        // Map the scenario data from the API response
         this.scenarioData = data.map((item: any) => ({
-          title: item.Content.content.find((c: any) => 
-            c.children.some((child: any) => child.bold)
+          title: item.Content.content.find((c: any) =>
+            c.type === 'heading' && c.children.some((child: any) => child.bold)
           )?.children[0].text || '',
-          
-          description: item.Content.content.map((c: any) =>
-            c.children.map((child: any) => ({
-              text: child.text,
-              bold: child.bold || false,
-              italic: child.italic || false
-            }))
-          )
+          content: item.Content.content.map((c: any) => {
+            if (c.type === 'list') {
+              // Handle lists (unordered or ordered)
+              return {
+                type: c.type,
+                format: c.format, // "unordered" or "ordered"
+                items: c.children.map((listItem: any) => ({
+                  type: listItem.type, // "list-item"
+                  children: listItem.children.map((child: any) => ({
+                    text: child.text,
+                    bold: child.bold || false,
+                    italic: child.italic || false
+                  }))
+                }))
+              };
+            } else {
+              // Handle paragraphs and headings
+              return {
+                type: c.type, // "heading" or "paragraph"
+                level: c.level || undefined, // For headings (e.g., level: 3 for h3)
+                children: c.children.map((child: any) => ({
+                  text: child.text,
+                  bold: child.bold || false,
+                  italic: child.italic || false
+                }))
+              };
+            }
+          })
         }));
+        console.log('Processed scenario data:', this.scenarioData);
       },
       (error) => console.error('Error loading data:', error)
     );
