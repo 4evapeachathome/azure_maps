@@ -40,14 +40,7 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
-ion-content {
-  --offset-bottom: auto !important;
-  --overflow: hidden;
-  overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
+
 html,
 body {
   font-family: $font-Inter;
@@ -81,6 +74,9 @@ ion-card {
   height: 100%;
     display: flex;
     flex-direction: column;
+}
+.p-b-0{
+  padding-bottom: 0;
 }
 .comp-space {
   margin: 16px 0;
