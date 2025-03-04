@@ -4,7 +4,8 @@ ion-footer {
   background-color: $color-dark-Gray;
   --color: $color-Gray64;
   font-size: $font-size-md;
-
+  margin-top: 16px;
+  box-shadow: none;
   a {
     cursor: pointer; 
     &.active { 
