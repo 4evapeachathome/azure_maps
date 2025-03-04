@@ -23,7 +23,7 @@ interface StateLaw {
 }
 
 @Component({
-  selector: 'app-usa-map',
+  selector: 'pathome-usa-map',
   standalone: true,
   imports: [CommonModule, IonicModule],
   templateUrl: './usa-map.component.html',

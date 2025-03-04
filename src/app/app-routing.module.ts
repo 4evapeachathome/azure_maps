@@ -1,10 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { RelationalComponent } from './controls/relational/relational.component';
 import { TypesofAbuseCardComponent } from './controls/typesof-abuse-card/typesof-abuse-card.component';
-import { HealthyrelatitonshipComponent } from './controls/healthyrelatitonship/healthyrelatitonship.component';
-import { UsStateLawDetailsComponent  } from './controls/us-state-law-details/us-state-law-details.component';
-import { UsaMapComponent } from './usa-map/usa-map.component';
 
 
 const routes: Routes = [
@@ -21,11 +17,7 @@ const routes: Routes = [
   { path: 'nopeaceathome', 
     loadChildren: () => import('./nopeaceathome/nopeaceathome.module').then( m => m.NopeaceathomePageModule)
   },
-  { path: 'relational', component: RelationalComponent },
-  { path: 'typesofabuse', component: TypesofAbuseCardComponent },
-  { path: 'uslawsbystate', component: UsaMapComponent },
-  { path: 'us-state-law-details/:stateName', component: UsStateLawDetailsComponent },
-    
+  { path: 'typesofabuse', component: TypesofAbuseCardComponent }, 
   {
     path: '',
     redirectTo: 'home',
@@ -38,9 +30,14 @@ const routes: Routes = [
   {
     path: 'supportservice',
     loadChildren: () => import('./supportservice/supportservice.module').then( m => m.SupportservicePageModule)
-  },  {
+  },
+  {
     path: 'unhealthyrelationship',
     loadChildren: () => import('./unhealthyrelationship/unhealthyrelationship.module').then( m => m.UnhealthyrelationshipPageModule)
+  },
+  {
+    path: 'uslawsbystate',
+    loadChildren: () => import('./legalrights/legalrights.module').then( m => m.LegalrightsPageModule)
   }
 
 ];
