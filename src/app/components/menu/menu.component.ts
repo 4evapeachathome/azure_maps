@@ -12,6 +12,7 @@ interface MenuItem {
   documentId: string;
   title: string;
   link: string | null;
+  order:number;
   parentMenu: MenuItem | null;
   children?: MenuItem[];
   expanded?: boolean;
@@ -33,6 +34,14 @@ export class MenuComponent implements OnInit {
   menuItems: MenuItem[] = [];
   processedMenu: MenuItem[] = [];
   selectedId: string | null = null;
+  showAdditionalMenus: boolean = false;
+
+  // Define the titles of menus to hide initially
+  private initiallyHiddenMenuTitles = [
+    'No Peace at Home',
+    'Support Service',
+    'Legal Rights'
+  ];
 
   constructor(
     private apiService: ApiService,
@@ -67,23 +76,24 @@ export class MenuComponent implements OnInit {
       }
     );
   }
-  
+
   buildMenuTree(items: MenuItem[]): MenuItem[] {
     if (!items) {
       console.error('Invalid items:', items);
       return [];
     }
-  
-    // First, find the root items (items with no parent)
+
     const rootItems = items.filter(item => !item.parentMenu);
-  
-    // Create a map for quick lookup of items by their id
     const itemMap = new Map<number, MenuItem>();
+    
     items.forEach(item => {
-      itemMap.set(item.id, { ...item, children: [], expanded: false });
+      itemMap.set(item.id, { 
+        ...item, 
+        children: [], 
+        expanded: false
+      });
     });
-  
-    // Build the tree structure
+
     items.forEach(item => {
       if (item.parentMenu) {
         const parent = itemMap.get(item.parentMenu.id);
@@ -92,19 +102,75 @@ export class MenuComponent implements OnInit {
         }
       }
     });
-  
-    // Return only the root items with their nested children
-    return rootItems.map(item => itemMap.get(item.id)!);
+
+    // Sort children of each item: order first (asc), then id (asc) if order is null
+    itemMap.forEach(item => {
+      if (item.children && item.children.length > 0) {
+        item.children.sort((a, b) => {
+          if (a.order !== null && b.order !== null) {
+            return a.order - b.order; // Sort by order if both have it
+          }
+          if (a.order === null && b.order === null) {
+            return a.id - b.id; // Sort by id if both orders are null
+          }
+          return a.order === null ? 1 : -1; // Null orders come last
+        });
+      }
+    });
+
+    const allRootItems = rootItems.map(item => itemMap.get(item.id)!);
+    
+    // Sort root items: order first (asc), then id (asc) if order is null
+    const sortedRootItems = allRootItems.sort((a, b) => {
+      if (a.order !== null && b.order !== null) {
+        return a.order - b.order; // Sort by order if both have it
+      }
+      if (a.order === null && b.order === null) {
+        return a.id - b.id; // Sort by id if both orders are null
+      }
+      return a.order === null ? 1 : -1; // Null orders come last
+    });
+
+    return sortedRootItems.filter(item => {
+      if (this.initiallyHiddenMenuTitles.includes(item.title)) {
+        return this.showAdditionalMenus;
+      }
+      return true;
+    });
   }
 
   toggleItem(item: MenuItem, event: Event) {
     event.stopPropagation();
+    
+    // Show additional menus when clicking "Peace at Home"
+    if (item.title === 'Peace at Home' && !this.showAdditionalMenus) {
+      this.showAdditionalMenus = true;
+      this.processedMenu = this.buildMenuTree(this.menuItems);
+    }
+    // Collapse additional menus when clicking "Home"
+    else if (item.title === 'Home' && this.showAdditionalMenus) {
+      this.showAdditionalMenus = false;
+      this.processedMenu = this.buildMenuTree(this.menuItems);
+      // Collapse all expanded items
+      this.collapseAllItems(this.processedMenu);
+    }
+
     if (item.children && item.children.length > 0) {
       item.expanded = !item.expanded;
     }
+    
     if (item.link) {
       this.router.navigate([item.link]);
     }
+  }
+
+  private collapseAllItems(items: MenuItem[]) {
+    items.forEach(item => {
+      item.expanded = false;
+      if (item.children) {
+        this.collapseAllItems(item.children);
+      }
+    });
   }
 
   expandCurrentSection() {

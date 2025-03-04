@@ -8,50 +8,49 @@
     margin-bottom: 10px;
 }
 
-/* New CSS for Content Wrapper, Headings, and Lists to Match Figma Design */
 .content-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Matches spacing between headings, paragraphs, and lists in Figma */
+    gap: 8px; 
   }
   
   .content-heading {
-    font-size: 18px; /* Larger for headings, matching Figma hierarchy */
-    line-height: 1.5; /* Matches line spacing in Figma */
-    color: #333; /* Matches text color in Figma */
-    margin: 0; /* Remove default margins for precise control */
+    font-size: 18px; 
+    line-height: 1.5; 
+    color: #333; 
+    margin: 0; 
   }
   
   .content-heading h3 {
-    font-weight: 600; /* Bold for headings, matching Figma */
-    margin: 0; /* Ensure no extra spacing around headings */
+    font-weight: 600; 
+    margin: 0; 
   }
   
   .content-paragraph {
-    font-size: 14px; /* Matches body text size in Figma */
-    line-height: 1.5; /* Matches line spacing in Figma */
-    color: #333; /* Matches text color in Figma */
-    margin: 0; /* Remove default margins for precise control */
+    font-size: 14px; 
+    line-height: 1.5; 
+    color: #333;
+    margin: 0; 
   }
   
   .content-paragraph p {
-    margin: 0; /* Ensure no extra spacing around paragraphs */
+    margin: 0;
   }
   
   .content-list {
-    font-size: 14px; /* Matches body text size in Figma */
-    line-height: 1.5; /* Matches line spacing in Figma */
-    color: #333; /* Matches text color in Figma */
-    margin: 0; /* Remove default margins for precise control */
+    font-size: 14px; 
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
   }
   
   .content-list ul,
   .content-list ol {
-    padding-left: 20px; /* Matches indent for bullet points/numbered lists in Figma */
-    margin: 0; /* Remove default margins for precise control */
+    padding-left: 20px; 
+    margin: 0;
   }
   
   .content-list li {
-    margin: 4px 0; /* Matches spacing between bullet points/numbered items in Figma */
-    padding: 0; /* Remove default padding for precise control */
+    margin: 4px 0; 
+    padding: 0;
   }
