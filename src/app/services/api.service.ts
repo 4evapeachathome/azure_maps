@@ -357,7 +357,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
     const secretKey = environmentdev.secretKey; // Use a secure key, store it safely
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(contactData), secretKey).toString();
   
-    return this.http.post(`${environmentdev.apiHost}${endpoint}`, { data: encryptedData }, { headers });
+    return this.http.post(`${endpoint}`, { data: encryptedData }, { headers });
   }
 
     // Fetch Relational, which includes both personal and interpersonal items
