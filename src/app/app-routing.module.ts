@@ -38,7 +38,12 @@ const routes: Routes = [
   {
     path: 'uslawsbystate',
     loadChildren: () => import('./legalrights/legalrights.module').then( m => m.LegalrightsPageModule)
+  },
+  {
+    path: 'federallaw',
+    loadChildren: () => import('./federallaw/federallaw.module').then( m => m.FederallawPageModule)
   }
+
 
 ];
 
