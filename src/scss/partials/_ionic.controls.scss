@@ -1,6 +1,20 @@
 .ion-color-primary {
   --box-shadow: none;
-  --ion-color-base: var(--ion-color-primary);
+  --ion-color-base: var(--color-primary ) !important;
+  --ion-color-base-rgb: var(--color-primary ) !important;
+  --ion-color-contrast: var(--color-primary-contrast) !important;
+  --ion-color-contrast-rgb: var(--color-primary-contrast) !important;
+  --ion-color-shade: var(--color-primary ) !important;
+  --ion-color-tint: var(--color-primary ) !important;
+}
+.ion-color-secondary {
+  --box-shadow: none;
+  --ion-color-base: var(--color-secondary) !important;
+  --ion-color-base-rgb: var(--color-secondary) !important;
+  --ion-color-contrast: var(--color-primary-contrast) !important;
+  --ion-color-contrast-rgb: var(--color-primary-contrast) !important;
+  --ion-color-shade: var(--color-secondary) !important;
+  --ion-color-tint: var(--color-secondary) !important;
 }
 ion-content {
   --background: #F1F1F1;
@@ -12,7 +26,7 @@ ion-content {
   // }
 }
 ion-card-content {
-  color: $color-dark-Gray;
+  color: var(--color-dark-Gray);
   font-size: $font-size-md !important;
   padding-inline-start: 16px !important;
   padding-inline-end: 16px !important;
@@ -33,7 +47,7 @@ ion-button{
   }
 }
 .filter-search{
-  border: 1px solid $color-Gray54  ;
+  border: 1px solid var(--color-Gray54)  ;
   border-radius: 8px;
   font-size: $font-size-base;
   --box-shadow: none;

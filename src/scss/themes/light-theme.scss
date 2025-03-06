@@ -1,0 +1,75 @@
+:root {
+  --ion-default-font              : $font-Inter;
+  --ion-font-family               : $font-Inter;
+
+  --menu-selected-color           : #AB52C5;
+  --content-background-color      : #F1F1F1;
+  --icon-color-dark               : #5F6368;
+
+  --ion-color-primary             : #AB52C5;
+  --background-activated          : #AB52C5;
+  --background-focused            : #AB52C5;
+  --background-hover              : #AB52C5;
+
+  --color-primary                 :    #AB52C5;
+  --color-secondary               :   #A0A0A0;
+  --color-deep-Gray               :   #202020;
+  --color-white-smoke             :   #F5F5F5;
+  --color-dark-Gray               :   #4D4D4D;
+  --icon-dark-Gray                :   #5F6368;
+  --icon-tint-Gray                :   #7C7C7C;
+  --color-container               :   #F1F1F1;
+  --color-dark-magenta            :   #813F95;
+  --color-Gray84                  :   #D6D6D6;
+  --color-Gray64                  :   #D7D7D7;
+  --color-Gray54                  :   #CCCCCC;
+  --color-Gray44                  :   #CECECE;
+  --color-primary-contrast        :   #ffffff;
+  --color-error                   :   red;
+  --color-white                   :   #ffffff;
+  
+}
+
+$color-primary                    :   var(--color-primary);
+$color-secondary                  :   var(--color-secondary);
+$color-deep-Gray                  :   var(--color-deep-Gray);
+$color-white-smoke                :   var(--color-white-smoke);
+$color-dark-Gray                  :   var(--color-dark-Gray);
+$icon-dark-Gray                   :   var(--icon-dark-Gray);
+$icon-tint-Gray                   :   var(--icon-tint-Gray);
+$color-container                  :   var(--color-container);
+$color-dark-magenta               :   var(--color-dark-magenta);
+$color-Gray84                     :   var(--color-Gray84);
+$color-Gray64                     :   var(--color-Gray64);
+$color-Gray54                     :   var(--color-Gray54);
+$color-Gray44                     :   var(--color-Gray44);
+$color-primary-contrast           :   var(--color-primary-contrast);
+$color-error                      :   var(--color-error);
+$color-white                      :   var(--color-white);
+
+
+
+$colors: () !default;
+$colors: map-merge(
+  (
+   "color-primary" : $color-primary,
+    "color-secondary":     $color-secondary,
+    "color-deep-Gray":     $color-deep-Gray ,
+    "color-white-smoke":     $color-white-smoke,
+    "color-dark-Gray":     $color-dark-Gray,
+    "icon-dark-Gray":     $icon-dark-Gray ,
+    "icon-tint-Gray":     $icon-tint-Gray  ,
+    "color-container":     $color-container   ,
+    "color-dark-magenta":     $color-dark-magenta,
+    "color-Gray84":     $color-Gray84,
+    "color-Gray64":     $color-Gray64,
+    "color-Gray54":     $color-Gray54,
+    "color-Gray44":     $color-Gray44,
+    "color-primary-contrast":     $color-primary-contrast,
+    "color-error":     $color-error,
+    "color-white":     $color-white,
+   
+    
+  ),
+  $colors
+);

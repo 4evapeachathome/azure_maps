@@ -105,7 +105,7 @@ ion-card {
 }
 .menu-content {
   box-shadow: none !important;
-  background: $color-container;
+  background: var(--color-container);
 }
 .opp-0{
   opacity: 0;
@@ -114,7 +114,7 @@ ion-card {
   ion-card-content {
     .cb-header {
       font-size: $font-size-head-xll;
-      color: $color-deep-Gray;
+      color: var(--color-deep-Gray);
       line-height: normal;
     }
     .cb-header-highlight {
@@ -137,7 +137,7 @@ ion-card {
       flex-direction: column;
       height: 100%;
   ion-card-title {
-    color: $color-deep-Gray;
+    color: var(--color-deep-Gray);
     font-size: $font-size-xll;
   }
   h3 {
@@ -167,7 +167,7 @@ ion-card {
   }
 }
 .common-container{
-  background: $color-white;
+  background: var(--color-white);
   padding: 16px;
   margin: 16px 0;
   border-radius: 8px;
@@ -190,7 +190,7 @@ ion-card {
   }
 }
 .form-container {
-  background: $color-white-smoke;
+  background: var(--color-white-smoke);
   padding: 24px;
   ion-item {
     border-radius: 8px;
@@ -378,7 +378,7 @@ ion-card {
     object-fit: contain;
   }
   .wellness-tip {
-    background: $color-white-smoke;
+    background: var(--color-white-smoke);
     border-radius: 8px;
     color: $color-dark-Gray;
     font-size: $font-size-md;
@@ -397,7 +397,7 @@ ion-card {
     width: 100%;
     height: 150px;
     //  max-height: 150px;
-    background: $color-white-smoke;
+    background: var(--color-white-smoke);
     border-radius: 8px;
     ion-img {
       height: 100%;
@@ -469,7 +469,7 @@ ion-card {
       // }
     }
     .carousel-des-container {
-      background: $color-white;
+      background: var(--color-white);
       margin-top: 110px;
       padding-top: 110px;
       .carousel-description {
@@ -486,7 +486,7 @@ ion-card {
           h3 {
             font-size: $font-size-xll;
             font-weight: $font-bold;
-            color: $color-deep-Gray;
+            color:var(--color-deep-Gray);
             margin-bottom: 16px;
           }
           p {
