@@ -97,11 +97,19 @@ ion-card {
 .com-space-top-16 {
   margin-top: 16px;
 }
+.ham-menu{
+  position: relative;
+}
+.logo{
+ // margin-left: 42px;
+}
 .menu-content {
   box-shadow: none !important;
   background: $color-container;
 }
-
+.opp-0{
+  opacity: 0;
+}
 .container-banner {
   ion-card-content {
     .cb-header {
