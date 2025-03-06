@@ -28,4 +28,9 @@ export const APIEndpoints = {
     unhealthyrelationcontentone: `${environmentdev.apiHost}/api/unhealthyrelationfirstcontents`, 
     unhealthyrelationcontenttwo: `${environmentdev.apiHost}/api/unhealthyrelationsecondcontents`, 
     unhealthyrelationcontentthree: `${environmentdev.apiHost}/api/unhealthyrelationthirdcontents`, 
+    federallawbannercontent: `${environmentdev.apiHost}/api/federal-level-law`, 
+    uvisa: `${environmentdev.apiHost}/api/u-visas`, 
+    tvisa: `${environmentdev.apiHost}/api/t-visas`, 
+    childwaiver: `${environmentdev.apiHost}/api/child-waivers`, 
+    immigrationbenfit: `${environmentdev.apiHost}/api/immigration-benefits`, 
   }

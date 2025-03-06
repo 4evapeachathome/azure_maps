@@ -14,7 +14,7 @@ import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
 export class HealthyrelatitonshipComponent  implements OnInit {
   img: any;
   contentBlocks: any[] = [];
-  title: any;
+  title: any[] = [];
   paragraphContent: any;
   @Input() endpoint:string = '';
 
@@ -26,18 +26,26 @@ export class HealthyrelatitonshipComponent  implements OnInit {
 
 
 
-  getHealthyRelationshipData(endpoint : string){
+  getHealthyRelationshipData(endpoint: string) {
     this.apiService.getHealthyRelationship(endpoint).subscribe(
       (response) => {
-        if (response && response.image && response.title && response.contentBlocks) {
-          this.img = response.image;
-          this.title = response.title;
-          this.contentBlocks = response.contentBlocks;
-        this.paragraphContent = response.title[1]?.children[0]?.text || '';
+        console.log('API Response:', response);
+        const data = response;
+        if (data) {
+          this.img = data.image;
+          this.title = Array.isArray(data.title) ? data.title : [];
+          // Handle both contentBlocks and ContentBlocks for compatibility
+          const blocks = data.contentBlocks || data.contentBlocks;
+          if (blocks) {
+            this.contentBlocks = Array.isArray(blocks) ? blocks : [blocks];
+          } else {
+            this.contentBlocks = [];
+          }
+          this.paragraphContent = data.title?.[1]?.children?.[0]?.text || '';
         }
       },
       (error) => {
-        console.error('Error fetching healthy relationship data:', error);
+        console.error('Error fetching api data:', error);
       }
     );
   }

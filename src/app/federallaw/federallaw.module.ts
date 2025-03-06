@@ -9,6 +9,8 @@ import { FederallawPageRoutingModule } from './federallaw-routing.module';
 import { FederallawPage } from './federallaw.page';
 import { HeaderComponent } from "../controls/header/header.component";
 import { FooterComponent } from "../controls/footer/footer.component";
+import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
+import { UnhealthyRelationshipContent } from "../controls/unhealthyrelationship-contents/unhealthyrelationshipcontent";
 
 @NgModule({
   imports: [
@@ -17,7 +19,9 @@ import { FooterComponent } from "../controls/footer/footer.component";
     IonicModule,
     FederallawPageRoutingModule,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    HealthyrelatitonshipComponent,
+    UnhealthyRelationshipContent
 ],
   declarations: [FederallawPage]
 })

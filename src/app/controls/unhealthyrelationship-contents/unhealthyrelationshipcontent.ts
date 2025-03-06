@@ -25,9 +25,8 @@ export class UnhealthyRelationshipContent  implements OnInit {
   GetUnhealthyrelationcontentone(endPoint: string) {
     this.apiService.UnhealthyRelationshipContents(endPoint).subscribe(
       (data: any) => {
-        // Extract webImage from the first item in data
-        if(data){
-          this.webImage = data.image;
+        if (data) {
+          this.webImage = data.image; // Assuming single item for simplicity
           this.scenarioData = data.map((item: any) => ({
             title: item.Content.content.find((c: any) =>
               c.type === 'heading' && c.children.some((child: any) => child.bold)
@@ -39,11 +38,27 @@ export class UnhealthyRelationshipContent  implements OnInit {
                   format: c.format, // "unordered" or "ordered"
                   items: c.children.map((listItem: any) => ({
                     type: listItem.type, // "list-item"
-                    children: listItem.children.map((child: any) => ({
-                      text: child.text,
-                      bold: child.bold || false,
-                      italic: child.italic || false
-                    }))
+                    children: listItem.children.map((child: any) => {
+                      if (child.type === 'link') {
+                        return {
+                          type: child.type,
+                          url: child.url,
+                          children: child.children.map((linkChild: any) => ({
+                            text: linkChild.text,
+                            bold: linkChild.bold || false,
+                            italic: linkChild.italic || false,
+                            underline: linkChild.underline || false
+                          }))
+                        };
+                      } else {
+                        return {
+                          type: child.type,
+                          text: child.text,
+                          bold: child.bold || false,
+                          italic: child.italic || false
+                        };
+                      }
+                    })
                   }))
                 };
               } else {

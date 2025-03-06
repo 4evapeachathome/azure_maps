@@ -5,7 +5,7 @@
       <ion-col size="7">
         <ng-container *ngFor="let item of title">
           <ng-container *ngIf="item.type === 'heading'">
-            <h2 class="title-highlight" [ngClass]="{'ion-heading': true}">
+            <h2 class="title-highlight ion-heading">
               <ng-container *ngFor="let child of item.children">
                 <ion-text class="highlighted-text" *ngIf="child.bold"><strong>{{ child.text }}</strong></ion-text>
                 <span *ngIf="!child.bold">{{ child.text }}</span>
@@ -22,20 +22,37 @@
         </ng-container>
       </ion-col>
       <ion-col>
-        <ion-img [src]="img" alt="Healthy Relationship Illustration"></ion-img>
+        <ion-img [src]="img" alt="Healthy Relationship Illustration" *ngIf="img"></ion-img>
       </ion-col>
     </div>
   </ion-row>
   <ion-row>
-  <ion-card *ngFor="let block of contentBlocks">
-    <ion-card-header *ngIf="block.multilinerichtextbox[0]?.type === 'heading'">
-      <ion-card-title>{{ block.multilinerichtextbox[0]?.children[0]?.text }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ng-container *ngFor="let item of block.multilinerichtextbox">
-        <p *ngIf="item.type === 'paragraph'">{{ item.children[0]?.text }}</p>
-      </ng-container>
-    </ion-card-content>
-  </ion-card>
-</ion-row>
+    <ion-card *ngFor="let block of contentBlocks">
+      <ion-card-header>
+        <ion-card-title *ngIf="block.multilinerichtextbox?.[0]?.type === 'heading'">
+          {{ block.multilinerichtextbox[0]?.children[0]?.text }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ng-container *ngFor="let item of block.multilinerichtextbox">
+          <p *ngIf="item.type === 'paragraph'">{{ item.children[0]?.text }}</p>
+          <ul *ngIf="item.type === 'list' && item.format === 'unordered'">
+            <li *ngFor="let listItem of item.children">
+              <ng-container *ngFor="let child of listItem.children">
+                <ng-container *ngIf="child.type === 'link'">
+                  <a [href]="child.url" target="_blank" rel="noopener noreferrer">
+                    {{ child.children[0]?.text }}
+                  </a>
+                </ng-container>
+                <!-- Skip empty text nodes -->
+                <ng-container *ngIf="child.type === 'text' && child.text">
+                  <span>{{ child.text }}</span>
+                </ng-container>
+              </ng-container>
+            </li>
+          </ul>
+        </ng-container>
+      </ion-card-content>
+    </ion-card>
+  </ion-row>
 </ion-grid>

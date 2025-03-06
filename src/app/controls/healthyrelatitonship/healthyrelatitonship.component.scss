@@ -69,3 +69,11 @@
   .highlighted-text{
     color: #ab52c4;
   }
+
+  a {
+    text-decoration: underline;
+    color:#ab52c4;
+    &:hover {
+      color: #8a1ba8;
+    }
+  }

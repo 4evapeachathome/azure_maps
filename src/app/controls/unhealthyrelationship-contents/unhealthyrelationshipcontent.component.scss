@@ -40,7 +40,6 @@
   .content-list {
     font-size: 14px; 
     line-height: 1.5;
-    color: #333;
     margin: 0;
   }
   
@@ -53,4 +52,12 @@
   .content-list li {
     margin: 4px 0; 
     padding: 0;
+  }
+
+  a {
+    text-decoration: underline;
+    color:#ab52c4;
+    &:hover {
+      color: #8a1ba8;
+    }
   }
