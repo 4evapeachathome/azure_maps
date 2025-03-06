@@ -6,17 +6,24 @@
     <ion-title class="ion-no-padding">
       <ion-grid>
         <ion-row>
-          <ion-col> <ion-img
-            src="../../../assets/icon/logo.svg"
-           
-          ></ion-img></ion-col>
+         
+          <ion-col>
+        
+              <!-- <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" checked />
+              <label for="sidebar-toggle" class="sidebar-toggle-label">
+                <ion-icon name="menu-outline"></ion-icon>
+              </label> -->
+         
+            <ion-img src="../../../assets/icon/logo.svg" class="logo"></ion-img
+          >
+   
+        </ion-col>
           <ion-col class="ion-text-end" *ngIf="showExitButton">
             <ion-button color="primary" size="small" [routerLink]="['/home']">
               <ion-icon slot="start" name="close"></ion-icon>
               Exit
             </ion-button>
           </ion-col>
-        
         </ion-row>
       </ion-grid>
     </ion-title>
