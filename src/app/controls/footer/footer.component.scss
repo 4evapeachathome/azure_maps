@@ -10,7 +10,7 @@ ion-footer {
     cursor: pointer; 
     &.active { 
       text-decoration: underline; 
-      color: darken($color-Gray64, 20%); 
+      color: $color-Gray64; 
     }
   }
 
