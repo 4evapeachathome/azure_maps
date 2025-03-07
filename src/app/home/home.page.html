@@ -4,7 +4,7 @@
 <ion-content [fullscreen]="true">
 
    
-  <ion-grid>
+  <ion-grid class="p-b-0">
 
     <!-- First Row: Single Component -->
     <ion-row class="comp-space">
@@ -15,13 +15,13 @@
 
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row class="comp-space hc-spacing">
-      <ion-col size-sm="4" class="hcs-r hc-cp">
+      <ion-col size="12" size-sm="4" class="hcs-r hc-cp">
         <pathome-daily-tips></pathome-daily-tips>
       </ion-col>      
-      <ion-col size-sm="4"  class="hcs hc-cp">
+      <ion-col size="12" size-sm="4"  class="hcs hc-cp">
         <pathome-wellness-tips></pathome-wellness-tips>
       </ion-col>
-      <ion-col size-sm="4"  class="hcs-l hc-cp">
+      <ion-col size="12" size-sm="4"  class="hcs-l hc-cp">
         <pathome-peace-harmony></pathome-peace-harmony>
       </ion-col>
     </ion-row>
@@ -35,11 +35,14 @@
 
     
 
-  </ion-grid>
-  <ion-grid>
-   <!-- Fourth Row: Footer Component -->
+ 
     <ion-row>
-      <ion-col >
+      <ion-col class="ion-text-center pb-24">
+        <ion-button color="primary" size="small">Explore the Next Chapter.....</ion-button>
+        </ion-col>
+        </ion-row>
+    <ion-row>
+      <ion-col class="p-b-0">
         <pathome-footer></pathome-footer>
       </ion-col>
     </ion-row>
