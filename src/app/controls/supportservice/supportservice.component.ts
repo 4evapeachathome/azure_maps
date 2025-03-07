@@ -209,25 +209,26 @@ getSupportServiceData(endpoint:string) {
     this.filterOpen = false;
   }
 
-  // Apply filters
-  applyFilters() {
-    // Get selected filter keys
-    const selectedFilterKeys = this.filterOptions
-      .filter(option => option.selected)
-      .map(option => option.key as keyof Organization); 
-    //debugger;
-    // Filter organizations based on selected filters
+ // Apply filters
+ applyFilters() {
+  const selectedFilterKeys = this.filterOptions
+    .filter(option => option.selected)
+    .map(option => option.key as keyof Organization);
+
+  if (selectedFilterKeys.length === 0) {
+    this.filteredLocations = [...this.organizations]; // No filters selected, show all
+  } else {
     const filteredOrgs = this.organizations.filter(org => {
-      return selectedFilterKeys.some(key => {
-        return org[key] === true;
-      });
+      return selectedFilterKeys.some(key => org[key] === true);
     });
-    
-    // Update the displayed organizations
     this.filteredLocations = filteredOrgs;
-    this.closeFilter();
   }
 
+  this.closeFilter();
+}
+  getSelectedFilterCount(): number {
+    return this.filterOptions.filter(option => option.selected).length;
+  }
 
   // Search functionality
   onSearch() {
@@ -239,6 +240,12 @@ getSupportServiceData(endpoint:string) {
       this.filteredLocations = this.organizations.filter(location =>
         location.OrgName.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
+    }
+  }
+
+  onInputChange(event: any) {
+    if (!this.searchQuery || this.searchQuery.trim() === '') {
+      this.filteredLocations = [...this.organizations];
     }
   }
 
