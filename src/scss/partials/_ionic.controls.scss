@@ -6,6 +6,7 @@
   --ion-color-contrast-rgb: var(--color-primary-contrast) !important;
   --ion-color-shade: var(--color-primary ) !important;
   --ion-color-tint: var(--color-primary ) !important;
+  --border-radius: 8px;
 }
 .ion-color-secondary {
   --box-shadow: none;
@@ -15,6 +16,7 @@
   --ion-color-contrast-rgb: var(--color-primary-contrast) !important;
   --ion-color-shade: var(--color-secondary) !important;
   --ion-color-tint: var(--color-secondary) !important;
+  --border-radius: 8px;
 }
 ion-content {
   --background: #F1F1F1;
