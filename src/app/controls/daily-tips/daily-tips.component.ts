@@ -23,8 +23,8 @@ import { getConstant } from 'src/shared/constants';
 export class DailyTipsComponent implements OnInit {
   currentDate: Date;
   allTips: any[] = [];
-  quotes : string = '';
-  dailyPeaceTitle:string = '';
+  quotes: string = '';
+  dailyPeaceTitle: string = '';
   weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   selectedDay: number;
   weekDates: Date[] = [];
@@ -38,7 +38,7 @@ export class DailyTipsComponent implements OnInit {
 
   constructor(private apiService: ApiService) {
     this.userDateTime = new Date();
-    this.currentDate = this.userDateTime;
+    this.currentDate = new Date(this.userDateTime); // Initialize with current date
     this.selectedDay = this.userDateTime.getDay();
   }
 
@@ -61,23 +61,24 @@ export class DailyTipsComponent implements OnInit {
       this.weekDates.push(date);
     }
 
-    // Update current date for display
-    this.currentDate = new Date(sunday);
-
     // If we're on the current week, ensure current day is selected
     if (this.currentWeekOffset === 0) {
       this.selectedDay = this.userDateTime.getDay();
+    } else if (this.selectedDay === undefined || this.selectedDay < 0 || this.selectedDay > 6) {
+      this.selectedDay = 0; // Default to Sunday if no valid selection
     }
+
+    // Update currentDate to the selected day's date
+    this.currentDate = new Date(this.weekDates[this.selectedDay]);
   }
 
   fetchDailyTipData() {
     this.apiService.getDailyTip().subscribe(
       (response) => {
-        // Check if there are any health tips available
         if (response.data && response.data.length > 0) {
-          this.allTips = response.data[0].description ;
+          this.allTips = response.data[0].description;
           this.dailyPeaceTitle = response.data[0].title;
-          
+
           if (this.allTips && this.allTips.length > 0) {
             this.generateRandomTip();
           } else {
@@ -97,8 +98,8 @@ export class DailyTipsComponent implements OnInit {
   setDefaultTip() {
     const peaceTip = getConstant('HEALTH_TIPS', 'DEFAULT_TIP');
     if (peaceTip) {
-      this.currentTip = peaceTip.message,
-      this.dailyPeaceTitle = peaceTip.title
+      this.currentTip = peaceTip.message;
+      this.dailyPeaceTitle = peaceTip.title;
     }
   }
 
@@ -112,20 +113,18 @@ export class DailyTipsComponent implements OnInit {
     do {
       randomIndex = Math.floor(Math.random() * this.allTips.length);
     } while (randomIndex === this.previousTipIndex);
-    
+
     const randomTip = this.allTips[randomIndex];
     this.currentTip = randomTip.Description;
     this.previousTipIndex = randomIndex;
 
-    
     localStorage.setItem(this.storageKey, randomIndex.toString());
   }
-
 
   navigateWeek(direction: 'prev' | 'next') {
     this.slideDirection = direction === 'next' ? 'left' : 'right';
     this.currentWeekOffset += direction === 'next' ? 1 : -1;
-    
+
     // Reset selection when moving away from current week
     if (this.currentWeekOffset !== 0) {
       this.selectedDay = 0;
@@ -133,11 +132,11 @@ export class DailyTipsComponent implements OnInit {
       // If returning to current week, select current day
       this.selectedDay = this.userDateTime.getDay();
     }
-    
+
     setTimeout(() => {
       this.calculateWeekDates();
       this.fetchDailyTipData();
-      
+
       // Remove the slide class after animation
       setTimeout(() => {
         this.slideDirection = null;
@@ -145,25 +144,28 @@ export class DailyTipsComponent implements OnInit {
     }, 50);
   }
 
-  
   isCurrentDay(index: number): boolean {
     if (this.currentWeekOffset !== 0) return false;
-    
+
     const weekDate = this.weekDates[index];
-    return weekDate && 
-           this.userDateTime.getDate() === weekDate.getDate() && 
-           this.userDateTime.getMonth() === weekDate.getMonth() && 
-           this.userDateTime.getFullYear() === weekDate.getFullYear();
+    return (
+      weekDate &&
+      this.userDateTime.getDate() === weekDate.getDate() &&
+      this.userDateTime.getMonth() === weekDate.getMonth() &&
+      this.userDateTime.getFullYear() === weekDate.getFullYear()
+    );
   }
 
   selectDay(index: number) {
     console.log(`Day selected: ${index}`);
-    
+
     if (this.selectedDay !== index) {
-        this.selectedDay = index; 
-        this.generateRandomTip();
+      this.selectedDay = index;
+      // Update currentDate to the selected day's date
+      this.currentDate = new Date(this.weekDates[index]);
+      this.generateRandomTip();
     } else {
-        console.log(`Day ${index} is already selected. No new tip generated.`);
+      console.log(`Day ${index} is already selected. No new tip generated.`);
     }
-}
+  }
 }
