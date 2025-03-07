@@ -18,6 +18,11 @@
   --ion-color-tint: var(--color-secondary) !important;
   --border-radius: 8px;
 }
+.sc-ion-buttons-md-s ion-button:not(.button-round) {
+  --border-radius: 8px;
+  --padding-start: 1.1em;
+  --padding-end: 1.1em;
+}
 ion-content {
   --background: #F1F1F1;
   // --offset-bottom: auto !important;
@@ -60,6 +65,20 @@ ion-button{
   }
   .searchbar-search-icon.sc-ion-searchbar-md{
     inset-inline-start: 8px;
+  }
+}
+ion-checkbox {
+  font-size: $font-size-base ;
+  --border-radius: 5px;
+  --border-color: var(--color-primary) ; /* Change the border color to purple */
+  --background: var(--color-white) ; /* Background color when unchecked */
+  ----checkmark-color: var(--color-white); /* Background color when checked */
+  --checkbox-background-checked: var(--color-primary);
+  --border-color-checked: var(--color-primary);
+  color: var(--color-dark-Gray) ;
+  &::part(label)
+  {
+     margin-inline-start: 8px;
   }
 }
 // .ss-search-button {

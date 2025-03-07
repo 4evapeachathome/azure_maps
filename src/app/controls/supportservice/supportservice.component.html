@@ -172,19 +172,21 @@
             
                 <ion-searchbar [(ngModel)]="filterSearchTerm" placeholder="Search" class="filter-search"></ion-searchbar>
             
-                <ion-list>
-                  <ion-item *ngFor="let option of filteredFilterOptions">
-                    <ion-checkbox [(ngModel)]="option.selected"></ion-checkbox>
-                    <ion-label class="ion-padding-start">{{ option.label }}</ion-label>
-                  </ion-item>
-                </ion-list>
+                <ol>
+                  <li *ngFor="let option of filteredFilterOptions">
+                    <!-- <ion-checkbox [(ngModel)]="option.selected"></ion-checkbox>
+                    <ion-label class="ion-padding-start">{{ option.label }}</ion-label> -->
+
+                    <ion-checkbox labelPlacement="end" justify="start" [(ngModel)]="option.selected">{{ option.label }}</ion-checkbox>
+                  </li>
+                </ol>
               </ion-card-content>
             </ion-card>
             </div>
           </div>
         <div class="gmap-container">
         
-  <google-map height="100%" width="100%" [zoom]="zoom">
+  <google-map height="100%" width="100%" [zoom]="zoom" class="gm-content">
     <map-marker 
       *ngFor="let location of filteredLocations" 
       [position]="{ lat: location.OrgLatitude, lng: location.OrgLongitude }" 
