@@ -202,6 +202,7 @@ getSupportServiceData(endpoint:string) {
   clearFilters() {
     this.filterOptions.forEach(option => option.selected = false);
     this.filterSearchTerm = '';
+    this.filteredLocations = [...this.organizations];
   }
   
   closeFilter() {
@@ -230,9 +231,15 @@ getSupportServiceData(endpoint:string) {
 
   // Search functionality
   onSearch() {
-    this.filteredLocations = this.organizations.filter(location =>
-      location.OrgName.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
+    if (!this.searchQuery || this.searchQuery.trim() === '') {
+      // If search query is empty, reset filteredLocations to the original list
+      this.filteredLocations = [...this.organizations];
+    } else {
+      // Filter the organizations based on the search query
+      this.filteredLocations = this.organizations.filter(location =>
+        location.OrgName.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    }
   }
 
   onIconClick() {
