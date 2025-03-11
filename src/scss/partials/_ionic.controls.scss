@@ -18,6 +18,20 @@
   --ion-color-tint: var(--color-secondary) !important;
   --border-radius: 8px;
 }
+.icon-button{
+  --box-shadow: none;
+  --ion-color-base: var(--color-white) !important;
+  --ion-color-base-rgb: var(--color-white) !important;
+  --ion-color-contrast: var(--icon-dark-Gray) !important;
+  --ion-color-contrast-rgb: var(--icon-dark-Gray) !important;
+  --ion-color-shade: var(--icon-dark-Gray) !important;
+  --ion-color-tint: var(--icon-dark-Gray) !important;
+  --border-radius: 8px !important;
+  --padding-start: 8px !important;
+  --padding-end: 8px !important;
+  --border-color: var(--color-Gray54);
+  --border-width: 1px;
+}
 .sc-ion-buttons-md-s ion-button:not(.button-round) {
   --border-radius: 8px;
   --padding-start: 1.1em;

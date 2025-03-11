@@ -20,7 +20,7 @@ ion-searchbar {
     bottom: 10px;
     right: 10px;
     z-index: 100;
- //   pointer-events: none;
+    pointer-events: none;
     .search-toolbar {
       --background: var(--color-white);
       --border-radius: 8px;
@@ -31,6 +31,7 @@ ion-searchbar {
       border-radius: 8px;
       width: 50%;
       padding: 8px;
+      padding-right: 4px;
       pointer-events: all;
       // .toolbar-background {
       //   border-radius: 8px;
@@ -45,6 +46,7 @@ ion-searchbar {
     border-radius: 8px;
     padding: 0 8px;
     ion-icon {
+      width: 22px;
       font-size: 20px;
       margin-right: 12px;
       margin-left: 4px;
@@ -68,7 +70,7 @@ ion-searchbar {
   .gmap-container {
     height: 550px;
    // height: 100%;
-   z-index: 1;
+  // z-index: 1;
    position: relative;
  
   }
@@ -124,11 +126,11 @@ ion-searchbar {
         --background: $color-Gray44;
       }
     }
-    ion-buttons {
+    .ab-containers {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      ion-button {
+      .action-button{
         color: $color-dark-Gray;
         font-size: $font-size-sm;
         border: 1px solid $color-primary;
@@ -161,7 +163,11 @@ ion-searchbar {
     margin-bottom: 0;
   }
 }
-
+.locations-card{
+  ion-card-content{
+    margin-bottom: 16px;
+  }
+}
 .filter-card {
 
   .filter-header {
@@ -180,14 +186,24 @@ ion-searchbar {
       margin-top: 0;
     }
   }
+  .filter-con-container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  
   ol{
     margin: 0;
     padding: 0;
+    overflow: hidden;
+    overflow-y: auto;
+    height: 100%;
+    margin-bottom: 16px;
     li{
      list-style: none;
      margin: 12px 0;
     }
   }
+}
   ion-item {
     --inner-padding-top: 6px !important;
     --inner-padding-bottom: 6px !important;
@@ -248,4 +264,26 @@ ion-badge {
   font-size: 12px;
   padding: 2px 6px;
   border-radius: 50%;
+}
+.sc-con-container{
+  display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 80px;
+    left: 10px;
+    bottom: 10px;
+    right: 10px;
+    z-index: 100;
+    pointer-events: all;
+}
+.icon-button{
+  --padding-top: 10px;
+    --padding-bottom: 10px;
+    margin-inline-start: 8px;
+    --padding-start: 10px !important;
+    --padding-end: 10px !important;
+    min-width: 48px;
+    ion-icon{
+      width: 16px;
+    }
 }
