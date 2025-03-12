@@ -170,7 +170,8 @@ ion-card {
 .common-container{
   background: var(--color-white);
   padding: 16px;
-  margin: 16px 0;
+  padding-top: 10px;
+  margin:0;
   border-radius: 8px;
   h3 {
     color: $color-primary;
@@ -189,6 +190,13 @@ ion-card {
     color: $color-primary;
     font-size: $font-size-base;
   }
+}
+.scc-content{
+  padding-bottom: 0;
+}
+.b-l-r-border-radius{
+  border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
 .form-container {
   background: var(--color-white-smoke);

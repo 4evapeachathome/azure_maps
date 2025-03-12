@@ -1,10 +1,13 @@
+@import "styles-dir";
+
 .breadcrumb {
-    font-size: 14px;
-    color: #888; // Default color for parent items
+    font-size: $font-size-base;
+    color: var(--color-Gray34); // Default color for parent items
+    margin-bottom: 8px;
   
     .breadcrumb-link {
       cursor: pointer;
-      color: #aaa; // Light grey for parent
+      color: var(--color-Gray34); // Light grey for parent
       text-decoration: none;
     }
   
@@ -13,7 +16,8 @@
     }
   
     .breadcrumb-current {
-      font-weight: bold;
+      font-weight: $font-bold ;
+      font-size: $font-size-xll;
       color: var(--ion-color-primary); // Primary color for the current page
     }
   }

@@ -24,9 +24,11 @@
   --color-Gray64                  :   #D7D7D7;
   --color-Gray54                  :   #CCCCCC;
   --color-Gray44                  :   #CECECE;
+  --color-Gray34                  :   #9E9E9E;
   --color-primary-contrast        :   #ffffff;
   --color-error                   :   red;
   --color-white                   :   #ffffff;
+
   
 }
 
@@ -43,9 +45,11 @@ $color-Gray84                     :   var(--color-Gray84);
 $color-Gray64                     :   var(--color-Gray64);
 $color-Gray54                     :   var(--color-Gray54);
 $color-Gray44                     :   var(--color-Gray44);
+$color-Gray34                      :   var(--color-Gray34);
 $color-primary-contrast           :   var(--color-primary-contrast);
 $color-error                      :   var(--color-error);
 $color-white                      :   var(--color-white);
+
 
 
 
@@ -65,6 +69,7 @@ $colors: map-merge(
     "color-Gray64":     $color-Gray64,
     "color-Gray54":     $color-Gray54,
     "color-Gray44":     $color-Gray44,
+    "color-Gray34":     $color-Gray34,
     "color-primary-contrast":     $color-primary-contrast,
     "color-error":     $color-error,
     "color-white":     $color-white,
