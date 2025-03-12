@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, NgModule, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicModule, Platform } from '@ionic/angular';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
@@ -82,7 +82,7 @@ export interface FilterOption {
     standalone: true,
     imports: [CommonModule, IonicModule, GoogleMapsModule, FormsModule, BreadcrumbComponent],
 })
-export class SupportserviceComponent  implements OnInit {
+export class SupportserviceComponent  implements OnInit{
   searchQuery: string = '';
   filterOpen: boolean = false;
   selectedLocation: Organization | null = null;
@@ -94,9 +94,10 @@ export class SupportserviceComponent  implements OnInit {
   userLocation: any = null;
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
-  private readonly endPoint : string = APIEndpoints.supportService;
+  public readonly endPoint : string = APIEndpoints.supportService;
 
-  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService) { }
+  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService) { 
+  }
 
 
   ngOnInit() {
@@ -104,16 +105,7 @@ export class SupportserviceComponent  implements OnInit {
     this.getSupportServiceData(this.endPoint);
   }
 
-  ionViewWillEnter() {
-    this.resetState();
-    this.getSupportServiceFilterOptions();
-    this.getSupportServiceData(this.endPoint);
-  }
-
-  ionViewDidLeave() {
-    this.resetState();
-  }
-
+ 
   resetState() {
     this.searchQuery = '';
     this.filterOpen = false;
@@ -143,7 +135,6 @@ export class SupportserviceComponent  implements OnInit {
       option.label.toLowerCase().includes(this.filterSearchTerm.toLowerCase())
     );
   }
-
 
 
   async getCurrentPosition() {
@@ -443,6 +434,5 @@ getSupportServiceData(endpoint:string) {
     // Opens phone app with specified number
     window.location.href = `tel:${phoneNumber}`;
   }
-
 
 }
