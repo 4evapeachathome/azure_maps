@@ -169,7 +169,7 @@ ion-card {
 }
 .common-container{
   background: var(--color-white);
-  padding: 16px;
+  padding: 16px 32px;
   padding-top: 10px;
   margin:0;
   border-radius: 8px;
@@ -192,6 +192,7 @@ ion-card {
   }
 }
 .scc-content{
+  padding: 16px 16px;
   padding-bottom: 0;
 }
 .b-l-r-border-radius{
