@@ -103,6 +103,34 @@ export class SupportserviceComponent  implements OnInit {
     this.getSupportServiceFilterOptions();
     this.getSupportServiceData(this.endPoint);
   }
+
+  ionViewWillEnter() {
+    this.resetState();
+    this.getSupportServiceFilterOptions();
+    this.getSupportServiceData(this.endPoint);
+  }
+
+  ionViewDidLeave() {
+    this.resetState();
+  }
+
+  resetState() {
+    this.searchQuery = '';
+    this.filterOpen = false;
+    this.selectedLocation = null;
+    this.activeTab = 'about';
+    this.segment = 'about';
+    this.latitude = undefined;
+    this.longitude = undefined;
+    this.geolocationEnabled = false;
+    this.userLocation = null;
+    this.organizations = [];
+    this.filterOptions = [];
+    this.filteredLocations = undefined;
+    this.filterSearchTerm = '';
+  }
+
+
   center: google.maps.LatLngLiteral = { lat: 42.0162261, lng: -91.701811 };
   zoom = 12;
   filteredLocations: any[] | undefined ;
@@ -196,6 +224,7 @@ getSupportServiceData(endpoint:string) {
   // Toggle filter widget
   toggleFilter() {
     this.filterOpen = !this.filterOpen;
+    this.filterSearchTerm = '';
   }
 
   // Clear filters
@@ -203,14 +232,24 @@ getSupportServiceData(endpoint:string) {
     this.filterOptions.forEach(option => option.selected = false);
     this.filterSearchTerm = '';
     this.filteredLocations = [...this.organizations];
+    this.searchQuery = '';
   }
   
   closeFilter() {
     this.filterOpen = false;
+    this.filterSearchTerm = '';
+  }
+
+  closeLocations(){
+    this.geolocationEnabled = false;
+    this.searchQuery = '';
   }
 
  // Apply filters
  applyFilters() {
+  if(!this.geolocationEnabled){
+
+  }
   const selectedFilterKeys = this.filterOptions
     .filter(option => option.selected)
     .map(option => option.key as keyof Organization);
@@ -223,8 +262,10 @@ getSupportServiceData(endpoint:string) {
     });
     this.filteredLocations = filteredOrgs;
   }
-
+  this.selectedLocation = null;
+  this.searchQuery = '';
   this.closeFilter();
+  
 }
   getSelectedFilterCount(): number {
     return this.filterOptions.filter(option => option.selected).length;
@@ -241,11 +282,14 @@ getSupportServiceData(endpoint:string) {
         location.OrgName.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     }
+    this.selectedLocation = null;
+    this.filterOptions.forEach(option => option.selected = false);
   }
 
   onInputChange(event: any) {
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       this.filteredLocations = [...this.organizations];
+      this.filterOptions.forEach(option => option.selected = false);
     }
   }
 
@@ -257,6 +301,7 @@ getSupportServiceData(endpoint:string) {
   }
 
   onLocationClick(location: any) {
+    this.filterOpen = false;
     this.selectedLocation = location; // Set the selected location
   }
 
