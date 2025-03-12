@@ -261,11 +261,13 @@ ion-segment-view {
 }
 ion-badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: -10px;
+    right: -10px;
   font-size: 12px;
-  padding: 2px 6px;
+  //padding: 4px 6px;
   border-radius: 50%;
+  height: 20px;
+    min-width: 20px;
 }
 .sc-con-container{
   display: flex;
@@ -284,7 +286,7 @@ ion-badge {
     margin-inline-start: 8px;
     --padding-start: 10px !important;
     --padding-end: 10px !important;
-    min-width: 48px;
+    min-width: 57px;
     ion-icon{
       width: 16px;
     }
