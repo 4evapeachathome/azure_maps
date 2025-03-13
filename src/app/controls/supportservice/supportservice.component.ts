@@ -223,7 +223,9 @@ getSupportServiceData(endpoint:string) {
     this.filterOptions.forEach(option => option.selected = false);
     this.filterSearchTerm = '';
     this.filteredLocations = [...this.organizations];
-    this.searchQuery = '';
+    // if(this.searchQuery !== ''){
+    //   this.searchQuery = '';
+    // }
   }
   
   closeFilter() {
