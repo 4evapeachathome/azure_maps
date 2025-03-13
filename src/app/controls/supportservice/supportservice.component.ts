@@ -220,12 +220,14 @@ getSupportServiceData(endpoint:string) {
 
   // Clear filters
   clearFilters() {
-    this.filterOptions.forEach(option => option.selected = false);
+    if(this.getSelectedFilterCount() > 0){
+      this.filterOptions.forEach(option => option.selected = false);
     this.filterSearchTerm = '';
-    this.filteredLocations = [...this.organizations];
-    // if(this.searchQuery !== ''){
-    //   this.searchQuery = '';
-    // }
+    
+    if(this.searchQuery?.trim() === ''){
+     this.filteredLocations = [...this.organizations];
+    }
+    }
   }
   
   closeFilter() {
@@ -240,10 +242,8 @@ getSupportServiceData(endpoint:string) {
 
  // Apply filters
  applyFilters() {
-  if(!this.geolocationEnabled){
-
-  }
-  const selectedFilterKeys = this.filterOptions
+  if(this.getSelectedFilterCount() > 0){
+    const selectedFilterKeys = this.filterOptions
     .filter(option => option.selected)
     .map(option => option.key as keyof Organization);
 
@@ -258,6 +258,8 @@ getSupportServiceData(endpoint:string) {
   this.selectedLocation = null;
   this.searchQuery = '';
   this.closeFilter();
+  }
+  
   
 }
   getSelectedFilterCount(): number {
