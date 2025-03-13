@@ -93,8 +93,14 @@ ion-checkbox {
   &::part(label)
   {
      margin-inline-start: 8px;
+     white-space: normal;
+     margin-top: -3px;
   }
+
+  
+ 
 }
+
 // .ss-search-button {
 //     .sc-ion-buttons-md-s ion-button {
 //       --padding-start: 0 !important;
