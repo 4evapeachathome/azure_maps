@@ -513,7 +513,11 @@ getAllSupportServices(endpoint: string): Observable<any> {
       'ServiceHours',
       'AboutOrg',
       'IsHotline'
-    ]
+    ],
+    pagination: {
+      page: 1,
+      pageSize: 10000 
+    }
   }, environmentdev.apitoken).pipe(
     catchError((error: any) => {
       console.error('Error fetching support services:', error);

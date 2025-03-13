@@ -123,7 +123,7 @@ export class SupportserviceComponent  implements OnInit{
   }
 
 
-  center: google.maps.LatLngLiteral = { lat: 42.0162261, lng: -91.701811 };
+  center: google.maps.LatLngLiteral = { lat: 36.7783, lng: -119.4179 };
   zoom = 12;
   filteredLocations: any[] | undefined ;
   filterSearchTerm: string = '';
@@ -412,7 +412,7 @@ getSupportServiceData(endpoint:string) {
     this.filteredLocations = this.organizations.filter(location => {
       const distance = this.calculateDistance(this.center.lat, this.center.lng, location.OrgLatitude, location.OrgLongitude);
       console.log(`Distance to ${location.OrgName}: ${distance.toFixed(2)} km`);
-      return distance <= 10000; // Keep locations within 100km
+      return distance <= 100; // Keep locations within 100km
     });
   
     console.log('Filtered support centers:', this.filteredLocations);
