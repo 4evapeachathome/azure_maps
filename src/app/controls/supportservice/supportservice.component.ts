@@ -268,6 +268,12 @@ getSupportServiceData(endpoint:string) {
 
   // Search functionality
   onSearch() {
+    if(!this.geolocationEnabled){
+      alert(
+        'Please turn on the location.'
+      );
+      return;
+    }
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       // If search query is empty, reset filteredLocations to the original list
       this.filteredLocations = [...this.organizations];
