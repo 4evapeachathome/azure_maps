@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 @Component({
@@ -11,10 +12,23 @@ import { IonicModule } from '@ionic/angular';
       imports: [CommonModule, IonicModule,RouterModule],
 })
 export class HeaderComponent  implements OnInit {
-  @Input() showExitButton!: boolean;
+  showExitButton: boolean = true;
 
-  constructor() { }
+  constructor(private router: Router,
+    private location: Location) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.checkRoute();
+
+    // Subscribe to route changes
+    this.router.events.subscribe(() => {
+      this.checkRoute();
+    });
+  }
+
+  private checkRoute() {
+    const currentPath = this.location.path();
+    this.showExitButton = currentPath !== '/home' && currentPath !== '';
+  }
 
 }
