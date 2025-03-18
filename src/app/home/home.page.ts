@@ -66,7 +66,7 @@ export class HomePage implements AfterViewInit {
     }
 
   ionViewDidEnter() {
-    debugger
+   // debugger
     const grid = document.querySelector('ion-grid.p-b-0') as HTMLElement;
     if (grid) {
       const gridHeight = grid.offsetHeight;
