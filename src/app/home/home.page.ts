@@ -11,22 +11,59 @@ import { HeightService } from 'src/shared/height.service';
   standalone: false,
   // imports: [IonicModule, MenuComponent]
 })
-export class HomePage {
+export class HomePage implements AfterViewInit {
+  @ViewChild('gridElement', { static: false }) gridElement!: ElementRef;
+  @ViewChild('contentElement', { static: false }) contentElement!: ElementRef;
   sliderEndpoint:string = APIEndpoints.sliderapi;
 
   constructor(private heightService: HeightService,
     private el: ElementRef,
     private ngZone: NgZone) {}
 
-  // ngAfterViewInit() {
-  //   debugger
-  //   // Calculate the height based on content
-  //   setTimeout(() => {
-  //     const contentHeight = this.el.nativeElement.scrollHeight;
-  //     // Add some padding if needed
-  //     this.heightService.setHeight(contentHeight + 50);
-  //   }, 100);
-  // }
+    ngAfterViewInit() {
+      this.initializeScrollSync();
+    }
+  
+    private initializeScrollSync() {
+      const grid = this.gridElement?.nativeElement;
+      const content = this.contentElement?.nativeElement;
+  
+      if (grid && content) {
+        const gridHeight = grid.offsetHeight;
+        console.log('Grid Height:', gridHeight);
+        this.heightService.setGridHeight(gridHeight);
+  
+        grid.addEventListener('scroll', () => this.syncScroll(grid, content));
+        content.addEventListener('scroll', () => this.syncScroll(grid, content));
+      } else {
+        console.error('Grid or Content element not found');
+      }
+    }
+  
+    private syncScroll(grid: HTMLElement, content: HTMLElement) {
+      const gridScrollHeight = grid.scrollHeight;
+      const gridScrollTop = grid.scrollTop;
+      const gridClientHeight = grid.clientHeight;
+      const isAtBottom = gridScrollTop + gridClientHeight >= gridScrollHeight - 5; 
+  
+      if (isAtBottom) {
+        // Inner scroll reached bottom, move outer scroll
+        const totalScroll = gridScrollHeight - gridClientHeight;
+        const scrollPercentage = gridScrollTop / totalScroll;
+        const contentScrollHeight = content.scrollHeight;
+        const contentClientHeight = content.clientHeight;
+        const newScrollTop = scrollPercentage * (contentScrollHeight - contentClientHeight);
+        content.scrollTo({ top: newScrollTop, behavior: 'smooth' });
+      } else {
+        // Sync inner scroll with outer scroll position
+        const contentScrollTop = content.scrollTop;
+        const contentScrollPercentage = contentScrollTop / (content.scrollHeight - content.clientHeight);
+        const newGridScrollTop = contentScrollPercentage * (gridScrollHeight - gridClientHeight);
+        if (newGridScrollTop !== gridScrollTop) {
+          grid.scrollTo({ top: newGridScrollTop, behavior: 'smooth' });
+        }
+      }
+    }
 
   ionViewDidEnter() {
     debugger
