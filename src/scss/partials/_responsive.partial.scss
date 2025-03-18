@@ -29,4 +29,37 @@
           margin-bottom: 8px;
         }
       }
+      .sidebar{
+        // position: absolute !important;
+        // display: block !important;
+        // .sidebar-header{
+        //   display: none !important;
+        // }
+      }
+      .slider-content {
+      
+        margin-left: 0 !important; 
+      }
+      .sidebar-toggle:checked + .sidebar-toggle-label + .sidebar {
+        position: absolute;
+       // transform: translateX(-258px);
+        display: block;
+        z-index: 10000;
+        .sidebar-header{
+          display: none;
+        }
+      }
+      .gmap-container{
+        min-height: 1000px;
+
+      }
+      .search-toolbar {
+        width: 80% !important;
+      }
+      .cards-container{
+        flex-direction: column !important;
+      }
+      .cc-cont-contaner{
+        width: 100% !important;
+      }
   }

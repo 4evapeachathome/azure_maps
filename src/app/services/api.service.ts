@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
-import { environmentdev } from 'src/environments/environment';
+import { environment } from 'src/environments/environment';
 import { APIEndpoints } from 'src/shared/endpoints';
 
 interface QueryOptions {
@@ -109,19 +109,19 @@ export class ApiService {
 }
 
   get(endpoint: string, token?: string): Observable<any> {
-    return this.http.get(`${environmentdev.apiHost}/${endpoint}`, { headers: this.createHeaders(token) });
+    return this.http.get(`${environment.apiHost}/${endpoint}`, { headers: this.createHeaders(token) });
   }
 
   post(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.post(`${environmentdev.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
+    return this.http.post(`${environment.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
   }
 
   put(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.put(`${environmentdev.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
+    return this.http.put(`${environment.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
   }
 
   patch(endpoint: string, body: any, token?: string): Observable<any> {
-    return this.http.patch(`${environmentdev.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
+    return this.http.patch(`${environment.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
   }
 
   getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string): Observable<any> {
@@ -147,7 +147,7 @@ export class ApiService {
         }
       },
       sort: ['createdAt:desc']
-    }, environmentdev.apitoken);
+    }, environment.apitoken);
   }
 
   getMenuItems(): Observable<any> {
@@ -167,15 +167,15 @@ export class ApiService {
         }
       },
       sort: ['createdAt:asc']
-    }, environmentdev.apitoken).pipe(
+    }, environment.apitoken).pipe(
       map((res: any) => {
         if (res && res.data) {
           return res.data.map((item: any) => {
             if (item.icon && item.icon.url) {
-              item.icon.url = `${environmentdev.apiHost}${item.icon.url}`;
+              item.icon.url = `${environment.apiHost}${item.icon.url}`;
             }
             if (item.parentMenu && item.parentMenu.icon && item.parentMenu.icon.url) {
-              item.parentMenu.icon.url = `${environmentdev.apiHost}${item.parentMenu.icon.url}`;
+              item.parentMenu.icon.url = `${environment.apiHost}${item.parentMenu.icon.url}`;
             }
             return item;
           });
@@ -207,12 +207,12 @@ export class ApiService {
         },
         sort: ['createdAt:desc']
     };
-    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
         map((res: any) => {
             console.log('data:', res.data);
             return res.data.map((resData: any) => {
                 if (resData && resData.webImage && resData.webImage.url) {
-                    resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
+                    resData.image = `${environment.apiHost}${resData.webImage.url}`;
                 } else {
                     resData.image = '';
                 }
@@ -241,17 +241,17 @@ export class ApiService {
       },
       sort: ['createdAt:desc']
     };
-    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
         console.log('data:', res.data);
         return res.data.map((resData: any) => {
           if (resData && resData.webImage && resData.webImage.url) {
-            resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
+            resData.image = `${environment.apiHost}${resData.webImage.url}`;
           } else {
             resData.image = ''; 
           }
           return resData;
-        },environmentdev.apitoken);
+        },environment.apitoken);
       }),
       catchError(error => {
         console.error('Error fetching health tips', error);
@@ -272,12 +272,12 @@ export class ApiService {
         },
         sort: ['createdAt:desc']
     };
-    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
         map((res: any) => {
             console.log('data:', res.data);
             return res.data.map((resData: any) => {
                 if (resData && resData.webImage && resData.webImage.url) {
-                    resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
+                    resData.image = `${environment.apiHost}${resData.webImage.url}`;
                 } else {
                     resData.image = '';
                 }
@@ -312,7 +312,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
     sort: ['createdAt:desc']
   };
 
-  return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
       console.log('Raw API Response:', res.data);
       
@@ -321,7 +321,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
           ? resData[mainParam].sliderContent.map((content: any) => ({
               slidercontent: content.slidercontent || [],
               imageUrl: content.webImage?.url 
-                ? `${environmentdev.apiHost}${content.webImage.url}` 
+                ? `${environment.apiHost}${content.webImage.url}` 
                 : null
             }))
           : [];
@@ -350,11 +350,11 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
     const endpoint = APIEndpoints.contactus;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${environmentdev.apitoken}`
+      'Authorization': `Bearer ${environment.apitoken}`
     });
   
     //const secretKey = '0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9'; // Use a secure key, store it safely
-    const secretKey = environmentdev.secretKey; // Use a secure key, store it safely
+    const secretKey = environment.secretKey; // Use a secure key, store it safely
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(contactData), secretKey).toString();
   
     return this.http.post(`${endpoint}`, { data: encryptedData }, { headers });
@@ -372,7 +372,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
             fields: ['textContent']
           }
         }
-      }, environmentdev.apitoken);
+      }, environment.apitoken);
     }
   
   
@@ -387,12 +387,12 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
       }
     };
 
-    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
         console.log('data:', res);
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
-          resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
+          resData.image = `${environment.apiHost}${resData.webImage.url}`;
         } else {
           resData.image = ''; 
         }
@@ -416,12 +416,12 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
       }
     };
   
-    return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
         console.log('data:', res);
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
-          resData.image = `${environmentdev.apiHost}${resData.webImage.url}`;
+          resData.image = `${environment.apiHost}${resData.webImage.url}`;
         } else {
           resData.image = ''; 
         }
@@ -438,7 +438,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
   getHealthyRelationShipContent(endpoint: string): Observable<any> {
     return this.getWithQuery(endpoint, {
       fields: ['content']
-    }, environmentdev.apitoken).pipe(
+    }, environment.apitoken).pipe(
       catchError((error: any) => {
         console.error('Error fetching Api content:', error);
         return throwError('An error occurred while fetching Api content. Please try again later.');
@@ -450,7 +450,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
 getNopeacepartnerViolence(): Observable<any> {
   return this.getWithQuery(APIEndpoints.nopeacepartnerviolence, {
     fields: ['content']
-  }, environmentdev.apitoken);
+  }, environment.apitoken);
 }
 
 
@@ -468,11 +468,11 @@ UnhealthyRelationshipContents(endPoint: string): Observable<any> {
     sort: ['createdAt:desc']
   };
 
-  return this.getWithQuery(endPoint, options, environmentdev.apitoken).pipe(
+  return this.getWithQuery(endPoint, options, environment.apitoken).pipe(
     map((res: any) => {
       const resData = res.data;
       if (resData[0] && resData[0]?.Content?.webImage?.url) {
-        resData.image = `${environmentdev.apiHost}${resData[0].Content.webImage.url}`;
+        resData.image = `${environment.apiHost}${resData[0].Content.webImage.url}`;
       } else {
         resData.image = ''; 
       }
@@ -518,7 +518,7 @@ getAllSupportServices(endpoint: string): Observable<any> {
       page: 1,
       pageSize: 10000 
     }
-  }, environmentdev.apitoken).pipe(
+  }, environment.apitoken).pipe(
     catchError((error: any) => {
       console.error('Error fetching support services:', error);
       return throwError('An error occurred while fetching support services. Please try again later.');
@@ -538,7 +538,7 @@ getServiceFilterOptions(): Observable<any> {
     }
   };
 
-  return this.getWithQuery(endpoint, options, environmentdev.apitoken).pipe(
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
       console.log('Service filter options data:', res);
     //  debugger;

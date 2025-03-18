@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { NgxCaptchaModule } from 'ngx-captcha';
 import { ApiService } from 'src/app/services/api.service';
@@ -12,7 +13,7 @@ import { presentToast, validateEmail } from 'src/shared/utility';
   templateUrl: './contact-us-form.component.html',
   styleUrls: ['./contact-us-form.component.scss'],
   standalone: true,
-    imports: [CommonModule, IonicModule,FormsModule, NgxCaptchaModule]
+    imports: [CommonModule, IonicModule,FormsModule, NgxCaptchaModule, RouterModule]
 })
 export class ContactUsFormComponent  implements OnInit {
   @ViewChild('contactForm') ContactForm!: NgForm;

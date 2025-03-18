@@ -1,10 +1,10 @@
 
 
-<pathome-header [showExitButton]="false"></pathome-header>
+
 <ion-content [fullscreen]="true">
 
    
-  <ion-grid class="p-b-0">
+  <ion-grid #gridElement class="p-b-0">
 
     <!-- First Row: Single Component -->
     <ion-row class="comp-space">
@@ -41,11 +41,14 @@
         <ion-button color="primary" [routerLink]="['/peaceathome']" size="small">Explore the Next Chapter.....</ion-button>
         </ion-col>
         </ion-row>
+ 
+  </ion-grid>
+  <ion-grid>
     <ion-row>
-      <ion-col class="p-b-0">
+      <ion-col >
         <pathome-footer></pathome-footer>
-      </ion-col>
-    </ion-row>
+        </ion-col>
+        </ion-row>
   </ion-grid>
 
 </ion-content>

@@ -1,0 +1,8 @@
+.div-scroll, ion-content, ion-grid {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .div-scroll::-webkit-scrollbar, ion-content::-webkit-scrollbar, ion-grid::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }

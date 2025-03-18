@@ -268,6 +268,13 @@ getSupportServiceData(endpoint:string) {
 
   // Search functionality
   onSearch() {
+    //debugger
+    if(!this.geolocationEnabled){
+      alert(
+        'Please turn on the location.'
+      );
+      return;
+    }
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       // If search query is empty, reset filteredLocations to the original list
       this.filteredLocations = [...this.organizations];
@@ -282,16 +289,25 @@ getSupportServiceData(endpoint:string) {
   }
 
   onInputChange(event: any) {
-    if (!this.searchQuery || this.searchQuery.trim() === '') {
-      this.filteredLocations = [...this.organizations];
-      this.filterOptions.forEach(option => option.selected = false);
+  //  debugger;
+    if(!this.geolocationEnabled){
+      alert(
+        'Please turn on the location.'
+      );
+    }else{
+      if (!this.searchQuery || this.searchQuery.trim() === '') {
+        this.filteredLocations = [...this.organizations];
+        this.filterOptions.forEach(option => option.selected = false);
+      }
     }
   }
 
   onIconClick() {
     console.log('Icon clicked!');
-    if (!this.userLocation) { // Only request location if we don’t already have it
-      this.getCurrentPosition();
+    if(!this.geolocationEnabled){
+      alert(
+        'Please turn on the location.'
+      );
     }
   }
 
