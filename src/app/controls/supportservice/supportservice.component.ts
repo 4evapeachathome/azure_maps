@@ -268,7 +268,7 @@ getSupportServiceData(endpoint:string) {
 
   // Search functionality
   onSearch() {
-    debugger
+    //debugger
     if(!this.geolocationEnabled){
       alert(
         'Please turn on the location.'
@@ -289,7 +289,7 @@ getSupportServiceData(endpoint:string) {
   }
 
   onInputChange(event: any) {
-    debugger;
+  //  debugger;
     if(!this.geolocationEnabled){
       alert(
         'Please turn on the location.'

@@ -20,7 +20,7 @@ export class AppComponent implements OnInit,OnDestroy {
   constructor(private heightService: HeightService) {}
 
   ngOnInit() {
-    debugger
+   // debugger
     this.heightSubscription = this.heightService.gridHeight$.subscribe(({ height, isReady }) => {
       console.log('HeightService Update:', { height, isReady });
       if (isReady && height > 0) {
