@@ -29,4 +29,21 @@
           margin-bottom: 8px;
         }
       }
+      .sidebar{
+        //transform: translateX(-9999px);
+      }
+      .slider-content {
+      
+        margin-left: 0 !important; 
+      }
+      .sidebar-toggle:checked + .sidebar-toggle-label + .sidebar {
+        position: absolute;
+       // transform: translateX(-258px);
+        display: block;
+        z-index: 10000;
+        .sidebar-header{
+          display: none;
+        }
+      }
+     
   }
