@@ -49,5 +49,17 @@
           display: none;
         }
       }
-     
+      .gmap-container{
+        min-height: 1000px;
+
+      }
+      .search-toolbar {
+        width: 80% !important;
+      }
+      .cards-container{
+        flex-direction: column !important;
+      }
+      .cc-cont-contaner{
+        width: 100% !important;
+      }
   }
