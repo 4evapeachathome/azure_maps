@@ -43,14 +43,14 @@
 
 //Hide scrollbar in all pages
 
-ion-content {
-  --offset-bottom: auto!important;
-  --overflow: hidden;
-  overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
+// ion-content {
+//   --offset-bottom: auto!important;
+//   --overflow: hidden;
+//   overflow: auto;
+//   &::-webkit-scrollbar {
+//     display: none;
+//   }
+// }
 
 
 
@@ -77,6 +77,9 @@ ion-card {
 .h-100{
   height: 100%;
 }
+.flex-grow-1{
+  flex: 1 1 auto
+}
 .d-flex{
   display: flex;
 }
@@ -88,6 +91,17 @@ ion-card {
   height: 100%;
     display: flex;
     flex-direction: column;
+}
+.div-scroll{
+  overflow-y: auto;
+  top: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  // &::-webkit-scrollbar {
+  //   display: none;
+  // }
 }
 .pos-relative{
   position: relative;
