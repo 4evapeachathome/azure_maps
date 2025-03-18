@@ -27,11 +27,12 @@
                 <div class="st-cont-container">
                                 <ion-icon 
                 src="../assets/gps.svg"
-                      (click)="onIconClick()">
+                     (click)="getCurrentPosition()" >
                     </ion-icon>
                 <ion-searchbar searchIcon="undefined"
                   [(ngModel)]="searchQuery"
                   (keyup.enter)="onSearch()"
+                  (click)="onIconClick()"
                   (ionInput)="onInputChange($event)"
                   placeholder="Type your current location"
                 
