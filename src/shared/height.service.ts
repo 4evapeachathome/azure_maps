@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class HeightService {
-  private heightSource = new BehaviorSubject<number>(250); 
-  currentHeight = this.heightSource.asObservable();
+  private gridHeightSubject = new BehaviorSubject<{ height: number; isReady: boolean }>({ height: 250, isReady: false });
+  gridHeight$ = this.gridHeightSubject.asObservable();
 
-  updateHeight(height: number) {
-    this.heightSource.next(height);
+  setGridHeight(height: number) {
+    this.gridHeightSubject.next({ height, isReady: true });
   }
 }
