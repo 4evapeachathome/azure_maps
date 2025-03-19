@@ -186,6 +186,9 @@
                 <ion-icon class="close-btn" name="close-outline" *ngIf="!selectedLocation" (click)="closeFilter()"></ion-icon>
                 
               </ion-card-header>
+              <ion-card-content *ngIf="filterOpen && filteredFilterOptions?.length === 0">
+                <p class="no-results-message">No results found, please try refining your search.</p>
+              </ion-card-content>
               <ion-card-content class="filter-con-container">
                
             

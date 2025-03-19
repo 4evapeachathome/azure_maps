@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
 
 @Component({
   selector: 'app-contactus',
@@ -7,10 +8,28 @@ import { Component, OnInit } from '@angular/core';
   standalone: false
 })
 export class ContactusPage implements OnInit {
+  @ViewChild(ContactUsFormComponent) contactUs!: ContactUsFormComponent;
 
   constructor() { }
 
   ngOnInit() {
   }
+
+  ionViewWillEnter() {
+    if (this.contactUs) {
+      this.contactUs.renderReCaptcha();
+    }    
+}
+
+
+ionViewDidLeave() {
+  if (this.contactUs) {
+     // Reset form data and controls on initialization
+  this.contactUs.onClear();
+  if (this.contactUs.ContactForm) {
+    this.contactUs.ContactForm.resetForm();
+  }
+  }
+}
 
 }

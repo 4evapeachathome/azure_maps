@@ -228,6 +228,7 @@ getSupportServiceData(endpoint:string) {
      this.filteredLocations = [...this.organizations];
     }
     }
+    this.filterSearchTerm = '';
   }
   
   closeFilter() {

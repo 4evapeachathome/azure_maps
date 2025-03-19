@@ -92,6 +92,7 @@ export class ContactUsFormComponent  implements OnInit {
       email: '',
       feedback: ''
     };
+    this.resetCaptcha();
   }
 
   //Captcha
