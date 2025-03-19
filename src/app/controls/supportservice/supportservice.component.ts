@@ -240,7 +240,6 @@ getSupportServiceData(endpoint:string) {
 
   closeLocations(){
     this.geolocationEnabled = false;
-    this.filteredLocations = [...this.organizations];
     this.searchQuery = '';
   }
 
