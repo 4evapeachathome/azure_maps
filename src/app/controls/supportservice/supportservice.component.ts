@@ -94,6 +94,7 @@ export class SupportserviceComponent  implements OnInit{
   userLocation: any = null;
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
+  filteredlocationwithinradius: any[] = [];
   public readonly endPoint : string = APIEndpoints.supportService;
 
   constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService) { 
@@ -225,10 +226,11 @@ getSupportServiceData(endpoint:string) {
     this.filterSearchTerm = '';
     
     if(this.searchQuery?.trim() === ''){
-     this.filteredLocations = [...this.organizations];
+     this.filteredLocations = [...this.filteredlocationwithinradius];
     }
     }
     this.filterSearchTerm = '';
+    this.selectedLocation = null;
   }
   
   closeFilter() {
@@ -238,6 +240,7 @@ getSupportServiceData(endpoint:string) {
 
   closeLocations(){
     this.geolocationEnabled = false;
+    this.filteredLocations = [...this.organizations];
     this.searchQuery = '';
   }
 
@@ -249,9 +252,9 @@ getSupportServiceData(endpoint:string) {
     .map(option => option.key as keyof Organization);
 
   if (selectedFilterKeys.length === 0) {
-    this.filteredLocations = [...this.organizations]; // No filters selected, show all
+    this.filteredLocations = [...this.filteredlocationwithinradius]; // No filters selected, show all
   } else {
-    const filteredOrgs = this.organizations.filter(org => {
+    const filteredOrgs = this.filteredlocationwithinradius.filter(org => {
       return selectedFilterKeys.some(key => org[key] === true);
     });
     this.filteredLocations = filteredOrgs;
@@ -278,10 +281,10 @@ getSupportServiceData(endpoint:string) {
     }
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       // If search query is empty, reset filteredLocations to the original list
-      this.filteredLocations = [...this.organizations];
+      this.filteredLocations = [...this.filteredlocationwithinradius];
     } else {
       // Filter the organizations based on the search query
-      this.filteredLocations = this.organizations.filter(location =>
+      this.filteredLocations = this.filteredlocationwithinradius.filter(location =>
         location.OrgName.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     }
@@ -297,7 +300,7 @@ getSupportServiceData(endpoint:string) {
       );
     }else{
       if (!this.searchQuery || this.searchQuery.trim() === '') {
-        this.filteredLocations = [...this.organizations];
+        this.filteredLocations = [...this.filteredlocationwithinradius];
         this.filterOptions.forEach(option => option.selected = false);
       }
     }
@@ -431,6 +434,9 @@ getSupportServiceData(endpoint:string) {
       console.log(`Distance to ${location.OrgName}: ${distance.toFixed(2)} km`);
       return distance <= 100; // Keep locations within 100km
     });
+
+    this.filteredlocationwithinradius =  this.filteredLocations;
+
   
     console.log('Filtered support centers:', this.filteredLocations);
   }
