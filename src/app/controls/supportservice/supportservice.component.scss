@@ -83,10 +83,12 @@ ion-searchbar {
     flex-direction: column;
   width: 30%;
   height: 100%;
-
+  min-height: 250px;
+  max-height: 100%;
   border-radius: 8px;
   box-shadow: none;
   background: var(--color-white);
+  pointer-events: all;
   .close-btn {
     position: absolute;
     top: 12px;
@@ -278,7 +280,7 @@ ion-badge {
     bottom: 10px;
     right: 10px;
     z-index: 100;
-    pointer-events: all;
+    pointer-events: none;
 }
 .icon-button{
   --padding-top: 10px;
