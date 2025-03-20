@@ -4,6 +4,7 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
@@ -243,6 +244,11 @@ getSupportServiceData(endpoint:string) {
     this.searchQuery = '';
   }
 
+  onMarkerClick(location: Organization) {
+    this.selectedLocation = location; // Set the clicked location as selected
+    this.segment = 'about'; // Optional: Set the default tab to 'about' when opening details
+  }
+
  // Apply filters
  applyFilters() {
   if(this.getSelectedFilterCount() > 0){
@@ -440,10 +446,52 @@ getSupportServiceData(endpoint:string) {
     console.log('Filtered support centers:', this.filteredLocations);
   }
   
-  openGoogleMaps(latitude:any,longitude:any) {
-    // Opens Google Maps in a new tab with specified coordinates
-    const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-    window.open(mapsUrl, '_blank');
+  async openGoogleMaps(latitude: number, longitude: number) {
+    // Ensure latitude and longitude are numbers
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (this.platform.is('android')) {
+      // Android: Try to open Google Maps app
+      const googleMapsUrl = `geo:${lat},${lng}?q=${lat},${lng}`;
+      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+
+      try {
+        const result: CanOpenURLResult = await AppLauncher.canOpenUrl({ url: 'com.google.android.apps.maps' });
+        if (result.value) {
+          // Google Maps app is available, launch it
+          await AppLauncher.openUrl({ url: googleMapsUrl });
+        } else {
+          // Fallback to browser if Google Maps app is not installed
+          window.open(webUrl, '_blank');
+        }
+      } catch (error) {
+        console.error('Error checking Google Maps app availability:', error);
+        window.open(webUrl, '_blank'); // Fallback to browser on error
+      }
+    } else if (this.platform.is('ios')) {
+      // iOS: Try to open Apple Maps app
+      const appleMapsUrl = `maps://?q=${lat},${lng}&ll=${lat},${lng}`;
+      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+
+      try {
+        const result: CanOpenURLResult = await AppLauncher.canOpenUrl({ url: 'maps://' });
+        if (result.value) {
+          // Apple Maps is available, launch it
+          await AppLauncher.openUrl({ url: appleMapsUrl });
+        } else {
+          // Fallback to browser if Apple Maps is not available
+          window.open(webUrl, '_blank');
+        }
+      } catch (error) {
+        console.error('Error checking Apple Maps availability:', error);
+        window.open(webUrl, '_blank'); // Fallback to browser on error
+      }
+    } else {
+      // Web or other platforms: Open in browser
+      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+      window.open(webUrl, '_blank');
+    }
   }
 
   openServices(location: any) {
@@ -456,9 +504,30 @@ getSupportServiceData(endpoint:string) {
     window.open(supportUrl, '_blank');
   }
 
-  openPhone(phoneNumber:any) {
-    // Opens phone app with specified number
-    window.location.href = `tel:${phoneNumber}`;
+  async openPhone(phoneNumber: string) {
+    // Ensure phoneNumber is a string and clean it (remove spaces, dashes, etc.)
+    const cleanedNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
+    const telUrl = `tel:${cleanedNumber}`;
+
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      // For native platforms (Android/iOS), use the tel: URI directly
+      try {
+        // Attempt to open the native dialer
+        window.location.href = telUrl;
+      } catch (error) {
+        console.error('Error opening phone dialer:', error);
+        alert('Unable to open the phone dialer. Please dial the number manually: ' + cleanedNumber);
+      }
+    } else {
+      // Web platform (browser)
+      try {
+        // Open the tel: URI, which will trigger the default telephony app if configured
+        window.open(telUrl, '_blank');
+      } catch (error) {
+        console.error('Error opening phone in browser:', error);
+        alert('No telephony app available. Please dial the number manually: ' + cleanedNumber);
+      }
+    }
   }
 
 }

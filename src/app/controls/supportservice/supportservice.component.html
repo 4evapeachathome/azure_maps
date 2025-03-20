@@ -18,6 +18,7 @@
                 <map-marker 
                   *ngFor="let location of filteredLocations" 
                   [position]="{ lat: location.OrgLatitude, lng: location.OrgLongitude }" 
+                  (mapClick)="onMarkerClick(location)"
                   [label]="location.OrgName">
                 </map-marker>
               </google-map>
