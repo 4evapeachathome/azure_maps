@@ -121,6 +121,15 @@ export class ContactUsFormComponent  implements OnInit {
     }
   }
 
+  isFormEmpty(): boolean {
+    const isFormDataEmpty = (
+      !this.formData.name.trim() &&
+      !this.formData.email.trim() &&
+      !this.formData.feedback.trim()
+    );
+    return isFormDataEmpty && !this.isCaptchaVerified;
+  }
+
   resetCaptcha() {
     this.isCaptchaVerified = false;
     this.captchaToken = '';
