@@ -280,12 +280,6 @@ getSupportServiceData(endpoint:string) {
   // Search functionality
   onSearch() {
     //debugger
-    if(!this.geolocationEnabled){
-      alert(
-        'Please turn on the location.'
-      );
-      return;
-    }
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       // If search query is empty, reset filteredLocations to the original list
       this.filteredLocations = [...this.filteredlocationwithinradius];
@@ -300,17 +294,11 @@ getSupportServiceData(endpoint:string) {
   }
 
   onInputChange(event: any) {
-  //  debugger;
-    if(!this.geolocationEnabled){
-      alert(
-        'Please turn on the location.'
-      );
-    }else{
       if (!this.searchQuery || this.searchQuery.trim() === '') {
         this.filteredLocations = [...this.filteredlocationwithinradius];
         this.filterOptions.forEach(option => option.selected = false);
       }
-    }
+    
   }
 
   onIconClick() {
