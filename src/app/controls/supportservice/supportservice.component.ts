@@ -240,7 +240,7 @@ getSupportServiceData(endpoint:string) {
   }
 
   closeLocations(){
-    this.geolocationEnabled = false;
+    //this.geolocationEnabled = false;
     this.searchQuery = '';
   }
 
