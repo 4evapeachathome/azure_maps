@@ -86,6 +86,7 @@ export interface FilterOption {
 export class SupportserviceComponent  implements OnInit{
   searchQuery: string = '';
   filterOpen: boolean = false;
+  locationcard: boolean = false;
   selectedLocation: Organization | null = null;
   activeTab: string = 'about';
   segment: string = 'about';
@@ -145,6 +146,7 @@ export class SupportserviceComponent  implements OnInit{
       this.latitude = coordinates.coords.latitude;
       this.longitude = coordinates.coords.longitude;
       this.geolocationEnabled = true;
+      this.locationcard = true;
       // this.center = { lat: this.latitude, lng: this.longitude };
   
       console.log('Current position:', this.center);
@@ -240,7 +242,7 @@ getSupportServiceData(endpoint:string) {
   }
 
   closeLocations(){
-    this.geolocationEnabled = false;
+    this.locationcard = false;
     this.searchQuery = '';
   }
 
