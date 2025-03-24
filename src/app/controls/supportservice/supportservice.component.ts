@@ -494,16 +494,6 @@ export class SupportserviceComponent  implements OnInit{
   getSelectedFilterCount(): number {
     return this.filterOptions.filter(option => option.selected).length;
   }
-
-  onIconClick() {
-    console.log('Icon clicked!');
-    if(!this.geolocationEnabled){
-      alert(
-        'Please turn on the location.'
-      );
-    }
-  }
-
   
 
 
