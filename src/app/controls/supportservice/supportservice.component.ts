@@ -292,6 +292,7 @@ export class SupportserviceComponent  implements OnInit{
       return distance <= 100; // Within 100km
     });
   
+    this.filteredlocationwithinradius = this.filteredLocations;
     // Update map markers if using them
     if (this.updateSupportServiceMarkers) {
       this.updateSupportServiceMarkers();
@@ -478,7 +479,7 @@ export class SupportserviceComponent  implements OnInit{
   if (selectedFilterKeys.length === 0) {
     this.filteredLocations = [...this.filteredlocationwithinradius]; // No filters selected, show all
   } else {
-    const filteredOrgs = this.filteredLocations?.filter(org => {
+    const filteredOrgs = this.filteredlocationwithinradius?.filter(org => {
       return selectedFilterKeys.some(key => org[key] === true);
     });
     this.filteredLocations = filteredOrgs;
