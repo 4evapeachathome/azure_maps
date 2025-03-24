@@ -219,7 +219,7 @@ export class SupportserviceComponent  implements OnInit{
   async onSearch() {
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       // If search is empty, show all locations or default view
-      this.filteredLocations = [...this.organizations];
+      this.filteredLocations = [...this.filteredlocationwithinradius];
       return;
     }
   
@@ -469,6 +469,7 @@ export class SupportserviceComponent  implements OnInit{
 
   // Apply filters
  applyFilters() {
+  debugger;
   if(this.getSelectedFilterCount() > 0){
     const selectedFilterKeys = this.filterOptions
     .filter(option => option.selected)
@@ -477,7 +478,7 @@ export class SupportserviceComponent  implements OnInit{
   if (selectedFilterKeys.length === 0) {
     this.filteredLocations = [...this.filteredlocationwithinradius]; // No filters selected, show all
   } else {
-    const filteredOrgs = this.filteredlocationwithinradius.filter(org => {
+    const filteredOrgs = this.filteredLocations?.filter(org => {
       return selectedFilterKeys.some(key => org[key] === true);
     });
     this.filteredLocations = filteredOrgs;
