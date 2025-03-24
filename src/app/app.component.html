@@ -6,7 +6,9 @@
   <div class="d-flex-ion div-scroll">
   
 <div class="d-flex-ion pos-relative flex-grow-1" >
-  <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" checked  />
+  <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
+  <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
+
   <label for="sidebar-toggle" class="sidebar-toggle-label ">
     <ion-icon name="menu-outline"></ion-icon>
   </label>
