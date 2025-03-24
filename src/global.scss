@@ -69,6 +69,9 @@ body {
 .pb-24{
   padding-bottom: 24px;
 }
+.p-0{
+  padding: 0;
+}
 ion-card {
   box-shadow: none;
   border-radius: 8px;
@@ -150,7 +153,9 @@ ion-card {
     }
   }
 }
-
+.footer-container{
+  padding: 0;
+}
 .card-small {
   display: flex  ;
       flex-direction: column;
@@ -613,7 +618,7 @@ ion-card {
 }
 .hb-img{
 
-  max-height: 300px;
+  max-height: 500px;
   
 }
 // .contact-img{
