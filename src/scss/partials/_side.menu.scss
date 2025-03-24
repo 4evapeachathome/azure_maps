@@ -133,8 +133,13 @@
 }
 .sidebar .menu-container {
   ion-label {
+    transition: transform 0.5s ease;
+    opacity: 0;
     transform: scaleX(0);
     height: 16px;
+    transform: scaleY(0);    
+    //transform-origin: top;
+   
     // transform: translateY(0%);
     //  opacity: 0;
     // display: none;
@@ -148,8 +153,12 @@
 
 .sidebar-toggle:checked + .sidebar-toggle-label + .sidebar .menu-container {
   ion-label {
+    transition: transform 0.5s ease;
+    opacity: 1;
     transform: scaleX(1);
-    height: inherit;
+    transform: scaleY(1);
+   // height: inherit;
+   
   }
   .flip-rtl {
     display: block;
