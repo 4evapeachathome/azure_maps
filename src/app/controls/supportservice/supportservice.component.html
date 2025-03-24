@@ -18,6 +18,7 @@
                 <map-marker 
                   *ngFor="let location of filteredLocations" 
                   [position]="{ lat: location.OrgLatitude, lng: location.OrgLongitude }" 
+                  (mapClick)="onMarkerClick(location)"
                   [label]="location.OrgName">
                 </map-marker>
               </google-map>
@@ -34,7 +35,7 @@
                   (keyup.enter)="onSearch()"
                   (click)="onIconClick()"
                   (ionInput)="onInputChange($event)"
-                  placeholder="Type your current location"
+                  placeholder="search for support services" 
                 
                 ></ion-searchbar>
                 <ion-buttons slot="end" class="ss-search-button">
@@ -58,7 +59,7 @@
             </div>
             <div class="sc-con-container">
             <div class="cards-container">
-              <ion-card class="cc-cont-contaner locations-card" *ngIf="geolocationEnabled">
+              <ion-card class="cc-cont-contaner locations-card" *ngIf="locationcard">
                 <ion-card-header>
                   <ion-card-title>Support Services near you</ion-card-title>
                   <ion-icon class="close-btn" name="close-outline" (click)="closeLocations()"></ion-icon>
@@ -186,6 +187,9 @@
                 <ion-icon class="close-btn" name="close-outline" *ngIf="!selectedLocation" (click)="closeFilter()"></ion-icon>
                 
               </ion-card-header>
+              <ion-card-content *ngIf="filterOpen && filteredFilterOptions?.length === 0">
+                <p class="no-results-message">No results found, please try refining your search.</p>
+              </ion-card-content>
               <ion-card-content class="filter-con-container">
                
             

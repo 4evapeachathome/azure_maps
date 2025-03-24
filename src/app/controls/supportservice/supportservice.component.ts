@@ -4,6 +4,7 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
@@ -85,6 +86,7 @@ export interface FilterOption {
 export class SupportserviceComponent  implements OnInit{
   searchQuery: string = '';
   filterOpen: boolean = false;
+  locationcard: boolean = false;
   selectedLocation: Organization | null = null;
   activeTab: string = 'about';
   segment: string = 'about';
@@ -94,6 +96,7 @@ export class SupportserviceComponent  implements OnInit{
   userLocation: any = null;
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
+  filteredlocationwithinradius: any[] = [];
   public readonly endPoint : string = APIEndpoints.supportService;
 
   constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService) { 
@@ -143,6 +146,7 @@ export class SupportserviceComponent  implements OnInit{
       this.latitude = coordinates.coords.latitude;
       this.longitude = coordinates.coords.longitude;
       this.geolocationEnabled = true;
+      this.locationcard = true;
       // this.center = { lat: this.latitude, lng: this.longitude };
   
       console.log('Current position:', this.center);
@@ -225,9 +229,11 @@ getSupportServiceData(endpoint:string) {
     this.filterSearchTerm = '';
     
     if(this.searchQuery?.trim() === ''){
-     this.filteredLocations = [...this.organizations];
+     this.filteredLocations = [...this.filteredlocationwithinradius];
     }
     }
+    this.filterSearchTerm = '';
+    this.selectedLocation = null;
   }
   
   closeFilter() {
@@ -236,8 +242,13 @@ getSupportServiceData(endpoint:string) {
   }
 
   closeLocations(){
-    this.geolocationEnabled = false;
+    this.locationcard = false;
     this.searchQuery = '';
+  }
+
+  onMarkerClick(location: Organization) {
+    this.selectedLocation = location; // Set the clicked location as selected
+    this.segment = 'about'; // Optional: Set the default tab to 'about' when opening details
   }
 
  // Apply filters
@@ -248,9 +259,9 @@ getSupportServiceData(endpoint:string) {
     .map(option => option.key as keyof Organization);
 
   if (selectedFilterKeys.length === 0) {
-    this.filteredLocations = [...this.organizations]; // No filters selected, show all
+    this.filteredLocations = [...this.filteredlocationwithinradius]; // No filters selected, show all
   } else {
-    const filteredOrgs = this.organizations.filter(org => {
+    const filteredOrgs = this.filteredlocationwithinradius.filter(org => {
       return selectedFilterKeys.some(key => org[key] === true);
     });
     this.filteredLocations = filteredOrgs;
@@ -277,10 +288,10 @@ getSupportServiceData(endpoint:string) {
     }
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       // If search query is empty, reset filteredLocations to the original list
-      this.filteredLocations = [...this.organizations];
+      this.filteredLocations = [...this.filteredlocationwithinradius];
     } else {
       // Filter the organizations based on the search query
-      this.filteredLocations = this.organizations.filter(location =>
+      this.filteredLocations = this.filteredlocationwithinradius.filter(location =>
         location.OrgName.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     }
@@ -296,7 +307,7 @@ getSupportServiceData(endpoint:string) {
       );
     }else{
       if (!this.searchQuery || this.searchQuery.trim() === '') {
-        this.filteredLocations = [...this.organizations];
+        this.filteredLocations = [...this.filteredlocationwithinradius];
         this.filterOptions.forEach(option => option.selected = false);
       }
     }
@@ -430,14 +441,59 @@ getSupportServiceData(endpoint:string) {
       console.log(`Distance to ${location.OrgName}: ${distance.toFixed(2)} km`);
       return distance <= 100; // Keep locations within 100km
     });
+
+    this.filteredlocationwithinradius =  this.filteredLocations;
+
   
     console.log('Filtered support centers:', this.filteredLocations);
   }
   
-  openGoogleMaps(latitude:any,longitude:any) {
-    // Opens Google Maps in a new tab with specified coordinates
-    const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-    window.open(mapsUrl, '_blank');
+  async openGoogleMaps(latitude: number, longitude: number) {
+    // Ensure latitude and longitude are numbers
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (this.platform.is('android')) {
+      // Android: Try to open Google Maps app
+      const googleMapsUrl = `geo:${lat},${lng}?q=${lat},${lng}`;
+      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+
+      try {
+        const result: CanOpenURLResult = await AppLauncher.canOpenUrl({ url: 'com.google.android.apps.maps' });
+        if (result.value) {
+          // Google Maps app is available, launch it
+          await AppLauncher.openUrl({ url: googleMapsUrl });
+        } else {
+          // Fallback to browser if Google Maps app is not installed
+          window.open(webUrl, '_blank');
+        }
+      } catch (error) {
+        console.error('Error checking Google Maps app availability:', error);
+        window.open(webUrl, '_blank'); // Fallback to browser on error
+      }
+    } else if (this.platform.is('ios')) {
+      // iOS: Try to open Apple Maps app
+      const appleMapsUrl = `maps://?q=${lat},${lng}&ll=${lat},${lng}`;
+      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+
+      try {
+        const result: CanOpenURLResult = await AppLauncher.canOpenUrl({ url: 'maps://' });
+        if (result.value) {
+          // Apple Maps is available, launch it
+          await AppLauncher.openUrl({ url: appleMapsUrl });
+        } else {
+          // Fallback to browser if Apple Maps is not available
+          window.open(webUrl, '_blank');
+        }
+      } catch (error) {
+        console.error('Error checking Apple Maps availability:', error);
+        window.open(webUrl, '_blank'); // Fallback to browser on error
+      }
+    } else {
+      // Web or other platforms: Open in browser
+      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+      window.open(webUrl, '_blank');
+    }
   }
 
   openServices(location: any) {
@@ -450,9 +506,30 @@ getSupportServiceData(endpoint:string) {
     window.open(supportUrl, '_blank');
   }
 
-  openPhone(phoneNumber:any) {
-    // Opens phone app with specified number
-    window.location.href = `tel:${phoneNumber}`;
+  async openPhone(phoneNumber: string) {
+    // Ensure phoneNumber is a string and clean it (remove spaces, dashes, etc.)
+    const cleanedNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
+    const telUrl = `tel:${cleanedNumber}`;
+
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      // For native platforms (Android/iOS), use the tel: URI directly
+      try {
+        // Attempt to open the native dialer
+        window.location.href = telUrl;
+      } catch (error) {
+        console.error('Error opening phone dialer:', error);
+        alert('Unable to open the phone dialer. Please dial the number manually: ' + cleanedNumber);
+      }
+    } else {
+      // Web platform (browser)
+      try {
+        // Open the tel: URI, which will trigger the default telephony app if configured
+        window.open(telUrl, '_blank');
+      } catch (error) {
+        console.error('Error opening phone in browser:', error);
+        alert('No telephony app available. Please dial the number manually: ' + cleanedNumber);
+      }
+    }
   }
 
 }

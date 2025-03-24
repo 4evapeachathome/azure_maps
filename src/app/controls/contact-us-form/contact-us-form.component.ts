@@ -92,6 +92,7 @@ export class ContactUsFormComponent  implements OnInit {
       email: '',
       feedback: ''
     };
+    this.resetCaptcha();
   }
 
   //Captcha
@@ -118,6 +119,15 @@ export class ContactUsFormComponent  implements OnInit {
       // If grecaptcha is not available, try again in 500ms
       setTimeout(() => this.renderReCaptcha(), 500);
     }
+  }
+
+  isFormEmpty(): boolean {
+    const isFormDataEmpty = (
+      !this.formData.name.trim() &&
+      !this.formData.email.trim() &&
+      !this.formData.feedback.trim()
+    );
+    return isFormDataEmpty && !this.isCaptchaVerified;
   }
 
   resetCaptcha() {
