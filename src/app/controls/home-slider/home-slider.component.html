@@ -3,13 +3,11 @@
   <ion-card-title>{{ mainTitle }}</ion-card-title>
 </ion-card-header>
 <ion-card-content class="carousel-container">
-  <div class="carousel" *ngIf="descriptions && descriptions.length > 0">
-    <div
+  <c-carousel class="carousel" *ngIf="descriptions && descriptions.length > 0">
+    <c-carousel-inner
       class="carousel-card"
       *ngFor="let description of descriptions; let i = index"
       [class.active]="currentIndex === i"
-      [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
-      [@slideAnimation]
     >
       <!-- Display Only the Current Image -->
       <div class="image-container" *ngIf="imageUrls?.length">
@@ -22,7 +20,7 @@
       </div>
   
       <!-- Dynamic Text Content -->
-      <div class="carousel-des-container">
+      <c-carousel-item class="carousel-des-container">
         <div class="carousel-description">
           <div class="description">
           <!-- Render heading if it exists -->
@@ -67,9 +65,9 @@
         class="arrow right-arrow"
         (click)="nextSlide()"
       ></ion-icon>
-      </div>
-    </div>
-  </div>
+      </c-carousel-item>
+    </c-carousel-inner>
+  </c-carousel>
 </ion-card-content>
 
 
