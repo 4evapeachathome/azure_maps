@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
-import { GoogleMapsModule } from '@angular/google-maps';
+import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
@@ -125,11 +125,12 @@ export class SupportserviceComponent  implements OnInit{
   placesService: any;
   autocompleteItems: Place[] = [];
   searchSubject = new BehaviorSubject<string>('');
-
+  @ViewChild(GoogleMap) map!: GoogleMap;
   searchedLocationMarker: any = null;
   supportServiceMarkers: any[] = [];
   currentState: string = '';
   searchRadius: number = DEFAULT_DISTANCE;
+  firstLoad: boolean = true;
   
 
 
@@ -149,6 +150,29 @@ export class SupportserviceComponent  implements OnInit{
 
     this.setupSearchDebounce();
   }
+
+  ngAfterViewInit() {
+    this.map.zoomChanged.subscribe(() => {
+      this.zoom = this.map.getZoom()!;
+      this.updateMarkerLabels();
+    });
+}
+
+updateMarkerLabels() {
+  this.supportServiceMarkers = this.supportServiceMarkers.map(marker => ({
+    ...marker,
+    options: {
+      ...marker.options,
+      label: this.zoom >= 15 ? {
+        text: marker.orgName,
+        fontSize: '12px',
+        fontWeight: 'bold',
+        className: 'marker-label'
+      } : null,
+      animation: null
+    }
+  }));
+}
 
   setupSearchDebounce() {
     this.searchSubject.pipe(
@@ -287,7 +311,9 @@ export class SupportserviceComponent  implements OnInit{
       }
   
       // Filter nearby locations with state-specific distance
+      
       this.filterNearbySupportCenters(lat, lng);
+      this.locationcard = true;
   
     } catch (error) {
       console.error('Search error:', error);
@@ -395,27 +421,29 @@ export class SupportserviceComponent  implements OnInit{
           url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
           scaledSize: new google.maps.Size(30, 30)
         },
-        label: {
+        label: this.zoom >= 15 ? {
           text: location.OrgName,
           fontSize: '12px',
-          fontWeight: 'bold'
-        },
-        animation: google.maps.Animation.DROP,
-        optimized: false // Helps with animation performance
+          fontWeight: 'bold',
+          className: 'marker-label'
+        } : null,
+        // Only apply animation on first load
+        animation: this.firstLoad ? google.maps.Animation.DROP : null,
+        optimized: false
       },
       click: () => this.onMarkerClick(location),
-      
-      animationDelay: index * 100 
+      // Only apply delay on first load
+      animationDelay: this.firstLoad ? index * 100 : 0,
+      orgName: location.OrgName
     }));
 
-    // Trigger the animations
-    setTimeout(() => {
-      if (this.supportServiceMarkers) {
-        this.supportServiceMarkers.forEach(marker => {
-        });
-      }
-    }, 0);
-  }
+    // After first load, set flag to false
+    if (this.firstLoad) {
+      setTimeout(() => {
+        this.firstLoad = false;
+      }, 1000); // Slightly longer than your longest animation delay
+    }
+}
 
   onSearchInput(event: any) {
     this.searchSubject.next(event.target.value);
@@ -549,23 +577,40 @@ export class SupportserviceComponent  implements OnInit{
     );
    }
   
-  getSupportServiceData(endpoint:string) {
+   getSupportServiceData(endpoint: string) {
     this.apiService.getAllSupportServices(endpoint).subscribe(
-       (response : OrganizationResponse) => {
-         if (response.data.length>0) {
-          this.organizations = response.data;
-           
-        
-         } else {
-           console.warn('No data found in the response.');
-          
-         }
-       },
-       (error) => {
-         console.error('Error fetching support service data:', error);
-       }
-     );
-   }
+      (response: OrganizationResponse) => {
+        if (response.data.length > 0) {
+          const seenNames = new Set<string>();
+          this.organizations = response.data.filter(org => {
+            if (seenNames.has(org.OrgName)) {
+              return false; 
+            }
+            seenNames.add(org.OrgName);
+            return true;
+          });
+        } else {
+          console.warn('No data found in the response.');
+        }
+      },
+      (error) => {
+        console.error('Error fetching support service data:', error);
+      }
+    );
+  }
+  
+  handleSearchBarClick() {
+    // Get applied filter values
+    const appliedFilters = this.filterOptions
+      .filter(option => option.selected)
+      .map(option => option.label)
+      .join(', ');
+  
+    // If searchQuery exactly matches applied filters, open the filter popup
+    if (this.searchQuery === appliedFilters && appliedFilters.length > 0) {
+      this.toggleFilter();
+    }
+  }
   
     // Toggle filter widget
     toggleFilter() {
@@ -578,13 +623,12 @@ export class SupportserviceComponent  implements OnInit{
       if(this.getSelectedFilterCount() > 0){
         this.filterOptions.forEach(option => option.selected = false);
       this.filterSearchTerm = '';
-      
-      if(this.searchQuery?.trim() === ''){
-       this.filteredLocations = [...this.filteredlocationwithinradius];
-      }
       }
       this.filterSearchTerm = '';
       this.selectedLocation = null;
+      this.locationcard = false;
+      this.filteredLocations = [];
+    this.updateSupportServiceMarkers();
     }
     
     closeFilter() {
@@ -604,29 +648,36 @@ export class SupportserviceComponent  implements OnInit{
     );
   }
 
-  // Apply filters
- applyFilters() {
-  debugger;
-  if(this.getSelectedFilterCount() > 0){
-    const selectedFilterKeys = this.filterOptions
-    .filter(option => option.selected)
-    .map(option => option.key as keyof Organization);
 
-  if (selectedFilterKeys.length === 0) {
-    this.filteredLocations = [...this.filteredlocationwithinradius]; // No filters selected, show all
-  } else {
-    const filteredOrgs = this.filteredlocationwithinradius?.filter(org => {
-      return selectedFilterKeys.some(key => org[key] === true);
-    });
-    this.filteredLocations = filteredOrgs;
-  }
-  this.selectedLocation = null;
-  this.searchQuery = '';
-  this.closeFilter();
+  applyFilters() {
+    debugger;
+    if (this.getSelectedFilterCount() > 0) {
+      const selectedFilterKeys = this.filterOptions
+        .filter(option => option.selected)
+        .map(option => option.key as keyof Organization);
+  
+      if (selectedFilterKeys.length === 0) {
+        this.filteredLocations = [...this.filteredlocationwithinradius]; // No filters selected, show all
+      } else {
+        const filteredOrgs = this.filteredlocationwithinradius?.filter(org => {
+          return selectedFilterKeys.some(key => org[key] === true);
+        });
+        this.filteredLocations = filteredOrgs;
+        this.updateSupportServiceMarkers();
+      }
+  
+      // Update search query with selected filters as comma-separated values
+      this.searchQuery = this.filterOptions
+        .filter(option => option.selected)
+        .map(option => option.label) // Assuming 'label' is a user-friendly name
+        .join(', ');
+  
+      this.selectedLocation = null;
+      this.closeFilter();
+    }
   }
   
   
-}
   getSelectedFilterCount(): number {
     return this.filterOptions.filter(option => option.selected).length;
   }

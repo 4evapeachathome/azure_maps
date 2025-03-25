@@ -44,12 +44,13 @@
                 src="../assets/gps.svg"
                      (click)="getCurrentPosition()" >
                     </ion-icon>
-                    <ion-searchbar 
+                  <ion-searchbar 
                     searchIcon="undefined"
                     [(ngModel)]="searchQuery"
                     (ionInput)="onSearchInput($event)"
                     (keyup.enter)="onSearch()"
-                    placeholder="Enter an address, place, or zip code">
+                     (click)="handleSearchBarClick()"
+                    placeholder="Enter an address, city or zip code">
                   </ion-searchbar>
                   
                   <!-- Autocomplete dropdown -->
