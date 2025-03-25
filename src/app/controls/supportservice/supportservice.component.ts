@@ -10,6 +10,7 @@ import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
 import { APIEndpoints } from 'src/shared/endpoints';
 import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 
 declare var google: any;
 
@@ -127,6 +128,9 @@ export class SupportserviceComponent  implements OnInit{
 
   searchedLocationMarker: any = null;
   supportServiceMarkers: any[] = [];
+  currentState: string = '';
+  searchRadius: number = DEFAULT_DISTANCE;
+  
 
 
   constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController) { 
@@ -192,6 +196,10 @@ export class SupportserviceComponent  implements OnInit{
   }
 
   selectSearchResult(item: Place) {
+    if (!this.geolocationEnabled) {
+      alert('Please turn on the location services to search for nearby support centers.');
+      return;
+    }
     this.searchQuery = item.description;
     this.autocompleteItems = [];
     
@@ -201,6 +209,7 @@ export class SupportserviceComponent  implements OnInit{
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           const lat = placeDetails.geometry.location.lat();
           const lng = placeDetails.geometry.location.lng();
+
           
           // Update map center
           this.center = { lat, lng };
@@ -216,52 +225,124 @@ export class SupportserviceComponent  implements OnInit{
     );
   }
 
+  private detectStateFromResult(result: google.maps.GeocoderResult) {
+    const stateComponent = result.address_components.find(comp => 
+      comp.types.includes('administrative_area_level_1')
+    );
+    
+    if (stateComponent) {
+      const stateName = stateComponent.long_name;
+      const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
+      this.currentState = stateName;
+      this.searchRadius = STATE_NAME_TO_DISTANCE[stateAbbr as keyof typeof STATE_NAME_TO_DISTANCE] || DEFAULT_DISTANCE;
+    } else {
+      this.currentState = '';
+      this.searchRadius = DEFAULT_DISTANCE;
+    }
+  }
+
   async onSearch() {
+    if (!this.geolocationEnabled) {
+      alert('Please turn on the location services to search for nearby support centers.');
+      return;
+    }
     if (!this.searchQuery || this.searchQuery.trim() === '') {
-      // If search is empty, show all locations or default view
-      this.filteredLocations = [...this.filteredlocationwithinradius];
+      this.filteredLocations = [...this.organizations];
       return;
     }
   
-    try {
-      // Use Google Places API to geocode the search query
-      const geocoder = new google.maps.Geocoder();
-      const response = await new Promise<any>((resolve, reject) => {
-        geocoder.geocode({ address: this.searchQuery }, (results: any, status: any) => {
-          if (status === 'OK') {
-            resolve(results[0]); // Take the first result
-          } else {
-            reject(status);
-          }
-        });
-      });
+    // Check if input is a zip code (5 digits for US)
+    const isZipCode = /^\d{5}(-\d{4})?$/.test(this.searchQuery.trim());
   
-      // Extract coordinates from the geocoding result
-      const lat = response.geometry.location.lat();
-      const lng = response.geometry.location.lng();
+    try {
+      let lat: number;
+      let lng: number;
+      let geocodeResult: any;
+  
+      if (isZipCode) {
+        // Handle zip code search
+        const zipCodeResponse = await this.geocodeZipCode(this.searchQuery.trim());
+        lat = zipCodeResponse.lat;
+        lng = zipCodeResponse.lng;
+        geocodeResult = zipCodeResponse.result; // Make sure your geocodeZipCode returns the full result
+      } else {
+        // Handle regular place search
+        const placeResponse = await this.geocodePlace(this.searchQuery.trim());
+        lat = placeResponse.lat;
+        lng = placeResponse.lng;
+        geocodeResult = placeResponse.result; // Make sure your geocodePlace returns the full result
+      }
   
       // Update map center
       this.center = { lat, lng };
-      this.zoom = 12;
-  
-      // Update searched location marker
       this.updateSearchedLocationMarker(this.center);
   
-      // Filter nearby locations
+      // Detect state and set search radius from the geocode result
+      if (geocodeResult) {
+        this.detectStateFromResult(geocodeResult);
+      } else {
+        this.currentState = '';
+        this.searchRadius = DEFAULT_DISTANCE;
+      }
+  
+      // Filter nearby locations with state-specific distance
       this.filterNearbySupportCenters(lat, lng);
   
     } catch (error) {
-      console.error('Geocoding error:', error);
-      // Show error to user
+      console.error('Search error:', error);
       const toast = await this.toastController.create({
-        message: 'Could not find the location. Please try a different address.',
+        message: 'Could not find the location. Please try a different address or zip code.',
         duration: 3000,
-        position: 'top'
+        position: 'bottom'
       });
       await toast.present();
     }
   }
   
+  // Update your geocode methods to return the full result
+  private async geocodeZipCode(zipCode: string): Promise<{ lat: number; lng: number; result: any }> {
+    return new Promise((resolve, reject) => {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode(
+        {
+          componentRestrictions: {
+            postalCode: zipCode,
+            country: 'US'
+          }
+        },
+        (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
+          if (status === 'OK' && results[0]) {
+            const location = results[0].geometry.location;
+            resolve({
+              lat: location.lat(),
+              lng: location.lng(),
+              result: results[0] // Return the full result
+            });
+          } else {
+            reject(`Geocoding failed for zip code: ${status}`);
+          }
+        }
+      );
+    });
+  }
+  
+  private async geocodePlace(query: string): Promise<{ lat: number; lng: number; result: any }> {
+    return new Promise((resolve, reject) => {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
+        if (status === 'OK' && results[0]) {
+          const location = results[0].geometry.location;
+          resolve({
+            lat: location.lat(),
+            lng: location.lng(),
+            result: results[0] // Return the full result
+          });
+        } else {
+          reject(`Geocoding failed for place: ${status}`);
+        }
+      });
+    });
+  }
   
 
   updateSearchedLocationMarker(position: { lat: number; lng: number }) {
@@ -277,27 +358,26 @@ export class SupportserviceComponent  implements OnInit{
   }
 
   filterNearbySupportCenters(lat: number, lng: number) {
-    if (!lat || !lng) {
-      console.error('Coordinates are not available');
-      return;
-    }
+    if (!lat || !lng) return;
   
     this.filteredLocations = this.organizations.filter(location => {
       const distance = this.calculateDistance(
-        lat,
-        lng,
-        location.OrgLatitude,
-        location.OrgLongitude
+        lat, lng, 
+        location.OrgLatitude, location.OrgLongitude
       );
-      return distance <= 100; // Within 100km
+      return distance <= this.searchRadius;
     });
+  
+    console.log(`Filtering within ${this.searchRadius}km of ${this.currentState || 'unknown location'}`);
   
     this.filteredlocationwithinradius = this.filteredLocations;
     // Update map markers if using them
     if (this.updateSupportServiceMarkers) {
       this.updateSupportServiceMarkers();
     }
+  
   }
+
 
   updateSupportServiceMarkers() {
     this.supportServiceMarkers = (this.filteredLocations ?? []).map(location => ({
@@ -318,8 +398,8 @@ export class SupportserviceComponent  implements OnInit{
   }
 
 
-  center: google.maps.LatLngLiteral = { lat: 36.7783, lng: -119.4179 };
-  zoom = 12;
+  center: google.maps.LatLngLiteral = { lat: 39.7783, lng: -119.4179 };
+  zoom = 4.2;
   filteredLocations: any[] | undefined ;
   filterSearchTerm: string = '';
 
@@ -339,8 +419,8 @@ export class SupportserviceComponent  implements OnInit{
       console.log('Current position:', this.center);
       console.log('Latitude:', this.latitude, 'Longitude:', this.longitude);
   
-      this.filterNearbySupportCenters(36.7783,-119.4179);
-      this.updateSearchedLocationMarker({ lat: 36.7783, lng: -119.4179 });
+      this.filterNearbySupportCenters(36.778259,-119.417931);
+      this.updateSearchedLocationMarker({ lat: 36.778259, lng: -119.417931 });
     } catch (error: any) { // Explicitly type the error
       if (error.code === error.PERMISSION_DENIED) {
         console.log('Location access denied by user.');
