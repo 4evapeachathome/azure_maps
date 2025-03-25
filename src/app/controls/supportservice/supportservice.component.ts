@@ -226,6 +226,7 @@ export class SupportserviceComponent  implements OnInit{
   }
 
   private detectStateFromResult(result: google.maps.GeocoderResult) {
+    debugger;
     const stateComponent = result.address_components.find(comp => 
       comp.types.includes('administrative_area_level_1')
     );
@@ -346,16 +347,23 @@ export class SupportserviceComponent  implements OnInit{
   
 
   updateSearchedLocationMarker(position: { lat: number; lng: number }) {
+    this.center = position;
+    this.zoom = 14; 
+    
+    // Update the marker
     this.searchedLocationMarker = {
       position: position,
       options: {
         icon: {
           url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
           scaledSize: new google.maps.Size(40, 40)
-        }
+        },
+        // Optional: Add animation
+        animation: google.maps.Animation.DROP
       }
     };
-  }
+    
+}
 
   filterNearbySupportCenters(lat: number, lng: number) {
     if (!lat || !lng) return;
@@ -380,17 +388,33 @@ export class SupportserviceComponent  implements OnInit{
 
 
   updateSupportServiceMarkers() {
-    this.supportServiceMarkers = (this.filteredLocations ?? []).map(location => ({
+    this.supportServiceMarkers = (this.filteredLocations ?? []).map((location, index) => ({
       position: { lat: location.OrgLatitude, lng: location.OrgLongitude },
       options: {
         icon: {
           url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
           scaledSize: new google.maps.Size(30, 30)
         },
-        label: location.OrgName
+        label: {
+          text: location.OrgName,
+          fontSize: '12px',
+          fontWeight: 'bold'
+        },
+        animation: google.maps.Animation.DROP,
+        optimized: false // Helps with animation performance
       },
-      click: () => this.onMarkerClick(location)
+      click: () => this.onMarkerClick(location),
+      
+      animationDelay: index * 100 
     }));
+
+    // Trigger the animations
+    setTimeout(() => {
+      if (this.supportServiceMarkers) {
+        this.supportServiceMarkers.forEach(marker => {
+        });
+      }
+    }, 0);
   }
 
   onSearchInput(event: any) {
@@ -418,9 +442,11 @@ export class SupportserviceComponent  implements OnInit{
   
       console.log('Current position:', this.center);
       console.log('Latitude:', this.latitude, 'Longitude:', this.longitude);
+      await this.reverseGeocodeForState({ lat: 36.778259, lng: -119.417931 });
   
-      this.filterNearbySupportCenters(36.778259,-119.417931);
       this.updateSearchedLocationMarker({ lat: 36.778259, lng: -119.417931 });
+      this.filterNearbySupportCenters(36.778259,-119.417931);
+
     } catch (error: any) { // Explicitly type the error
       if (error.code === error.PERMISSION_DENIED) {
         console.log('Location access denied by user.');
@@ -434,6 +460,36 @@ export class SupportserviceComponent  implements OnInit{
       }
     }
   }
+
+  private async reverseGeocodeForState(location: { lat: number, lng: number }) {
+    try {
+      const geocoder = new google.maps.Geocoder();
+      const results = await new Promise<any>((resolve, reject) => {
+        geocoder.geocode({ location }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
+          if (status === 'OK') resolve(results);
+          else reject(status);
+        });
+      });
+        debugger;
+      if (results && results.length > 0) {
+        const stateComponent = results[0].address_components.find((comp:any) => 
+          comp.types.includes('administrative_area_level_1')
+        );
+        
+        if (stateComponent) {
+          const stateName = stateComponent.long_name;
+          const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
+          this.currentState = stateName;
+          this.searchRadius = STATE_NAME_TO_DISTANCE[stateAbbr as keyof typeof STATE_NAME_TO_DISTANCE] || DEFAULT_DISTANCE;
+          console.log(`Detected state: ${this.currentState}, using radius: ${this.searchRadius}km`);
+        }
+      }
+    } catch (error) {
+      console.error('Reverse geocoding error:', error);
+      this.currentState = '';
+      this.searchRadius = DEFAULT_DISTANCE;
+    }
+}
 
   handleLocationPermissionDenied() {
   this.geolocationEnabled = false;

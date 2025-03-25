@@ -57,7 +57,7 @@ export const STATE_ABBREVIATIONS = {
     'AK': 50,   // Alaska
     'AZ': 30,   // Arizona
     'AR': 25,   // Arkansas
-    'CA': 100,   // California
+    'CA': 50,   // California
     'CO': 30,   // Colorado
     'CT': 15,   // Connecticut
     'DE': 15,   // Delaware
