@@ -174,18 +174,24 @@ updateMarkerLabels() {
   }));
 }
 
-  setupSearchDebounce() {
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(searchText => {
-      if (searchText) {
-        this.updateSearchResults(searchText);
-      } else {
-        this.autocompleteItems = [];
-      }
-    });
-  }
+setupSearchDebounce() {
+  this.searchSubject.pipe(
+    debounceTime(300),
+    distinctUntilChanged()
+  ).subscribe(searchText => {
+    // Prevent search if geolocation is false
+    if (!this.geolocationEnabled) {
+      alert('Please turn on the location services to search for nearby support centers.');
+      return;
+    }
+
+    if (searchText) {
+      this.updateSearchResults(searchText);
+    } else {
+      this.autocompleteItems = [];
+    }
+  });
+}
 
   initializeGoogleMapsServices() {
     this.autocompleteService = new google.maps.places.AutocompleteService();
