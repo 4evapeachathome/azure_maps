@@ -1,75 +1,72 @@
-
 <ion-card-header class="carousel-header">
   <ion-card-title>{{ mainTitle }}</ion-card-title>
 </ion-card-header>
+
 <ion-card-content class="carousel-container">
-  <div class="carousel" *ngIf="descriptions && descriptions.length > 0">
-    <div
-      class="carousel-card"
-      *ngFor="let description of descriptions; let i = index"
-      [class.active]="currentIndex === i"
-      [@fadeAnimation]="currentIndex === i ? 'enter' : 'leave'"
-      [@slideAnimation]
-    >
-      <!-- Display Only the Current Image -->
-      <div class="image-container" *ngIf="imageUrls?.length">
-        <ion-img 
-          [src]="imageUrls[i]" 
-          [alt]="mainTitle || 'Slider Image'" 
-          class="carousel-image"
-          (ionImgDidLoad)="onImageLoad(i)"
-        ></ion-img>
-      </div>
-  
-      <!-- Dynamic Text Content -->
-      <div class="carousel-des-container">
-        <div class="carousel-description">
-          <div class="description">
-          <!-- Render heading if it exists -->
-          <ng-container *ngFor="let content of description">
-            <h3 *ngIf="content.type === 'heading'"
-                [innerHTML]="getStyledText(content.children[0])">
-            </h3>
-          </ng-container>
+  <div class="slider-wrapper">
+    <ng-container *ngFor="let description of descriptions; let i = index">
+      <div class="slide" 
+           *ngIf="currentIndex === i"
+           [@slideAnimation]>
+        <div class="slide-content">
+          <!-- Image Section -->
+          <div class="image-container" *ngIf="imageUrls?.length">
+            <ion-img 
+              [src]="imageUrls[i]" 
+              [alt]="mainTitle || 'Slider Image'"
+              (ionImgDidLoad)="onImageLoad(i)"
+            ></ion-img>
+          </div>
           
-          <!-- Render paragraphs -->
-          <ng-container *ngFor="let content of description">
-            <p *ngIf="content.type === 'paragraph'">
-              <span *ngFor="let child of content.children" 
-                    [innerHTML]="getStyledText(child)">
-              </span>
-            </p>
-          </ng-container>
-          
-          <!-- Read More Button (only once per slide) -->
-          <ion-button color="primary" [routerLink]="['/healthyrelationship']"
-                      *ngIf="i === 0 && showButton">
-            Read More
-          </ion-button>
-          
-          <!-- Dots for Indicators (only once per slide) -->
-          <div class="dots">
-            <div *ngFor="let dot of descriptions; let j = index" 
-                 [class.active]="currentIndex === j"
-                 (click)="currentIndex = j">
+          <!-- Text Content Section -->
+          <div class="text-container">
+            <div class="carousel-description">
+              <ng-container *ngFor="let content of description">
+                <h3 *ngIf="content.type === 'heading'"
+                    [innerHTML]="getStyledText(content.children[0])">
+                </h3>
+              </ng-container>
+              
+              <ng-container *ngFor="let content of description">
+                <p *ngIf="content.type === 'paragraph'">
+                  <span *ngFor="let child of content.children" 
+                        [innerHTML]="getStyledText(child)">
+                  </span>
+                </p>
+              </ng-container>
+              
+              <ion-button color="primary" [routerLink]="['/healthyrelationship']"
+                        *ngIf="i === 0 && showButton">
+                Read More
+              </ion-button>
             </div>
           </div>
         </div>
-        </div>
-              <!-- Navigation Arrows -->
-        <ion-icon
-        name="chevron-back-outline"
-        class="arrow left-arrow"
-        (click)="prevSlide()"
-      ></ion-icon>
-      <ion-icon
-        name="chevron-forward-outline"
-        class="arrow right-arrow"
-        (click)="nextSlide()"
-      ></ion-icon>
       </div>
-    </div>
+    </ng-container>
+  </div>
+
+  <!-- Navigation Arrows -->
+  <div class="navigation-arrows">
+    <ion-icon 
+      name="chevron-back-circle-outline" 
+      class="nav-arrow prev" 
+      (click)="prevSlide()"
+      [class.disabled]="descriptions.length <= 1">
+    </ion-icon>
+    <ion-icon 
+      name="chevron-forward-circle-outline" 
+      class="nav-arrow next" 
+      (click)="nextSlide()"
+      [class.disabled]="descriptions.length <= 1">
+    </ion-icon>
+  </div>
+
+  <!-- Pagination Dots -->
+  <div class="pagination-dots">
+    <span *ngFor="let item of descriptions; let i = index" 
+          [class.active]="currentIndex === i"
+          (click)="currentIndex = i">
+    </span>
   </div>
 </ion-card-content>
-
-
