@@ -53,17 +53,7 @@
                     placeholder="Enter an address, city or zip code">
                   </ion-searchbar>
                   
-                  <!-- Autocomplete dropdown -->
-                  <div *ngIf="autocompleteItems.length > 0" class="autocomplete-dropdown">
-                    <ion-item 
-                      *ngFor="let item of autocompleteItems"
-                      (click)="selectSearchResult(item)">
-                      <ion-label>
-                        <h3>{{ item.structured_formatting.main_text }}</h3>
-                        <p>{{ item.structured_formatting.secondary_text }}</p>
-                      </ion-label>
-                    </ion-item>
-                  </div>
+                  
             
                   <ion-buttons slot="end" class="ss-search-button">
                     <ion-button (click)="onSearch()" [disabled]="!searchQuery">
@@ -81,7 +71,17 @@
                 </ion-button>
               </ion-buttons>
               </ion-toolbar>
-              
+              <!-- Autocomplete dropdown -->
+              <div *ngIf="autocompleteItems.length > 0" class="autocomplete-dropdown">
+                <ion-item 
+                  *ngFor="let item of autocompleteItems"
+                  (click)="selectSearchResult(item)">
+                  <ion-label>
+                    <h3>{{ item.structured_formatting.main_text }}</h3>
+                    <p>{{ item.structured_formatting.secondary_text }}</p>
+                  </ion-label>
+                </ion-item>
+              </div>
             </div>
             <div class="sc-con-container">
             <div class="cards-container">
