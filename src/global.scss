@@ -112,6 +112,7 @@ ion-card {
 .p-b-0{
   padding-bottom: 0;
 }
+
 .comp-space {
   margin: 0;
   margin-bottom: 32px;
@@ -213,6 +214,9 @@ ion-card {
     color: $color-primary;
     font-size: $font-size-base;
   }
+}
+.ccc-space-bottom{
+  margin-bottom: 60px;
 }
 .scc-content{
   padding: 16px 16px;
