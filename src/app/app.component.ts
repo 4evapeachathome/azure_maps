@@ -6,6 +6,7 @@ import { HeaderComponent } from "./controls/header/header.component";
 import { HeightService } from 'src/shared/height.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -17,11 +18,15 @@ import { CommonModule } from '@angular/common';
 export class AppComponent implements OnInit,OnDestroy {
   isMobile!: boolean;
 
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform, private router:Router) {
     this.isMobile = this.platform.is('android') || this.platform.is('ios');
   }
 
   ngOnInit() {
+    const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+    if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
+      this.router.navigate(['/home']); // Redirect to home if page is refreshed
+    }
   }
 
   ngOnDestroy() {
