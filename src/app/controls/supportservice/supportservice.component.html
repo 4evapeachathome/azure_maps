@@ -48,6 +48,7 @@
                     searchIcon="undefined"
                     [(ngModel)]="searchQuery"
                     (ionInput)="onSearchInput($event)"
+                    (ionClear)="onSearchClear()"
                     (keyup.enter)="onSearch()"
                      (click)="handleSearchBarClick()"
                     placeholder="Enter an address, city or zip code">

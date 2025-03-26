@@ -445,13 +445,24 @@ setupSearchDebounce() {
     }
 }
 
+onSearchClear() {
+  this.searchQuery = '';
+  this.locationcard = false;
+    this.selectedLocation = null;
+    this.filterOpen = false;
+  this.filteredLocations = []; // Clear the filtered locations
+  this.updateSupportServiceMarkers(); // Update markers
+}
+
   onSearchInput(event: any) {
         // Prevent search if geolocation is false
         if (!this.geolocationEnabled) {
           alert('Please turn on the location services to search for nearby support centers.');
           return;
         }
-    
+    this.locationcard = false;
+    this.selectedLocation = null;
+    this.filterOpen = false;
     this.searchSubject.next(event.target.value);
   }
 
