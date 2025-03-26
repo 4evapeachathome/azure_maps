@@ -1,3 +1,5 @@
+@import "styles-dir";
+
 .map-container {
   width: 100%;
   height: 100%;
@@ -16,30 +18,30 @@
     svg {
       width: 100%;
       height: auto;
-      max-width: 800px;
+      max-width: 90%;
 
       path {
-        fill: #ccc;
-        stroke: #fff;
+        fill: var(--color-map-background);
+        stroke: var(--color-primary);
         stroke-width: 0.5;
         cursor: pointer;
         transition: fill 0.3s;
 
         &:hover {
-          fill: #999;
+          fill: var(--color-map-background-selected);
           & + text {
-            fill: #333;
+            fill: var(--color-white);
           }
         }
       }
 
       text.state-label {
-        font-size: 8px;
-        fill: #666;
+        font-size: $font-size-sm;
+        fill: var(--color-dark-Gray);
         text-anchor: middle;
         pointer-events: none;
-        font-family: Arial, sans-serif;
-        font-weight: bold;
+        font-family: $font-Inter;
+        font-weight: $font-semibold;
         user-select: none;
       }
     }
@@ -66,14 +68,14 @@
           height: auto;
 
           path {
-            fill: #e0e0e0;
-            stroke: #fff;
+            fill: var(--color-map-background);
+            stroke: var(--color-primary);
             stroke-width: 0.5;
             cursor: pointer;
             transition: all 0.3s ease;
 
             &.active {
-              fill: #007bff;
+              fill: var(--color-map-background);
             }
 
             &.inactive {
@@ -82,8 +84,8 @@
           }
 
           text.state-label {
-            font-size: 8px;
-            fill: #666;
+            font-size: $font-size-sm;
+            fill: var(--color-dark-Gray);
             text-anchor: middle;
             pointer-events: none;
             user-select: none;
@@ -92,14 +94,14 @@
       }
 
       .state-side {
-        width: 800px;
-        padding: 30px;
+        width: 100%;
+        padding: 0;
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        background: #f8f9fa;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        // background: #f8f9fa;
+        // border-radius: 12px;
+        // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
         .state-header {
           display: flex;
@@ -116,9 +118,9 @@
 
           h2 {
             margin: 0;
-            font-size: 32px;
-            color: #333;
-            font-weight: 600;
+            font-size: $font-size-xlll;
+            color: var(--color-primary);
+            font-weight: $font-semibold;
           }
         }
 
@@ -131,19 +133,19 @@
             height: auto;
 
             path {
-              fill: #007bff;
-              stroke: #fff;
+              fill: var(--color-map-background);
+            stroke: var(--color-primary);
               stroke-width: 1;
               filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
             }
 
             text.state-label.selected {
-              font-size: 16px;
-              fill: #fff;
+              font-size: $font-size-sm;
+              fill: var(--color-dark-Gray);
               text-anchor: middle;
               font-weight: bold;
               text-transform: uppercase;
-              filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+             // filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
             }
           }
         }
@@ -236,14 +238,15 @@
                 transform: translate(-50%, -50%);
 
                 path {
-                  fill: #007bff;
+                  fill: var(--color-map-state-selected);
+                  stroke: var(--color-primary);
                   transform-origin: center;
                 }
 
                 text.state-label.selected {
-                  font-size: 14px;
-                  fill: #fff;
-                  font-weight: bold;
+                  font-size: $font-size-sm;
+              fill: var(--color-dark-Gray);
+                  font-weight: $font-semibold;
                   text-transform: uppercase;
                   letter-spacing: 0.5px;
                   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));

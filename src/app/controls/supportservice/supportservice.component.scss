@@ -21,7 +21,7 @@ ion-searchbar {
     left: 10px;
     bottom: 10px;
     right: 10px;
-    z-index: 100;
+    z-index: 102;
     pointer-events: none;
     .search-toolbar {
       --background: var(--color-white);
@@ -320,6 +320,9 @@ ion-badge {
     pointer-events: all;
     ion-item {
       cursor: pointer;
+      ion-label{
+        cursor: pointer;
+      }
     }
   h3{
     font-size: $font-size-base;
