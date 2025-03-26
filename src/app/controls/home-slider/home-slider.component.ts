@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
@@ -13,7 +13,24 @@ import { ApiService } from 'src/app/services/api.service';
   styleUrls: ['./home-slider.component.scss'],
   standalone: true,
     imports: [CommonModule, IonicModule, RouterModule],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    animations: [
+      trigger('fadeAnimation', [
+        transition(':enter', [
+          style({ opacity: 0, transform: 'translateX(20px)' }),
+          animate('500ms ease-in-out', style({ opacity: 1, transform: 'translateX(0)' }))
+        ]),
+        transition(':leave', [
+          animate('500ms ease-in-out', style({ opacity: 0, transform: 'translateX(-20px)' }))
+        ])
+      ]),
+      trigger('slideAnimation', [
+        transition(':enter', [
+          style({ opacity: 0, transform: 'scale(0.9)' }),
+          animate('600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)', 
+            style({ opacity: 1, transform: 'scale(1)' }))
+        ])
+      ])
+    ]
 })
 export class HomeSliderComponent  implements OnInit {
 mainTitle: string = ''; // Stores the main title
