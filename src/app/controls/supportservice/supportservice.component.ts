@@ -179,12 +179,6 @@ setupSearchDebounce() {
     debounceTime(300),
     distinctUntilChanged()
   ).subscribe(searchText => {
-    // Prevent search if geolocation is false
-    if (!this.geolocationEnabled) {
-      alert('Please turn on the location services to search for nearby support centers.');
-      return;
-    }
-
     if (searchText) {
       this.updateSearchResults(searchText);
     } else {
@@ -452,6 +446,12 @@ setupSearchDebounce() {
 }
 
   onSearchInput(event: any) {
+        // Prevent search if geolocation is false
+        if (!this.geolocationEnabled) {
+          alert('Please turn on the location services to search for nearby support centers.');
+          return;
+        }
+    
     this.searchSubject.next(event.target.value);
   }
 
@@ -476,10 +476,10 @@ setupSearchDebounce() {
   
       console.log('Current position:', this.center);
       console.log('Latitude:', this.latitude, 'Longitude:', this.longitude);
-      await this.reverseGeocodeForState({ lat: 36.778259, lng: -119.417931 });
+      await this.reverseGeocodeForState({ lat: 37.3387, lng: -121.8853 });
   
-      this.updateSearchedLocationMarker({ lat: 36.778259, lng: -119.417931 });
-      this.filterNearbySupportCenters(36.778259,-119.417931);
+      this.updateSearchedLocationMarker({ lat: 37.3387, lng: -121.8853 });
+      this.filterNearbySupportCenters(37.3387,-121.8853);
 
     } catch (error: any) { // Explicitly type the error
       if (error.code === error.PERMISSION_DENIED) {
@@ -631,6 +631,7 @@ setupSearchDebounce() {
       this.filterSearchTerm = '';
       }
       this.filterSearchTerm = '';
+      this.searchQuery = '';
       this.selectedLocation = null;
       this.locationcard = false;
       this.filteredLocations = [];
