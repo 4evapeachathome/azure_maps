@@ -33,4 +33,5 @@ export const APIEndpoints = {
     tvisa: `${environment.apiHost}/api/t-visas`, 
     childwaiver: `${environment.apiHost}/api/child-waivers`, 
     immigrationbenfit: `${environment.apiHost}/api/immigration-benefits`, 
+    usstatelaws: `${environment.apiHost}/api/us-state-laws`,
   }

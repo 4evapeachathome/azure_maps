@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import usaMap from '@svg-maps/usa';
+import { ApiService } from '../services/api.service';
 
 interface Point {
   x: number;
@@ -15,11 +16,11 @@ interface BoundingBox {
   maxY: number;
 }
 
+
 interface StateLaw {
-  title: string;
-  description: string;
-  lastUpdated: string;
-  source: string;
+  state: string;
+  lawdescription: string;
+  link: string;
 }
 
 @Component({
@@ -33,35 +34,60 @@ export class UsaMapComponent {
   usaMap = usaMap;
   selectedState: { id: string; name: string; path?: string } | null = null;
   showLawInfo = false;
+  stateLaws: StateLaw[] = [];
 
-  private stateAbbreviations: { [key: string]: string } = {
-    alabama: 'AL', alaska: 'AK', arizona: 'AZ', arkansas: 'AR', california: 'CA',
-    colorado: 'CO', connecticut: 'CT', delaware: 'DE', florida: 'FL', georgia: 'GA',
-    hawaii: 'HI', idaho: 'ID', illinois: 'IL', indiana: 'IN', iowa: 'IA',
-    kansas: 'KS', kentucky: 'KY', louisiana: 'LA', maine: 'ME', maryland: 'MD',
-    massachusetts: 'MA', michigan: 'MI', minnesota: 'MN', mississippi: 'MS', missouri: 'MO',
-    montana: 'MT', nebraska: 'NE', nevada: 'NV', 'new-hampshire': 'NH', 'new-jersey': 'NJ',
-    'new-mexico': 'NM', 'new-york': 'NY', 'north-carolina': 'NC', 'north-dakota': 'ND', ohio: 'OH',
-    oklahoma: 'OK', oregon: 'OR', pennsylvania: 'PA', 'rhode-island': 'RI', 'south-carolina': 'SC',
-    'south-dakota': 'SD', tennessee: 'TN', texas: 'TX', utah: 'UT', vermont: 'VT',
-    virginia: 'VA', washington: 'WA', 'west-virginia': 'WV', wisconsin: 'WI', wyoming: 'WY'
-  };
 
-  // Mock state law data - replace with actual API call in production
-  private stateLaws: { [key: string]: StateLaw } = {
-    california: {
-      title: 'California Privacy Rights Act (CPRA)',
-      description: 'The California Privacy Rights Act (CPRA) enhances consumer privacy rights and builds upon the California Consumer Privacy Act (CCPA). Key provisions include:\n\n' +
-        '• Right to correct inaccurate personal information\n' +
-        '• Right to limit use and disclosure of sensitive personal information\n' +
-        '• Extended data retention limitations\n' +
-        '• Enhanced consent requirements for minors\n' +
-        '• Creation of the California Privacy Protection Agency',
-      lastUpdated: '2023-01-01',
-      source: 'California State Legislature'
-    },
-    // Add more states as needed
-  };
+  constructor(private apiService: ApiService) {
+    this.getUSLawsbystateData();
+
+  }
+
+
+
+  private stateNames: { [key: string]: string } = {
+    AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
+    CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
+    HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
+    KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+    MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri',
+    MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
+    NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
+    OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
+    SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
+    VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming'
+};
+
+getStateName(stateId: string): string {
+  return this.stateNames[stateId.toUpperCase()] || stateId;
+}
+  
+  // Helper function to format state names correctly (capitalize words and replace hyphens)
+  private formatStateName(name: string): string {
+    return name
+      .split('-') // Split hyphenated names
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
+      .join(' '); // Rejoin with spaces
+  }
+
+  openlink() {
+    const law = this.getStateLaw();
+    if (law?.link) {
+      window.open(law.link, '_blank');
+    }
+  }
+
+  
+ getUSLawsbystateData() {
+    this.apiService.getStateLaws().subscribe(
+      (response: StateLaw[]) => {
+        debugger;
+        this.stateLaws = response;
+      },
+      (error) => {
+        console.error('Error fetching state laws:', error);
+      }
+    );
+  }
 
   onStateClick(state: { id: string; name: string; path: string }) {
     this.selectedState = { ...state };
@@ -74,32 +100,40 @@ export class UsaMapComponent {
     this.showLawInfo = false;
   }
 
-  getStateAbbreviation(stateId: string): string {
-    return this.stateAbbreviations[stateId] || stateId;
-  }
 
   getSelectedStatePath(): string {
     const location = this.usaMap.locations.find(loc => loc.id === this.selectedState?.id);
     return location?.path || '';
   }
 
-  getStateLaw(): StateLaw {
-    if (!this.selectedState) {
-      return {
-        title: '',
-        description: '',
-        lastUpdated: '',
-        source: ''
-      };
-    }
+  getStateLaw(): StateLaw | null {
+    if (!this.selectedState) return null;
+    
+    // Find law for selected state (case insensitive match)
+    const stateLaw = this.stateLaws.find(law => 
+      law.state.toLowerCase() === this.selectedState?.name.toLowerCase()
+    );
 
-    return this.stateLaws[this.selectedState.id] || {
-      title: `${this.selectedState.name} Privacy Laws`,
-      description: 'Information about specific privacy laws for this state is currently being compiled.',
-      lastUpdated: 'N/A',
-      source: 'Pending'
-    };
+    return stateLaw || null;
   }
+
+  getLawDescription(): string {
+    debugger;
+    const law = this.getStateLaw();
+    if (!law || !law.lawdescription) return '';
+  
+    // Ensure lawdescription is an array
+    if (Array.isArray(law.lawdescription)) {
+      return law.lawdescription
+        .map((paragraph: any) =>
+          paragraph.children?.map((child: any) => child.text).join(' ') || ''
+        )
+        .join('\n'); // Join paragraphs with a newline
+    }
+  
+    return ''; // Return empty string if not in expected format
+  }
+  
 
   getStateViewBox(): string {
     if (!this.selectedState) return '0 0 100 100';
@@ -126,6 +160,7 @@ export class UsaMapComponent {
     
     return `${newMinX} ${newMinY} ${totalSize} ${totalSize}`;
   }
+
 
   getStateCenter(pathData: string): Point {
     const coordinates = this.extractCoordinates(pathData);
