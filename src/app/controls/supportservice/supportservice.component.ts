@@ -250,7 +250,6 @@ setupSearchDebounce() {
   }
 
   private detectStateFromResult(result: google.maps.GeocoderResult) {
-    debugger;
     const stateComponent = result.address_components.find(comp => 
       comp.types.includes('administrative_area_level_1')
     );
@@ -515,7 +514,6 @@ onSearchClear() {
           else reject(status);
         });
       });
-        debugger;
       if (results && results.length > 0) {
         const stateComponent = results[0].address_components.find((comp:any) => 
           comp.types.includes('administrative_area_level_1')
@@ -578,7 +576,6 @@ onSearchClear() {
   getSupportServiceFilterOptions() {
     this.apiService.getServiceFilterOptions().subscribe(
       (response: any) => {
-      //  debugger;
         if (response.data && response.data.length > 0) {        
           this.filterOptions = response.data; 
           console.log('Fetched filter options:', this.filterOptions);
@@ -668,7 +665,6 @@ onSearchClear() {
 
 
   applyFilters() {
-    debugger;
     if (this.getSelectedFilterCount() > 0) {
       const selectedFilterKeys = this.filterOptions
         .filter(option => option.selected)

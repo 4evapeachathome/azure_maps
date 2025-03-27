@@ -18,6 +18,18 @@ interface QueryOptions {
   pageSize?: number;
 }
 
+interface StateLaw {
+  state: string;
+  lawdescription: string;
+  link: string;
+}
+
+interface StateLawsResponse {
+  data: Array<{
+    statelaws: StateLaw[];
+  }>;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -195,7 +207,6 @@ export class ApiService {
   //#region BannerSectionAPI Service 
   getHappyHomeQuote(): Observable<any> {
     const endpoint = APIEndpoints.homebanner;
- //   debugger;
     const options = {
         populate: {
             content: {
@@ -541,7 +552,6 @@ getServiceFilterOptions(): Observable<any> {
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
       console.log('Service filter options data:', res);
-    //  debugger;
       if (res.data && res.data.length > 0 && res.data[0] && res.data[0].filterOptions) {
         // Extract and flatten the filterOptions from res.data[0].attributes.filterOptions
         const filterOptions = res.data[0].filterOptions.map((item: any) => ({
@@ -560,6 +570,39 @@ getServiceFilterOptions(): Observable<any> {
     })
   );
 }
+
+
+
+getStateLaws(): Observable<StateLaw[]> {
+  const endpoint = APIEndpoints.usstatelaws;
+
+  const options: QueryOptions = {
+    populate: {
+      statelaws: {
+        fields: ['state', 'lawdescription', 'link']
+      }
+    },
+    pagination: {
+      page: 1,
+      pageSize: 10000
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: StateLawsResponse) => {
+      // Alternative to flatMap using reduce
+      const allStateLaws = res.data?.reduce((acc, item) => {
+        return acc.concat(item.statelaws ?? []);
+      }, [] as StateLaw[]) ?? [];
+      return allStateLaws;
+    }),
+    catchError(error => {
+      console.error('Error fetching US state laws:', error);
+      return throwError(() => new Error('Failed to fetch state laws'));
+    })
+  );
+}
+
 
 
 

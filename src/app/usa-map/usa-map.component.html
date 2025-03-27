@@ -15,7 +15,7 @@
           class="state-label"
           (click)="onStateClick(location)"
         >
-          {{ getStateAbbreviation(location.id) }}
+          {{ getStateName(location.id) }}
         </text>
       </g>
     </svg>
@@ -39,7 +39,7 @@
               class="state-label"
               (click)="onStateClick(location)"
             >
-              {{ getStateAbbreviation(location.id) }}
+              {{ getStateName(location.id) }}
             </text>
           </g>
         </svg>
@@ -69,50 +69,39 @@
           </svg>
         </div>
 
-        <ion-grid *ngIf="showLawInfo" class="state-law-container">
+        <ion-grid *ngIf="showLawInfo && getStateLaw()" class="state-law-container">
           <ion-row>
             <ion-col class="state-law-info" size="12" size-sm="8">
-              <div class="law-header">
-                <h3>{{ getStateLaw().title }}</h3>
-                <div class="law-metadata">
-                  <span class="last-updated">
-                    <ion-icon name="calendar-outline"></ion-icon>
-                    Last Updated: {{ getStateLaw().lastUpdated }}
-                  </span>
-                  <span class="source">
-                    <ion-icon name="document-text-outline"></ion-icon>
-                    Source: {{ getStateLaw().source }}
-                  </span>
-                </div>
-              </div>
               <div class="law-content">
-                <p [innerHTML]="getStateLaw().description | json"></p>
+                <p>{{ getLawDescription() }}</p>
               </div>
             </ion-col>
-  
+    
             <ion-col class="state-map-side" size="12" size-sm="4">
               <div class="selected-state-map">
                 <svg [attr.viewBox]="getStateViewBox()">
-                  <path
-                    [attr.d]="getSelectedStatePath()"
-                    class="active"
-                  />
-                  <text
-                    [attr.x]="50"
-                    [attr.y]="50"
-                    class="state-label selected"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                  >
+                  <path [attr.d]="getSelectedStatePath()" class="active" />
+                  <text [attr.x]="50" [attr.y]="50" class="state-label selected"
+                    text-anchor="middle" dominant-baseline="middle">
                     {{ selectedState.name }}
                   </text>
                 </svg>
               </div>
             </ion-col>
-          </ion-row>          
+          </ion-row>
+          
+          <ion-row>
+            <ion-col>
+              <ion-button *ngIf="getStateLaw()?.link" color="primary" 
+                (click)="openlink()" size="small">
+                Read More
+              </ion-button>
+            </ion-col>
+          </ion-row>
         </ion-grid>
+    
 
-
+       
 
         <ion-button color="primary" (click)="resetState()" size="small">
           <ion-icon name="arrow-back" slot="start"></ion-icon>
