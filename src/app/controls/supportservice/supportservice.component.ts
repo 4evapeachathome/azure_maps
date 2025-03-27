@@ -727,6 +727,7 @@ onSearchClear() {
     this.latitude = undefined;
     this.longitude = undefined;
     this.geolocationEnabled = false;
+    this.locationcard = false;
     this.userLocation = null;
     this.organizations = [];
     this.filterOptions = [];
