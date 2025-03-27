@@ -5,42 +5,42 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
-
-
 @Component({
   selector: 'pathome-home-slider',
   templateUrl: './home-slider.component.html',
   styleUrls: ['./home-slider.component.scss'],
   standalone: true,
-    imports: [CommonModule, IonicModule, RouterModule],
-    animations: [
-      trigger('fadeAnimation', [
-        transition(':enter', [
-          style({ opacity: 0, transform: 'translateX(20px)' }),
-          animate('500ms ease-in-out', style({ opacity: 1, transform: 'translateX(0)' }))
-        ]),
-        transition(':leave', [
-          animate('500ms ease-in-out', style({ opacity: 0, transform: 'translateX(-20px)' }))
-        ])
+  imports: [CommonModule, IonicModule, RouterModule],
+  animations: [
+    trigger('slideAnimation', [
+      transition(':enter', [
+        style({ 
+          opacity: 0, 
+          transform: 'translateX(100%)' 
+        }),
+        animate('500ms ease-out', style({ 
+          opacity: 1, 
+          transform: 'translateX(0)' 
+        }))
       ]),
-      trigger('slideAnimation', [
-        transition(':enter', [
-          style({ opacity: 0, transform: 'scale(0.9)' }),
-          animate('600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)', 
-            style({ opacity: 1, transform: 'scale(1)' }))
-        ])
+      transition(':leave', [
+        animate('500ms ease-out', style({ 
+          opacity: 0, 
+          transform: 'translateX(-100%)' 
+        }))
       ])
-    ]
+    ])
+  ]
 })
-export class HomeSliderComponent  implements OnInit {
-mainTitle: string = ''; // Stores the main title
-descriptions: any[] = []; // Stores slider content
-imageUrls: string[] = []; // Stores image URLs
-currentIndex: number = 0; // To track active slider index
-@Input() showButton: boolean = true;
-sliderData: any;
-@Input() endpoint: string ='';
-@Input() paramName:string = '';
+export class HomeSliderComponent implements OnInit {
+  mainTitle: string = ''; // Stores the main title
+  descriptions: any[] = []; // Stores slider content
+  imageUrls: string[] = []; // Stores image URLs
+  currentIndex: number = 0; // To track active slider index
+  @Input() showButton: boolean = true;
+  sliderData: any;
+  @Input() endpoint: string ='';
+  @Input() paramName:string = '';
  
   constructor(private apiService:ApiService) { }
 
@@ -81,12 +81,9 @@ sliderData: any;
     );
   }
   
-  
   onImageLoad(index: number) {
     console.log(`Image ${index} loaded`);
   }
-  
-
 
   prevSlide() {
     this.currentIndex = this.currentIndex === 0 ? this.descriptions.length - 1 : this.currentIndex - 1;
@@ -95,15 +92,11 @@ sliderData: any;
   nextSlide() {
     this.currentIndex = this.currentIndex === this.descriptions.length - 1 ? 0 : this.currentIndex + 1;
   }
-  
 
-  
   getStyledText(child: any): string {
     let text = child.text;
     if (child.bold) text = `<strong>${text}</strong>`;
     if (child.italic) text = `<em>${text}</em>`;
     return text;
   }
-
-  
 }

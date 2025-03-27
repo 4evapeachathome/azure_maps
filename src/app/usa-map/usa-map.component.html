@@ -1,3 +1,4 @@
+<div class="common-container map-space-bottom">
 <div class="map-container">
   <div *ngIf="!selectedState" class="map-view">
     <svg [attr.viewBox]="usaMap.viewBox">
@@ -70,7 +71,7 @@
 
         <ion-grid *ngIf="showLawInfo" class="state-law-container">
           <ion-row>
-            <ion-col class="state-law-info">
+            <ion-col class="state-law-info" size="12" size-sm="8">
               <div class="law-header">
                 <h3>{{ getStateLaw().title }}</h3>
                 <div class="law-metadata">
@@ -89,7 +90,7 @@
               </div>
             </ion-col>
   
-            <ion-col class="state-map-side">
+            <ion-col class="state-map-side" size="12" size-sm="4">
               <div class="selected-state-map">
                 <svg [attr.viewBox]="getStateViewBox()">
                   <path
@@ -113,11 +114,12 @@
 
 
 
-        <ion-button (click)="resetState()">
+        <ion-button color="primary" (click)="resetState()" size="small">
           <ion-icon name="arrow-back" slot="start"></ion-icon>
           Back to Map
         </ion-button>
       </div>
     </div>
   </div>
+</div>
 </div>

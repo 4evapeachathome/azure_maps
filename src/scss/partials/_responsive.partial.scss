@@ -34,17 +34,26 @@
         // display: block !important;
         // .sidebar-header{
         //   display: none !important;
+        
         // }
+        height: 100% !important;
+        left: -500px !important;
+        transition: margin-left 0.5s;
       }
       .slider-content {
       
-        margin-left: 0 !important; 
+      //  margin-left: 0 !important; 
+        .sm-cont-margin{
+          margin-left: 0 !important; 
+        }
       }
       .sidebar-toggle:checked + .sidebar-toggle-label + .sidebar {
         position: absolute;
        // transform: translateX(-258px);
         display: block;
         z-index: 10000;
+        left: 0 !important;
+      //  transition: margin-left 0.5s;
         .sidebar-header{
           display: none;
         }
@@ -73,5 +82,8 @@
       }
       .form-container {
         padding: 16px 16px !important;
+    }
+    .map-space-bottom{
+      margin-bottom: 10px;
     }
   }

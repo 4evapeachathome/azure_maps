@@ -39,7 +39,7 @@ export class MenuComponent implements OnInit {
   // Define the titles of menus to hide initially
   private initiallyHiddenMenuTitles = [
     'No Peace at Home',
-    // 'Support Service',
+    'Support Service',
     'Legal Rights'
   ];
 

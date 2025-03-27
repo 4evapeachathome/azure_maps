@@ -21,7 +21,7 @@ ion-searchbar {
     left: 10px;
     bottom: 10px;
     right: 10px;
-    z-index: 100;
+    z-index: 102;
     pointer-events: none;
     .search-toolbar {
       --background: var(--color-white);
@@ -159,6 +159,7 @@ ion-searchbar {
     font-weight: $font-semibold;
     margin-top: 0;
     margin-bottom: 0;
+    margin-right: 20px;
   }
   p {
     color: $color-dark-Gray;
@@ -215,6 +216,15 @@ ion-searchbar {
   }
 }
 
+.marker-label {
+  color: #333;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin-top: 8px;
+}
 
 
 .seg-cont-container{
@@ -292,4 +302,35 @@ ion-badge {
     ion-icon{
       width: 16px;
     }
+}
+.search-autocomplete{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.autocomplete-dropdown{
+  position: absolute;
+    top: 62px;
+    left: 0;
+    right: 50%;
+    border: 1px solid var(--color-Gray54);
+    border-radius: 10px;
+    overflow: hidden;
+    overflow-y: auto;
+    pointer-events: all;
+    ion-item {
+      cursor: pointer;
+      ion-label{
+        cursor: pointer;
+      }
+    }
+  h3{
+    font-size: $font-size-base;
+    color: var(--color-primary);
+  }
+  p{
+    font-size: $font-size-md;
+    color: var(--color-dark-Gray);
+  }
 }

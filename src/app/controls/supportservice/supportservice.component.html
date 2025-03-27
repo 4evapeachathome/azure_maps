@@ -14,14 +14,28 @@
           <div class="support-map-container">
             <div class="gmap-container">
           
-              <google-map height="100%" width="100%" [zoom]="zoom" class="gm-content">
-                <map-marker 
-                  *ngFor="let location of filteredLocations" 
-                  [position]="{ lat: location.OrgLatitude, lng: location.OrgLongitude }" 
-                  (mapClick)="onMarkerClick(location)"
-                  [label]="location.OrgName">
-                </map-marker>
-              </google-map>
+              <google-map 
+    height="100%" 
+    width="100%" 
+    [zoom]="zoom" 
+    [center]="center"
+    class="gm-content">
+    
+    <!-- Searched location marker (red) -->
+    <map-marker 
+      *ngIf="searchedLocationMarker"
+      [position]="searchedLocationMarker.position"
+      [options]="searchedLocationMarker.options">
+    </map-marker>
+    
+    <!-- Support service markers (blue) -->
+    <map-marker 
+      *ngFor="let marker of supportServiceMarkers"
+      [position]="marker.position"
+      [options]="marker.options"
+      (mapClick)="marker.click()">
+    </map-marker>
+  </google-map>
             </div>
             <div class="search-container">
               <ion-toolbar class="search-toolbar">      
@@ -30,20 +44,23 @@
                 src="../assets/gps.svg"
                      (click)="getCurrentPosition()" >
                     </ion-icon>
-                <ion-searchbar searchIcon="undefined"
-                  [(ngModel)]="searchQuery"
-                  (keyup.enter)="onSearch()"
-                  (click)="onIconClick()"
-                  (ionInput)="onInputChange($event)"
-                  placeholder="search for support services" 
-                
-                ></ion-searchbar>
-                <ion-buttons slot="end" class="ss-search-button">
-                <ion-button (click)="onSearch()">
-                  <ion-icon name="search-outline"></ion-icon>
-                
-                </ion-button>
-                </ion-buttons>            
+                  <ion-searchbar 
+                    searchIcon="undefined"
+                    [(ngModel)]="searchQuery"
+                    (ionInput)="onSearchInput($event)"
+                    (ionClear)="onSearchClear()"
+                    (keyup.enter)="onSearch()"
+                     (click)="handleSearchBarClick()"
+                    placeholder="Enter an address, city or zip code">
+                  </ion-searchbar>
+                  
+                  
+            
+                  <ion-buttons slot="end" class="ss-search-button">
+                    <ion-button (click)="onSearch()" [disabled]="!searchQuery">
+                      <ion-icon name="search-outline"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>           
               </div>
               <ion-buttons slot="end" >
                 
@@ -55,7 +72,17 @@
                 </ion-button>
               </ion-buttons>
               </ion-toolbar>
-              
+              <!-- Autocomplete dropdown -->
+              <div *ngIf="autocompleteItems.length > 0" class="autocomplete-dropdown">
+                <ion-item 
+                  *ngFor="let item of autocompleteItems"
+                  (click)="selectSearchResult(item)">
+                  <ion-label>
+                    <h3>{{ item.structured_formatting.main_text }}</h3>
+                    <p>{{ item.structured_formatting.secondary_text }}</p>
+                  </ion-label>
+                </ion-item>
+              </div>
             </div>
             <div class="sc-con-container">
             <div class="cards-container">

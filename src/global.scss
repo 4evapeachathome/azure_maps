@@ -69,6 +69,9 @@ body {
 .pb-24{
   padding-bottom: 24px;
 }
+.p-0{
+  padding: 0;
+}
 ion-card {
   box-shadow: none;
   border-radius: 8px;
@@ -109,6 +112,7 @@ ion-card {
 .p-b-0{
   padding-bottom: 0;
 }
+
 .comp-space {
   margin: 0;
   margin-bottom: 32px;
@@ -150,7 +154,9 @@ ion-card {
     }
   }
 }
-
+.footer-container{
+  padding: 0;
+}
 .card-small {
   display: flex  ;
       flex-direction: column;
@@ -208,6 +214,9 @@ ion-card {
     color: $color-primary;
     font-size: $font-size-base;
   }
+}
+.map-space-bottom{
+  margin-bottom: 60px;
 }
 .scc-content{
   padding: 16px 16px;
@@ -490,6 +499,9 @@ ion-card {
     position: relative;
     overflow: hidden;
     width: 100%;
+    .slide-content{
+      position: relative;
+    }
     .carousel-card {
       display: none;
       align-items: center;
@@ -502,7 +514,7 @@ ion-card {
         opacity: 1;
       }
     }
-    .image-container {
+    .cc-image-container {
       width: 220px;
       height: 220px;
       margin: 0 auto;
@@ -511,6 +523,19 @@ ion-card {
       left: 0;
       right: 0;
       z-index: 1;
+      ion-img {
+        width: 100%;
+        height: 100%;
+        border: 5px solid var(--color-white);
+    border-radius: 50%;
+    background: var(--color-Gray44);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    &::part(image){
+      position: absolute;
+    top: 0;
+    left: 0;
+    }
+      }
       // .carousel-image {
       //   // width: 100%;
       //   // height: 300px;
@@ -519,7 +544,7 @@ ion-card {
       //   // box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       // }
     }
-    .carousel-des-container {
+    .carousel-des-container, .text-container {
       background: var(--color-white);
       margin-top: 110px;
       padding-top: 110px;
@@ -551,12 +576,12 @@ ion-card {
           justify-content: center;
           gap: 0.5rem;
           margin-top: 1rem;
-          position: absolute;
+         // position: absolute;
           bottom: 0;
           z-index: 1;
           left: 0;
           right: 0;
-          div {
+          div, span {
             width: 10px;
             height: 10px;
             border-radius: 50%;
@@ -598,6 +623,34 @@ ion-card {
           right: 1rem;
         }
       }
+      .navigation-arrows {
+        width: 100%;
+        justify-content: space-between;
+        display: flex;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        cursor: pointer;
+        z-index: 2;
+        color: #ab52c5;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: darken(#ab52c5, 10%);
+        }
+.nav-arrow{
+  position: relative;
+  background: var(--color-white );
+}
+        .prev {
+          left: 8px;
+        }
+
+        .next {
+          right: 8px;
+        }
+      }
     }
   }
 }
@@ -613,7 +666,7 @@ ion-card {
 }
 .hb-img{
 
-  max-height: 300px;
+  max-height: 500px;
   
 }
 // .contact-img{

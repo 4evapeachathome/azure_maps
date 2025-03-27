@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { IonicModule, Platform } from '@ionic/angular';
-import { GoogleMapsModule } from '@angular/google-maps';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonicModule, Platform, ToastController } from '@ionic/angular';
+import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
@@ -9,6 +9,8 @@ import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
 import { APIEndpoints } from 'src/shared/endpoints';
+import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 
 declare var google: any;
 
@@ -76,6 +78,26 @@ export interface FilterOption {
   selected: boolean;
 }
 
+interface Place {
+  description: string;
+  place_id: string;
+  structured_formatting: {
+    main_text: string;
+    secondary_text: string;
+  };
+}
+
+interface PlaceDetails {
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
+  name: string;
+  formatted_address: string;
+}
+
 @Component({
   selector: 'pathome-supportservice',
   templateUrl: './supportservice.component.html',
@@ -99,45 +121,359 @@ export class SupportserviceComponent  implements OnInit{
   filteredlocationwithinradius: any[] = [];
   public readonly endPoint : string = APIEndpoints.supportService;
 
-  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService) { 
-  }
+  autocompleteService: any;
+  placesService: any;
+  autocompleteItems: Place[] = [];
+  searchSubject = new BehaviorSubject<string>('');
+  @ViewChild(GoogleMap) map!: GoogleMap;
+  searchedLocationMarker: any = null;
+  supportServiceMarkers: any[] = [];
+  currentState: string = '';
+  searchRadius: number = DEFAULT_DISTANCE;
+  firstLoad: boolean = true;
+  
 
 
-  ngOnInit() {
-    this.getSupportServiceFilterOptions();
-    this.getSupportServiceData(this.endPoint);
+  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController) { 
+    this.autocompleteService = new google.maps.places.AutocompleteService();
+    this.placesService = new google.maps.places.PlacesService(
+      document.createElement('div')
+    );
   }
 
  
-  resetState() {
-    this.searchQuery = '';
-    this.filterOpen = false;
-    this.selectedLocation = null;
-    this.activeTab = 'about';
-    this.segment = 'about';
-    this.latitude = undefined;
-    this.longitude = undefined;
-    this.geolocationEnabled = false;
-    this.userLocation = null;
-    this.organizations = [];
-    this.filterOptions = [];
-    this.filteredLocations = undefined;
-    this.filterSearchTerm = '';
+
+  ngOnInit() {
+    this.initializeGoogleMapsServices();
+    this.getSupportServiceFilterOptions();
+    this.getSupportServiceData(this.endPoint);
+
+    this.setupSearchDebounce();
+  }
+
+  ngAfterViewInit() {
+    this.map.zoomChanged.subscribe(() => {
+      this.zoom = this.map.getZoom()!;
+      this.updateMarkerLabels();
+    });
+}
+
+updateMarkerLabels() {
+  this.supportServiceMarkers = this.supportServiceMarkers.map(marker => ({
+    ...marker,
+    options: {
+      ...marker.options,
+      label: this.zoom >= 15 ? {
+        text: marker.orgName,
+        fontSize: '12px',
+        fontWeight: 'bold',
+        className: 'marker-label'
+      } : null,
+      animation: null
+    }
+  }));
+}
+
+setupSearchDebounce() {
+  this.searchSubject.pipe(
+    debounceTime(300),
+    distinctUntilChanged()
+  ).subscribe(searchText => {
+    if (searchText) {
+      this.updateSearchResults(searchText);
+    } else {
+      this.autocompleteItems = [];
+    }
+  });
+}
+
+  initializeGoogleMapsServices() {
+    this.autocompleteService = new google.maps.places.AutocompleteService();
+    this.placesService = new google.maps.places.PlacesService(
+      document.createElement('div')
+    );
+  }
+  
+
+  createGoogleMapsSize(width: number, height: number): google.maps.Size {
+    return new google.maps.Size(width, height);
+  }
+
+  updateSearchResults(searchText: string) {
+    if (searchText.length > 2) {
+      this.autocompleteService.getPlacePredictions(
+        {
+          input: searchText,
+          componentRestrictions: { country: 'us' },
+        },
+        (predictions: Place[], status: string) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            this.autocompleteItems = predictions;
+          } else {
+            this.autocompleteItems = [];
+          }
+        }
+      );
+    } else {
+      this.autocompleteItems = [];
+    }
+  }
+
+  selectSearchResult(item: Place) {
+    if (!this.geolocationEnabled) {
+      alert('Please turn on the location services to search for nearby support centers.');
+      return;
+    }
+    this.searchQuery = item.description;
+    this.autocompleteItems = [];
+    
+    this.placesService.getDetails(
+      { placeId: item.place_id },
+      (placeDetails: any, status: string) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          const lat = placeDetails.geometry.location.lat();
+          const lng = placeDetails.geometry.location.lng();
+
+          
+          // Update map center
+          this.center = { lat, lng };
+          this.updateSearchedLocationMarker(this.center);
+          
+          // Filter and update both map markers and list
+          this.filterNearbySupportCenters(lat, lng);
+          
+          // Reset selected location
+          this.selectedLocation = null;
+        }
+      }
+    );
+  }
+
+  private detectStateFromResult(result: google.maps.GeocoderResult) {
+    debugger;
+    const stateComponent = result.address_components.find(comp => 
+      comp.types.includes('administrative_area_level_1')
+    );
+    
+    if (stateComponent) {
+      const stateName = stateComponent.long_name;
+      const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
+      this.currentState = stateName;
+      this.searchRadius = STATE_NAME_TO_DISTANCE[stateAbbr as keyof typeof STATE_NAME_TO_DISTANCE] || DEFAULT_DISTANCE;
+    } else {
+      this.currentState = '';
+      this.searchRadius = DEFAULT_DISTANCE;
+    }
+  }
+
+  async onSearch() {
+    if (!this.geolocationEnabled) {
+      alert('Please turn on the location services to search for nearby support centers.');
+      return;
+    }
+    if (!this.searchQuery || this.searchQuery.trim() === '') {
+      this.filteredLocations = [...this.organizations];
+      return;
+    }
+  
+    // Check if input is a zip code (5 digits for US)
+    const isZipCode = /^\d{5}(-\d{4})?$/.test(this.searchQuery.trim());
+  
+    try {
+      let lat: number;
+      let lng: number;
+      let geocodeResult: any;
+  
+      if (isZipCode) {
+        // Handle zip code search
+        const zipCodeResponse = await this.geocodeZipCode(this.searchQuery.trim());
+        lat = zipCodeResponse.lat;
+        lng = zipCodeResponse.lng;
+        geocodeResult = zipCodeResponse.result; // Make sure your geocodeZipCode returns the full result
+      } else {
+        // Handle regular place search
+        const placeResponse = await this.geocodePlace(this.searchQuery.trim());
+        lat = placeResponse.lat;
+        lng = placeResponse.lng;
+        geocodeResult = placeResponse.result; // Make sure your geocodePlace returns the full result
+      }
+  
+      // Update map center
+      this.center = { lat, lng };
+      this.updateSearchedLocationMarker(this.center);
+  
+      // Detect state and set search radius from the geocode result
+      if (geocodeResult) {
+        this.detectStateFromResult(geocodeResult);
+      } else {
+        this.currentState = '';
+        this.searchRadius = DEFAULT_DISTANCE;
+      }
+  
+      // Filter nearby locations with state-specific distance
+      
+      this.filterNearbySupportCenters(lat, lng);
+      this.locationcard = true;
+  
+    } catch (error) {
+      console.error('Search error:', error);
+      const toast = await this.toastController.create({
+        message: 'Could not find the location. Please try a different address or zip code.',
+        duration: 3000,
+        position: 'bottom'
+      });
+      await toast.present();
+    }
+  }
+  
+  // Update your geocode methods to return the full result
+  private async geocodeZipCode(zipCode: string): Promise<{ lat: number; lng: number; result: any }> {
+    return new Promise((resolve, reject) => {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode(
+        {
+          componentRestrictions: {
+            postalCode: zipCode,
+            country: 'US'
+          }
+        },
+        (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
+          if (status === 'OK' && results[0]) {
+            const location = results[0].geometry.location;
+            resolve({
+              lat: location.lat(),
+              lng: location.lng(),
+              result: results[0] // Return the full result
+            });
+          } else {
+            reject(`Geocoding failed for zip code: ${status}`);
+          }
+        }
+      );
+    });
+  }
+  
+  private async geocodePlace(query: string): Promise<{ lat: number; lng: number; result: any }> {
+    return new Promise((resolve, reject) => {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
+        if (status === 'OK' && results[0]) {
+          const location = results[0].geometry.location;
+          resolve({
+            lat: location.lat(),
+            lng: location.lng(),
+            result: results[0] // Return the full result
+          });
+        } else {
+          reject(`Geocoding failed for place: ${status}`);
+        }
+      });
+    });
+  }
+  
+
+  updateSearchedLocationMarker(position: { lat: number; lng: number }) {
+    this.center = position;
+    this.zoom = 14; 
+    
+    // Update the marker
+    this.searchedLocationMarker = {
+      position: position,
+      options: {
+        icon: {
+          url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+          scaledSize: new google.maps.Size(40, 40)
+        },
+        // Optional: Add animation
+        animation: google.maps.Animation.DROP
+      }
+    };
+    
+}
+
+  filterNearbySupportCenters(lat: number, lng: number) {
+    if (!lat || !lng) return;
+  
+    this.filteredLocations = this.organizations.filter(location => {
+      const distance = this.calculateDistance(
+        lat, lng, 
+        location.OrgLatitude, location.OrgLongitude
+      );
+      return distance <= this.searchRadius;
+    });
+  
+    console.log(`Filtering within ${this.searchRadius}km of ${this.currentState || 'unknown location'}`);
+  
+    this.filteredlocationwithinradius = this.filteredLocations;
+    // Update map markers if using them
+    if (this.updateSupportServiceMarkers) {
+      this.updateSupportServiceMarkers();
+    }
+  
   }
 
 
-  center: google.maps.LatLngLiteral = { lat: 36.7783, lng: -119.4179 };
-  zoom = 12;
+  updateSupportServiceMarkers() {
+    this.supportServiceMarkers = (this.filteredLocations ?? []).map((location, index) => ({
+      position: { lat: location.OrgLatitude, lng: location.OrgLongitude },
+      options: {
+        icon: {
+          url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+          scaledSize: new google.maps.Size(30, 30)
+        },
+        label: this.zoom >= 15 ? {
+          text: location.OrgName,
+          fontSize: '12px',
+          fontWeight: 'bold',
+          className: 'marker-label'
+        } : null,
+        // Only apply animation on first load
+        animation: this.firstLoad ? google.maps.Animation.DROP : null,
+        optimized: false
+      },
+      click: () => this.onMarkerClick(location),
+      // Only apply delay on first load
+      animationDelay: this.firstLoad ? index * 100 : 0,
+      orgName: location.OrgName
+    }));
+
+    // After first load, set flag to false
+    if (this.firstLoad) {
+      setTimeout(() => {
+        this.firstLoad = false;
+      }, 1000); // Slightly longer than your longest animation delay
+    }
+}
+
+onSearchClear() {
+  this.searchQuery = '';
+  this.locationcard = false;
+    this.selectedLocation = null;
+    this.filterOpen = false;
+  this.filteredLocations = []; // Clear the filtered locations
+  this.updateSupportServiceMarkers(); // Update markers
+}
+
+  onSearchInput(event: any) {
+        // Prevent search if geolocation is false
+        if (!this.geolocationEnabled) {
+          alert('Please turn on the location services to search for nearby support centers.');
+          return;
+        }
+    this.locationcard = false;
+    this.selectedLocation = null;
+    this.filterOpen = false;
+    this.searchSubject.next(event.target.value);
+  }
+
+
+  center: google.maps.LatLngLiteral = { lat: 39.7783, lng: -119.4179 };
+  zoom = 4.2;
   filteredLocations: any[] | undefined ;
   filterSearchTerm: string = '';
 
 
-  // Filtered options for search within the filter widget
-  get filteredFilterOptions() {
-    return this.filterOptions.filter(option =>
-      option.label.toLowerCase().includes(this.filterSearchTerm.toLowerCase())
-    );
-  }
+
 
 
   async getCurrentPosition() {
@@ -151,8 +487,11 @@ export class SupportserviceComponent  implements OnInit{
   
       console.log('Current position:', this.center);
       console.log('Latitude:', this.latitude, 'Longitude:', this.longitude);
+      await this.reverseGeocodeForState({ lat: 37.3387, lng: -121.8853 });
   
-      this.filterNearbySupportCenters();
+      this.updateSearchedLocationMarker({ lat: 37.3387, lng: -121.8853 });
+      this.filterNearbySupportCenters(37.3387,-121.8853);
+
     } catch (error: any) { // Explicitly type the error
       if (error.code === error.PERMISSION_DENIED) {
         console.log('Location access denied by user.');
@@ -167,6 +506,36 @@ export class SupportserviceComponent  implements OnInit{
     }
   }
 
+  private async reverseGeocodeForState(location: { lat: number, lng: number }) {
+    try {
+      const geocoder = new google.maps.Geocoder();
+      const results = await new Promise<any>((resolve, reject) => {
+        geocoder.geocode({ location }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
+          if (status === 'OK') resolve(results);
+          else reject(status);
+        });
+      });
+        debugger;
+      if (results && results.length > 0) {
+        const stateComponent = results[0].address_components.find((comp:any) => 
+          comp.types.includes('administrative_area_level_1')
+        );
+        
+        if (stateComponent) {
+          const stateName = stateComponent.long_name;
+          const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
+          this.currentState = stateName;
+          this.searchRadius = STATE_NAME_TO_DISTANCE[stateAbbr as keyof typeof STATE_NAME_TO_DISTANCE] || DEFAULT_DISTANCE;
+          console.log(`Detected state: ${this.currentState}, using radius: ${this.searchRadius}km`);
+        }
+      }
+    } catch (error) {
+      console.error('Reverse geocoding error:', error);
+      this.currentState = '';
+      this.searchRadius = DEFAULT_DISTANCE;
+    }
+}
+
   handleLocationPermissionDenied() {
   this.geolocationEnabled = false;
   const userConfirmed = confirm(
@@ -178,149 +547,166 @@ export class SupportserviceComponent  implements OnInit{
     );
   }
 }
+ 
+  onInputChange(event: any) {
+      if (!this.searchQuery || this.searchQuery.trim() === '') {
+        this.filteredLocations = [...this.filteredlocationwithinradius];
+        this.filterOptions.forEach(option => option.selected = false);
+      }
+    
+  }
 
-getSupportServiceFilterOptions() {
-  this.apiService.getServiceFilterOptions().subscribe(
-    (response: any) => {
-    //  debugger;
-      if (response.data && response.data.length > 0) {        
-        this.filterOptions = response.data; 
-        console.log('Fetched filter options:', this.filterOptions);
-      } else {
-        console.warn('No filter options found in the Strapi response.');
+  calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = this.degreesToRadians(lat2 - lat1);
+    const dLon = this.degreesToRadians(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.degreesToRadians(lat1)) * Math.cos(this.degreesToRadians(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  }
+
+  // Convert degrees to radians
+  degreesToRadians(degrees: number) {
+    return degrees * (Math.PI / 180);
+  }
+
+  
+
+  getSupportServiceFilterOptions() {
+    this.apiService.getServiceFilterOptions().subscribe(
+      (response: any) => {
+      //  debugger;
+        if (response.data && response.data.length > 0) {        
+          this.filterOptions = response.data; 
+          console.log('Fetched filter options:', this.filterOptions);
+        } else {
+          console.warn('No filter options found in the Strapi response.');
+          this.filterOptions = []; 
+        }
+      },
+      (error) => {
+        console.error('Error fetching service filter options:', error);
         this.filterOptions = []; 
       }
-    },
-    (error) => {
-      console.error('Error fetching service filter options:', error);
-      this.filterOptions = []; 
-    }
-  );
- }
-
-getSupportServiceData(endpoint:string) {
-  this.apiService.getAllSupportServices(endpoint).subscribe(
-     (response : OrganizationResponse) => {
-       if (response.data.length>0) {
-        this.organizations = response.data;
-         
-      
-       } else {
-         console.warn('No data found in the response.');
-        
-       }
-     },
-     (error) => {
-       console.error('Error fetching support service data:', error);
-     }
-   );
- }
-
-  // Toggle filter widget
-  toggleFilter() {
-    this.filterOpen = !this.filterOpen;
-    this.filterSearchTerm = '';
-  }
-
-  // Clear filters
-  clearFilters() {
-    if(this.getSelectedFilterCount() > 0){
-      this.filterOptions.forEach(option => option.selected = false);
-    this.filterSearchTerm = '';
-    
-    if(this.searchQuery?.trim() === ''){
-     this.filteredLocations = [...this.filteredlocationwithinradius];
-    }
-    }
-    this.filterSearchTerm = '';
-    this.selectedLocation = null;
+    );
+   }
+  
+   getSupportServiceData(endpoint: string) {
+    this.apiService.getAllSupportServices(endpoint).subscribe(
+      (response: OrganizationResponse) => {
+        if (response.data.length > 0) {
+          const seenNames = new Set<string>();
+          this.organizations = response.data.filter(org => {
+            if (seenNames.has(org.OrgName)) {
+              return false; 
+            }
+            seenNames.add(org.OrgName);
+            return true;
+          });
+        } else {
+          console.warn('No data found in the response.');
+        }
+      },
+      (error) => {
+        console.error('Error fetching support service data:', error);
+      }
+    );
   }
   
-  closeFilter() {
-    this.filterOpen = false;
-    this.filterSearchTerm = '';
+  handleSearchBarClick() {
+    // Get applied filter values
+    const appliedFilters = this.filterOptions
+      .filter(option => option.selected)
+      .map(option => option.label)
+      .join(', ');
+  
+    // If searchQuery exactly matches applied filters, open the filter popup
+    if (this.searchQuery === appliedFilters && appliedFilters.length > 0) {
+      this.toggleFilter();
+    }
+  }
+  
+    // Toggle filter widget
+    toggleFilter() {
+      this.filterOpen = !this.filterOpen;
+      this.filterSearchTerm = '';
+    }
+  
+    // Clear filters
+    clearFilters() {
+      if(this.getSelectedFilterCount() > 0){
+        this.filterOptions.forEach(option => option.selected = false);
+      this.filterSearchTerm = '';
+      }
+      this.filterSearchTerm = '';
+      this.searchQuery = '';
+      this.selectedLocation = null;
+      this.locationcard = false;
+      this.filteredLocations = [];
+    this.updateSupportServiceMarkers();
+    }
+    
+    closeFilter() {
+      this.filterOpen = false;
+      this.filterSearchTerm = '';
+    }
+  
+    closeLocations(){
+      this.locationcard = false;
+      this.searchQuery = '';
+    }
+
+      // Filtered options for search within the filter widget
+  get filteredFilterOptions() {
+    return this.filterOptions.filter(option =>
+      option.label.toLowerCase().includes(this.filterSearchTerm.toLowerCase())
+    );
   }
 
-  closeLocations(){
-    this.locationcard = false;
-    this.searchQuery = '';
+
+  applyFilters() {
+    debugger;
+    if (this.getSelectedFilterCount() > 0) {
+      const selectedFilterKeys = this.filterOptions
+        .filter(option => option.selected)
+        .map(option => option.key as keyof Organization);
+  
+      if (selectedFilterKeys.length === 0) {
+        this.filteredLocations = [...this.filteredlocationwithinradius]; // No filters selected, show all
+      } else {
+        const filteredOrgs = this.filteredlocationwithinradius?.filter(org => {
+          return selectedFilterKeys.some(key => org[key] === true);
+        });
+        this.filteredLocations = filteredOrgs;
+        this.updateSupportServiceMarkers();
+      }
+  
+      // Update search query with selected filters as comma-separated values
+      this.searchQuery = this.filterOptions
+        .filter(option => option.selected)
+        .map(option => option.label) // Assuming 'label' is a user-friendly name
+        .join(', ');
+  
+      this.selectedLocation = null;
+      this.closeFilter();
+    }
   }
+  
+  
+  getSelectedFilterCount(): number {
+    return this.filterOptions.filter(option => option.selected).length;
+  }
+  
+
 
   onMarkerClick(location: Organization) {
     this.selectedLocation = location; // Set the clicked location as selected
     this.segment = 'about'; // Optional: Set the default tab to 'about' when opening details
   }
 
- // Apply filters
- applyFilters() {
-  if(this.getSelectedFilterCount() > 0){
-    const selectedFilterKeys = this.filterOptions
-    .filter(option => option.selected)
-    .map(option => option.key as keyof Organization);
-
-  if (selectedFilterKeys.length === 0) {
-    this.filteredLocations = [...this.filteredlocationwithinradius]; // No filters selected, show all
-  } else {
-    const filteredOrgs = this.filteredlocationwithinradius.filter(org => {
-      return selectedFilterKeys.some(key => org[key] === true);
-    });
-    this.filteredLocations = filteredOrgs;
-  }
-  this.selectedLocation = null;
-  this.searchQuery = '';
-  this.closeFilter();
-  }
-  
-  
-}
-  getSelectedFilterCount(): number {
-    return this.filterOptions.filter(option => option.selected).length;
-  }
-
-  // Search functionality
-  onSearch() {
-    //debugger
-    if(!this.geolocationEnabled){
-      alert(
-        'Please turn on the location.'
-      );
-      return;
-    }
-    if (!this.searchQuery || this.searchQuery.trim() === '') {
-      // If search query is empty, reset filteredLocations to the original list
-      this.filteredLocations = [...this.filteredlocationwithinradius];
-    } else {
-      // Filter the organizations based on the search query
-      this.filteredLocations = this.filteredlocationwithinradius.filter(location =>
-        location.OrgName.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    }
-    this.selectedLocation = null;
-    this.filterOptions.forEach(option => option.selected = false);
-  }
-
-  onInputChange(event: any) {
-  //  debugger;
-    if(!this.geolocationEnabled){
-      alert(
-        'Please turn on the location.'
-      );
-    }else{
-      if (!this.searchQuery || this.searchQuery.trim() === '') {
-        this.filteredLocations = [...this.filteredlocationwithinradius];
-        this.filterOptions.forEach(option => option.selected = false);
-      }
-    }
-  }
-
-  onIconClick() {
-    console.log('Icon clicked!');
-    if(!this.geolocationEnabled){
-      alert(
-        'Please turn on the location.'
-      );
-    }
-  }
 
   onLocationClick(location: any) {
     this.filterOpen = false;
@@ -330,6 +716,25 @@ getSupportServiceData(endpoint:string) {
   closeDetails() {
     this.selectedLocation = null; // Hide the details card
   }
+
+   
+  resetState() {
+    this.searchQuery = '';
+    this.filterOpen = false;
+    this.selectedLocation = null;
+    this.activeTab = 'about';
+    this.segment = 'about';
+    this.latitude = undefined;
+    this.longitude = undefined;
+    this.geolocationEnabled = false;
+    this.locationcard = false;
+    this.userLocation = null;
+    this.organizations = [];
+    this.filterOptions = [];
+    this.filteredLocations = undefined;
+    this.filterSearchTerm = '';
+  }
+
   
   getAboutText(location: Organization): string {
     if (!location.AboutOrg || location.AboutOrg.length === 0) return '';
@@ -412,41 +817,6 @@ getSupportServiceData(endpoint:string) {
     this.segment = segmentValue;
   }
 
-  calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const R = 6371; // Radius of the Earth in km
-    const dLat = this.degreesToRadians(lat2 - lat1);
-    const dLon = this.degreesToRadians(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.degreesToRadians(lat1)) * Math.cos(this.degreesToRadians(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
-  }
-
-  // Convert degrees to radians
-  degreesToRadians(degrees: number) {
-    return degrees * (Math.PI / 180);
-  }
-
-  // Filter support centers within 10km
-  filterNearbySupportCenters() {
-    if (!this.geolocationEnabled || !this.center.lat || !this.center.lng) {
-      console.error('Geolocation is not available or not set');
-      return;
-    }
-  
-    this.filteredLocations = this.organizations.filter(location => {
-      const distance = this.calculateDistance(this.center.lat, this.center.lng, location.OrgLatitude, location.OrgLongitude);
-      console.log(`Distance to ${location.OrgName}: ${distance.toFixed(2)} km`);
-      return distance <= 100; // Keep locations within 100km
-    });
-
-    this.filteredlocationwithinradius =  this.filteredLocations;
-
-  
-    console.log('Filtered support centers:', this.filteredLocations);
-  }
   
   async openGoogleMaps(latitude: number, longitude: number) {
     // Ensure latitude and longitude are numbers
