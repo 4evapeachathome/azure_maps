@@ -10,6 +10,7 @@ import { LegalrightsPage } from './legalrights.page';
 import { HeaderComponent } from "../controls/header/header.component";
 import { FooterComponent } from "../controls/footer/footer.component";
 import { UsaMapComponent } from "../usa-map/usa-map.component";
+import { BreadcrumbComponent } from "../controls/breadcrumb/breadcrumb.component";
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { UsaMapComponent } from "../usa-map/usa-map.component";
     LegalrightsPageRoutingModule,
     HeaderComponent,
     FooterComponent,
-    UsaMapComponent
+    UsaMapComponent,
+    BreadcrumbComponent
 ],
   declarations: [LegalrightsPage]
 })
