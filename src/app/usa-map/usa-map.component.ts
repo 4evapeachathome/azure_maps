@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import usaMap from '@svg-maps/usa';
@@ -31,8 +31,9 @@ interface StateLaw {
   styleUrls: ['./usa-map.component.scss']
 })
 export class UsaMapComponent {
+  @Output() stateSelected = new EventEmitter<{ id: string; name: string; path: string }>();
   usaMap = usaMap;
-  selectedState: { id: string; name: string; path?: string } | null = null;
+  @Input() selectedState: { id: string; name: string; path?: string } | null = null;
   showLawInfo = false;
   stateLaws: StateLaw[] = [];
 
@@ -41,7 +42,6 @@ export class UsaMapComponent {
     this.getUSLawsbystateData();
 
   }
-
 
 
   private stateNames: { [key: string]: string } = {
@@ -60,14 +60,6 @@ export class UsaMapComponent {
 getStateName(stateId: string): string {
   return this.stateNames[stateId.toUpperCase()] || stateId;
 }
-  
-  // Helper function to format state names correctly (capitalize words and replace hyphens)
-  private formatStateName(name: string): string {
-    return name
-      .split('-') // Split hyphenated names
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
-      .join(' '); // Rejoin with spaces
-  }
 
   openlink() {
     const law = this.getStateLaw();
@@ -91,6 +83,7 @@ getStateName(stateId: string): string {
 
   onStateClick(state: { id: string; name: string; path: string }) {
     this.selectedState = { ...state };
+    this.stateSelected.emit(state);
     this.showLawInfo = true;
     console.log('Selected state:', state.name);
   }

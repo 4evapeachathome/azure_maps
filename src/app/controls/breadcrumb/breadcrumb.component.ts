@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { filter } from 'rxjs';
@@ -18,8 +18,10 @@ interface Breadcrumb {
     imports: [CommonModule, IonicModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class BreadcrumbComponent  implements OnInit {
-  breadcrumbPath: any[] = [];
+export class BreadcrumbComponent  implements OnInit,OnChanges {
+  @Input() selectedState: string | null = null;  // Receive selected state name
+  @Output() breadcrumbClicked = new EventEmitter<void>();
+  breadcrumbPath: { title: string; link?: string }[] = [];
 
   constructor(
     private menuService: MenuService,
@@ -42,6 +44,32 @@ export class BreadcrumbComponent  implements OnInit {
 
     if (currentPage) {
       this.breadcrumbPath = this.getBreadcrumbHierarchy(currentPage, menuItems).reverse();
+
+      // If a state is selected, append it to the breadcrumb path
+      debugger;
+      if (this.selectedState) {
+        this.breadcrumbPath.push({
+          title: this.selectedState,
+          link: this.router.url,  // Keep the same URL
+        });
+      }
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['selectedState']) {
+      this.updateBreadcrumb();
+    }
+  }
+
+  updateBreadcrumb() {
+    this.breadcrumbPath = [
+      { title: 'Legal Rights', link: '/federallaw' },
+      { title: 'US Laws by State', link: '/uslawsbystate' },
+    ];
+
+    if (this.selectedState) {
+      this.breadcrumbPath.push({ title: this.selectedState });
     }
   }
 
@@ -56,7 +84,13 @@ export class BreadcrumbComponent  implements OnInit {
   }
 
   navigateTo(link: string) {
+    debugger;
+    console.log('Navigating to:', link);
+    if (link === '/uslawsbystate') {
+        console.log('Emitting event');
+        this.breadcrumbClicked.emit(); 
+    }
     this.router.navigateByUrl(link);
-  }
+}
 
 }

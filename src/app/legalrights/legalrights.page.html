@@ -4,12 +4,12 @@
   <ion-grid class="p-b-0 sm-cont-margin">
     <ion-row>
       <ion-col>
-        <pathome-breadcrumb></pathome-breadcrumb>
+        <pathome-breadcrumb [selectedState]="selectedState?.name" (breadcrumbClicked)="resetSelectedState()"></pathome-breadcrumb>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <pathome-usa-map></pathome-usa-map>
+        <pathome-usa-map [selectedState]="selectedState" (stateSelected)="onStateClick($event)"></pathome-usa-map>
       </ion-col>
     </ion-row>
   </ion-grid>
