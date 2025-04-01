@@ -1,30 +1,36 @@
 
- <ion-grid class="home-happiness-container">
+<ion-card class="container-banner cb-p-se" >
+  <ion-card-content class="ic-content">
+ <ion-grid>
   <pathome-breadcrumb></pathome-breadcrumb>
   <ion-row>
-  <ion-col *ngIf="titleContent?.length > 0">
-    <h2 class="happyhome-title">
+  <ion-col  size="12" size-sm="6" *ngIf="titleContent?.length > 0">
+    <!-- <h2 class="happyhome-title"> -->
       <ng-container *ngFor="let item of titleContent[0]?.children">
         <ng-container [ngSwitch]="item.type">
-          <ion-text *ngSwitchCase="'text'" [ngClass]="{'highlight': item.bold}">
+          <ion-text class="cb-header" *ngSwitchCase="'text'" [ngClass]="{'cb-header-highlight': item.bold}">
             <strong *ngIf="item.bold">{{ item.text }}</strong>
             <span *ngIf="!item.bold">{{ item.text }}</span>
           </ion-text>
         </ng-container>
       </ng-container>
-    </h2>
+    <!-- </h2> -->
     </ion-col>
-    <ion-col>
-    <ion-img [src]="peaceathomeImg" alt="Happy Home Image"></ion-img>
+    <ion-col  size="12" size-sm="6"  class="img-container ">
+    <ion-img [src]="peaceathomeImg" alt="Happy Home Image" class="hb-img"></ion-img>
   </ion-col>
 </ion-row>
-  <ion-row>
-  <p class="paragraph-class" *ngIf="paragraphContent">
-    {{ paragraphContent }}
-  </p>
+  <ion-row  class="comp-space">
+    <ion-col >
+      <ion-text *ngIf="paragraphContent">
+        {{ paragraphContent }}
+      </ion-text>
+ 
+  </ion-col>
 </ion-row>
-
-<ion-grid class="content-section">
+<ion-row>
+  <ion-col>
+<div class="cc-box-content">
   <ion-card *ngFor="let block of contentBlocks">
     <ion-card-header *ngIf="block.multilinerichtextbox[0]?.type === 'paragraph'">
       <ion-card-title>
@@ -46,5 +52,9 @@
       </ng-container>
     </ion-card-content>
   </ion-card>
-  </ion-grid>
+</div>
+</ion-col>
+</ion-row>
     </ion-grid>
+  </ion-card-content>
+</ion-card>

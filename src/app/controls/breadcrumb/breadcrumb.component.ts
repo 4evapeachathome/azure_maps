@@ -46,7 +46,7 @@ export class BreadcrumbComponent  implements OnInit,OnChanges {
       this.breadcrumbPath = this.getBreadcrumbHierarchy(currentPage, menuItems).reverse();
 
       // If a state is selected, append it to the breadcrumb path
-      debugger;
+     // debugger;
       if (this.selectedState) {
         this.breadcrumbPath.push({
           title: this.selectedState,
@@ -84,7 +84,7 @@ export class BreadcrumbComponent  implements OnInit,OnChanges {
   }
 
   navigateTo(link: string) {
-    debugger;
+   // debugger;
     console.log('Navigating to:', link);
     if (link === '/uslawsbystate') {
         console.log('Emitting event');

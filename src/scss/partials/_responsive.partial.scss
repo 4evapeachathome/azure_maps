@@ -73,9 +73,18 @@
         height: auto !important;
       }
       .container-banner {
-      .card-content-md{
+      .ic-content{
         padding: 8px 8px !important;
       }
+    }
+    .cb-p-se{
+      padding-inline-start:8px !important;
+      padding-inline-end:8px !important;
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+    }
+    .cc-box-content{
+      flex-direction: column;
     }
       .common-container{
         padding: 16px 8px !important;
@@ -85,5 +94,12 @@
     }
     .map-space-bottom{
       margin-bottom: 10px;
+    }
+    .ii-power{
+      width: 100% !important;
+      ion-list {    
+        gap: 6px !important;
+        width: 100% !important;
+    }
     }
   }
