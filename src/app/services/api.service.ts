@@ -604,6 +604,38 @@ getStateLaws(): Observable<StateLaw[]> {
 }
 
 
+//Partner violence title content
+
+//Peace at home component service
+getPartnerViolenceTitle(): Observable<any> {
+  const endpoint = APIEndpoints.partnervioencehome;
+  const options: QueryOptions = {
+    populate: {
+      webImage: { fields: ['url'] },
+      mobileImage: { fields: ['url'] },
+      ContentBlocks: { fields: ['multilinerichtextbox'] }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      console.log('data:', res);
+      const resData = res.data;
+      if (resData && resData.webImage && resData.webImage.url) {
+        resData.image = `${environment.apiHost}${resData.webImage.url}`;
+      } else {
+        resData.image = ''; 
+      }
+      return resData;
+    }),
+    catchError(error => {
+      console.error('Error fetching peace at home data', error);
+      return throwError(error);
+    })
+  );
+}
+
+
 
 
 }

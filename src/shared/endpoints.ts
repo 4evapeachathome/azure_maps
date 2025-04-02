@@ -34,4 +34,5 @@ export const APIEndpoints = {
     childwaiver: `${environment.apiHost}/api/child-waivers`, 
     immigrationbenfit: `${environment.apiHost}/api/immigration-benefits`, 
     usstatelaws: `${environment.apiHost}/api/us-state-laws`,
+    partnervioencehome: `${environment.apiHost}/api/partner-violence-title`,
   }
