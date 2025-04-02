@@ -542,11 +542,12 @@ ion-card {
     border-radius: 50%;
     background: var(--color-Gray44);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    &::part(image){
-      position: absolute;
-    top: 0;
-    left: 0;
-    }
+    padding: 5px;
+    // &::part(image){
+    //   position: absolute;
+    // top: 0;
+    // left: 0;
+    // }
       }
       // .carousel-image {
       //   // width: 100%;
