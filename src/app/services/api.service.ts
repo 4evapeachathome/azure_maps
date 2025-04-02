@@ -635,7 +635,27 @@ getPartnerViolenceTitle(): Observable<any> {
   );
 }
 
-
+  //Common ipv partner violence service component
+  getPartnerViolenceContent(): Observable<any> {
+    return this.getWithQuery(
+      APIEndpoints.ipvpartnervioence,
+      {
+        populate: ['ipvpartnerviolence'], // Pass as an array to get ?populate=ipvpartnerviolence
+      },
+      environment.apitoken
+    ).pipe(
+      catchError((error) => {
+        console.error('Error fetching partner violence content:', error);
+        const errorMessage =
+          error.status === 0
+            ? 'Network error: Please check your internet connection.'
+            : error.status === 404
+            ? 'Partner violence content not found.'
+            : `Failed to fetch partner violence content: ${error.message || 'Unknown error'}`;
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
 
 
 }

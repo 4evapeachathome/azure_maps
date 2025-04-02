@@ -1,6 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { ApiService } from 'src/app/services/api.service';
+
+interface RichTextChild {
+  text?: string; // Optional, as not all nodes have text (e.g., a list-item may only have children)
+  type: string;
+  children?: RichTextChild[]; // Allow nested children
+}
+
+interface RichTextElement {
+  type: string;
+  level?: number;
+  format?: string;
+  children: RichTextChild[];
+}
+
+interface IpvPartnerViolence {
+  id: number;
+  multilinerichtextbox: RichTextElement[];
+}
+
+
 
 @Component({
   selector: 'pathome-partner-violence-progressbar',
@@ -10,9 +31,55 @@ import { IonicModule } from '@ionic/angular';
     imports: [CommonModule, IonicModule],
 })
 export class PartnerViolenceProgressbarComponent  implements OnInit {
+  @Input() level!: IpvPartnerViolence;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {}
+
+  getHeadingText(level: IpvPartnerViolence): string {
+    const heading = level.multilinerichtextbox.find((item) => item.type === 'heading');
+    if (heading && heading.children && heading.children[0] && heading.children[0].text) {
+      return heading.children[0].text;
+    }
+    return 'Unknown Level';
+  }
+
+  getLevelNumber(level: IpvPartnerViolence): number {
+    const headingText = this.getHeadingText(level);
+    console.log('Heading text:', headingText);
+    const levelNumber = parseInt(headingText.split(' ')[1], 10) || 0;
+    console.log('Level number:', levelNumber);
+    return levelNumber;
+  }
+
+  getDescription(level: IpvPartnerViolence): string {
+    const paragraph = level.multilinerichtextbox.find((item) => item.type === 'paragraph');
+    if (paragraph && paragraph.children && paragraph.children[0] && paragraph.children[0].text) {
+      return paragraph.children[0].text;
+    }
+    return '';
+  }
+
+  getListItems(level: IpvPartnerViolence): string[] {
+    const lists = level.multilinerichtextbox.filter((item) => item.type === 'list');
+    return lists
+      .map((list) => {
+        const listItem = list.children[0];
+        if (listItem && listItem.type === 'list-item' && listItem.children && listItem.children.length > 0) {
+          const textNode = listItem.children[0];
+          return textNode && textNode.type === 'text' && textNode.text ? textNode.text : '';
+        }
+        return '';
+      })
+      .filter((text) => text !== '');
+  }
+
+  getProgressBarClasses(levelNumber: number): string[] {
+    if (levelNumber === 1) return ['yellow'];
+    if (levelNumber === 2) return ['yellow', 'orange'];
+    if (levelNumber === 3) return ['yellow', 'orange', 'red'];
+    return [];
+  }
 
 }

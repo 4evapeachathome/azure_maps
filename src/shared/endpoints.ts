@@ -35,4 +35,5 @@ export const APIEndpoints = {
     immigrationbenfit: `${environment.apiHost}/api/immigration-benefits`, 
     usstatelaws: `${environment.apiHost}/api/us-state-laws`,
     partnervioencehome: `${environment.apiHost}/api/partner-violence-title`,
+    ipvpartnervioence: `${environment.apiHost}/api/partnerviolencecontents`,
   }
