@@ -102,3 +102,20 @@
     font-size: 24px; /* Adjust icon size as needed */
   }
   
+
+  /* Handle image position */
+.abuse-card.reverse-image {
+  .card-content {
+    flex-direction: row-reverse;
+  }
+
+  .example-list {
+    margin-left: 0; /* Reset margin when image is on the right */
+    margin-right: -135px; /* Adjust for reverse layout */
+  }
+}
+
+/* Handle Read More button position */
+.button-container.button-left {
+  justify-content: flex-start;
+}

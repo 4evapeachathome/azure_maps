@@ -10,6 +10,7 @@ import { APIEndpoints } from 'src/shared/endpoints';
 export class TypesofabusesPage implements OnInit {
   
   ipvtypesofabusesendpoint:string=APIEndpoints.ipvtypesofabuses;
+  physicalabuse:string=APIEndpoints.physicalabuse;
 
   constructor() { }
 

@@ -1,7 +1,8 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'pathome-typesof-abuse-card',
@@ -24,22 +25,44 @@ import { IonicModule } from '@ionic/angular';
 })
 export class TypesofAbuseCardComponent  implements OnInit {
   isExpanded = false;
+  physicalAbuse: any = null;
+  @Input() imagePosition: 'left' | 'right' = 'left';  // Controls image position
+  @Input() buttonPosition: 'left' | 'right' = 'right'; 
+  @Input() endpoint: string = '';
+  @Input() paramName: string = '';
 
-  examples = [
-    { id: 1, text: 'The partner throws things, such as kitchen utensils, cups, plates, etc., or burns with candle sticks or cigarette buds at the other partner when angry' },
-    { id: 2, text: 'The partner uses hands or other body parts to hurt, such as slapping, choking, kicking, biting, or scratching, burns with candle sticks or cigarette buds' },
-    { id: 3, text: 'The partner uses knives, guns, or heavy objects to threaten to hurt children.' },
-    { id: 4, text: 'The partner confines or isolates the partner from the outside world including friends, or access to help' },
-    { id: 5, text: 'The partner threatens to starve and kill the family' }
-  ];
+  constructor(private apiService: ApiService) {}
 
+  ngOnInit() {
+    this.loadPhysicalAbuseData(this.endpoint,this.paramName);
+  }
 
-  constructor() { }
-
-  ngOnInit() {}
+  loadPhysicalAbuseData(endPoint: string,paramName: string) {
+    this.apiService.getPhysicalAbuses(endPoint,paramName).subscribe(
+    
+      (res: any) => {
+        if (res && res.physicalAbuse) {
+          this.physicalAbuse = res.physicalAbuse;
+        }
+      },
+      (error) => {
+        console.error('Error fetching physical abuse data:', error);
+      }
+    );
+  }
 
   toggleReadMore() {
     this.isExpanded = !this.isExpanded;
+  }
+
+  getHeadingText(contentArray: any[]): string {
+    const heading = contentArray.find(item => item.type === 'heading');
+    return heading?.children[0]?.text || 'Physical Abuse';
+  }
+
+  getDescriptionText(contentArray: any[]): string {
+    const paragraph = contentArray.find(item => item.type === 'paragraph');
+    return paragraph?.children[0]?.text || '';
   }
 
 }

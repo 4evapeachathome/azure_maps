@@ -38,5 +38,6 @@ export const APIEndpoints = {
     ipvpartnervioence: `${environment.apiHost}/api/partnerviolencecontents`,
     typesOfAbuse: `${environment.apiHost}/api/types-of-abuse`,
     typesofabusesTitle :`${environment.apiHost}/api/typesof-abuse-title`,
-    ipvtypesofabuses :`${environment.apiHost}/api/ipvtypesofabuses`
+    ipvtypesofabuses :`${environment.apiHost}/api/ipvtypesofabuses`,
+    physicalabuse :`${environment.apiHost}/api/physical-abuses`
   }

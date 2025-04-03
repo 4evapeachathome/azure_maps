@@ -1,35 +1,42 @@
-<ion-card class="abuse-card">
+<ion-card 
+  class="abuse-card" 
+  *ngIf="physicalAbuse" 
+  [ngClass]="{'reverse-image': imagePosition === 'right'}"
+>
   <div class="card-content">
     <!-- Image Section -->
     <div class="image-section">
-      <ion-img src="assets/images/physical-abuse.png" alt="Physical Abuse"></ion-img>
+      <ion-img 
+        [src]="physicalAbuse.webImage?.fullUrl || 'assets/images/physical-abuse.png'" 
+        alt="Physical Abuse"
+      ></ion-img>
     </div>
 
     <!-- Text Content -->
     <div class="text-section">
-      <h3>Physical Abuse</h3>
-      <p>
-        Physical abuse occurs when an individual uses force to harm their partner or attempts to 
-        exert control over them through physical violence. This can involve actions such as 
-        hitting, choking, grabbing, pinching, strangling, shoving, slapping, hair-pulling, 
-        biting, maiming, or killing, or threatening with weapons to inflict injury. 
-        Additionally, physical abuse may include behaviors like denying medical care, forcing 
-        substance use (such as drugs or alcohol), or isolating a partner from friends and family.
+      <h3 *ngIf="physicalAbuse.titleContent.length > 0">
+        {{ getHeadingText(physicalAbuse.titleContent) }}
+      </h3>
+      <p *ngIf="physicalAbuse.titleContent.length > 1">
+        {{ getDescriptionText(physicalAbuse.titleContent) }}
       </p>
 
       <!-- Expand/Collapse Section -->
       <div *ngIf="isExpanded" @expandCollapse>    
         <div class="example-list">
           <h4>Examples/Scenarios</h4>
-          <div class="example" *ngFor="let example of examples">
-            <span class="circle">{{ example.id }}</span>
-            <p>{{ example.text }}</p>
+          <div class="example" *ngFor="let example of physicalAbuse.example; let i = index">
+            <span class="circle">{{ i + 1 }}</span>
+            <p>{{ example.description }}</p>
           </div>
         </div>
       </div>
 
       <!-- Read More / Read Less Button -->
-      <div class="button-container">
+      <div 
+        class="button-container" 
+        [ngClass]="{'button-left': buttonPosition === 'left'}"
+      >
         <div class="button-icon-wrapper">
           <ion-button fill="clear" class="read-more" (click)="toggleReadMore()">
             {{ isExpanded ? 'Read Less' : 'Read More' }}
