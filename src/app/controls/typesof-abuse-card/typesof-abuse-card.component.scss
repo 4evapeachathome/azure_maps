@@ -104,18 +104,20 @@
   
 
   /* Handle image position */
-.abuse-card.reverse-image {
-  .card-content {
-    flex-direction: row-reverse;
+  .abuse-card.reverse-image {
+    .card-content {
+      flex-direction: row-reverse;
+    }
+  
+    /* Ensure examples remain within the container */
+    .example-list {
+      margin-left: auto !important; /* Reset left margin */
+      margin-right: 0 !important;   /* Ensure proper alignment */
+    }
   }
-
-  .example-list {
-    margin-left: 0; /* Reset margin when image is on the right */
-    margin-right: -135px; /* Adjust for reverse layout */
+  
+  /* Ensure button aligns correctly */
+  .button-container.button-left {
+    justify-content: flex-start;
+    width: 100%; /* Ensure it doesn't get squeezed */
   }
-}
-
-/* Handle Read More button position */
-.button-container.button-left {
-  justify-content: flex-start;
-}

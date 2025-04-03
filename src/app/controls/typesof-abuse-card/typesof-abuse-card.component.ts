@@ -41,8 +41,8 @@ export class TypesofAbuseCardComponent  implements OnInit {
     this.apiService.getPhysicalAbuses(endPoint,paramName).subscribe(
     
       (res: any) => {
-        if (res && res.physicalAbuse) {
-          this.physicalAbuse = res.physicalAbuse;
+        if (res && res[paramName]) {
+          this.physicalAbuse = res[paramName];
         }
       },
       (error) => {

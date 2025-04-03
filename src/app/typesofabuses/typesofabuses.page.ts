@@ -11,7 +11,12 @@ export class TypesofabusesPage implements OnInit {
   
   ipvtypesofabusesendpoint:string=APIEndpoints.ipvtypesofabuses;
   physicalabuse:string=APIEndpoints.physicalabuse;
-
+  sexualabuse:string=APIEndpoints.sexualabuse;
+  emotionalabuse:string=APIEndpoints.emotionalabuse;
+  verbalabuse:string=APIEndpoints.verbalabuse;
+  financialabuse:string=APIEndpoints.financialabuse;
+  technologicalabuse:string=APIEndpoints.technologicalabuse;
+  immigrantabuse:string=APIEndpoints.immigrantabuse;
   constructor() { }
 
   ngOnInit() {

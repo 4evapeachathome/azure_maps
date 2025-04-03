@@ -39,5 +39,11 @@ export const APIEndpoints = {
     typesOfAbuse: `${environment.apiHost}/api/types-of-abuse`,
     typesofabusesTitle :`${environment.apiHost}/api/typesof-abuse-title`,
     ipvtypesofabuses :`${environment.apiHost}/api/ipvtypesofabuses`,
-    physicalabuse :`${environment.apiHost}/api/physical-abuses`
+    physicalabuse :`${environment.apiHost}/api/physical-abuses`,
+    sexualabuse :`${environment.apiHost}/api/sexual-abuses`,
+    emotionalabuse :`${environment.apiHost}/api/emotional-abuses`,
+    verbalabuse :`${environment.apiHost}/api/verbal-abuses`,
+    financialabuse :`${environment.apiHost}/api/financial-abuses`,
+    technologicalabuse :`${environment.apiHost}/api/technological-abuses`,
+    immigrantabuse :`${environment.apiHost}/api/immigrant-abuses`,
   }
