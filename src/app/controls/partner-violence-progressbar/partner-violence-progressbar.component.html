@@ -14,12 +14,5 @@
   </div>
 
   <!-- Description Content -->
-  <p>{{ getDescription(level) }}</p>
-
-  <!-- List of violence types (if any, e.g., for Level 3) -->
-  <ul *ngIf="getListItems(level).length > 0">
-    <li *ngFor="let item of getListItems(level)">
-      {{ item }}
-    </li>
-  </ul>
+  <p [innerHTML]="getDescription(level)"></p>
 </ion-card>

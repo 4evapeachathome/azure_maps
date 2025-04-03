@@ -657,6 +657,57 @@ getPartnerViolenceTitle(): Observable<any> {
     );
   }
 
+  //Types of abuses gallery
+  getTypesOfAbuse(): Observable<any> {
+    const endpoint = APIEndpoints.typesOfAbuse;
+    const options = {
+      populate: {
+        AbuseGallery: {
+          fields: ['caption'], // Ensure 'caption' is fetched
+          populate: {
+            webImage: { fields: ['url'] }, // Fetch only the 'url' field
+            mobileImage: { fields: ['url'] }
+          }
+        }
+      }
+    };
+  
+    console.log('Fetching Types of Abuse with options:', JSON.stringify(options));
+  
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+      map((res: any) => {
+        console.log('Raw response:', res);
+  debugger;
+        const resData = res?.data;
+        if (!resData) {
+          console.warn('No data received from API');
+          return null;
+        }
+  
+        // Ensure AbuseGallery exists and process it
+        if (resData.AbuseGallery && Array.isArray(resData.AbuseGallery)) {
+          resData.AbuseGallery = resData.AbuseGallery.map((item: any) => ({
+            ...item,
+            webImageUrl: item.webImage?.url ? `${environment.apiHost}${item.webImage.url}` : '',
+            mobileImageUrls: item.mobileImage?.map((img: any) => `${environment.apiHost}${img.url}`) || []
+          }));
+        } else {
+          console.warn('AbuseGallery field is missing or not an array');
+          resData.AbuseGallery = [];
+        }
+  
+        console.log('Processed data:', resData);
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching types of abuse data:', error);
+        return throwError(error);
+      })
+    );
+  }
+  
+
+
 
 }
 

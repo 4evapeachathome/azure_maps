@@ -54,12 +54,27 @@ export class PartnerViolenceProgressbarComponent  implements OnInit {
   }
 
   getDescription(level: IpvPartnerViolence): string {
-    const paragraph = level.multilinerichtextbox.find((item) => item.type === 'paragraph');
-    if (paragraph && paragraph.children && paragraph.children[0] && paragraph.children[0].text) {
-      return paragraph.children[0].text;
-    }
-    return '';
+    return level.multilinerichtextbox
+      .map((item) => {
+        if (item.type === 'paragraph' && item.children) {
+          return item.children.map((child) => child.text).join(' ');
+        } else if (item.type === 'list' && item.format === 'unordered' && Array.isArray(item.children)) {
+          return `<ul>` + 
+            item.children
+              .map((listItem) => {
+                if (listItem.children && Array.isArray(listItem.children)) {
+                  return `<li>${listItem.children.map((child) => child.text).join(' ')}</li>`;
+                }
+                return ''; // Fallback in case listItem.children is undefined
+              })
+              .join('') +
+            `</ul>`;
+        }
+        return '';
+      })
+      .join('');
   }
+  
 
   getListItems(level: IpvPartnerViolence): string[] {
     const lists = level.multilinerichtextbox.filter((item) => item.type === 'list');

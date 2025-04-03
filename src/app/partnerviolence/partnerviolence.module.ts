@@ -10,6 +10,7 @@ import { PartnerviolencePage } from './partnerviolence.page';
 import { FooterComponent } from "../controls/footer/footer.component";
 import { PartnerviolencecontentComponent } from "../controls/partnerviolencecontent/partnerviolencecontent.component";
 import { PartnerViolenceProgressbarComponent } from "../controls/partner-violence-progressbar/partner-violence-progressbar.component";
+import { AbusesgalleryComponent } from "../controls/abusesgallery/abusesgallery.component";
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { PartnerViolenceProgressbarComponent } from "../controls/partner-violenc
     PartnerviolencePageRoutingModule,
     FooterComponent,
     PartnerviolencecontentComponent,
-    PartnerViolenceProgressbarComponent
+    PartnerViolenceProgressbarComponent,
+    AbusesgalleryComponent
 ],
   declarations: [PartnerviolencePage]
 })
