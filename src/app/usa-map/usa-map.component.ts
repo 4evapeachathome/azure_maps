@@ -77,7 +77,7 @@ getStateAbbreviation(stateId: string): string {
  getUSLawsbystateData() {
     this.apiService.getStateLaws().subscribe(
       (response: StateLaw[]) => {
-        debugger;
+       // debugger;
         this.stateLaws = response;
       },
       (error) => {
@@ -117,7 +117,7 @@ getStateAbbreviation(stateId: string): string {
   }
 
   getLawDescription(): string {
-    debugger;
+    //debugger;
     const law = this.getStateLaw();
     if (!law || !law.lawdescription) return '';
   

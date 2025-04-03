@@ -706,6 +706,32 @@ getPartnerViolenceTitle(): Observable<any> {
     );
   }
   
+  getTypesofabusesTitle(): Observable<any> {
+    const endpoint = APIEndpoints.typesofabusesTitle;
+    const options: QueryOptions = {
+      populate: {
+        webImage: { fields: ['url'] },
+        mobileImage: { fields: ['url'] }
+      }
+    };
+  
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res);
+        const resData = res.data;
+        if (resData && resData.webImage && resData.webImage.url) {
+          resData.image = `${environment.apiHost}${resData.webImage.url}`;
+        } else {
+          resData.image = ''; 
+        }
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching healthy relationship data', error);
+        return throwError(error);
+      })
+    );
+  }
 
 
 
