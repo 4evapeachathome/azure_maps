@@ -70,11 +70,26 @@
         </div>
 
         <ion-grid *ngIf="showLawInfo && getStateLaw()" class="state-law-container">
+          
           <ion-row>
             <ion-col class="state-law-info" size="12" size-sm="8">
+              <ion-grid>
+              <ion-row>
+                <ion-col>
               <div class="law-content">
                 <p>{{ getLawDescription() }}</p>
               </div>
+            </ion-col>
+          </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-button *ngIf="getStateLaw()?.link" color="primary" 
+                    (click)="openlink()" size="small">
+                    Read More
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
             </ion-col>
     
             <ion-col class="state-map-side" size="12" size-sm="4">
@@ -90,14 +105,7 @@
             </ion-col>
           </ion-row>
           
-          <ion-row>
-            <ion-col>
-              <ion-button *ngIf="getStateLaw()?.link" color="primary" 
-                (click)="openlink()" size="small">
-                Read More
-              </ion-button>
-            </ion-col>
-          </ion-row>
+         
         </ion-grid>
     
 
