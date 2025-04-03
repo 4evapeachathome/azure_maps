@@ -15,12 +15,12 @@
 }
 .sidebar-toggle-label {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  top: 15px;
+  left: 15px;
   cursor: pointer;
   z-index: 1000;
   color: var(--color-deep-Gray);
-  font-size: 1.25rem;
+  font-size: 2rem;
   font-weight: 600;
 }
 .sidebar {
@@ -183,3 +183,41 @@
 //     }
 //   }
 // }
+.close-menu {
+  background: rgba(0, 0, 0, 1);
+  cursor: default;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  visibility: hidden;
+  /* "delay" the visibility transition */
+  -webkit-transition: opacity 0.5s, visibility 0s linear 0.5s;
+  transition: opacity 0.5s, visibility 0s linear 0.5s;
+}
+
+.sidebar-toggle + .sidebar-toggle-label {
+  .st-close {
+    opacity: 1;
+   
+    transition: all 0.4s ease;
+  }
+.st-open {
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+}
+.sidebar-toggle:checked + .sidebar-toggle-label 
+{
+  .st-close {
+    opacity: 0;
+    width: 0;
+    transition: all 0.4s ease;
+  }
+.st-open {
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+}
