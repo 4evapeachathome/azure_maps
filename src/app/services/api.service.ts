@@ -604,6 +604,109 @@ getStateLaws(): Observable<StateLaw[]> {
 }
 
 
+//Partner violence title content
+
+//Peace at home component service
+getPartnerViolenceTitle(): Observable<any> {
+  const endpoint = APIEndpoints.partnervioencehome;
+  const options: QueryOptions = {
+    populate: {
+      webImage: { fields: ['url'] },
+      mobileImage: { fields: ['url'] },
+      ContentBlocks: { fields: ['multilinerichtextbox'] }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      console.log('data:', res);
+      const resData = res.data;
+      if (resData && resData.webImage && resData.webImage.url) {
+        resData.image = `${environment.apiHost}${resData.webImage.url}`;
+      } else {
+        resData.image = ''; 
+      }
+      return resData;
+    }),
+    catchError(error => {
+      console.error('Error fetching peace at home data', error);
+      return throwError(error);
+    })
+  );
+}
+
+  //Common ipv partner violence service component
+  getPartnerViolenceContent(): Observable<any> {
+    return this.getWithQuery(
+      APIEndpoints.ipvpartnervioence,
+      {
+        populate: ['ipvpartnerviolence'], // Pass as an array to get ?populate=ipvpartnerviolence
+      },
+      environment.apitoken
+    ).pipe(
+      catchError((error) => {
+        console.error('Error fetching partner violence content:', error);
+        const errorMessage =
+          error.status === 0
+            ? 'Network error: Please check your internet connection.'
+            : error.status === 404
+            ? 'Partner violence content not found.'
+            : `Failed to fetch partner violence content: ${error.message || 'Unknown error'}`;
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
+  //Types of abuses gallery
+  getTypesOfAbuse(): Observable<any> {
+    const endpoint = APIEndpoints.typesOfAbuse;
+    const options = {
+      populate: {
+        AbuseGallery: {
+          fields: ['caption'], // Ensure 'caption' is fetched
+          populate: {
+            webImage: { fields: ['url'] }, // Fetch only the 'url' field
+            mobileImage: { fields: ['url'] }
+          }
+        }
+      }
+    };
+  
+    console.log('Fetching Types of Abuse with options:', JSON.stringify(options));
+  
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+      map((res: any) => {
+        console.log('Raw response:', res);
+  debugger;
+        const resData = res?.data;
+        if (!resData) {
+          console.warn('No data received from API');
+          return null;
+        }
+  
+        // Ensure AbuseGallery exists and process it
+        if (resData.AbuseGallery && Array.isArray(resData.AbuseGallery)) {
+          resData.AbuseGallery = resData.AbuseGallery.map((item: any) => ({
+            ...item,
+            webImageUrl: item.webImage?.url ? `${environment.apiHost}${item.webImage.url}` : '',
+            mobileImageUrls: item.mobileImage?.map((img: any) => `${environment.apiHost}${img.url}`) || []
+          }));
+        } else {
+          console.warn('AbuseGallery field is missing or not an array');
+          resData.AbuseGallery = [];
+        }
+  
+        console.log('Processed data:', resData);
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching types of abuse data:', error);
+        return throwError(error);
+      })
+    );
+  }
+  
+
 
 
 }

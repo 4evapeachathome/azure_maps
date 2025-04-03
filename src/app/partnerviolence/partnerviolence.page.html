@@ -6,26 +6,28 @@
     <!-- First Row: Single Component -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-peaceathome></pathome-peaceathome>
+       <pathome-partnerviolencecontent></pathome-partnerviolencecontent>
       </ion-col>
     </ion-row>
 
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-home-slider [endpoint]="peaceathomeslider" [showButton]="false" [paramName]="'peaceathomeslider'"></pathome-home-slider>
+        <pathome-partner-violence-progressbar *ngFor="let level of levels"
+        [level]="level"></pathome-partner-violence-progressbar> 
+    
       </ion-col>
     </ion-row>
 
     <!-- Third Row: Full-Width Slide Component -->
     <ion-row class="comp-space">
       <ion-col size="12">
-       <pathome-relational></pathome-relational>
+        <pathome-abusesgallery></pathome-abusesgallery>
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">
       <ion-col class="ion-text-center">
-        <ion-button color="primary" size="small" [routerLink]="['/nopeaceathome']">Explore the Next Chapter.....</ion-button>
+        <ion-button color="primary" size="small">Explore the Next Chapter.....</ion-button>
         </ion-col>
         </ion-row>
 

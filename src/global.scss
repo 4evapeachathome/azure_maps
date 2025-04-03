@@ -66,7 +66,13 @@ body {
 .pls-0{
   padding-inline-start: 0;
 }
+.pb-16{
+  padding-bottom: 16px;
+}
 .pb-24{
+  padding-bottom: 24px;
+}
+.pb-30{
   padding-bottom: 24px;
 }
 .p-0{
@@ -132,6 +138,12 @@ ion-card {
 }
 .opp-0{
   opacity: 0;
+}
+.cb-p-se{
+  padding-inline-start:16px;
+  padding-inline-end:16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 .container-banner {
   ion-card-content {
@@ -530,11 +542,12 @@ ion-card {
     border-radius: 50%;
     background: var(--color-Gray44);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    &::part(image){
-      position: absolute;
-    top: 0;
-    left: 0;
-    }
+    padding: 5px;
+    // &::part(image){
+    //   position: absolute;
+    // top: 0;
+    // left: 0;
+    // }
       }
       // .carousel-image {
       //   // width: 100%;
@@ -672,3 +685,51 @@ ion-card {
 // .contact-img{
 //   max-height: 300px;
 // }
+.cc-box-content{
+  display: flex;
+  gap: 24px;
+  ion-card{
+    background: var(--color-white-smoke );
+    flex: 1;
+  }
+  ion-card-header{
+    padding-bottom: 0;
+  }
+  ion-card-title{
+    color: var(--color-deep-Gray);
+    font-size: $font-size-l;
+  }
+}
+.ii-power{
+  width: 80%;
+  margin: 0 auto;
+ 
+  h2 {
+    font-size: $font-size-xl;
+    color: var(--color-deep-Gray);
+    font-weight:$font-bold  ;
+    margin-bottom: 8px;
+  }
+  h3{
+    font-size: $font-size-xl;
+    color: var(--color-deep-Gray);
+  }
+  ion-list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 80%;
+    ion-item{
+      font-size: $font-size-md;
+      color: var(--color-dark-Gray);
+      border-radius: 16px;
+      border: 1px solid var(--color-primary);
+      --min-height: auto;
+      ion-label{
+        width: auto;
+        margin: 4px 0;
+      }
+
+    }
+  }
+}

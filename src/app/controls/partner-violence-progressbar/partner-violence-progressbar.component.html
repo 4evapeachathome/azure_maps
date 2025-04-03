@@ -1,34 +1,18 @@
-<ion-card class="level-three-card">
+<ion-card class="level-card">
+  <!-- Card Header -->
   <ion-card-header class="card-header">
-    <h3>LEVEL 3</h3>
+    <h3>{{ getHeadingText(level) }}</h3>
   </ion-card-header>
 
   <!-- Progress Bar -->
   <div class="progress-bar">
-    <div class="progress-segment yellow"></div>
-    <div class="progress-segment orange"></div>
-    <div class="progress-segment red"></div>
+    <div
+      *ngFor="let segment of getProgressBarClasses(getLevelNumber(level))"
+      class="progress-segment"
+      [ngClass]="segment"
+    ></div>
   </div>
 
   <!-- Description Content -->
-  <p>
-    Level 3 abuse includes more severe actions such as the use of a weapon, choking, 
-    or attempting to strangulate. Different forms of violence include:
-  </p>
-
-  <ul>
-    <li>
-      <strong>Intimate terrorism / patriarchal terrorism:</strong> where aggression 
-      is mostly from male to female with the goal of control and domination, instilling fear.
-    </li>
-    <li>
-      <strong>Violent resistance:</strong> occurs when a partner resists aggression, 
-      often in self-defense, and can lead to injury.
-    </li>
-    <li>
-      <strong>Situational couple violence / common couple violence:</strong> involves 
-      bidirectional, low-intensity aggression, often because of conflict rather than 
-      for control or self-defense.
-    </li>
-  </ul>
+  <p [innerHTML]="getDescription(level)"></p>
 </ion-card>

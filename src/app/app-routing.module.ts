@@ -11,7 +11,11 @@ const routes: Routes = [
   { path: 'supportservice', loadChildren: () => import('./supportservice/supportservice.module').then(m => m.SupportservicePageModule) },
   { path: 'unhealthyrelationship', loadChildren: () => import('./unhealthyrelationship/unhealthyrelationship.module').then(m => m.UnhealthyrelationshipPageModule) },
   { path: 'uslawsbystate', loadChildren: () => import('./legalrights/legalrights.module').then(m => m.LegalrightsPageModule) },
-  { path: 'federallaw', loadChildren: () => import('./federallaw/federallaw.module').then(m => m.FederallawPageModule) }
+  { path: 'federallaw', loadChildren: () => import('./federallaw/federallaw.module').then(m => m.FederallawPageModule) },  {
+    path: 'partnerviolence',
+    loadChildren: () => import('./partnerviolence/partnerviolence.module').then( m => m.PartnerviolencePageModule)
+  }
+
 ];
 
 @NgModule({

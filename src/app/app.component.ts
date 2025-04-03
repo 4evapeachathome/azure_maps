@@ -3,7 +3,6 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
 import { HeaderComponent } from "./controls/header/header.component";
-import { HeightService } from 'src/shared/height.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
