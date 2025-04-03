@@ -199,24 +199,24 @@
 }
 
 .sidebar-toggle + .sidebar-toggle-label {
-  .st-close {
+  .st-open {
     opacity: 1;
    
     transition: all 0.4s ease;
   }
-.st-open {
+.st-close {
   opacity: 0;
   transition: all 0.4s ease;
 }
 }
 .sidebar-toggle:checked + .sidebar-toggle-label 
 {
-  .st-close {
+  .st-open {
     opacity: 0;
     width: 0;
     transition: all 0.4s ease;
   }
-.st-open {
+.st-close {
   opacity: 1;
   transition: all 0.4s ease;
 }
