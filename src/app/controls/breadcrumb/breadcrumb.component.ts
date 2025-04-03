@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { filter } from 'rxjs';
 import { MenuService } from 'src/shared/menu.service';
 
 interface Breadcrumb {
@@ -19,9 +18,9 @@ interface Breadcrumb {
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class BreadcrumbComponent  implements OnInit,OnChanges {
-  @Input() selectedState: string | null = null;  // Receive selected state name
-  @Output() breadcrumbClicked = new EventEmitter<void>();
   breadcrumbPath: { title: string; link?: string }[] = [];
+  @Input() selectedState: { id: string; name: string } | null = null;
+  @Output() stateCleared = new EventEmitter<void>();
 
   constructor(
     private menuService: MenuService,
@@ -38,38 +37,56 @@ export class BreadcrumbComponent  implements OnInit,OnChanges {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['selectedState']) {
+      if (this.selectedState) {
+        // If a state is selected, update the breadcrumb with the state
+        this.clearLastState();
+        this.updateBreadcrumbWithState();
+      } else {
+        // If selectedState becomes null, remove the state breadcrumb
+        this.clearLastState();
+      }
+    }
+  }
+
+  clearLastState() {
+    // Remove any breadcrumb that matches a state URL pattern
+    this.breadcrumbPath = this.breadcrumbPath.filter(item => 
+      !item.link?.includes('/uslawsbystate/')
+    );
+  }
+
   generateBreadcrumb(menuItems: any[]) {
     const currentUrl = this.router.url;
     const currentPage = menuItems.find(item => item.link === currentUrl);
 
     if (currentPage) {
       this.breadcrumbPath = this.getBreadcrumbHierarchy(currentPage, menuItems).reverse();
-
-      // If a state is selected, append it to the breadcrumb path
-     // debugger;
-      if (this.selectedState) {
-        this.breadcrumbPath.push({
-          title: this.selectedState,
-          link: this.router.url,  // Keep the same URL
-        });
-      }
     }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['selectedState']) {
-      this.updateBreadcrumb();
-    }
-  }
-
-  updateBreadcrumb() {
-    this.breadcrumbPath = [
-      { title: 'Legal Rights', link: '/federallaw' },
-      { title: 'US Laws by State', link: '/uslawsbystate' },
-    ];
 
     if (this.selectedState) {
-      this.breadcrumbPath.push({ title: this.selectedState });
+      this.updateBreadcrumbWithState();
+    }
+  }
+
+  updateBreadcrumbWithState() {
+    if (this.selectedState) {
+      const lastItem = this.breadcrumbPath[this.breadcrumbPath.length - 1];
+  
+      // If the last breadcrumb is a state, replace it
+      if (lastItem && lastItem.link?.includes('/uslawsbystate/')) {
+        this.breadcrumbPath[this.breadcrumbPath.length - 1] = {
+          title: this.selectedState.name,
+          link: `/uslawsbystate/${this.selectedState.id}`
+        };
+      } else {
+        // Otherwise, add the state as a new breadcrumb
+        this.breadcrumbPath.push({
+          title: this.selectedState.name,
+          link: `/uslawsbystate/${this.selectedState.id}`
+        });
+      }
     }
   }
 
@@ -84,13 +101,12 @@ export class BreadcrumbComponent  implements OnInit,OnChanges {
   }
 
   navigateTo(link: string) {
-   // debugger;
-    console.log('Navigating to:', link);
     if (link === '/uslawsbystate') {
-        console.log('Emitting event');
-        this.breadcrumbClicked.emit(); 
+      this.selectedState = null;
+      this.breadcrumbPath = this.breadcrumbPath.filter(item => !item.link?.includes('/uslawsbystate/')); 
+      this.stateCleared.emit();
     }
     this.router.navigateByUrl(link);
-}
+  }
 
 }
