@@ -1,0 +1,47 @@
+
+
+<ion-content [fullscreen]="true">
+  <ion-grid  class="p-b-0 sm-cont-margin">
+
+    <!-- First Row: Single Component -->
+    <ion-row>
+      <ion-col size="12">
+        <pathome-typeofabusetitle></pathome-typeofabusetitle>
+      </ion-col>
+    </ion-row>
+
+    <!-- Second Row: Three Components in Flex Display -->
+    <ion-row>
+      <ion-col size="12">
+        <pathome-typesof-abuse-card></pathome-typesof-abuse-card>
+      </ion-col>
+    </ion-row>
+
+    <!-- Third Row: Full-Width Slide Component -->
+    <ion-row>
+      <ion-col size="12">
+      </ion-col>
+    </ion-row>
+    
+
+        <ion-row>
+          <ion-col size="12">
+
+          </ion-col>
+        </ion-row>
+
+     <ion-row>
+      <ion-col size="12">
+        <pathome-healthyrelationshipcontent [endpoint]="ipvtypesofabusesendpoint" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+  <ion-grid class="footer-container">
+    <ion-row>
+      <ion-col class="p-0">
+        <pathome-footer></pathome-footer>
+        </ion-col>
+        </ion-row>
+  </ion-grid>
+</ion-content>
