@@ -5,7 +5,7 @@
     <ion-col size="12" size-sm="9">
       <pathome-breadcrumb [selectedState]="selectedState" (stateCleared)="clearSelectedState()"></pathome-breadcrumb>
     </ion-col>
-    <ion-col size="12" size-sm="3" class="ion-text-right pr-0">
+    <ion-col *ngIf="selectedState" size="12" size-sm="3" class="ion-text-right pr-0">
       <ion-button color="primary" (click)="resetState()" size="small">
         <ion-icon name="arrow-back" slot="start"></ion-icon>
         Back to Map
