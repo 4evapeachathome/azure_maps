@@ -9,9 +9,10 @@
           <ng-container *ngIf="item.type === 'heading'">
             <!-- <h2 class="title-highlight ion-heading"> -->
               <ng-container *ngFor="let child of item.children">
-            <ion-text class="cb-header" *ngIf="child.bold" [ngClass]="{'cb-header-highlight': child.bold}"><strong>{{ child.text }}</strong>
-                <span *ngIf="!child.bold">{{ child.text }}</span>
-              </ion-text>
+                <ion-text class="cb-header" [ngClass]="{'cb-header-highlight': child.bold}">
+                  <strong *ngIf="child.bold">{{ child.text }}</strong>
+                  <span *ngIf="!child.bold">{{ child.text }}</span>
+                </ion-text>
               </ng-container>
             <!-- </h2> -->
           </ng-container>
