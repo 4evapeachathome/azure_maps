@@ -63,7 +63,36 @@ export class UsaMapComponent {
 };
 
 getStateAbbreviation(stateId: string): string {
-  return this.stateAbbreviations[stateId] || stateId;
+  if (!stateId) return '';
+  return this.stateAbbreviations[stateId.toLowerCase()] || stateId.toUpperCase();
+}
+
+private lineLabelStates: string[] = ['ri', 'hi'];
+
+needsLineLabel(stateId?: string): boolean {
+  if (!stateId) return false;
+  return this.lineLabelStates.includes(stateId.toLowerCase());
+}
+
+getLineCoordinates(pathData: string, stateId: string): { start: Point; end: Point } {
+  const center = this.getStateCenter(pathData, stateId);
+  const bbox = this.calculateBoundingBox(pathData);
+
+  let endX = bbox.maxX + 20;
+  let endY = center.y;
+
+  if (stateId.toLowerCase() === 'ri') {
+    endX = bbox.maxX + 30;
+    endY = center.y + 40;
+  } else if (stateId.toLowerCase() === 'hi') {
+    endX = bbox.minX + 60; // Extend left for HI
+    endY = center.y + 30;
+  }
+
+  return {
+    start: { x: bbox.maxX, y: center.y },
+    end: { x: endX, y: endY },
+  };
 }
 
   openlink() {
