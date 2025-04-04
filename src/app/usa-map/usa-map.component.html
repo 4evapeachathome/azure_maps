@@ -110,7 +110,10 @@
                   <ion-col class="state-map-side" size="12" size-sm="4">
                     <div class="selected-state-map">
                       <svg [attr.viewBox]="getStateViewBox()">
-                        <path [attr.d]="getSelectedStatePath()" class="active" />
+                        <path [attr.d]="getSelectedStatePath()" class="active" [ngClass]="{
+                          'small-stroke': selectedState && isSmallState(selectedState.id) && selectedState.id.toLowerCase() !== 'ri',
+                          'ri-stroke': selectedState && selectedState.id.toLowerCase() === 'ri'
+                        }"/>
                         <text [attr.x]="50" [attr.y]="50" class="state-label selected"
                           text-anchor="middle" dominant-baseline="middle">
                           {{ selectedState.name }}

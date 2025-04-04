@@ -142,6 +142,13 @@ margin-bottom: 32px;
              // filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
             }
 
+            path.small-stroke {
+              stroke-width: 0.2; /* Stroke width for VT, MD, CT, NH, MA, NJ, DE */
+            }
+        
+            path.ri-stroke {
+              stroke-width: 0.1; /* Specific stroke width for RI */
+            }
             text.state-label.selected {
               font-size: $font-size-sm;
               fill: var(--color-dark-Gray);
