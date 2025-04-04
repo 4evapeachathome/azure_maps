@@ -90,7 +90,8 @@ getStateAbbreviation(stateId: string): string {
     this.selectedState = { ...state };
     this.stateSelected.emit(state);
     this.showLawInfo = true;
-    console.log('Selected state:', state.name);
+    console.log('Selected state ID:', this.selectedState.id); // Debug the ID
+    console.log('Selected state:', this.selectedState); // Debug the entire object
   }
 
   resetState() {
@@ -101,7 +102,8 @@ getStateAbbreviation(stateId: string): string {
 
 
   getSelectedStatePath(): string {
-    const location = this.usaMap.locations.find(loc => loc.id === this.selectedState?.id);
+    const location = this.usaMap.locations.find(loc => loc.id.toLowerCase() === this.selectedState?.id?.toLowerCase());
+    console.log('Found location for Minnesota:', location); // Debug the found location
     return location?.path || '';
   }
 
@@ -161,7 +163,34 @@ getStateAbbreviation(stateId: string): string {
   }
 
 
-  getStateCenter(pathData: string): Point {
+  private stateTextOffsets: { [key: string]: { x: number; y: number } } = {
+    'wa': { x: 10, y: 20 },      // Washington - Move down to middle
+    'id': { x: 0, y: 10 },      // Idaho - Move slightly south
+    'mn': { x: -15, y: 10 },      // Minnesota - Move south from north edge
+    'wi': { x: 0, y: 10 },      // Wisconsin - Move south from Michigan border // Texas - Move northwest from southeast
+    'ak': { x: 30, y: -90 },    // Alaska - Move northeast from southwest
+    'la': { x: -27, y: -15 },   // Louisiana - Move northwest from southeast to center
+    'va': { x: 0, y: 10 },    // Virginia - Move southwest from northeast
+    'md': { x: 0, y: 0 },     // Maryland - Move left from Delaware overlap
+    'nc': { x: 0, y: 0 },     // North Carolina - Move left to center    // Mississippi - Move left from Alabama overlap
+    'ma': { x: -10, y: 2 },     // Massachusetts - Move left
+    'ri': { x: 0, y: 5 },      // Rhode Island - Move slightly left
+    'ga': { x: -10, y: -10 },   // Georgia - Move northwest to middle
+    'fl': { x: 15, y: 0 } ,
+    'mi': { x: 10, y: 40 } ,   
+    'nj': { x: 3, y: 0 }  ,
+    'ky': { x: 10, y: 5 }  ,
+    'de': { x: 5, y: 5 }  ,
+    'in': { x: 0, y: -15 }  ,
+    'hi': { x: 10, y: 25 }  ,
+    'mt': { x: 15, y: 0 }  ,
+    'az': { x: 15, y: 0 }  ,
+    'ct': { x: 0, y: 3 }  ,
+    'ms': { x: 5, y: 0 }  ,
+  };
+
+  getStateCenter(pathData: string, stateId?: string): Point {
+    debugger;
     const coordinates = this.extractCoordinates(pathData);
     if (coordinates.length === 0) return { x: 0, y: 0 };
 
@@ -170,10 +199,21 @@ getStateAbbreviation(stateId: string): string {
       y: acc.y + curr.y
     }));
 
-    return {
+    const center = {
       x: sum.x / coordinates.length,
       y: sum.y / coordinates.length
     };
+
+    // Apply custom offset if state ID exists in our offset table
+    if (stateId && this.stateTextOffsets[stateId.toLowerCase()]) {
+      const offset = this.stateTextOffsets[stateId.toLowerCase()];
+      return {
+        x: center.x + offset.x,
+        y: center.y + offset.y
+      };
+    }
+
+    return center;
   }
 
   private calculateBoundingBox(pathData: string): BoundingBox {
@@ -201,18 +241,30 @@ getStateAbbreviation(stateId: string): string {
     
     let currentX = 0;
     let currentY = 0;
-
+  
     commands.forEach(cmd => {
       const type = cmd[0];
       const args = cmd.slice(1).trim().split(/[\s,]+/).map(Number);
-
-      if (type === 'M' || type === 'L') {
+  
+      if (type === 'M') { // Absolute move to
         currentX = args[0];
         currentY = args[1];
         coordinates.push({ x: currentX, y: currentY });
+      } else if (type === 'm') { // Relative move to
+        currentX += args[0];
+        currentY += args[1];
+        coordinates.push({ x: currentX, y: currentY });
+      } else if (type === 'L') { // Absolute line to
+        currentX = args[0];
+        currentY = args[1];
+        coordinates.push({ x: currentX, y: currentY });
+      } else if (type === 'l') { // Relative line to
+        currentX += args[0];
+        currentY += args[1];
+        coordinates.push({ x: currentX, y: currentY });
       }
     });
-
+  
     return coordinates;
   }
 

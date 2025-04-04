@@ -25,8 +25,8 @@
                 (click)="onStateClick(location)"
               />
               <text
-                [attr.x]="getStateCenter(location.path).x"
-                [attr.y]="getStateCenter(location.path).y"
+               [attr.x]="getStateCenter(location.path, location.id).x"
+    [attr.y]="getStateCenter(location.path, location.id).y"
                 class="state-label"
                 (click)="onStateClick(location)"
               >
@@ -49,8 +49,8 @@
                   />
                   <text
                     *ngIf="location.id !== selectedState.id"
-                    [attr.x]="getStateCenter(location.path).x"
-                    [attr.y]="getStateCenter(location.path).y"
+                   [attr.x]="getStateCenter(location.path, location.id).x"
+    [attr.y]="getStateCenter(location.path, location.id).y"
                     class="state-label"
                     (click)="onStateClick(location)"
                   >
