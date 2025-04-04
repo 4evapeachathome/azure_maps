@@ -37,4 +37,13 @@ export const APIEndpoints = {
     partnervioencehome: `${environment.apiHost}/api/partner-violence-title`,
     ipvpartnervioence: `${environment.apiHost}/api/partnerviolencecontents`,
     typesOfAbuse: `${environment.apiHost}/api/types-of-abuse`,
+    typesofabusesTitle :`${environment.apiHost}/api/typesof-abuse-title`,
+    ipvtypesofabuses :`${environment.apiHost}/api/ipvtypesofabuses`,
+    physicalabuse :`${environment.apiHost}/api/physical-abuses`,
+    sexualabuse :`${environment.apiHost}/api/sexual-abuses`,
+    emotionalabuse :`${environment.apiHost}/api/emotional-abuses`,
+    verbalabuse :`${environment.apiHost}/api/verbal-abuses`,
+    financialabuse :`${environment.apiHost}/api/financial-abuses`,
+    technologicalabuse :`${environment.apiHost}/api/technological-abuses`,
+    immigrantabuse :`${environment.apiHost}/api/immigrant-abuses`,
   }

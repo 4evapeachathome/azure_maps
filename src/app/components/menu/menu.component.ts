@@ -141,7 +141,7 @@ export class MenuComponent implements OnInit {
 
   toggleItem(item: MenuItem, event: Event) {
     event.stopPropagation();
-    
+
     // Show additional menus when clicking "Peace at Home"
     if (item.title === 'Peace at Home' && !this.showAdditionalMenus) {
       this.showAdditionalMenus = true;
@@ -151,14 +151,21 @@ export class MenuComponent implements OnInit {
     else if (item.title === 'Home' && this.showAdditionalMenus) {
       this.showAdditionalMenus = false;
       this.processedMenu = this.buildMenuTree(this.menuItems);
-      // Collapse all expanded items
       this.collapseAllItems(this.processedMenu);
     }
 
-    if (item.children && item.children.length > 0) {
-      item.expanded = !item.expanded;
+    // If the item is a root-level item (no parent), collapse all other root items
+    if (!item.parentMenu && item.children && item.children.length > 0) {
+      this.processedMenu.forEach(rootItem => {
+        if (rootItem !== item) {
+          rootItem.expanded = false; // Collapse other root items
+        }
+      });
+      item.expanded = !item.expanded; // Toggle the clicked item
+    } else if (item.children && item.children.length > 0) {
+      item.expanded = !item.expanded; // Toggle non-root items as before
     }
-    
+
     if (item.link) {
       this.router.navigate([item.link]);
     }

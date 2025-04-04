@@ -118,7 +118,9 @@ ion-card {
 .p-b-0{
   padding-bottom: 0;
 }
-
+.pr-0{
+  padding-right: 0;
+}
 .comp-space {
   margin: 0;
   margin-bottom: 32px;
@@ -209,11 +211,11 @@ ion-card {
   padding-top: 10px;
   margin:0;
   border-radius: 8px;
-  h3 {
+  h1 {
     color: $color-primary;
     font-size: $font-size-xlll;
     margin: 0;
-    margin-bottom: 5px;
+    margin-bottom: 24px;
   }
   .cc-content{
     color: $color-dark-Gray;
@@ -732,4 +734,7 @@ ion-card {
 
     }
   }
+}
+.backtomap-button{
+  margin-top: -14px;
 }

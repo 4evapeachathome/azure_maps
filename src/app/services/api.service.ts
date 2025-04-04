@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from 'src/environments/environment';
 import { APIEndpoints } from 'src/shared/endpoints';
@@ -46,31 +46,32 @@ export class ApiService {
 
   private buildQueryParams(options: QueryOptions): HttpParams {
     let params = new HttpParams();
-   
+  
     if (options.fields?.length) {
       params = params.set('fields', options.fields.join(','));
     }
-   
+  
     if (options.populate) {
       if (Array.isArray(options.populate)) {
         params = params.set('populate', options.populate.join(','));
       } else {
         const handleNestedPopulate = (parentKey: string, value: any) => {
-          if (typeof value === 'object') {
+          if (typeof value === 'object' && value !== null) {
             if (value.fields) {
               params = params.set(`populate[${parentKey}][fields]`, value.fields.join(','));
             }
             if (value.populate) {
               Object.entries(value.populate).forEach(([nestedKey, nestedValue]: [string, any]) => {
-                if (typeof nestedValue === 'object') {
-                  // Handle fields at this level
+                if (nestedValue === true) {
+                  // Handle simple `true` to populate the field
+                  params = params.set(`populate[${parentKey}][populate][${nestedKey}]`, 'true');
+                } else if (typeof nestedValue === 'object' && nestedValue !== null) {
                   if (nestedValue.fields) {
                     params = params.set(
                       `populate[${parentKey}][populate][${nestedKey}][fields]`,
                       nestedValue.fields.join(',')
                     );
                   }
-                  // Recursively handle deeper populate
                   if (nestedValue.populate) {
                     Object.entries(nestedValue.populate).forEach(([deepKey, deepValue]: [string, any]) => {
                       if (deepValue.fields) {
@@ -86,24 +87,24 @@ export class ApiService {
             }
           }
         };
-
+  
         Object.entries(options.populate).forEach(([key, value]) => {
           handleNestedPopulate(key, value);
         });
       }
     }
-   
+  
     // Keep existing functionality for filters, sort, and pagination
     if (options.filters) {
       Object.entries(options.filters).forEach(([key, value]) => {
         params = params.set(`filters[${key}]`, value);
       });
     }
-   
+  
     if (options.sort?.length) {
       params = params.set('sort', options.sort.join(','));
     }
-   
+  
     if (options.pagination) {
       if (options.pagination.page) {
         params = params.set('pagination[page]', options.pagination.page.toString());
@@ -116,9 +117,9 @@ export class ApiService {
     } else if (options.pageSize) {
       params = params.set('pagination[pageSize]', options.pageSize.toString());
     }
-   
+  
     return params;
-}
+  }
 
   get(endpoint: string, token?: string): Observable<any> {
     return this.http.get(`${environment.apiHost}/${endpoint}`, { headers: this.createHeaders(token) });
@@ -706,7 +707,74 @@ getPartnerViolenceTitle(): Observable<any> {
     );
   }
   
+  getTypesofabusesTitle(): Observable<any> {
+    const endpoint = APIEndpoints.typesofabusesTitle;
+    const options: QueryOptions = {
+      populate: {
+        webImage: { fields: ['url'] },
+        mobileImage: { fields: ['url'] }
+      }
+    };
+  
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+      map((res: any) => {
+        console.log('data:', res);
+        const resData = res.data;
+        if (resData && resData.webImage && resData.webImage.url) {
+          resData.image = `${environment.apiHost}${resData.webImage.url}`;
+        } else {
+          resData.image = ''; 
+        }
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching healthy relationship data', error);
+        return throwError(error);
+      })
+    );
+  }
 
+  getPhysicalAbuses(endpoint:string,mainParam:string): Observable<any> {
+    const options: QueryOptions = {
+      populate: {
+        [mainParam]: {
+          populate: {
+            example: true,
+            webImage: { fields: ['url'] },
+            mobileImage: { fields: ['url'] }
+          }
+        }
+      }
+    };
+  
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+      tap((res: any) => console.log('Raw API response:', res)),
+      map((res: any) => {
+        console.log('Mapped data:', res);
+        const resData = res.data[0];
+  
+        if (resData && resData[mainParam]) {
+          if (resData[mainParam].webImage && resData[mainParam].webImage.url) {
+            resData[mainParam].webImage.fullUrl = `${environment.apiHost}${resData[mainParam].webImage.url}`;
+          } else {
+            resData[mainParam].webImage = { fullUrl: '' };
+          }
+  
+          if (resData[mainParam].mobileImage && resData[mainParam].mobileImage.url) {
+            resData[mainParam].mobileImage.fullUrl = `${environment.apiHost}${resData[mainParam].mobileImage.url}`;
+          } else {
+            resData[mainParam].mobileImage = { fullUrl: '' };
+          }
+        }
+  
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching physical abuses data', error);
+        return throwError(error);
+      })
+    );
+  }
 
 
 }

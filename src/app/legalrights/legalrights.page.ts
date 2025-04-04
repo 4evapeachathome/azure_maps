@@ -15,14 +15,5 @@ export class LegalrightsPage implements OnInit {
   ngOnInit() {
   }
 
-  onStateClick(state: { id: string; name: string; path: string }) {
-    debugger;
-    this.selectedState = state; // Update selected state for breadcrumb
-    console.log('Selected state:', state.name);
-  }
 
-  resetSelectedState() {
-    debugger;
-    this.selectedState = null; // Reset state when breadcrumb is clicked
-  }
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import usaMap from '@svg-maps/usa';
 import { ApiService } from '../services/api.service';
+import { BreadcrumbComponent } from "../controls/breadcrumb/breadcrumb.component";
 
 interface Point {
   x: number;
@@ -26,7 +27,7 @@ interface StateLaw {
 @Component({
   selector: 'pathome-usa-map',
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [CommonModule, IonicModule, BreadcrumbComponent],
   templateUrl: './usa-map.component.html',
   styleUrls: ['./usa-map.component.scss']
 })
@@ -43,6 +44,10 @@ export class UsaMapComponent {
 
   }
 
+  clearSelectedState() {
+    this.selectedState = null;
+    this.showLawInfo = false; // Hide the state view when breadcrumb is clicked
+  }
 
   private stateAbbreviations: { [key: string]: string } = {
     alabama: 'AL', alaska: 'AK', arizona: 'AZ', arkansas: 'AR', california: 'CA',
@@ -72,7 +77,7 @@ getStateAbbreviation(stateId: string): string {
  getUSLawsbystateData() {
     this.apiService.getStateLaws().subscribe(
       (response: StateLaw[]) => {
-        debugger;
+       // debugger;
         this.stateLaws = response;
       },
       (error) => {
@@ -91,6 +96,7 @@ getStateAbbreviation(stateId: string): string {
   resetState() {
     this.selectedState = null;
     this.showLawInfo = false;
+    this.clearSelectedState();
   }
 
 
@@ -111,7 +117,7 @@ getStateAbbreviation(stateId: string): string {
   }
 
   getLawDescription(): string {
-    debugger;
+    //debugger;
     const law = this.getStateLaw();
     if (!law || !law.lawdescription) return '';
   
@@ -209,4 +215,9 @@ getStateAbbreviation(stateId: string): string {
 
     return coordinates;
   }
+
+
+
+
+
 }

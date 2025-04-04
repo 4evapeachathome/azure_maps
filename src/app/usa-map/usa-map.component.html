@@ -1,114 +1,137 @@
-<div class="common-container map-space-bottom">
-<div class="map-container">
-  <div *ngIf="!selectedState" class="map-view">
-    <svg [attr.viewBox]="usaMap.viewBox">
-      <g *ngFor="let location of usaMap.locations">
-        <path
-          [attr.d]="location.path"
-          [attr.name]="location.name"
-          [attr.id]="location.id"
-          (click)="onStateClick(location)"
-        />
-        <text
-          [attr.x]="getStateCenter(location.path).x"
-          [attr.y]="getStateCenter(location.path).y"
-          class="state-label"
-          (click)="onStateClick(location)"
-        >
-          {{ getStateAbbreviation(location.id) }}
-        </text>
-      </g>
-    </svg>
-  </div>
-  
-  <div *ngIf="selectedState" class="state-view">
-    <div class="content-wrapper">
-      <div *ngIf="!showLawInfo" class="map-side">
-        <svg [attr.viewBox]="usaMap.viewBox">
-          <g *ngFor="let location of usaMap.locations">
-            <path
-              [attr.d]="location.path"
-              [class.active]="location.id === selectedState.id"
-              [class.inactive]="location.id !== selectedState.id"
-              (click)="onStateClick(location)"
-            />
-            <text
-              *ngIf="location.id !== selectedState.id"
-              [attr.x]="getStateCenter(location.path).x"
-              [attr.y]="getStateCenter(location.path).y"
-              class="state-label"
-              (click)="onStateClick(location)"
-            >
-              {{ getStateAbbreviation(location.id) }}
-            </text>
-          </g>
-        </svg>
-      </div>
 
-      <div class="state-side">
-        <div class="state-header">
-          <ion-icon name="location"></ion-icon>
-          <h2>{{ selectedState.name }}</h2>
-        </div>
-        
-        <div *ngIf="!showLawInfo" class="selected-state-map">
-          <svg [attr.viewBox]="getStateViewBox()">
-            <path
-              [attr.d]="getSelectedStatePath()"
-              class="active"
-            />
-            <text
-              [attr.x]="50"
-              [attr.y]="50"
-              class="state-label selected"
-              text-anchor="middle"
-              dominant-baseline="middle"
-            >
-              {{ selectedState.name }}
-            </text>
+<div class="common-container map-space-bottom">
+  <ion-grid>
+  <ion-row>
+    <ion-col size="12" size-sm="9">
+      <pathome-breadcrumb [selectedState]="selectedState" (stateCleared)="clearSelectedState()"></pathome-breadcrumb>
+    </ion-col>
+    <ion-col size="12" size-sm="3" class="ion-text-right pr-0">
+      <ion-button color="primary" (click)="resetState()" size="small" *ngIf="selectedState" class="backtomap-button">
+        <ion-icon name="arrow-back" slot="start"></ion-icon>
+        Back to Map
+      </ion-button>
+    </ion-col>
+  </ion-row> 
+  <ion-row>
+    <ion-col class="p-0">
+      <div class="map-container">
+        <div *ngIf="!selectedState" class="map-view">
+          <svg [attr.viewBox]="usaMap.viewBox">
+            <g *ngFor="let location of usaMap.locations">
+              <path
+                [attr.d]="location.path"
+                [attr.name]="location.name"
+                [attr.id]="location.id"
+                (click)="onStateClick(location)"
+              />
+              <text
+                [attr.x]="getStateCenter(location.path).x"
+                [attr.y]="getStateCenter(location.path).y"
+                class="state-label"
+                (click)="onStateClick(location)"
+              >
+                {{ getStateAbbreviation(location.id) }}
+              </text>
+            </g>
           </svg>
         </div>
-
-        <ion-grid *ngIf="showLawInfo && getStateLaw()" class="state-law-container">
-          <ion-row>
-            <ion-col class="state-law-info" size="12" size-sm="8">
-              <div class="law-content">
-                <p>{{ getLawDescription() }}</p>
-              </div>
-            </ion-col>
-    
-            <ion-col class="state-map-side" size="12" size-sm="4">
-              <div class="selected-state-map">
+        
+        <div *ngIf="selectedState" class="state-view">
+          <div class="content-wrapper">
+            <div *ngIf="!showLawInfo" class="map-side">
+              <svg [attr.viewBox]="usaMap.viewBox">
+                <g *ngFor="let location of usaMap.locations">
+                  <path
+                    [attr.d]="location.path"
+                    [class.active]="location.id === selectedState.id"
+                    [class.inactive]="location.id !== selectedState.id"
+                    (click)="onStateClick(location)"
+                  />
+                  <text
+                    *ngIf="location.id !== selectedState.id"
+                    [attr.x]="getStateCenter(location.path).x"
+                    [attr.y]="getStateCenter(location.path).y"
+                    class="state-label"
+                    (click)="onStateClick(location)"
+                  >
+                    {{ getStateAbbreviation(location.id) }}
+                  </text>
+                </g>
+              </svg>
+            </div>
+      
+            <div class="state-side">
+              <!-- <div class="state-header">
+                <ion-icon name="location"></ion-icon>
+                <h2>{{ selectedState.name }}</h2>
+              </div> -->
+              
+              <div *ngIf="!showLawInfo" class="selected-state-map">
                 <svg [attr.viewBox]="getStateViewBox()">
-                  <path [attr.d]="getSelectedStatePath()" class="active" />
-                  <text [attr.x]="50" [attr.y]="50" class="state-label selected"
-                    text-anchor="middle" dominant-baseline="middle">
+                  <path
+                    [attr.d]="getSelectedStatePath()"
+                    class="active"
+                  />
+                  <text
+                    [attr.x]="50"
+                    [attr.y]="50"
+                    class="state-label selected"
+                    text-anchor="middle"
+                    dominant-baseline="middle"
+                  >
                     {{ selectedState.name }}
                   </text>
                 </svg>
               </div>
-            </ion-col>
-          </ion-row>
+      
+              <ion-grid *ngIf="showLawInfo && getStateLaw()" class="state-law-container p-0">
+                
+                <ion-row>
+                  <ion-col class="state-law-info p-0" size="12" size-sm="8">
+                    <ion-grid>
+                    <ion-row>
+                      <ion-col>
+                    <div class="law-content">
+                      <p>{{ getLawDescription() }}</p>
+                    </div>
+                  </ion-col>
+                </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-button *ngIf="getStateLaw()?.link" color="primary" 
+                          (click)="openlink()" size="small">
+                          Read More
+                        </ion-button>
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+                  </ion-col>
           
-          <ion-row>
-            <ion-col>
-              <ion-button *ngIf="getStateLaw()?.link" color="primary" 
-                (click)="openlink()" size="small">
-                Read More
-              </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-    
-
-       
-
-        <ion-button color="primary" (click)="resetState()" size="small">
-          <ion-icon name="arrow-back" slot="start"></ion-icon>
-          Back to Map
-        </ion-button>
+                  <ion-col class="state-map-side" size="12" size-sm="4">
+                    <div class="selected-state-map">
+                      <svg [attr.viewBox]="getStateViewBox()">
+                        <path [attr.d]="getSelectedStatePath()" class="active" />
+                        <text [attr.x]="50" [attr.y]="50" class="state-label selected"
+                          text-anchor="middle" dominant-baseline="middle">
+                          {{ selectedState.name }}
+                        </text>
+                      </svg>
+                    </div>
+                  </ion-col>
+                </ion-row>
+                
+               
+              </ion-grid>
+          
+      
+             
+      
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
+      </ion-col>
+      </ion-row>
+</ion-grid>
+
 </div>

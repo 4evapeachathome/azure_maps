@@ -1,0 +1,22 @@
+<ion-grid class="relationship-container">
+  <pathome-breadcrumb></pathome-breadcrumb>
+  <ion-row>
+    <div class="heading-img-container">
+      <ion-col size="7">
+        <ng-container *ngFor="let item of title">
+          <ng-container *ngIf="item.type === 'heading'">
+            <h2 class="title-highlight ion-heading">
+              <ng-container *ngFor="let child of item.children">
+                <ion-text class="highlighted-text" *ngIf="child.bold"><strong>{{ child.text }}</strong></ion-text>
+                <span *ngIf="!child.bold">{{ child.text }}</span>
+              </ng-container>
+            </h2>
+          </ng-container>
+        </ng-container>
+      </ion-col>
+      <ion-col>
+        <ion-img [src]="img" alt="Healthy Relationship Illustration" *ngIf="img"></ion-img>
+      </ion-col>
+    </div>
+  </ion-row>
+</ion-grid>
