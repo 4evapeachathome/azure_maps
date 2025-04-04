@@ -73,6 +73,13 @@ getStateAbbreviation(stateId: string): string {
     }
   }
 
+  private smallStrokeStates: string[] = ['vt', 'md', 'ct', 'nh', 'ma', 'ri', 'nj', 'de'];
+
+isSmallState(stateId?: string): boolean {
+  if (!stateId) return false;
+  return this.smallStrokeStates.includes(stateId.toLowerCase());
+}
+  
   
  getUSLawsbystateData() {
     this.apiService.getStateLaws().subscribe(
