@@ -197,7 +197,7 @@ isSmallState(stateId?: string): boolean {
   };
 
   getStateCenter(pathData: string, stateId?: string): Point {
-    debugger;
+   // debugger;
     const coordinates = this.extractCoordinates(pathData);
     if (coordinates.length === 0) return { x: 0, y: 0 };
 
