@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
@@ -8,7 +8,7 @@ import { APIEndpoints } from 'src/shared/endpoints';
   standalone: false
 })
 export class TypesofabusesPage implements OnInit {
-  
+  activeSection: string = '';
   ipvtypesofabusesendpoint:string=APIEndpoints.ipvtypesofabuses;
   physicalabuse:string=APIEndpoints.physicalabuse;
   sexualabuse:string=APIEndpoints.sexualabuse;
@@ -17,9 +17,20 @@ export class TypesofabusesPage implements OnInit {
   financialabuse:string=APIEndpoints.financialabuse;
   technologicalabuse:string=APIEndpoints.technologicalabuse;
   immigrantabuse:string=APIEndpoints.immigrantabuse;
+
+  @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
+
   constructor() { }
 
   ngOnInit() {
   }
 
-}
+  scrollToSection(sectionId: string) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+  }
+
+
