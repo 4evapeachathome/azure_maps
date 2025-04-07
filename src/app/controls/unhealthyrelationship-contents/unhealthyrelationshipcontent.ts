@@ -38,7 +38,11 @@ export class UnhealthyRelationshipContent  implements OnInit {
                   format: c.format, // "unordered" or "ordered"
                   items: c.children.map((listItem: any) => ({
                     type: listItem.type, // "list-item"
-                    children: listItem.children.map((child: any) => {
+                    children: listItem.children
+  .filter((child: any) => {
+    // Filter out empty text nodes
+    return !(child.type === 'text' && (!child.text || child.text.trim() === ''));
+  }).map((child: any) => {
                       if (child.type === 'link') {
                         return {
                           type: child.type,
