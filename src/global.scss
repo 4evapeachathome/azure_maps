@@ -52,6 +52,16 @@ ion-content {
   }
 }
 
+ion-header {
+  padding-top: env(safe-area-inset-top); // respects iOS notch area too
+}
+
+body {
+  padding-top: constant(safe-area-inset-top); /* old iOS support */
+  padding-top: env(safe-area-inset-top);      /* modern support */
+}
+
+
 
 
 html,
