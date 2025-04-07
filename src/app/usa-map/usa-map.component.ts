@@ -63,7 +63,36 @@ export class UsaMapComponent {
 };
 
 getStateAbbreviation(stateId: string): string {
-  return this.stateAbbreviations[stateId] || stateId;
+  if (!stateId) return '';
+  return this.stateAbbreviations[stateId.toLowerCase()] || stateId.toUpperCase();
+}
+
+private lineLabelStates: string[] = ['ri', 'hi'];
+
+needsLineLabel(stateId?: string): boolean {
+  if (!stateId) return false;
+  return this.lineLabelStates.includes(stateId.toLowerCase());
+}
+
+getLineCoordinates(pathData: string, stateId: string): { start: Point; end: Point } {
+  const center = this.getStateCenter(pathData, stateId);
+  const bbox = this.calculateBoundingBox(pathData);
+
+  let endX = bbox.maxX + 20;
+  let endY = center.y;
+
+  if (stateId.toLowerCase() === 'ri') {
+    endX = bbox.maxX + 30;
+    endY = center.y + 40;
+  } else if (stateId.toLowerCase() === 'hi') {
+    endX = bbox.minX + 60; // Extend left for HI
+    endY = center.y + 30;
+  }
+
+  return {
+    start: { x: bbox.maxX, y: center.y },
+    end: { x: endX, y: endY },
+  };
 }
 
   openlink() {
@@ -187,9 +216,9 @@ isSmallState(stateId?: string): boolean {
     'mi': { x: 10, y: 40 } ,   
     'nj': { x: 3, y: 0 }  ,
     'ky': { x: 10, y: 5 }  ,
-    'de': { x: 5, y: 5 }  ,
+    'de': { x: 3, y: 5 }  ,
     'in': { x: 0, y: -15 }  ,
-    'hi': { x: 10, y: 25 }  ,
+    'hi': { x: 8, y: 35 }  ,
     'mt': { x: 15, y: 0 }  ,
     'az': { x: 15, y: 0 }  ,
     'ct': { x: 0, y: 3 }  ,
@@ -197,7 +226,7 @@ isSmallState(stateId?: string): boolean {
   };
 
   getStateCenter(pathData: string, stateId?: string): Point {
-    debugger;
+   // debugger;
     const coordinates = this.extractCoordinates(pathData);
     if (coordinates.length === 0) return { x: 0, y: 0 };
 

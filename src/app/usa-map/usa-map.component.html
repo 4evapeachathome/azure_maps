@@ -24,7 +24,27 @@
                 [attr.id]="location.id"
                 (click)="onStateClick(location)"
               />
+              <ng-container *ngIf="needsLineLabel(location.id)">
+                <line
+                  [attr.x1]="getLineCoordinates(location.path, location.id).start.x"
+                  [attr.y1]="getLineCoordinates(location.path, location.id).start.y"
+                  [attr.x2]="getLineCoordinates(location.path, location.id).end.x"
+                  [attr.y2]="getLineCoordinates(location.path, location.id).end.y"
+                  stroke="var(--color-primary)"
+                  stroke-width="0.5"
+                />
+                <text
+                  [attr.x]="getLineCoordinates(location.path, location.id).end.x"
+                  [attr.y]="getLineCoordinates(location.path, location.id).end.y"
+                  class="state-label"
+                  (click)="onStateClick(location)"
+                  text-anchor="start"
+                >
+                  {{ getStateAbbreviation(location.id) }} <!-- Use abbreviation instead of full name -->
+                </text>
+              </ng-container>
               <text
+              *ngIf="!needsLineLabel(location.id)"
                [attr.x]="getStateCenter(location.path, location.id).x"
     [attr.y]="getStateCenter(location.path, location.id).y"
                 class="state-label"

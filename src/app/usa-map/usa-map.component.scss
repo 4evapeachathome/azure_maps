@@ -149,6 +149,12 @@ margin-bottom: 32px;
             path.ri-stroke {
               stroke-width: 0.1; /* Specific stroke width for RI */
             }
+
+            line {
+              stroke: var(--color-primary);
+              stroke-width: 0.5;
+            }
+            
             text.state-label.selected {
               font-size: $font-size-sm;
               fill: var(--color-dark-Gray);

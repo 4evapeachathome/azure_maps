@@ -6,6 +6,7 @@ import { HeaderComponent } from "./controls/header/header.component";
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,15 @@ export class AppComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit() {
+
+    this.platform.ready().then(() => {
+      // Set overlay to false to prevent content under status bar
+      StatusBar.setOverlaysWebView({ overlay: false });
+  
+      // Optional: Set light/dark content based on your app design
+      StatusBar.setStyle({ style: Style.Dark }); // or Style.Light
+    });
+
     const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
     if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
       this.router.navigate(['/home']); // Redirect to home if page is refreshed

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { UsaMapComponent } from '../usa-map/usa-map.component';
 
 @Component({
   selector: 'app-legalrights',
@@ -8,11 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LegalrightsPage implements OnInit {
   selectedState: any = null;
+  @ViewChild(UsaMapComponent) usaMapComponent!: UsaMapComponent;
 
  
   constructor() { }
 
   ngOnInit() {
+  }
+
+  ionViewWillLeave() {
+    if (this.usaMapComponent) {
+      this.usaMapComponent.resetState();
+    }
   }
 
 
