@@ -54,6 +54,10 @@ ion-card-content {
   padding-inline-end: 16px !important;
   padding-top: 10px !important;
   padding-bottom: 10px !important;
+  ul{
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+  }
 }
 ion-button{
   text-transform: inherit;

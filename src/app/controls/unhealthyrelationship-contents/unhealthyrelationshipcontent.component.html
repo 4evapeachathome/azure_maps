@@ -28,41 +28,36 @@
             </ion-text>
 
             <!-- Handle lists (unordered or ordered) -->
-            <ng-container *ngIf="content.type === 'list'">
+            <ion-text class="content-list" *ngIf="content.type === 'list'">
               <ul *ngIf="content.format === 'unordered'">
                 <li *ngFor="let item of content.items">
                   <ng-container *ngFor="let part of item.children">
                     <a *ngIf="part.type === 'link'" [href]="part.url" target="_blank">
-                      <ng-container *ngFor="let linkChild of part.children">
-                        <b *ngIf="linkChild.bold">{{ linkChild.text }}</b>
-                        <i *ngIf="linkChild.italic && !linkChild.bold">{{ linkChild.text }}</i>
-                        <span *ngIf="!linkChild.bold && !linkChild.italic">{{ linkChild.text }}</span>
-                      </ng-container>
+                      <ion-text *ngIf="part.children[0].bold" color="dark"><b>{{ part.children[0].text }}</b></ion-text>
+                      <ion-text *ngIf="part.children[0].italic && !part.children[0].bold" color="dark"><i>{{ part.children[0].text }}</i></ion-text>
+                      <ion-text *ngIf="!part.children[0].bold && !part.children[0].italic">{{ part.children[0].text }}</ion-text>
                     </a>
-                    <b *ngIf="part.type !== 'link' && part.bold">{{ part.text }}</b>
-                    <i *ngIf="part.type !== 'link' && part.italic && !part.bold">{{ part.text }}</i>
-                    <span *ngIf="part.type !== 'link' && !part.bold && !part.italic">{{ part.text }}</span>
+                    <ion-text *ngIf="part.type !== 'link' && part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                    <ion-text *ngIf="part.type !== 'link' && part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                    <ion-text *ngIf="part.type !== 'link' && !part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
                   </ng-container>
                 </li>
               </ul>
-            
               <ol *ngIf="content.format === 'ordered'">
                 <li *ngFor="let item of content.items">
                   <ng-container *ngFor="let part of item.children">
                     <a *ngIf="part.type === 'link'" [href]="part.url" target="_blank">
-                      <ng-container *ngFor="let linkChild of part.children">
-                        <b *ngIf="linkChild.bold">{{ linkChild.text }}</b>
-                        <i *ngIf="linkChild.italic && !linkChild.bold">{{ linkChild.text }}</i>
-                        <span *ngIf="!linkChild.bold && !linkChild.italic">{{ linkChild.text }}</span>
-                      </ng-container>
+                      <ion-text *ngIf="part.children[0].bold" color="dark"><b>{{ part.children[0].text }}</b></ion-text>
+                      <ion-text *ngIf="part.children[0].italic && !part.children[0].bold" color="dark"><i>{{ part.children[0].text }}</i></ion-text>
+                      <ion-text *ngIf="!part.children[0].bold && !part.children[0].italic">{{ part.children[0].text }}</ion-text>
                     </a>
-                    <b *ngIf="part.type !== 'link' && part.bold">{{ part.text }}</b>
-                    <i *ngIf="part.type !== 'link' && part.italic && !part.bold">{{ part.text }}</i>
-                    <span *ngIf="part.type !== 'link' && !part.bold && !part.italic">{{ part.text }}</span>
+                    <ion-text *ngIf="part.type !== 'link' && part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                    <ion-text *ngIf="part.type !== 'link' && part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                    <ion-text *ngIf="part.type !== 'link' && !part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
                   </ng-container>
                 </li>
               </ol>
-            </ng-container>
+            </ion-text>
           </ng-container>
         </div>
       </ion-card-content>
@@ -99,41 +94,36 @@
               </p>
             </ion-text>
 
-            <ng-container *ngIf="content.type === 'list'">
+            <ion-text class="content-list" *ngIf="content.type === 'list'">
               <ul *ngIf="content.format === 'unordered'">
                 <li *ngFor="let item of content.items">
                   <ng-container *ngFor="let part of item.children">
                     <a *ngIf="part.type === 'link'" [href]="part.url" target="_blank">
-                      <ng-container *ngFor="let linkChild of part.children">
-                        <b *ngIf="linkChild.bold">{{ linkChild.text }}</b>
-                        <i *ngIf="linkChild.italic && !linkChild.bold">{{ linkChild.text }}</i>
-                        <span *ngIf="!linkChild.bold && !linkChild.italic">{{ linkChild.text }}</span>
-                      </ng-container>
+                      <ion-text *ngIf="part.children[0].bold" color="dark"><b>{{ part.children[0].text }}</b></ion-text>
+                      <ion-text *ngIf="part.children[0].italic && !part.children[0].bold" color="dark"><i>{{ part.children[0].text }}</i></ion-text>
+                      <ion-text *ngIf="!part.children[0].bold && !part.children[0].italic">{{ part.children[0].text }}</ion-text>
                     </a>
-                    <b *ngIf="part.type !== 'link' && part.bold">{{ part.text }}</b>
-                    <i *ngIf="part.type !== 'link' && part.italic && !part.bold">{{ part.text }}</i>
-                    <span *ngIf="part.type !== 'link' && !part.bold && !part.italic">{{ part.text }}</span>
+                    <ion-text *ngIf="part.type !== 'link' && part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                    <ion-text *ngIf="part.type !== 'link' && part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                    <ion-text *ngIf="part.type !== 'link' && !part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
                   </ng-container>
                 </li>
               </ul>
-            
               <ol *ngIf="content.format === 'ordered'">
                 <li *ngFor="let item of content.items">
                   <ng-container *ngFor="let part of item.children">
                     <a *ngIf="part.type === 'link'" [href]="part.url" target="_blank">
-                      <ng-container *ngFor="let linkChild of part.children">
-                        <b *ngIf="linkChild.bold">{{ linkChild.text }}</b>
-                        <i *ngIf="linkChild.italic && !linkChild.bold">{{ linkChild.text }}</i>
-                        <span *ngIf="!linkChild.bold && !linkChild.italic">{{ linkChild.text }}</span>
-                      </ng-container>
+                      <ion-text *ngIf="part.children[0].bold" color="dark"><b>{{ part.children[0].text }}</b></ion-text>
+                      <ion-text *ngIf="part.children[0].italic && !part.children[0].bold" color="dark"><i>{{ part.children[0].text }}</i></ion-text>
+                      <ion-text *ngIf="!part.children[0].bold && !part.children[0].italic">{{ part.children[0].text }}</ion-text>
                     </a>
-                    <b *ngIf="part.type !== 'link' && part.bold">{{ part.text }}</b>
-                    <i *ngIf="part.type !== 'link' && part.italic && !part.bold">{{ part.text }}</i>
-                    <span *ngIf="part.type !== 'link' && !part.bold && !part.italic">{{ part.text }}</span>
+                    <ion-text *ngIf="part.type !== 'link' && part.bold" color="dark"><b>{{ part.text }}</b></ion-text>
+                    <ion-text *ngIf="part.type !== 'link' && part.italic && !part.bold" color="dark"><i>{{ part.text }}</i></ion-text>
+                    <ion-text *ngIf="part.type !== 'link' && !part.bold && !part.italic" color="dark">{{ part.text }}</ion-text>
                   </ng-container>
                 </li>
               </ol>
-            </ng-container>
+            </ion-text>
           </ng-container>
         </div>
       </ion-card-content>
