@@ -67,7 +67,7 @@ body {
 html,
 body {
   font-family: $font-Inter;
-  background: var(--content-background-color );
+  background: var(--color-container);
 }
 .plr-0 {
   padding-left: 0;
@@ -141,9 +141,7 @@ ion-card {
 .ham-menu{
   position: relative;
 }
-.logo{
- // margin-left: 42px;
-}
+
 .menu-content {
   box-shadow: none !important;
   background: var(--color-container);
@@ -744,6 +742,25 @@ ion-card {
 
     }
   }
+}
+.legal-container{
+  width: 90%;
+  margin: 0 auto;
+.lrc-ul{
+ // margin-top: 24px;
+}
+  h3{
+    color: var(--color-deep-Gray);
+  font-size: $font-size-base !important;
+  }
+  ion-text{
+    color: var(--color-dark-Gray);
+  font-size: $font-size-md !important;
+  }
+  .lc-image{
+height: 320px;
+  }
+ 
 }
 .backtomap-button{
   margin-top: -14px;

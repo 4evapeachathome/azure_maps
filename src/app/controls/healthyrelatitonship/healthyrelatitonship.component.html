@@ -1,23 +1,23 @@
 <ion-card class="container-banner cb-p-se" >
   <ion-card-content class="ic-content">
-<ion-grid class="relationship-container">
+<ion-grid>
   <pathome-breadcrumb></pathome-breadcrumb>
   <ion-row>
     <!-- <div class="heading-img-container"> -->
       <ion-col  size="12" size-sm="6" >
         <ng-container *ngFor="let item of title">
           <ng-container *ngIf="item.type === 'heading'">
-            <!-- <h2 class="title-highlight ion-heading"> -->
+        
               <ng-container *ngFor="let child of item.children">
                 <ion-text class="cb-header" [ngClass]="{'cb-header-highlight': child.bold}">
                   <strong *ngIf="child.bold">{{ child.text }}</strong>
                   <span *ngIf="!child.bold">{{ child.text }}</span>
                 </ion-text>
               </ng-container>
-            <!-- </h2> -->
+       
           </ng-container>
           <ng-container *ngIf="item.type === 'paragraph'">
-            <ion-text class="paragraph-text">
+            <ion-text>
               <ng-container *ngFor="let child of item.children">
                 {{ child.text }}
               </ng-container>
@@ -31,10 +31,15 @@
     <!-- </div> -->
   </ion-row>
   <ion-row>
+    <ion-col>
+      <div class="cc-box-content">
     <ion-card *ngFor="let block of contentBlocks">
       <ion-card-header>
         <ion-card-title *ngIf="block.multilinerichtextbox?.[0]?.type === 'heading'">
-          {{ block.multilinerichtextbox[0]?.children[0]?.text }}
+          <ion-text>
+            {{ block.multilinerichtextbox[0]?.children[0]?.text }}
+          </ion-text>
+        
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
@@ -58,6 +63,8 @@
         </ng-container>
       </ion-card-content>
     </ion-card>
+    </div>
+  </ion-col>
   </ion-row>
 </ion-grid>
 </ion-card-content>
