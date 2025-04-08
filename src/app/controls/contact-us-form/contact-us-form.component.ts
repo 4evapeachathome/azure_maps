@@ -49,7 +49,6 @@ export class ContactUsFormComponent  implements OnInit {
   
       this.apiService.sendContactData(this.formData).subscribe({
         next: async (response) => {
-          console.log('Contact data sent successfully', response);
           
           // Check if response contains data and id
           if (response?.data?.id) {
@@ -104,14 +103,12 @@ export class ContactUsFormComponent  implements OnInit {
           this.ngZone.run(() => {
             this.captchaToken = response;
             this.isCaptchaVerified = true;
-            console.log('Captcha verified with token:', response);
           });
         },
         'expired-callback': () => {
           this.ngZone.run(() => {
             this.isCaptchaVerified = false;
             this.captchaToken = '';
-            console.log('Captcha expired');
           });
         }
       });

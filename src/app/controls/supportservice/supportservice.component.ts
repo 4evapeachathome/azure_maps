@@ -401,7 +401,6 @@ setupSearchDebounce() {
       return distance <= this.searchRadius;
     });
   
-    console.log(`Filtering within ${this.searchRadius}km of ${this.currentState || 'unknown location'}`);
   
     this.filteredlocationwithinradius = this.filteredLocations;
     // Update map markers if using them
@@ -484,8 +483,6 @@ onSearchClear() {
       this.locationcard = true;
       // this.center = { lat: this.latitude, lng: this.longitude };
   
-      console.log('Current position:', this.center);
-      console.log('Latitude:', this.latitude, 'Longitude:', this.longitude);
       await this.reverseGeocodeForState({ lat: 37.3387, lng: -121.8853 });
   
       this.updateSearchedLocationMarker({ lat: 37.3387, lng: -121.8853 });
@@ -524,7 +521,6 @@ onSearchClear() {
           const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
           this.currentState = stateName;
           this.searchRadius = STATE_NAME_TO_DISTANCE[stateAbbr as keyof typeof STATE_NAME_TO_DISTANCE] || DEFAULT_DISTANCE;
-          console.log(`Detected state: ${this.currentState}, using radius: ${this.searchRadius}km`);
         }
       }
     } catch (error) {
@@ -578,7 +574,6 @@ onSearchClear() {
       (response: any) => {
         if (response.data && response.data.length > 0) {        
           this.filterOptions = response.data; 
-          console.log('Fetched filter options:', this.filterOptions);
         } else {
           console.warn('No filter options found in the Strapi response.');
           this.filterOptions = []; 

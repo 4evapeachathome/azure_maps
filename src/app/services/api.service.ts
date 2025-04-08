@@ -221,7 +221,6 @@ export class ApiService {
     };
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
         map((res: any) => {
-            console.log('data:', res.data);
             return res.data.map((resData: any) => {
                 if (resData && resData.webImage && resData.webImage.url) {
                     resData.image = `${environment.apiHost}${resData.webImage.url}`;
@@ -255,7 +254,6 @@ export class ApiService {
     };
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
-        console.log('data:', res.data);
         return res.data.map((resData: any) => {
           if (resData && resData.webImage && resData.webImage.url) {
             resData.image = `${environment.apiHost}${resData.webImage.url}`;
@@ -286,7 +284,6 @@ export class ApiService {
     };
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
         map((res: any) => {
-            console.log('data:', res.data);
             return res.data.map((resData: any) => {
                 if (resData && resData.webImage && resData.webImage.url) {
                     resData.image = `${environment.apiHost}${resData.webImage.url}`;
@@ -326,9 +323,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
 
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
-      console.log('Raw API Response:', res.data);
-      
-      return res.data.map((resData: any) => {
+       return res.data.map((resData: any) => {
         const sliderContent = resData[mainParam]?.sliderContent 
           ? resData[mainParam].sliderContent.map((content: any) => ({
               slidercontent: content.slidercontent || [],
@@ -401,7 +396,6 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
 
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
-        console.log('data:', res);
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
           resData.image = `${environment.apiHost}${resData.webImage.url}`;
@@ -430,7 +424,6 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
   
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
-        console.log('data:', res);
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
           resData.image = `${environment.apiHost}${resData.webImage.url}`;
@@ -552,7 +545,6 @@ getServiceFilterOptions(): Observable<any> {
 
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
-      console.log('Service filter options data:', res);
       if (res.data && res.data.length > 0 && res.data[0] && res.data[0].filterOptions) {
         // Extract and flatten the filterOptions from res.data[0].attributes.filterOptions
         const filterOptions = res.data[0].filterOptions.map((item: any) => ({
@@ -620,7 +612,6 @@ getPartnerViolenceTitle(): Observable<any> {
 
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
-      console.log('data:', res);
       const resData = res.data;
       if (resData && resData.webImage && resData.webImage.url) {
         resData.image = `${environment.apiHost}${resData.webImage.url}`;
@@ -673,12 +664,9 @@ getPartnerViolenceTitle(): Observable<any> {
       }
     };
   
-    console.log('Fetching Types of Abuse with options:', JSON.stringify(options));
   
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
-        console.log('Raw response:', res);
-  //debugger;
         const resData = res?.data;
         if (!resData) {
           console.warn('No data received from API');
@@ -697,7 +685,6 @@ getPartnerViolenceTitle(): Observable<any> {
           resData.AbuseGallery = [];
         }
   
-        console.log('Processed data:', resData);
         return resData;
       }),
       catchError(error => {
@@ -718,7 +705,6 @@ getPartnerViolenceTitle(): Observable<any> {
   
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
-        console.log('data:', res);
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
           resData.image = `${environment.apiHost}${resData.webImage.url}`;
@@ -748,9 +734,8 @@ getPartnerViolenceTitle(): Observable<any> {
     };
   
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
-      tap((res: any) => console.log('Raw API response:', res)),
+      tap((res: any) => { }),
       map((res: any) => {
-        console.log('Mapped data:', res);
         const resData = res.data[0];
   
         if (resData && resData[mainParam]) {
@@ -788,7 +773,6 @@ getPartnerViolenceTitle(): Observable<any> {
   
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
-        console.log('data:', res);
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
           resData.image = `${environment.apiHost}${resData.webImage.url}`;
