@@ -33,6 +33,18 @@
   --border-color: var(--color-Gray54);
   --border-width: 1px;
 }
+.button-clear {
+  --background-activated: transparent;
+  --background-focused: transparent;
+  --background-hover: transparent;
+  --background-activated-opacity: 0;
+  --background-focused-opacity: .12;
+  --background-hover-opacity: .04;
+  --color: var(--color-primary) !important;
+  --color-hover: var(--color-dark-Gray) !important;
+  --padding-start: 0;
+  --padding-end: 0;
+}
 .sc-ion-buttons-md-s ion-button:not(.button-round) {
   --border-radius: 8px;
   --padding-start: 1.1em;
@@ -57,6 +69,11 @@ ion-card-content {
   ul{
     margin-block-start: 0.5em;
     margin-block-end: 0.5em;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    li{
+      line-height: inherit;
+    }
   }
 }
 ion-button{
