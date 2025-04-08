@@ -34,13 +34,38 @@ export class HealthyrelatitonshipComponent  implements OnInit {
         if (data) {
           this.img = data.image;
           this.title = Array.isArray(data.title) ? data.title : [];
+  
           // Handle both contentBlocks and ContentBlocks for compatibility
-          const blocks = data.contentBlocks || data.contentBlocks;
+          const blocks = data.contentBlocks || data.ContentBlocks;
           if (blocks) {
             this.contentBlocks = Array.isArray(blocks) ? blocks : [blocks];
+  
+            // Merge all unordered lists into one
+            this.contentBlocks.forEach(block => {
+              if (Array.isArray(block.multilinerichtextbox)) {
+                const listItems = block.multilinerichtextbox
+                  .filter((item:any) => item.type === 'list' && item.format === 'unordered')
+                  .flatMap((item:any) => item.children || []);
+  
+                const nonListItems = block.multilinerichtextbox
+                  .filter((item:any) => !(item.type === 'list' && item.format === 'unordered'));
+  
+                if (listItems.length > 0) {
+                  nonListItems.push({
+                    type: 'list',
+                    format: 'unordered',
+                    children: listItems
+                  });
+                }
+  
+                block.multilinerichtextbox = nonListItems;
+              }
+            });
+  
           } else {
             this.contentBlocks = [];
           }
+  
           this.paragraphContent = data.title?.[1]?.children?.[0]?.text || '';
         }
       },
@@ -49,5 +74,6 @@ export class HealthyrelatitonshipComponent  implements OnInit {
       }
     );
   }
+  
 
 }
