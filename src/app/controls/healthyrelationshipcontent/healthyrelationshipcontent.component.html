@@ -1,17 +1,19 @@
-<ion-card>
+<ion-card class="legal-container p-0">
   <ion-card-content>
     <ng-container *ngFor="let item of content">
       
       <!-- Render Heading -->
-      <h3 *ngIf="item.type === 'heading' && item.children[0]?.text.trim().length > 0" 
+     
+      <h3 *ngIf="item.type === 'heading' && item.children[0]?.text.trim()" 
           [ngClass]="{ 'bold': item.children[0]?.bold }">
         {{ item.children[0]?.text.trim() }}
       </h3>
+  
 
-      <!-- Render Paragraph if it has meaningful text (after trimming) -->
-      <p *ngIf="item.type === 'paragraph' && item.children[0]?.text.trim().length > 0">
-        {{ item.children[0]?.text.trim() }}
-      </p>
+      <!-- Render Paragraph if it has text -->
+      <ion-text *ngIf="item.type === 'paragraph' && item.children[0]?.text.trim()">
+        {{ item.children[0]?.text }}
+      </ion-text>
 
       <!-- Render Spacer for empty paragraphs (after trimming) -->
       <div *ngIf="item.type === 'paragraph' && item.children[0]?.text.trim().length === 0" style="height: 1rem;"></div>
@@ -19,6 +21,6 @@
     </ng-container>
 
     <!-- Read More Button -->
-    <ion-button *ngIf="isBtnVisible" [routerLink]="['/nopeaceathome']">Read More</ion-button>
+    <ion-button *ngIf="isBtnVisible" [routerLink]="['/nopeaceathome']" fill="clear" size="small" class="rmc-button">Read More  <ion-img src="../../../assets/downArrow.svg" alt="Contact Us"></ion-img></ion-button>
   </ion-card-content>
 </ion-card>

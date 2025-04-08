@@ -26,7 +26,7 @@ export class PartnerviolencePage implements OnInit {
   ngOnInit() {
     this.apiService.getPartnerViolenceContent().subscribe(
       (response) => {
-        debugger;
+        //debugger;
         const data = response.data[0];
         this.title = data.title;
         this.levels = data.ipvpartnerviolence;
