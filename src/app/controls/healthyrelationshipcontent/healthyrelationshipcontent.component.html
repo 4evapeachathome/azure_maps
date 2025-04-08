@@ -1,15 +1,21 @@
 <ion-card>
   <ion-card-content>
     <ng-container *ngFor="let item of content">
-      <!-- Render Heading if Available -->
-      <h3 *ngIf="item.type === 'heading' && item.children[0]?.text.trim()" [ngClass]="{ 'bold': item.children[0]?.bold }">
+      
+      <!-- Render Heading -->
+      <h3 *ngIf="item.type === 'heading' && item.children[0]?.text.trim()" 
+          [ngClass]="{ 'bold': item.children[0]?.bold }">
         {{ item.children[0]?.text }}
       </h3>
 
-      <!-- Render Paragraph Only if It Has Text -->
+      <!-- Render Paragraph if it has text -->
       <p *ngIf="item.type === 'paragraph' && item.children[0]?.text.trim()">
         {{ item.children[0]?.text }}
       </p>
+
+      <!-- Render Spacer for empty paragraphs -->
+      <div *ngIf="item.type === 'paragraph' && !item.children[0]?.text.trim()" style="height: 1rem;"></div>
+
     </ng-container>
 
     <!-- Read More Button -->
