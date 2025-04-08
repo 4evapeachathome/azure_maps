@@ -1,0 +1,30 @@
+
+<ion-content [fullscreen]="true">
+
+  <ion-grid  class="p-b-0 sm-cont-margin">
+
+    <!-- First Row: Single Component -->
+    <ion-row class="comp-space">
+      <ion-col>
+        <pathome-legalrights [endpoint]="legalrightsbannercontent"></pathome-legalrights>
+      </ion-col>
+    </ion-row>
+    <ion-row class="comp-space">
+      <ion-col class="ion-text-center">
+        <ion-button color="primary" [routerLink]="['/federallaw']" size="small">See Federal Laws</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button color="primary" [routerLink]="['/uslawsbystate']" size="small">See State Laws</ion-button>
+        </ion-col>
+        </ion-row>
+  </ion-grid>
+  <ion-grid class="footer-container">
+   
+    <ion-row>
+      <ion-col class="p-0">
+        <pathome-footer></pathome-footer>
+        </ion-col>
+        </ion-row>
+  </ion-grid>
+
+</ion-content>

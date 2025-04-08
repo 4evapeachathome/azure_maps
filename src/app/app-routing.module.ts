@@ -19,7 +19,12 @@ const routes: Routes = [
   {
     path: 'typesofabuse',
     loadChildren: () => import('./typesofabuses/typesofabuses.module').then( m => m.TypesofabusesPageModule)
+  },
+  {
+    path: 'legalrights',
+    loadChildren: () => import('./legalrightshome/legalrightshome.module').then( m => m.LegalrightshomePageModule)
   }
+
 
 ];
 
