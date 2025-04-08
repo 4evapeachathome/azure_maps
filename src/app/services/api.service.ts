@@ -678,7 +678,7 @@ getPartnerViolenceTitle(): Observable<any> {
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
         console.log('Raw response:', res);
-  debugger;
+  //debugger;
         const resData = res?.data;
         if (!resData) {
           console.warn('No data received from API');
