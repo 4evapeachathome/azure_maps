@@ -32,10 +32,15 @@
   </ion-row>
   <ion-row>
     <ion-col>
-      <div class="cc-box-content">
+      <div class="cc-box-content ccbc-flex-column">
+        <ng-container *ngIf="paragraphContent">
+          <ion-text class="content-paragraph">
+            {{ paragraphContent }}
+          </ion-text>
+        </ng-container>
     <ion-card *ngFor="let block of contentBlocks">
-      <ion-card-header>
-        <ion-card-title *ngIf="block.multilinerichtextbox?.[0]?.type === 'heading'">
+      <ion-card-header *ngIf="block.multilinerichtextbox?.[0]?.type === 'heading'">
+        <ion-card-title >
           <ion-text>
             {{ block.multilinerichtextbox[0]?.children[0]?.text }}
           </ion-text>

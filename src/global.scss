@@ -710,6 +710,9 @@ ion-card {
     font-size: $font-size-l;
   }
 }
+.ccbc-flex-column{
+  flex-direction: column;
+}
 .ii-power{
   width: 80%;
   margin: 0 auto;
@@ -752,10 +755,14 @@ ion-card {
   h3{
     color: var(--color-deep-Gray);
   font-size: $font-size-base !important;
+  font-weight:$font-bold;
+  margin-top: 10px;
+  margin-bottom: 10px;
   }
   ion-text{
     color: var(--color-dark-Gray);
   font-size: $font-size-md !important;
+  display: block;
   }
   .lc-image{
 height: 320px;
@@ -764,4 +771,12 @@ height: 320px;
 }
 .backtomap-button{
   margin-top: -14px;
+}
+.rmc-button{
+  margin-top: 16px;
+  ion-img{
+    margin-left: 12px;
+    height: 12px;
+
+  }
 }

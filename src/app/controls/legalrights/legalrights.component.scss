@@ -1,0 +1,41 @@
+.legal-content {
+    p {
+      margin: 1em 0;
+      line-height: 1.6;
+    }
+  
+    h1, h2, h3 {
+      font-weight: bold;
+      margin-top: 1.5em;
+    }
+  
+    ul {
+      padding-left: 1.2em;
+      margin: 1em 0;
+    }
+  
+    li {
+      margin-bottom: 0.5em;
+    }
+  
+    a {
+      color: #007bff;
+      text-decoration: underline;
+    }
+  
+    u {
+      text-decoration: underline;
+    }
+  
+    strong {
+      font-weight: bold;
+    }
+  
+    .top-illustration img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      margin-bottom: 1em;
+    }
+  }
+  

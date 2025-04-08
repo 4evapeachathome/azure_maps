@@ -21,14 +21,12 @@ export class HealthyrelationshipcontentComponent  implements OnInit {
     this.getHealthyRelationshipContent(this.endpoint);
   }
 
-  getHealthyRelationshipContent(endpoint: string){
+  getHealthyRelationshipContent(endpoint: string) {
     this.apiService.getHealthyRelationShipContent(endpoint).subscribe(
       (response) => {
         if (response?.data?.length > 0) {
-          // Filter out empty paragraphs
-          this.content = response.data[0].content.filter((item:any) => 
-            item.children[0]?.text.trim().length > 0
-          );
+          // Keep all paragraphs, including empty ones
+          this.content = response.data[0].content;
         }
       },
       (error) => {

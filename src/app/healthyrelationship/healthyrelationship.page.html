@@ -1,26 +1,31 @@
 
 <ion-content [fullscreen]="true">
   <ion-grid  class="p-b-0 sm-cont-margin">
- <ion-row>
+    <ion-row class="comp-space">
   <ion-col size="12">
   <pathome-healthyrelatitonship [endpoint]="healtyrelationTitleContent"></pathome-healthyrelatitonship>
   </ion-col>
  </ion-row>
- <ion-row>
-  <ion-col size="10">
+ <ion-row class="comp-space">
+  <ion-col size="12">
     <pathome-healthyrelationshipcontent [endpoint]="healthyrelationcontentwithoutbutton" [isBtnVisible]="false"></pathome-healthyrelationshipcontent>
   </ion-col>
  </ion-row>
- <ion-row>
+ <ion-row class="comp-space">
   <ion-col size="12">
     <pathome-home-slider [endpoint]="healthyrelationslider" [paramName]="'HealthyRelationshipSlider'" [showButton]="false"></pathome-home-slider>
   </ion-col>
 </ion-row>
-<ion-row>
-  <ion-col size="10">
+<ion-row class="comp-space">
+  <ion-col size="12">
     <pathome-healthyrelationshipcontent [endpoint]="healthyrelationcontentwithbutton" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
   </ion-col>
  </ion-row>
+ <ion-row class="comp-space">
+  <ion-col class="ion-text-center">
+    <ion-button color="primary" size="small">Explore the Next Chapter.....</ion-button>
+    </ion-col>
+    </ion-row>
 </ion-grid>
 <ion-grid class="footer-container">
   <ion-row>
