@@ -157,8 +157,6 @@ export class DailyTipsComponent implements OnInit {
   }
 
   selectDay(index: number) {
-    console.log(`Day selected: ${index}`);
-
     if (this.selectedDay !== index) {
       this.selectedDay = index;
       // Update currentDate to the selected day's date

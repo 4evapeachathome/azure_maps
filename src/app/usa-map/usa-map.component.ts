@@ -126,8 +126,6 @@ isSmallState(stateId?: string): boolean {
     this.selectedState = { ...state };
     this.stateSelected.emit(state);
     this.showLawInfo = true;
-    console.log('Selected state ID:', this.selectedState.id); // Debug the ID
-    console.log('Selected state:', this.selectedState); // Debug the entire object
   }
 
   resetState() {
@@ -139,7 +137,6 @@ isSmallState(stateId?: string): boolean {
 
   getSelectedStatePath(): string {
     const location = this.usaMap.locations.find(loc => loc.id.toLowerCase() === this.selectedState?.id?.toLowerCase());
-    console.log('Found location for Minnesota:', location); // Debug the found location
     return location?.path || '';
   }
 

@@ -47,9 +47,7 @@ export class PartnerViolenceProgressbarComponent  implements OnInit {
 
   getLevelNumber(level: IpvPartnerViolence): number {
     const headingText = this.getHeadingText(level);
-    console.log('Heading text:', headingText);
     const levelNumber = parseInt(headingText.split(' ')[1], 10) || 0;
-    console.log('Level number:', levelNumber);
     return levelNumber;
   }
 

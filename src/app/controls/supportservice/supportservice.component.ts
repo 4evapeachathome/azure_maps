@@ -11,6 +11,7 @@ import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
 import { APIEndpoints } from 'src/shared/endpoints';
 import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
+import { MenuService } from 'src/shared/menu.service';
 
 declare var google: any;
 
@@ -119,7 +120,7 @@ export class SupportserviceComponent  implements OnInit{
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
   filteredlocationwithinradius: any[] = [];
-  public readonly endPoint : string = APIEndpoints.supportService;
+  
 
   autocompleteService: any;
   placesService: any;
@@ -134,7 +135,7 @@ export class SupportserviceComponent  implements OnInit{
   
 
 
-  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController) { 
+  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController, private sharedDataService: MenuService) { 
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(
       document.createElement('div')
@@ -144,10 +145,8 @@ export class SupportserviceComponent  implements OnInit{
  
 
   ngOnInit() {
-    this.initializeGoogleMapsServices();
-    this.getSupportServiceFilterOptions();
-    this.getSupportServiceData(this.endPoint);
-
+    this.initializeGoogleMapsServices();   
+    this.loadFilterSupportSeviceData();
     this.setupSearchDebounce();
   }
 
@@ -156,6 +155,16 @@ export class SupportserviceComponent  implements OnInit{
       this.zoom = this.map.getZoom()!;
       this.updateMarkerLabels();
     });
+}
+
+loadFilterSupportSeviceData(){
+  this.sharedDataService.filterOptions$.subscribe(options => {
+    this.filterOptions = options;
+  });
+
+  this.sharedDataService.organizations$.subscribe(orgs => {
+    this.organizations = orgs;
+  });
 }
 
 updateMarkerLabels() {
@@ -401,7 +410,6 @@ setupSearchDebounce() {
       return distance <= this.searchRadius;
     });
   
-    console.log(`Filtering within ${this.searchRadius}km of ${this.currentState || 'unknown location'}`);
   
     this.filteredlocationwithinradius = this.filteredLocations;
     // Update map markers if using them
@@ -484,8 +492,6 @@ onSearchClear() {
       this.locationcard = true;
       // this.center = { lat: this.latitude, lng: this.longitude };
   
-      console.log('Current position:', this.center);
-      console.log('Latitude:', this.latitude, 'Longitude:', this.longitude);
       await this.reverseGeocodeForState({ lat: 37.3387, lng: -121.8853 });
   
       this.updateSearchedLocationMarker({ lat: 37.3387, lng: -121.8853 });
@@ -524,7 +530,6 @@ onSearchClear() {
           const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
           this.currentState = stateName;
           this.searchRadius = STATE_NAME_TO_DISTANCE[stateAbbr as keyof typeof STATE_NAME_TO_DISTANCE] || DEFAULT_DISTANCE;
-          console.log(`Detected state: ${this.currentState}, using radius: ${this.searchRadius}km`);
         }
       }
     } catch (error) {
@@ -573,45 +578,44 @@ onSearchClear() {
 
   
 
-  getSupportServiceFilterOptions() {
-    this.apiService.getServiceFilterOptions().subscribe(
-      (response: any) => {
-        if (response.data && response.data.length > 0) {        
-          this.filterOptions = response.data; 
-          console.log('Fetched filter options:', this.filterOptions);
-        } else {
-          console.warn('No filter options found in the Strapi response.');
-          this.filterOptions = []; 
-        }
-      },
-      (error) => {
-        console.error('Error fetching service filter options:', error);
-        this.filterOptions = []; 
-      }
-    );
-   }
+  // getSupportServiceFilterOptions() {
+  //   this.apiService.getServiceFilterOptions().subscribe(
+  //     (response: any) => {
+  //       if (response.data && response.data.length > 0) {        
+  //         this.filterOptions = response.data; 
+  //       } else {
+  //         console.warn('No filter options found in the Strapi response.');
+  //         this.filterOptions = []; 
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching service filter options:', error);
+  //       this.filterOptions = []; 
+  //     }
+  //   );
+  //  }
   
-   getSupportServiceData(endpoint: string) {
-    this.apiService.getAllSupportServices(endpoint).subscribe(
-      (response: OrganizationResponse) => {
-        if (response.data.length > 0) {
-          const seenNames = new Set<string>();
-          this.organizations = response.data.filter(org => {
-            if (seenNames.has(org.OrgName)) {
-              return false; 
-            }
-            seenNames.add(org.OrgName);
-            return true;
-          });
-        } else {
-          console.warn('No data found in the response.');
-        }
-      },
-      (error) => {
-        console.error('Error fetching support service data:', error);
-      }
-    );
-  }
+  //  getSupportServiceData(endpoint: string) {
+  //   this.apiService.getAllSupportServices(endpoint).subscribe(
+  //     (response: OrganizationResponse) => {
+  //       if (response.data.length > 0) {
+  //         const seenNames = new Set<string>();
+  //         this.organizations = response.data.filter(org => {
+  //           if (seenNames.has(org.OrgName)) {
+  //             return false; 
+  //           }
+  //           seenNames.add(org.OrgName);
+  //           return true;
+  //         });
+  //       } else {
+  //         console.warn('No data found in the response.');
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching support service data:', error);
+  //     }
+  //   );
+  // }
   
   handleSearchBarClick() {
     // Get applied filter values

@@ -105,8 +105,7 @@ export class UnhealthyRelationshipContent  implements OnInit {
             };
           });
         }
-        console.log('Processed scenario data:', this.scenarioData);
-      },
+     },
       (error) => console.error('Error loading data:', error)
     );
   }

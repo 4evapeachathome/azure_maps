@@ -29,7 +29,6 @@ export class HealthyrelatitonshipComponent  implements OnInit {
   getHealthyRelationshipData(endpoint: string) {
     this.apiService.getHealthyRelationship(endpoint).subscribe(
       (response) => {
-        console.log('API Response:', response);
         const data = response;
         if (data) {
           this.img = data.image;

@@ -28,7 +28,6 @@ export class AbusesgalleryComponent  implements OnInit {
         if (data && data.AbuseGallery) {
           this.abuseGallery = data.AbuseGallery;
           this.title = data.title;
-          console.log('Loaded abuse gallery:', this.abuseGallery);
         }
       },
       (error) => {

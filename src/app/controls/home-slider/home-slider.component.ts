@@ -70,9 +70,6 @@ export class HomeSliderComponent implements OnInit {
           // Set default index to show first image & text
           this.currentIndex = 0;
   
-          console.log('Main Title:', this.mainTitle);
-          console.log('Descriptions:', this.descriptions);
-          console.log('Image URLs:', this.imageUrls);
         }
       },
       (error) => {
@@ -82,7 +79,6 @@ export class HomeSliderComponent implements OnInit {
   }
   
   onImageLoad(index: number) {
-    console.log(`Image ${index} loaded`);
   }
 
   prevSlide() {
