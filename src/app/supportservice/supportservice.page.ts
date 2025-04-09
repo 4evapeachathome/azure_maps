@@ -18,8 +18,7 @@ export class SupportservicePage implements OnInit {
 
   ionViewWillEnter() {
     if (this.supportServiceComponent) {
-      this.supportServiceComponent.getSupportServiceFilterOptions();
-      this.supportServiceComponent.getSupportServiceData(this.supportServiceComponent.endPoint);
+      this.supportServiceComponent.loadFilterSupportSeviceData();
     }    
 }
 
