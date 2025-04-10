@@ -177,6 +177,9 @@ ion-card {
     ion-text{
       color: var(--color-dark-Gray);
       font-size: $font-size-md;
+     // display: block;
+    }
+    .cb-content{
       display: block;
     }
   }
@@ -723,24 +726,29 @@ ion-card {
   flex-direction: column;
 }
 .ii-power{
-  width: 80%;
-  margin: 0 auto;
- 
+  width: 90%;
+margin: 0 auto;
+ .iip-container{
+ width: 90%;
+margin: 0 auto;
+ }
   h2 {
     font-size: $font-size-xl;
     color: var(--color-deep-Gray);
     font-weight:$font-bold  ;
     margin-bottom: 8px;
+    text-align: center;
   }
   h3{
-    font-size: $font-size-xl;
-    color: var(--color-deep-Gray);
+    font-size: $font-size-l;
+    color: var(--color-primary);
+    font-weight: $font-bold  ;
   }
   ion-list{
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    width: 80%;
+    width: 90%;
     ion-item{
       font-size: $font-size-md;
       color: var(--color-dark-Gray);

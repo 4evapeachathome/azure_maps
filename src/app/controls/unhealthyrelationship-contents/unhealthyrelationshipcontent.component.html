@@ -20,7 +20,7 @@
             </ion-text>
 
             <!-- Handle paragraphs -->
-            <ion-text class="content-paragraph" *ngIf="content.type === 'paragraph'">
+            <ion-text class="cb-content" *ngIf="content.type === 'paragraph'">
            
                 <ng-container *ngFor="let part of content.children">
                   <span *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></span>
@@ -89,7 +89,7 @@
               </h3>
             </ion-text>
 
-            <ion-text class="content-paragraph" *ngIf="content.type === 'paragraph'">
+            <ion-text class="cb-content" *ngIf="content.type === 'paragraph'">
            
                 <ng-container *ngFor="let part of content.children">
                   <span *ngIf="part.bold" color="dark"><b>{{ part.text }}</b></span>

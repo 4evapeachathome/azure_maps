@@ -17,7 +17,7 @@
        
           </ng-container>
           <ng-container *ngIf="item.type === 'paragraph'">
-            <ion-text>
+            <ion-text class="cb-content">
               <ng-container *ngFor="let child of item.children">
                 {{ child.text }}
               </ng-container>
@@ -34,7 +34,7 @@
     <ion-col>
       <div class="cc-box-content ccbc-flex-column">
         <ng-container *ngIf="paragraphContent">
-          <ion-text class="content-paragraph">
+          <ion-text class="cb-content">
             {{ paragraphContent }}
           </ion-text>
         </ng-container>
