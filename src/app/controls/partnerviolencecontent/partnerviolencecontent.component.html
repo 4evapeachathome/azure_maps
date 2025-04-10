@@ -48,7 +48,7 @@
               <div *ngSwitchCase="'paragraph'">
                 <ng-container *ngFor="let item of content.children">
                   <ng-container [ngSwitch]="item.type">
-                    <div *ngSwitchCase="'text'">{{ item.text }}</div>
+                    <ion-text *ngSwitchCase="'text'">{{ item.text }}</ion-text>
                   </ng-container>
                 </ng-container>
               </div>
@@ -71,7 +71,7 @@
     </div>
 </ion-col>
 </ion-row>
-<ion-row class="comp-space">
+<ion-row>
   <ion-col>
     <ng-container *ngFor="let content of titleparaContent">
       <ng-container [ngSwitch]="content.type">
@@ -86,11 +86,11 @@
         </ion-text>
         <!-- Handle paragraphs -->
         <ion-text *ngSwitchCase="'paragraph'">
-          <p>
+        
             <ng-container *ngFor="let item of content.children">
               {{ item.text }}
             </ng-container>
-          </p>
+        
         </ion-text>
       </ng-container>
     </ng-container>

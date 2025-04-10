@@ -65,7 +65,7 @@ export class HealthyrelatitonshipComponent  implements OnInit {
             this.contentBlocks = [];
           }
   
-          this.paragraphContent = data.title?.[1]?.children?.[0]?.text || '';
+          //this.paragraphContent = data.title?.[1]?.children?.[0]?.text || '';
         }
       },
       (error) => {
