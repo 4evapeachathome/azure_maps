@@ -23,7 +23,7 @@
                 <!-- <p class="paragraph-class"> -->
                   <ng-container *ngFor="let item of paragraph.children">
                     <ng-container [ngSwitch]="item.type">
-                      <ion-text *ngSwitchCase="'text'" [ngClass]="{'cb-content-highlight': item.bold}">
+                      <ion-text class="cb-content" *ngSwitchCase="'text'" [ngClass]="{'cb-content-highlight': item.bold}">
                         <strong *ngIf="item.bold">{{ item.text }}</strong>
                         <span *ngIf="!item.bold">{{ item.text }}</span>
                       </ion-text>

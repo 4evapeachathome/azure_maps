@@ -17,7 +17,7 @@
        
           </ng-container>
           <ng-container *ngIf="item.type === 'paragraph'">
-            <ion-text>
+            <ion-text class="cb-content">
               <ng-container *ngFor="let child of item.children">
                 {{ child.text }}
               </ng-container>
@@ -33,11 +33,11 @@
   <ion-row>
     <ion-col>
       <div class="cc-box-content ccbc-flex-column">
-        <ng-container *ngIf="paragraphContent">
-          <ion-text class="content-paragraph">
+        <!-- <ng-container *ngIf="paragraphContent">
+          <ion-text class="cb-content">
             {{ paragraphContent }}
           </ion-text>
-        </ng-container>
+        </ng-container> -->
     <ion-card *ngFor="let block of contentBlocks">
       <ion-card-header *ngIf="block.multilinerichtextbox?.[0]?.type === 'heading'">
         <ion-card-title >

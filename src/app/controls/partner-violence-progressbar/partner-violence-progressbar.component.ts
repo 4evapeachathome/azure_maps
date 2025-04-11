@@ -31,18 +31,15 @@ interface IpvPartnerViolence {
     imports: [CommonModule, IonicModule],
 })
 export class PartnerViolenceProgressbarComponent  implements OnInit {
-  @Input() level!: IpvPartnerViolence;
+  @Input() levels: IpvPartnerViolence[] = [];
 
   constructor() {}
 
   ngOnInit() {}
 
   getHeadingText(level: IpvPartnerViolence): string {
-    const heading = level.multilinerichtextbox.find((item) => item.type === 'heading');
-    if (heading && heading.children && heading.children[0] && heading.children[0].text) {
-      return heading.children[0].text;
-    }
-    return 'Unknown Level';
+    const heading = level.multilinerichtextbox.find(item => item.type === 'heading');
+    return heading?.children?.[0]?.text ?? 'Unknown Level';
   }
 
   getLevelNumber(level: IpvPartnerViolence): number {
