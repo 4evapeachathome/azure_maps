@@ -10,6 +10,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { ApiService } from './services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
+import { Capacitor } from '@capacitor/core';
 
 
 export interface OrganizationResponse {
@@ -115,13 +116,12 @@ export class AppComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.loadInitialData();
-    this.platform.ready().then(() => {
-      // Set overlay to false to prevent content under status bar
-      StatusBar.setOverlaysWebView({ overlay: false });
-  
-      // Optional: Set light/dark content based on your app design
-      StatusBar.setStyle({ style: Style.Dark }); // or Style.Light
-    });
+    if (Capacitor.isNativePlatform()) {
+      this.platform.ready().then(() => {
+        StatusBar.setOverlaysWebView({ overlay: false });
+        StatusBar.setStyle({ style: Style.Dark }); // or Style.Light
+      });
+    }
 
     const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
     if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
