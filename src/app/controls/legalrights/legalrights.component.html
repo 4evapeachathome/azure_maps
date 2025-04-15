@@ -3,7 +3,7 @@
 <ion-grid>
   <pathome-breadcrumb></pathome-breadcrumb>
   <ion-row>
-    <!-- <div class="heading-img-container"> -->
+
       <ion-col  size="12" size-sm="6" >
         <ng-container *ngFor="let item of title">
           <ng-container *ngIf="item.type === 'heading'">
@@ -28,7 +28,7 @@
       <ion-col  size="12" size-sm="6"  class="img-container ">
         <ion-img [src]="imageUrl" alt="Healthy Relationship Illustration" *ngIf="imageUrl" class="hb-img"></ion-img>
       </ion-col>
-    <!-- </div> -->
+
   </ion-row>
   <ion-card>
     <ng-container *ngFor="let block of contentBlocks">
