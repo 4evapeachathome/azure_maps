@@ -697,7 +697,7 @@ ion-card {
   top: 40% !important;
 }
 
-.img-container{
+.img-container, .con-container-center{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -805,11 +805,7 @@ height: 320px;
 
   }
 }
-.img-postion{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 .legalrights-content{
   background: var(--color-white);
   color: var(--color-dark-Gray);
