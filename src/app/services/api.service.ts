@@ -767,26 +767,46 @@ getPartnerViolenceTitle(): Observable<any> {
       populate: {
         webImage: { fields: ['url'] },
         mobileImage: { fields: ['url'] },
-        contentBlocks: { fields: ['multilinerichtextbox'] }
+        contentBlocks: {
+          populate: {
+            webImage: { fields: ['url'] },
+            mobileImage: { fields: ['url'] }
+          }
+        }
       }
     };
-  
+
     return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
       map((res: any) => {
         const resData = res.data;
+        
+        // Handle top-level webImage
         if (resData && resData.webImage && resData.webImage.url) {
           resData.image = `${environment.apiHost}${resData.webImage.url}`;
         } else {
-          resData.image = ''; 
+          resData.image = '';
         }
+
+        // Handle contentBlocks webImage URLs
+        if (resData && resData.contentBlocks && Array.isArray(resData.contentBlocks)) {
+          resData.contentBlocks = resData.contentBlocks.map((block: any) => {
+            if (block.webImage && block.webImage.url) {
+              block.image = `${environment.apiHost}${block.webImage.url}`;
+            } else {
+              block.image = '';
+            }
+            return block;
+          });
+        }
+
         return resData;
       }),
       catchError(error => {
-        console.error('Error fetching healthy relationship data', error);
+        console.error('Error fetching legal rights data', error);
         return throwError(error);
       })
     );
-  }
+}
 
 }
 
