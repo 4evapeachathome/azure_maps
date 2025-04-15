@@ -722,10 +722,11 @@ ion-card {
   }
   ion-card-title {
     color: var(--color-deep-Gray) !important;
-    font-size: $font-size-l !important;
+    font-size: $font-size-base !important;
     ion-text{
       color: var(--color-deep-Gray) !important;
-      font-size: $font-size-l !important;
+      font-size: $font-size-base !important;
+      font-weight: $font-bold;
     }
   }
 }

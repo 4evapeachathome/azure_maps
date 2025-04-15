@@ -30,11 +30,19 @@
       </ion-col>
 
   </ion-row>
-  <ion-row>
-    <ion-col>
-      <div [innerHTML]="legalRightsContent" class="legalrights-content"></div>
-  </ion-col>
-  </ion-row>
+  <ion-card>
+    <ng-container *ngFor="let block of contentBlocks">
+      <ion-row class="content-block-row">
+        <ion-col [size]="block.image ? '12' : '12'" [sizeMd]="block.image ? '6' : '12'" class="content-col">
+          <div [innerHTML]="block.content" class="legal-content"></div>
+        </ion-col>
+        <ion-col size="12" sizeMd="6" *ngIf="block.image" class="image-col">
+          <ion-img [src]="block.image" alt="Content Block Image" class="content-block-img"></ion-img>
+        </ion-col>
+      </ion-row>
+    </ng-container>
+  </ion-card>
+  
 </ion-grid>
 </ion-card-content>
 </ion-card>
