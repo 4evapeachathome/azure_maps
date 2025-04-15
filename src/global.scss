@@ -811,13 +811,31 @@ height: 320px;
   justify-content: center;
 }
 .legalrights-content{
-  background: var(--color-white-smoke);
+  background: var(--color-white);
   color: var(--color-dark-Gray);
   font-size: $font-size-md;
   padding: 16px;
   border-radius: 8px;
+  h3{
+    color: var(--color-deep-Gray);
+  font-size: $font-size-base !important;
+  font-weight:$font-bold;
+  margin-top: 0;
+  margin-bottom: 0;
+  }
   p{
     color: var(--color-dark-Gray);
   font-size: $font-size-md;
+  margin-top: 10px;
+  margin-bottom: 10px;
   }
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+}
+.lrc-img{
+
+  height: 320px;
+  
 }

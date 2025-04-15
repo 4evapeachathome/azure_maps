@@ -1,48 +1,62 @@
-<ion-card class="container-banner cb-p-se" >
-  <ion-card-content class="ic-content">
-<ion-grid>
-  <pathome-breadcrumb></pathome-breadcrumb>
-  <ion-row>
-
-      <ion-col  size="12" size-sm="6" >
-        <ng-container *ngFor="let item of title">
-          <ng-container *ngIf="item.type === 'heading'">
-        
-              <ng-container *ngFor="let child of item.children">
-                <ion-text class="cb-header" [ngClass]="{'cb-header-highlight': child.bold}">
-                  <strong *ngIf="child.bold">{{ child.text }}</strong>
-                  <span *ngIf="!child.bold">{{ child.text }}</span>
+<ion-grid class="p-b-0">
+<ion-row class="comp-space">
+  <ion-col size="12">
+    <ion-card class="container-banner cb-p-se" >
+      <ion-card-content class="ic-content">
+    <ion-grid>
+      <pathome-breadcrumb></pathome-breadcrumb>
+      <ion-row>
+    
+          <ion-col  size="12" size-sm="6" >
+            <ng-container *ngFor="let item of title">
+              <ng-container *ngIf="item.type === 'heading'">
+            
+                  <ng-container *ngFor="let child of item.children">
+                    <ion-text class="cb-header" [ngClass]="{'cb-header-highlight': child.bold}">
+                      <strong *ngIf="child.bold">{{ child.text }}</strong>
+                      <span *ngIf="!child.bold">{{ child.text }}</span>
+                    </ion-text>
+                  </ng-container>
+           
+              </ng-container>
+              <ng-container *ngIf="item.type === 'paragraph'">
+                <ion-text>
+                  <ng-container *ngFor="let child of item.children">
+                    {{ child.text }}
+                  </ng-container>
                 </ion-text>
               </ng-container>
-       
-          </ng-container>
-          <ng-container *ngIf="item.type === 'paragraph'">
-            <ion-text>
-              <ng-container *ngFor="let child of item.children">
-                {{ child.text }}
-              </ng-container>
-            </ion-text>
-          </ng-container>
-        </ng-container>
-      </ion-col>
-      <ion-col  size="12" size-sm="6"  class="img-container ">
-        <ion-img [src]="imageUrl" alt="Healthy Relationship Illustration" *ngIf="imageUrl" class="hb-img"></ion-img>
-      </ion-col>
-
-  </ion-row>
-  <ion-card>
-    <ng-container *ngFor="let block of contentBlocks">
-      <ion-row class="content-block-row">
-        <ion-col [size]="block.image ? '12' : '12'" [sizeMd]="block.image ? '6' : '12'" class="content-col">
-          <div [innerHTML]="block.content" class="legal-content"></div>
-        </ion-col>
-        <ion-col size="12" sizeMd="6" *ngIf="block.image" class="image-col">
-          <ion-img [src]="block.image" alt="Content Block Image" class="content-block-img"></ion-img>
-        </ion-col>
+            </ng-container>
+          </ion-col>
+          <ion-col  size="12" size-sm="6"  class="img-container ">
+            <ion-img [src]="imageUrl" alt="Healthy Relationship Illustration" *ngIf="imageUrl" class="hb-img"></ion-img>
+          </ion-col>
+    
       </ion-row>
-    </ng-container>
-  </ion-card>
-  
+    
+      
+    </ion-grid>
+    </ion-card-content>
+    </ion-card>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col size="12">
+    <!-- <ion-card>
+      <ion-card-content> -->
+        <ng-container *ngFor="let block of contentBlocks">
+          <ion-row class="comp-space content-block-row">
+            <ion-col [size]="block.image ? '12' : '12'" [sizeMd]="block.image ? '6' : '12'" class="p-0">
+              <div [innerHTML]="block.content" class="legalrights-content"></div>
+            </ion-col>
+            <ion-col size="12" size-sm="6"  *ngIf="block.image" class="p-0 img-postion">
+              <ion-img [src]="block.image" alt="Content Block Image" class="lrc-img"></ion-img>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+      <!-- </ion-card-content>
+      </ion-card> -->
+  </ion-col>
+</ion-row>
+
 </ion-grid>
-</ion-card-content>
-</ion-card>

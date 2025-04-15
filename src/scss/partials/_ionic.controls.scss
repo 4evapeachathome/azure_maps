@@ -51,7 +51,7 @@
   --padding-end: 1.1em;
 }
 ion-content {
-  --background: #F1F1F1;
+  --background: var(--color-container);
   // --offset-bottom: auto !important;
   // --overflow: hidden;
   // overflow: auto;
