@@ -17,6 +17,7 @@ export class TypesofabusesPage implements OnInit {
   financialabuse:string=APIEndpoints.financialabuse;
   technologicalabuse:string=APIEndpoints.technologicalabuse;
   immigrantabuse:string=APIEndpoints.immigrantabuse;
+  systemabuse:string=APIEndpoints.systemabuse;
 
   @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
 

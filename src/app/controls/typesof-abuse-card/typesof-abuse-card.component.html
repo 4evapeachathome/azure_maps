@@ -17,9 +17,14 @@
       <h3 *ngIf="physicalAbuse.titleContent.length > 0">
         {{ getHeadingText(physicalAbuse.titleContent) }}
       </h3>
-      <p *ngIf="physicalAbuse.titleContent.length > 1">
-        {{ getDescriptionText(physicalAbuse.titleContent) }}
-      </p>
+      <div *ngIf="physicalAbuse.titleContent.length > 1">
+        <!-- Render paragraphs -->
+        <p *ngFor="let line of getParagraphLines()" class="description">{{ line }}</p>
+        <!-- Render list items under a single <ul> -->
+        <ul *ngIf="getListItems().length > 0" class="description-list">
+          <li *ngFor="let item of getListItems()">{{ item }}</li>
+        </ul>
+      </div>
 
       <!-- Expand/Collapse Section -->
       <div *ngIf="isExpanded" @expandCollapse>    
