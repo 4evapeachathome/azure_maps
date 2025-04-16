@@ -805,7 +805,10 @@ height: 320px;
 
   }
 }
-
+.lr-main-container{
+  width: 90%;
+  margin: 0 auto;
+}
 .legalrights-content{
   background: var(--color-white);
   color: var(--color-dark-Gray);
