@@ -47,4 +47,5 @@ export const APIEndpoints = {
     financialabuse :`${environment.apiHost}/api/financial-abuses`,
     technologicalabuse :`${environment.apiHost}/api/technological-abuses`,
     immigrantabuse :`${environment.apiHost}/api/immigrant-abuses`,
+    unhealthyrelationexamples :`${environment.apiHost}/api/unhealthyrelationexamples`,
   }
