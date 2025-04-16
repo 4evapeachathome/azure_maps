@@ -61,8 +61,45 @@ export class TypesofAbuseCardComponent  implements OnInit {
   }
 
   getDescriptionText(contentArray: any[]): string {
+    let description = '';
+
+    // Existing logic for paragraph
     const paragraph = contentArray.find(item => item.type === 'paragraph');
-    return paragraph?.children[0]?.text || '';
+    if (paragraph) {
+      description += paragraph.children[0]?.text || '';
+    }
+
+    // Logic for list
+    const list = contentArray.find(item => item.type === 'list');
+    if (list && list.children?.length > 0) {
+      const listItems = list.children
+        .filter((item: any) => item.type === 'list-item')
+        .map((item: any) => item.children[0]?.text || '')
+        .filter((text: string) => text)
+        .map((text: string) => `- ${text}`)
+        .join('\n');
+      if (listItems) {
+        description += (description ? '\n' : '') + listItems;
+      }
+    }
+
+    return description;
   }
 
+  // New method to get paragraph lines
+  getParagraphLines(): string[] {
+    const description = this.physicalAbuse ? this.getDescriptionText(this.physicalAbuse.titleContent) : '';
+    return description
+      .split('\n')
+      .filter(line => !line.startsWith('-'));
+  }
+
+  // New method to get list items
+  getListItems(): string[] {
+    const description = this.physicalAbuse ? this.getDescriptionText(this.physicalAbuse.titleContent) : '';
+    return description
+      .split('\n')
+      .filter(line => line.startsWith('-'))
+      .map(line => line.substring(2).trim());
+  }
 }

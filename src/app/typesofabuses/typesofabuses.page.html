@@ -61,6 +61,13 @@
                   </ion-col>
                 </ion-row>
 
+                <ion-row>
+                  <ion-col size="12">
+                    <pathome-typesof-abuse-card id="systemAbuse" [paramName]="'systemAbuse'"  [endpoint]="systemabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
+    
+                  </ion-col>
+                </ion-row>
+
      <ion-row>
       <ion-col size="12">
         <pathome-healthyrelationshipcontent [endpoint]="ipvtypesofabusesendpoint" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
@@ -77,6 +84,7 @@
         <a (click)="scrollToSection('financialAbuse')" [ngClass]="{'active': activeSection === 'financialAbuse'}">Financial Abuse</a>
         <a (click)="scrollToSection('technologicalAbuse')" [ngClass]="{'active': activeSection === 'technologicalAbuse'}">Technological Abuse</a>
         <a (click)="scrollToSection('immigrantAbuse')" [ngClass]="{'active': activeSection === 'immigrantAbuse'}">Immigrant Related Abuse</a>
+        <a (click)="scrollToSection('systemAbuse')" [ngClass]="{'active': activeSection === 'systemAbuse'}">System Abuse</a>
       </div>
     </ion-col>
     </ion-row>
