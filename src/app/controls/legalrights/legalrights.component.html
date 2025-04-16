@@ -46,10 +46,16 @@
       <ion-card-content> -->
         <ng-container *ngFor="let block of contentBlocks">
           <ion-row class="comp-space content-block-row">
-            <ion-col [size]="block.image ? '12' : '12'" [sizeMd]="block.image ? '6' : '12'" class="p-0 con-container-center">
+            <!-- Image on left for odd validWebImageIndex (1, 3, ...) -->
+            <ion-col size="12" size-md="6" *ngIf="block.webImage && block.validWebImageIndex % 2 === 1" class="p-0 img-container">
+              <ion-img [src]="block.image" alt="Content Block Image" class="lrc-img"></ion-img>
+            </ion-col>
+            <!-- Content column -->
+            <ion-col [size]="block.webImage ? '12' : '12'" [sizeMd]="block.webImage ? '6' : '12'" class="p-0 con-container-center">
               <div [innerHTML]="block.content" class="legalrights-content"></div>
             </ion-col>
-            <ion-col size="12" size-sm="6"  *ngIf="block.image" class="p-0 img-container">
+            <!-- Image on right for even validWebImageIndex (0, 2, ...) -->
+            <ion-col size="12" size-md="6" *ngIf="block.webImage && block.validWebImageIndex % 2 === 0" class="p-0 img-container">
               <ion-img [src]="block.image" alt="Content Block Image" class="lrc-img"></ion-img>
             </ion-col>
           </ion-row>
