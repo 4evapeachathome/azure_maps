@@ -4,13 +4,13 @@
   <ion-grid  class="p-b-0 sm-cont-margin">
 
     <!-- First Row: Single Component -->
-    <ion-row class="comp-space">
+    <ion-row >
       <ion-col>
         <pathome-legalrights [endpoint]="legalrightsbannercontent"></pathome-legalrights>
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">
-      <ion-col>
+      <ion-col style="padding-left: 12px;">
         <ion-button color="primary" [routerLink]="['/federallaw']" size="small" class="ion-margin-end">See Federal Laws</ion-button>
         <ion-button color="primary" [routerLink]="['/uslawsbystate']" size="small">See State Laws</ion-button>
         </ion-col>

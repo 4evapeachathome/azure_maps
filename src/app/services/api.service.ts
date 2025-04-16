@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Query } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
@@ -760,6 +760,25 @@ getPartnerViolenceTitle(): Observable<any> {
       })
     );
   }
+
+  getunhealthyrelationexample(): Observable<any> {
+    const endpoint = APIEndpoints.unhealthyrelationexamples; // '/api/unhealthyrelationexamples'
+    const options : QueryOptions = {
+      populate: ['content']
+    }; 
+    
+    return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+      map((res: any) => {
+        const resData = res.data[0];
+        return resData;
+      }),
+      catchError(error => {
+        console.error('Error fetching unhealthyrelationexamples API data', error);
+        return throwError(error);
+      })
+    );
+  }
+
 
   //getLegalRightsData
   getLegalRightsData(endpoint: string): Observable<any> {
