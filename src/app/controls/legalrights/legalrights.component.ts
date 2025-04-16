@@ -34,11 +34,18 @@ export class LegalrightsComponent  implements OnInit {
           this.imageUrl = data.image || '';
           this.title = Array.isArray(data.title) ? data.title : [];
 
-          // Process contentBlocks
-          this.contentBlocks = (data.contentBlocks || []).map((block: any) => ({
-            content: this.sanitizer.bypassSecurityTrustHtml(this.renderBlocks(block.content || [])),
-            image: block.image || ''
-          }));
+          // Process contentBlocks with validWebImageIndex
+          let validImageCount = 0;
+          this.contentBlocks = (data.contentBlocks || []).map((block: any) => {
+            const hasWebImage = !!block.webImage; // Check if webImage is not null
+            const blockData = {
+              content: this.sanitizer.bypassSecurityTrustHtml(this.renderBlocks(block.content || [])),
+              image: block.image || '',
+              webImage: block.webImage,
+              validWebImageIndex: hasWebImage ? validImageCount++ : -1 // Increment only for valid webImage
+            };
+            return blockData;
+          });
         }
       },
       (error) => {
