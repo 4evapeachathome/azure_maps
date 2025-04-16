@@ -3,7 +3,7 @@
 <ion-grid class="legal-container p-0" *ngFor="let scenario of scenarioData">
   <ion-row>
     <!-- First column - content (text/lists) based on contentPlacement -->
-    <ion-col size="12" size-sm="6" *ngIf="contentPlacement === 'left'" class="p-0">
+    <ion-col size="12" size-sm="6" *ngIf="contentPlacement === 'left'" class="p-0 con-container-center">
       <ion-card >
       <ion-card-content>
       
@@ -73,7 +73,7 @@
     </ion-col>
 
     <!-- Text column for right placement -->
-    <ion-col size="12" size-sm="6" *ngIf="contentPlacement === 'right'" >
+    <ion-col class="con-container-center" size="12" size-sm="6" *ngIf="contentPlacement === 'right'" >
       <ion-card >
       <ion-card-content>
      
