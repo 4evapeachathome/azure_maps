@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
 import usaMap from '@svg-maps/usa';
 import { ApiService } from '../services/api.service';
 import { BreadcrumbComponent } from "../controls/breadcrumb/breadcrumb.component";
+import { FormsModule } from '@angular/forms';
 
 interface Point {
   x: number;
@@ -27,7 +28,7 @@ interface StateLaw {
 @Component({
   selector: 'pathome-usa-map',
   standalone: true,
-  imports: [CommonModule, IonicModule, BreadcrumbComponent],
+  imports: [CommonModule, IonicModule, BreadcrumbComponent,FormsModule],
   templateUrl: './usa-map.component.html',
   styleUrls: ['./usa-map.component.scss']
 })
@@ -37,16 +38,27 @@ export class UsaMapComponent {
   @Input() selectedState: { id: string; name: string; path?: string } | null = null;
   showLawInfo = false;
   stateLaws: StateLaw[] = [];
+  isMobile: boolean = false; // Flag to check if the device is mobile
+  stateOptions: { name: string, code: string }[] = [];
 
-
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private platform: Platform) { 
+    this.isMobile = this.platform.is('android') || this.platform.is('ios');
+    this.stateOptions = Object.entries(this.stateAbbreviations).map(([key, value]) => {
+      return {
+        name: this.capitalizeWords(key.replace(/-/g, ' ')),
+        code: value
+      };
+    });
     this.getUSLawsbystateData();
-
   }
 
   clearSelectedState() {
     this.selectedState = null;
     this.showLawInfo = false; // Hide the state view when breadcrumb is clicked
+  }
+
+  private capitalizeWords(str: string): string {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
   }
 
   private stateAbbreviations: { [key: string]: string } = {
@@ -72,6 +84,10 @@ private lineLabelStates: string[] = ['ri', 'hi'];
 needsLineLabel(stateId?: string): boolean {
   if (!stateId) return false;
   return this.lineLabelStates.includes(stateId.toLowerCase());
+}
+
+onStateSelected() {
+  this.showLawInfo = true;
 }
 
 getLineCoordinates(pathData: string, stateId: string): { start: Point; end: Point } {
@@ -123,9 +139,12 @@ isSmallState(stateId?: string): boolean {
   }
 
   onStateClick(state: { id: string; name: string; path: string }) {
-    this.selectedState = { ...state };
-    this.stateSelected.emit(state);
-    this.showLawInfo = true;
+    const match = this.usaMap.locations.find(loc => loc.id === state.id);
+    if (match) {
+      this.selectedState = match;
+      this.stateSelected.emit(match);
+      this.showLawInfo = true;
+    }
   }
 
   resetState() {

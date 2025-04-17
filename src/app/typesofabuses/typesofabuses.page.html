@@ -68,13 +68,19 @@
                   </ion-col>
                 </ion-row>
 
+                <ion-row>
+                  <ion-col size="12">
+                    <pathome-criminilizationofsurvivors></pathome-criminilizationofsurvivors>
+                  </ion-col>
+                </ion-row>
+
      <ion-row>
       <ion-col size="12">
         <pathome-healthyrelationshipcontent [endpoint]="ipvtypesofabusesendpoint" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
       </ion-col>
     </ion-row>
     </ion-col>
-
+    
     <ion-col size="3">
       <div class="side-menu">
         <a (click)="scrollToSection('physicalAbuse')" [ngClass]="{'active': activeSection === 'physicalAbuse'}">Physical Abuse</a>

@@ -771,18 +771,21 @@ margin: 0 auto;
     }
   }
 }
-.legal-container{
+.healthy-unhealthy-container{
   width: 90%;
   margin: 0 auto;
-.lrc-ul{
- // margin-top: 24px;
-}
+
   h3{
     color: var(--color-deep-Gray);
   font-size: $font-size-base !important;
   font-weight:$font-bold;
   margin-top: 10px;
   margin-bottom: 10px;
+  }
+  h5{
+    color: var(--color-dark-Gray);
+    font-size: $font-size-md !important;
+    font-weight: $font-bold;
   }
   ion-text{
     color: var(--color-dark-Gray);
@@ -805,13 +808,17 @@ height: 320px;
 
   }
 }
-
+.lr-main-container{
+  width: 90%;
+  margin: 0 auto;
+}
 .legalrights-content{
   background: var(--color-white);
   color: var(--color-dark-Gray);
   font-size: $font-size-md;
   padding: 16px;
   border-radius: 8px;
+  line-height: 1.5;
   h3{
     color: var(--color-deep-Gray);
   font-size: $font-size-base !important;
@@ -835,3 +842,30 @@ height: 320px;
   height: 320px;
   
 }
+.huc-list-item{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  margin-bottom: 24px;
+  li{
+    margin: 8px 0;
+    border-radius: 8px;
+    display: table;
+    background: var(--color-white-smoke);
+    padding-right: 8px;
+    .circle{
+      background: var(--color-primary );
+      color: var(--color-white);
+      border-radius: 50%;
+      display: inline-block;    
+      width: 24px;
+    height: 24px; 
+    line-height: 24px;
+    margin-right: 8px;
+    text-align: center;
+    }
+    ion-text{
+      display: inline;
+    }
+  }
+ }
