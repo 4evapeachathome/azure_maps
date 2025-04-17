@@ -17,6 +17,23 @@
       <p>Please select your state of residence to see the US LAWS BY STATE</p>
     </ion-col>
   </ion-row>
+  <ion-row *ngIf="selectedState">
+    <ion-col>
+      <ion-item>
+        <ion-label>Select State</ion-label>
+        <ion-select 
+          placeholder="Choose state" 
+          [(ngModel)]="selectedState" 
+          (ionChange)="onStateClick($event.detail.value)">
+          <ion-select-option 
+            *ngFor="let state of usaMap.locations" 
+            [value]="state">
+            {{ state.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>      
+    </ion-col>
+  </ion-row>
   <ion-row>
     <ion-col class="p-0">
       <div class="map-container">
@@ -160,7 +177,7 @@
       </div>
       </ion-col>
   </ion-row>
-  <ion-row>
+  <ion-row *ngIf="!selectedState">
     <ion-col>
       <ion-item>
         <ion-label>Select State</ion-label>
