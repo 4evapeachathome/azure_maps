@@ -860,6 +860,66 @@ getCriminalizationOfSurvivors(): Observable<any> {
   );
 }
 
+//get quiz api
+getQuizzes(): Observable<any> {
+  const endpoint = APIEndpoints.quiz;
+  const options: QueryOptions = {
+    populate: ['questions']  
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      const quiz = res.data?.[0];
+      if (!quiz) return null;
+      debugger;
+      return {
+        id: quiz.id,
+        title: quiz.title,
+        subheading: quiz.subheading,
+        questions: quiz.questions || []
+      };
+    }),
+    catchError(error => {
+      console.error('Error fetching quiz data', error);
+      return throwError(error);
+    })
+  );
+}
+
+
+//get sripa api
+getSripaa(): Observable<any> {
+  const endpoint = APIEndpoints.sripa;
+  const options: QueryOptions = {
+    populate: {
+      sripa: {
+        fields: ['question', 'responseyes']
+      }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      const item = res.data?.[0];
+      if (!item) return null;
+
+      return {
+        id: item.id,
+        title: item.title,
+        subheading: item.subheading,
+        rating: item.rating,
+        yesanswer: item.yesanswer,
+        sripa: item.sripa || []  // array of { question, responseyes }
+      };
+    }),
+    catchError(error => {
+      console.error('Error fetching sripaa data', error);
+      return throwError(error);
+    })
+  );
+}
+
+
 
 
 }
