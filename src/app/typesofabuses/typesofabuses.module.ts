@@ -12,6 +12,7 @@ import { HealthyrelationshipcontentComponent } from "../controls/healthyrelation
 import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
 import { TypeofabusetitleComponent } from "../controls/typeofabusetitle/typeofabusetitle.component";
 import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typesof-abuse-card.component";
+import { CriminilizationofsurvivorsComponent } from '../controls/criminilizationofsurvivors/criminilizationofsurvivors.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typeso
     HealthyrelationshipcontentComponent,
     HealthyrelatitonshipComponent,
     TypeofabusetitleComponent,
-    TypesofAbuseCardComponent
+    TypesofAbuseCardComponent,
+    CriminilizationofsurvivorsComponent
 ],
   declarations: [TypesofabusesPage]
 })

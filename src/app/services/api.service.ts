@@ -827,6 +827,41 @@ getPartnerViolenceTitle(): Observable<any> {
     );
 }
 
+
+//criminilization of survivors
+getCriminalizationOfSurvivors(): Observable<any> {
+  const endpoint = APIEndpoints.criminalizationOfSurvivors; // e.g. '/api/criminizalationof-survivors'
+  const options: QueryOptions = {
+    populate: {
+      webImage: { fields: ['url'] },
+      mobileImage: { fields: ['url'] }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      const resData = res.data?.[0];
+      debugger;
+      if (resData?.webImage?.length) {
+        resData.imageList = resData.webImage.map((img: any) => ({
+          ...img,
+          fullUrl: `${environment.apiHost}${img.url}`
+        }));
+      } else {
+        resData.imageList = [];
+      }
+
+      return resData;
+    }),
+    catchError(error => {
+      console.error('Error fetching criminalization of survivors API data', error);
+      return throwError(error);
+    })
+  );
+}
+
+
+
 }
 
 
