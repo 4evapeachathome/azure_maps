@@ -1,18 +1,18 @@
-<ion-card >
-  <div class="card-content">
+<ion-card class="healthy-unhealthy-container p-0">
+  <ion-card-content>
+ 
 
-
-      <!-- Expand/Collapse Section -->
-      <div>    
-        <div class="example-list">
-          <h4>{{title}}</h4>
-          <div class="example" *ngFor="let example of content; let i = index">
+    <h3>{{title}}</h3>
+        <ul class="huc-list-item">
+          
+          <li *ngFor="let example of content; let i = index">
             <span class="circle">{{ i + 1 }}</span>
-            <p>{{ example.description }}</p>
-          </div>
-          <h5>{{description}}</h5>
-        </div>
-      </div>
-
-    </div>
+            <ion-text>{{ example.description }}</ion-text>
+          </li>
+       
+      
+        </ul>
+        <h5>{{description}}</h5>
+   
+  </ion-card-content>
 </ion-card>
