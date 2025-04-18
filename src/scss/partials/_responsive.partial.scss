@@ -3,10 +3,13 @@
   .all-rights{
     margin-bottom: 24px;
   }
+  .carousel-header ion-card-title {
+    font-size: $font-size-base*2  !important;
+}
     .container-banner {
         ion-card-content {
           .cb-header {
-            font-size: $font-size-head-md !important;
+            font-size: $font-size-base*2  !important;
           }         
 
         }
