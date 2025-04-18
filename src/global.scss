@@ -955,3 +955,11 @@ height: 320px;
     }
   }
 }
+.mobile-container{
+.menu-hidden-bg, .menu-hidden-bg-header{
+  background: yellow;
+  height: 100%;
+  z-index: 100;
+  display: none;
+}
+}
