@@ -50,4 +50,6 @@ export const APIEndpoints = {
     systemabuse :`${environment.apiHost}/api/system-abuses`,
     unhealthyrelationexamples :`${environment.apiHost}/api/unhealthyrelationexamples`,
     criminalizationOfSurvivors :`${environment.apiHost}/api/criminizalationof-survivors`,
+    quiz :`${environment.apiHost}/api/quizzes`,
+    sripa :`${environment.apiHost}/api/sripaas`,
   }

@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import { Router } from '@angular/router';
 import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
@@ -11,6 +12,9 @@ import { APIEndpoints } from 'src/shared/endpoints';
 export class HomePage {
   sliderEndpoint:string = APIEndpoints.sliderapi;
 
-  constructor() {}
+  constructor(private router: Router) {}
 
+  navigateToPeaceAtHome() {
+    this.router.navigate(['/peaceathome']);
+  }
 }
