@@ -23,6 +23,7 @@
         <ion-label>Select State</ion-label>
         <ion-select 
           placeholder="Choose state" 
+          interface="action-sheet"
           [(ngModel)]="selectedState" 
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
@@ -183,6 +184,7 @@
         <ion-label>Select State</ion-label>
         <ion-select 
           placeholder="Choose state" 
+          interface="action-sheet"
           [(ngModel)]="selectedState" 
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
