@@ -12,12 +12,12 @@
       </ion-button>
     </ion-col>
   </ion-row> 
-  <ion-row *ngIf="!selectedState">
+  <ion-row *ngIf="!selectedState && isMobile">
     <ion-col>
       <p>Please select your state of residence to see the US LAWS BY STATE</p>
     </ion-col>
   </ion-row>
-  <ion-row *ngIf="selectedState">
+  <ion-row *ngIf="selectedState && isMobile">
     <ion-col>
       <ion-item>
         <ion-label>Select State</ion-label>
@@ -178,7 +178,7 @@
       </div>
       </ion-col>
   </ion-row>
-  <ion-row *ngIf="!selectedState">
+  <ion-row *ngIf="!selectedState && isMobile">
     <ion-col>
       <ion-item>
         <ion-label>Select State</ion-label>
