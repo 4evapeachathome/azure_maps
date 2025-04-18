@@ -643,11 +643,12 @@ onSearchClear() {
       this.filterSearchTerm = '';
       }
       this.filterSearchTerm = '';
-      this.searchQuery = '';
+      //this.searchQuery = '';
       this.selectedLocation = null;
-      this.locationcard = false;
-      this.filteredLocations = [];
-    this.updateSupportServiceMarkers();
+      //this.locationcard = false;
+      //this.filteredLocations = [];
+      this.filteredLocations = this.filteredlocationwithinradius;
+      this.updateSupportServiceMarkers();
     }
     
     closeFilter() {
@@ -685,10 +686,10 @@ onSearchClear() {
       }
   
       // Update search query with selected filters as comma-separated values
-      this.searchQuery = this.filterOptions
-        .filter(option => option.selected)
-        .map(option => option.label) // Assuming 'label' is a user-friendly name
-        .join(', ');
+      // this.searchQuery = this.filterOptions
+      //   .filter(option => option.selected)
+      //   .map(option => option.label) // Assuming 'label' is a user-friendly name
+      //   .join(', ');
   
       this.selectedLocation = null;
       this.closeFilter();
