@@ -1,6 +1,6 @@
-<ion-app [ngClass]="{'mobile-container':  isMobile}">
+<ion-app [ngClass]="{'mobile-container':  isMobile && isMenuOpen}">
   <div>
-    <div class="menu-hidden-bg-header"></div>
+    <div class="menu-hidden-bg-header" (click)="closeMobileMenu()"></div>
     <pathome-header></pathome-header>
     </div>
     <div class="d-flex-ion pos-relative flex-grow-1">
@@ -8,7 +8,7 @@
   
 <div class="d-flex-ion pos-relative flex-grow-1" >
   <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
-  <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
+  <input #mobileToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
 
   <label for="sidebar-toggle" class="sidebar-toggle-label ">
   
@@ -35,7 +35,7 @@
     >
     </app-menu>
   </aside>
-<div class="menu-hidden-bg"></div>
+<div class="menu-hidden-bg" (click)="closeMobileMenu()"></div>
   <ion-router-outlet
     id="main-content"
     class="slider-content"

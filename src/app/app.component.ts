@@ -104,14 +104,17 @@ interface PlaceDetails {
   standalone: true,
   imports: [IonicModule, MenuComponent, HeaderComponent, CommonModule]
 })
-export class AppComponent implements OnInit,OnDestroy {
+export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMobile!: boolean;
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
+  @ViewChild('mobileToggle', { static: false }) mobileToggle!: ElementRef<HTMLInputElement>;
+  isMenuOpen = false;
   public readonly endPoint : string = APIEndpoints.supportService;
 
   constructor(private platform: Platform, private router:Router, private apiService: ApiService, private sharedDataService:MenuService) {
     this.isMobile = this.platform.is('android') || this.platform.is('ios');
+
   }
 
   ngOnInit() {
@@ -126,6 +129,17 @@ export class AppComponent implements OnInit,OnDestroy {
     const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
     if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
       this.router.navigate(['/home']); // Redirect to home if page is refreshed
+    }
+  }
+
+  ngAfterViewInit() {
+    debugger;
+    if (this.mobileToggle) {
+      this.isMenuOpen = this.mobileToggle.nativeElement.checked;
+
+      this.mobileToggle.nativeElement.addEventListener('change', () => {
+        this.isMenuOpen = this.mobileToggle.nativeElement.checked;
+      });
     }
   }
 
@@ -145,6 +159,13 @@ export class AppComponent implements OnInit,OnDestroy {
       this.sharedDataService.setOrganizations(this.organizations);
     });
    
+  }
+
+  closeMobileMenu() {
+    if (this.isMobile && this.mobileToggle?.nativeElement.checked) {
+      this.mobileToggle.nativeElement.checked = false;
+      this.isMenuOpen = false;
+    }
   }
 
   ngOnDestroy() {

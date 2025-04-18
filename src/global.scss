@@ -958,8 +958,8 @@ height: 320px;
 .mobile-container{
 .menu-hidden-bg, .menu-hidden-bg-header{
   background: yellow;
+  opacity: 0;
   height: 100%;
   z-index: 100;
-  display: none;
 }
 }
