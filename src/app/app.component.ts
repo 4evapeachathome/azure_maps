@@ -133,7 +133,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
 
   ngAfterViewInit() {
-    debugger;
+  //  debugger;
     if (this.mobileToggle) {
       this.isMenuOpen = this.mobileToggle.nativeElement.checked;
 
