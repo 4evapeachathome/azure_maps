@@ -111,4 +111,30 @@
         height: 180px !important;
           }
     }
+    .vp-card{
+      width: 100% !important;
+      .progress-bar {
+
+      .progress-segment {
+        width: 80px;
+    }
+  }
+    }
+    .pv-gallery
+    {
+      width: 100% !important;
+      .pv-card{
+        width: 100% !important;
+        .progress-bar{
+
+        .progress-segment {
+          width: 80px !important;
+        }
+      }
+      }
+     ul li ion-img {      
+        height: 80px !important;
+    }
+    }
+    
   }
