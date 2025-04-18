@@ -868,4 +868,84 @@ height: 320px;
       display: inline;
     }
   }
- }
+}
+.vp-card{
+  width: 90%;
+  margin: 0 auto;
+    margin-bottom: 16px;
+    padding: 16px;
+    border: 1px solid var(--color-Gray64);
+  .vp-header{
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+  padding-top: 0;
+    padding-bottom: 0;
+    h3{
+      color: var(--color-dark-Gray);
+      font-size: $font-size-xl;
+      margin: 0;
+      margin-bottom: 10px;
+    }
+  }
+  p{
+    color: var(--color-dark-Gray);
+    font-size: $font-size-md;
+    margin-bottom: 0;
+  }
+  .progress-bar {
+    display: flex;
+    height: 8px;
+    gap: 8px;
+    width: fit-content; /* Ensure the bar only takes up the space needed */
+    margin-bottom: 24px;
+    .progress-segment {
+      width: 200px; /* Fixed width for each segment */
+      &.yellow {
+        background-color: var(--color-yellow);
+      }
+      &.orange {
+        background-color: var(--color-orange);
+      }
+      &.red {
+        background-color: var(--color-red);
+      }
+     
+    }
+  }
+  
+}
+.pv-gallery{
+  width: 80%;
+    margin: 0 auto;
+  h3{
+    color: var(--color-deep-Gray);
+    font-size: $font-size-xl;
+    margin: 0;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  ul{
+    padding: 0;
+    margin: 0;
+    li{
+      background: var(--color-white);
+      border: 1px solid var(--color-Gray64);
+      display: inline-block;
+     
+      border-radius: 8px;
+      margin: 8px;
+      padding: 8px;
+      text-align: center;
+      ion-img{
+        width: 150px;
+        height: 120px;
+      }
+      p{
+        margin: 0;
+        margin-top: 8px;
+        color: var(--color-dark-Gray);
+        font-size: $font-size-md ;
+      }
+    }
+  }
+}

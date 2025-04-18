@@ -30,6 +30,10 @@
   --color-map-background          :   #F7F9FC;
   --color-map-background-selected :   #d85b1e;
   --color-map-state-selected      :   #DCE8FF;
+  --color-yellow                  :   #F69204;
+  --color-orange                  :   #F65B04;
+  --color-red                     :   #F60404;
+  
 
   
 }
@@ -52,8 +56,11 @@ $color-primary-contrast           :   var(--color-primary-contrast);
 $color-error                      :   var(--color-error);
 $color-white                      :   var(--color-white);
 $color-map-background             :   var(--color-map-background);
-$color-map-background             :   var(--color-map-background-selected);
-$color-map-background             :   var(--color-map-state-selected);
+$color-map-background-selected    :   var(--color-map-background-selected);
+$color-map-state-selected         :   var(--color-map-state-selected);
+$color-yellow                     :   var(--color-yellow);
+$color-orange                     :   var(--color-orange);
+$color-red                        :   var(--color-red);
 
 
 $colors: () !default;
