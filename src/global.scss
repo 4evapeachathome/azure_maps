@@ -88,6 +88,9 @@ body {
 .p-0{
   padding: 0;
 }
+.m-0{
+  margin: 0;
+}
 ion-card {
   box-shadow: none;
   border-radius: 8px;
@@ -971,3 +974,8 @@ height: 320px;
   position: relative;
  
 }
+.select-alertless{
+  .alert-button-group{
+      display:none;
+      }
+  }
