@@ -122,6 +122,25 @@ ion-checkbox {
   
  
 }
+.select-fill-outline{
+  --border-radius: 8px;
+  //min-height: 48px;
+}
+.alert-radio-label.sc-ion-alert-md{
+  padding-inline-start: 42px;
+}
+  // ion-select{
+  // border: 1px solid var(--color-dark-Gray);
+  //   border-radius: 8px;
+  //   padding: 0 10px;
+  //   :host(.select-label-placement-start) {     
+    
+  //   .select-wrapper-inner{
+  //     justify-content: space-between;
+  //     width: 100%;
+  //   }
+  // }
+  // }
 
 // .ss-search-button {
 //     .sc-ion-buttons-md-s ion-button {
