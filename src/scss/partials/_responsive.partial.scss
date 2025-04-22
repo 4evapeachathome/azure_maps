@@ -141,4 +141,12 @@
     .lr-main-container{
       width: 100% !important;
     }
+    .reverse-image {
+      .img-container {
+        order: inherit !important; /* Image comes first */
+      }
+      .con-container-center {
+        order: 1 !important; /* Content comes second */
+      }
+    }
   }
