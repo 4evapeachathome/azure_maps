@@ -800,8 +800,16 @@ height: 320px;
   }
  
 }
+.typeCont-health{
+  .healthy-unhealthy-container{
+width: 100%;
+  }
+}
 .backtomap-button{
   margin-top: -14px;
+}
+.m-t-16{
+  margin-top: 16px;
 }
 .rmc-button{
   margin-top: 16px;
@@ -979,3 +987,40 @@ height: 320px;
       display:none;
       }
   }
+  .width-100{
+    width: 100%;
+  }
+  .side-menu {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    position: fixed;
+    right: 20px;
+    top: 150px;
+   // width: 200px;
+    li{
+      text-align: right;
+      border-right: 3px solid var(--color-Gray84);
+    a {
+      color: var(--color-dark-Gray);
+      font-size: $font-size-md !important;
+      display: block;
+      padding: 10px 15px;
+      cursor: pointer;
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      transition: all 0.3s ease;
+    }
+    
+     
+  }
+  li.active, li:active{
+    border-right: 3px solid var(--color-primary);
+    a {
+      color: var(--color-primary);
+      font-weight: $font-bold;
+    }
+  }
+  }
+  
+  

@@ -1,54 +1,62 @@
-<ion-card 
-  class="abuse-card" 
-  *ngIf="physicalAbuse" 
-  [ngClass]="{'reverse-image': imagePosition === 'right'}"
->
-  <div class="card-content">
+<ion-grid class="healthy-unhealthy-container p-0 width-100"   *ngIf="physicalAbuse" 
+[ngClass]="{'reverse-image': imagePosition === 'right'}">
+  <ion-row>
+    <!-- First column - content (text/lists) based on contentPlacement -->
+    <ion-col size="12" size-sm="6" class="p-0 con-container-center order1">
+      <ion-card >
+        <ion-card-content>
     <!-- Image Section -->
-    <div class="image-section">
-      <ion-img 
+    <ion-text class="content-heading" *ngIf="physicalAbuse.titleContent.length > 0">
+      <h3>
+     
+          {{ getHeadingText(physicalAbuse.titleContent) }}
+      
+      </h3>
+    </ion-text>
+    <ion-text class="cb-content" *ngIf="physicalAbuse.titleContent.length > 1">
+      <ng-container *ngFor="let line of getParagraphLines()">
+      {{ line }}
+  </ng-container>
+  </ion-text>
+
+<div class="m-t-16" *ngIf="isExpanded" @expandCollapse>
+  
+      <ion-text class="cb-content" >
+           
+    
+          <span ><b>Examples/Scenarios</b></span>
+        
+      
+    
+    </ion-text>
+
+    <ion-text class="lrc-ul ">
+      <ol  >
+        <li *ngFor="let example of physicalAbuse.example; let i = index">
+          {{ example.description }}
+        </li>
+      </ol>
+   
+    </ion-text>
+
+  </div>
+
+    
+
+
+  <ion-button fill="clear" size="small" class="rmc-button" [ngClass]="{'button-left': buttonPosition === 'left'}" (click)="toggleReadMore()">   {{ isExpanded ? 'Read Less' : 'Read More' }}<ion-img src="../../../assets/downArrow.svg" alt="Contact Us"></ion-img></ion-button>
+
+
+
+ 
+        </ion-card-content>
+</ion-card>
+    </ion-col>
+    <ion-col size="12" size-sm="6" class="p-0 img-container">
+      <ion-img class="lc-image"
         [src]="physicalAbuse.webImage?.fullUrl || 'assets/images/physical-abuse.png'" 
         alt="Physical Abuse"
       ></ion-img>
-    </div>
-
-    <!-- Text Content -->
-    <div class="text-section">
-      <h3 *ngIf="physicalAbuse.titleContent.length > 0">
-        {{ getHeadingText(physicalAbuse.titleContent) }}
-      </h3>
-      <div *ngIf="physicalAbuse.titleContent.length > 1">
-        <!-- Render paragraphs -->
-        <p *ngFor="let line of getParagraphLines()" class="description">{{ line }}</p>
-        <!-- Render list items under a single <ul> -->
-        <ul *ngIf="getListItems().length > 0" class="description-list">
-          <li *ngFor="let item of getListItems()">{{ item }}</li>
-        </ul>
-      </div>
-
-      <!-- Expand/Collapse Section -->
-      <div *ngIf="isExpanded" @expandCollapse>    
-        <div class="example-list">
-          <h4>Examples/Scenarios</h4>
-          <div class="example" *ngFor="let example of physicalAbuse.example; let i = index">
-            <span class="circle">{{ i + 1 }}</span>
-            <p>{{ example.description }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Read More / Read Less Button -->
-      <div 
-        class="button-container" 
-        [ngClass]="{'button-left': buttonPosition === 'left'}"
-      >
-        <div class="button-icon-wrapper">
-          <ion-button fill="clear" class="read-more" (click)="toggleReadMore()">
-            {{ isExpanded ? 'Read Less' : 'Read More' }}
-          </ion-button>
-          <ion-icon name="chevron-down-outline"></ion-icon>
-        </div>
-      </div>
-    </div>
-  </div>
-</ion-card>
+    </ion-col>
+    </ion-row>
+    </ion-grid>
