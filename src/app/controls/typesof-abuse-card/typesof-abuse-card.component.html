@@ -44,7 +44,7 @@
     
 
 
-  <ion-button fill="clear" size="small" class="rmc-button" [ngClass]="{'button-left': buttonPosition === 'left'}" (click)="toggleReadMore()">   {{ isExpanded ? 'Read Less' : 'Read More' }}<ion-img src="../../../assets/downArrow.svg" alt="Contact Us"></ion-img></ion-button>
+  <ion-button fill="clear" size="small" class="rmc-button" [ngClass]="{'button-left': buttonPosition === 'left'}" (click)="toggleReadMore()">   {{ isExpanded ? 'Read Less' : 'Read More' }}<ion-img [src]="isExpanded ? '../../../assets/upArrow.svg' : '../../../assets/downArrow.svg'" alt="Contact Us"></ion-img></ion-button>
 
 
 
