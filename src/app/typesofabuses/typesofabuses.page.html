@@ -4,7 +4,7 @@
   <ion-grid  class="p-b-0 sm-cont-margin">
 
     <!-- First Row: Single Component -->
-    <ion-row>
+    <ion-row class="comp-space">
       <ion-col size="12">
         <pathome-typeofabusetitle></pathome-typeofabusetitle>
       </ion-col>
@@ -12,86 +12,99 @@
 
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row>
-      <ion-col size="9">
-    <ion-row>
+      <ion-col size="12" size-sm="9">
+        <ion-row class="comp-space">
       <ion-col size="12">
         <pathome-typesof-abuse-card id="physicalAbuse" [paramName]="'physicalAbuse'"  [endpoint]="physicalabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
       </ion-col>
     </ion-row>
 
     <!-- Third Row: Full-Width Slide Component -->
-    <ion-row>
+    <ion-row class="comp-space">
       <ion-col size="12">
         <pathome-typesof-abuse-card id="sexualAbuse" [paramName]="'sexualAbuse'"  [endpoint]="sexualabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
       </ion-col>
     </ion-row>
     
 
-        <ion-row>
+    <ion-row class="comp-space">
           <ion-col size="12">
             <pathome-typesof-abuse-card id="emotionalAbuse" [paramName]="'emotionalAbuse'"  [endpoint]="emotionalabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
           </ion-col>
         </ion-row>
 
-        <ion-row>
+        <ion-row class="comp-space">
           <ion-col size="12">
             <pathome-typesof-abuse-card id="verbalAbuse" [paramName]="'verbalAbuse'"  [endpoint]="verbalabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
           </ion-col>
         </ion-row>
         
     
-            <ion-row>
+        <ion-row class="comp-space">
               <ion-col size="12">
                 <pathome-typesof-abuse-card id="financialAbuse" [paramName]="'financialAbuse'"  [endpoint]="financialabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
 
               </ion-col>
             </ion-row>
 
-            <ion-row>
+            <ion-row class="comp-space">
               <ion-col size="12">
                 <pathome-typesof-abuse-card id="technologicalAbuse" [paramName]="'technologicalAbuse'"  [endpoint]="technologicalabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
               </ion-col>
             </ion-row>
             
         
-                <ion-row>
+            <ion-row class="comp-space">
                   <ion-col size="12">
                     <pathome-typesof-abuse-card id="immigrantAbuse" [paramName]="'immigrantAbuse'"  [endpoint]="immigrantabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
     
                   </ion-col>
                 </ion-row>
 
-                <ion-row>
+                <ion-row class="comp-space">
                   <ion-col size="12">
                     <pathome-typesof-abuse-card id="systemAbuse" [paramName]="'systemAbuse'"  [endpoint]="systemabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
     
                   </ion-col>
                 </ion-row>
 
-                <ion-row>
+                <ion-row class="comp-space">
                   <ion-col size="12">
                     <pathome-criminilizationofsurvivors></pathome-criminilizationofsurvivors>
                   </ion-col>
                 </ion-row>
 
-     <ion-row>
-      <ion-col size="12">
+                <ion-row class="comp-space">
+      <ion-col size="12" class="typeCont-health">
         <pathome-healthyrelationshipcontent [endpoint]="ipvtypesofabusesendpoint" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
       </ion-col>
     </ion-row>
     </ion-col>
     
-    <ion-col size="3">
-      <div class="side-menu">
-        <a (click)="scrollToSection('physicalAbuse')" [ngClass]="{'active': activeSection === 'physicalAbuse'}">Physical Abuse</a>
-        <a (click)="scrollToSection('sexualAbuse')" [ngClass]="{'active': activeSection === 'sexualAbuse'}">Sexual Abuse</a>
-        <a (click)="scrollToSection('emotionalAbuse')" [ngClass]="{'active': activeSection === 'emotionalAbuse'}">Emotional Abuse</a>
-        <a (click)="scrollToSection('verbalAbuse')" [ngClass]="{'active': activeSection === 'verbalAbuse'}">Verbal Abuse</a>
-        <a (click)="scrollToSection('financialAbuse')" [ngClass]="{'active': activeSection === 'financialAbuse'}">Financial Abuse</a>
-        <a (click)="scrollToSection('technologicalAbuse')" [ngClass]="{'active': activeSection === 'technologicalAbuse'}">Technological Abuse</a>
-        <a (click)="scrollToSection('immigrantAbuse')" [ngClass]="{'active': activeSection === 'immigrantAbuse'}">Immigrant Related Abuse</a>
-        <a (click)="scrollToSection('systemAbuse')" [ngClass]="{'active': activeSection === 'systemAbuse'}">System Abuse</a>
-      </div>
+    <ion-col size="12" size-sm="3">
+      <ul class="side-menu"   #stickyMenu   >
+        <li [ngClass]="{'active': activeSection === 'physicalAbuse'}">  <a (click)="scrollToSection('physicalAbuse')" >Physical Abuse</a></li>
+        <li  [ngClass]="{'active': activeSection === 'sexualAbuse'}">  <a (click)="scrollToSection('sexualAbuse')">Sexual Abuse</a></li>
+        <li [ngClass]="{'active': activeSection === 'emotionalAbuse'}"> <a (click)="scrollToSection('emotionalAbuse')" >Emotional Abuse</a></li>
+        <li [ngClass]="{'active': activeSection === 'verbalAbuse'}">
+          <a (click)="scrollToSection('verbalAbuse')" >Verbal Abuse</a>
+        </li>
+        <li  [ngClass]="{'active': activeSection === 'financialAbuse'}">
+          <a (click)="scrollToSection('financialAbuse')">Financial Abuse</a>
+        </li>
+        <li [ngClass]="{'active': activeSection === 'technologicalAbuse'}"> <a (click)="scrollToSection('technologicalAbuse')" >Technological Abuse</a></li>
+        <li  [ngClass]="{'active': activeSection === 'immigrantAbuse'}">   <a (click)="scrollToSection('immigrantAbuse')">Immigrant Related Abuse</a></li>
+        <li [ngClass]="{'active': activeSection === 'systemAbuse'}">  <a (click)="scrollToSection('systemAbuse')" >System Abuse</a></li>
+ 
+      
+      
+      
+     
+        
+       
+     
+      
+      </ul>
     </ion-col>
     </ion-row>
 
