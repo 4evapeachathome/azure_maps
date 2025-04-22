@@ -1023,4 +1023,13 @@ width: 100%;
   }
   }
   
-  
+  .reverse-image {
+    .img-container {
+      order: 1; /* Image comes first */
+    }
+    .con-container-center {
+      order: 2; /* Content comes second */
+    }
+  }
+ 
+ 
