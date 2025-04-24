@@ -14,16 +14,22 @@
   </ion-row> 
   <ion-row *ngIf="!selectedState && isMobile">
     <ion-col>
-      <p>Please select your state of residence to see the US LAWS BY STATE</p>
+      <p class="m-0">Please select your state of residence to see the US LAWS BY STATE</p>
     </ion-col>
   </ion-row>
   <ion-row *ngIf="selectedState && isMobile">
     <ion-col>
-      <ion-item>
-        <ion-label>Select State</ion-label>
-        <ion-select 
-          placeholder="Choose state" 
-          interface="action-sheet"
+    <!-- <ion-list class="select-container">
+      <ion-item> -->
+        <!-- <ion-label>Select State</ion-label> -->
+        <!-- <ion-select label="Outline select" label-placement="floating" fill="outline">
+          <ion-select-option value="apples">Apples</ion-select-option>
+          <ion-select-option value="oranges">Oranges</ion-select-option>
+          <ion-select-option value="bananas">Bananas</ion-select-option>
+        </ion-select> -->
+        <ion-select  
+          placeholder="Choose Your State" fill="outline"  label="Choose Your State" label-placement="floating" 
+          interface="modal" 
           [(ngModel)]="selectedState" 
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
@@ -32,7 +38,8 @@
             {{ state.name }}
           </ion-select-option>
         </ion-select>
-      </ion-item>      
+      <!-- </ion-item>     
+    </ion-list>  -->
     </ion-col>
   </ion-row>
   <ion-row>
@@ -180,12 +187,14 @@
   </ion-row>
   <ion-row *ngIf="!selectedState && isMobile">
     <ion-col>
-      <ion-item>
-        <ion-label>Select State</ion-label>
-        <ion-select 
-          placeholder="Choose state" 
-          interface="action-sheet"
-          [(ngModel)]="selectedState" 
+      <!-- <ion-list>
+      <ion-item> -->
+        <!-- <ion-label>Select State</ion-label> -->
+         
+        <ion-select
+          placeholder="Choose Your State" fill="outline" interface="modal" label="Choose Your State" label-placement="floating" 
+       
+          [(ngModel)]="selectedState"  
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
             *ngFor="let state of usaMap.locations" 
@@ -193,7 +202,8 @@
             {{ state.name }}
           </ion-select-option>
         </ion-select>
-      </ion-item>      
+      <!-- </ion-item> 
+    </ion-list>      -->
     </ion-col>
   </ion-row>
 </ion-grid>

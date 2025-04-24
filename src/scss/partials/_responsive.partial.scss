@@ -1,12 +1,18 @@
 
 @media (max-width: 768px) {
+  .order1{
+    order: 1 !important;
+  }
   .all-rights{
     margin-bottom: 24px;
   }
+  .carousel-header ion-card-title {
+    font-size: $font-size-base*2  !important;
+}
     .container-banner {
         ion-card-content {
           .cb-header {
-            font-size: $font-size-head-md !important;
+            font-size: $font-size-base*2  !important;
           }         
 
         }
@@ -132,5 +138,15 @@
         height: 80px !important;
     }
     }
-    
+    .lr-main-container{
+      width: 100% !important;
+    }
+    .reverse-image {
+      .img-container {
+        order: inherit !important; /* Image comes first */
+      }
+      .con-container-center {
+        order: 1 !important; /* Content comes second */
+      }
+    }
   }

@@ -23,7 +23,15 @@ const routes: Routes = [
   {
     path: 'legalrights',
     loadChildren: () => import('./legalrightshome/legalrightshome.module').then( m => m.LegalrightshomePageModule)
+  },  {
+    path: 'sripaa',
+    loadChildren: () => import('./sripaa/sripaa.module').then( m => m.SripaaPageModule)
+  },
+  {
+    path: 'quiz',
+    loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizPageModule)
   }
+
 
 
 ];

@@ -22,6 +22,11 @@
   color: var(--color-deep-Gray);
   font-size: 2rem;
   font-weight: 600;
+  ion-icon{
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 }
 .sidebar {
   position: fixed;

@@ -7,7 +7,7 @@
       <pathome-breadcrumb></pathome-breadcrumb>
       <ion-row>
     
-          <ion-col  size="12" size-sm="6" >
+          <ion-col  size="12" size-sm="6">
             <ng-container *ngFor="let item of title">
               <ng-container *ngIf="item.type === 'heading'">
             
@@ -52,7 +52,7 @@
               <ion-img [src]="block.image" alt="Content Block Image" class="lrc-img"></ion-img>
             </ion-col>
             <!-- Content column -->
-            <ion-col [size]="block.webImage ? '12' : '12'" [sizeMd]="block.webImage ? '6' : '12'" class="p-0 con-container-center">
+            <ion-col [size]="block.webImage ? '12' : '12'" [sizeMd]="block.webImage ? '6' : '12'" class="p-0 con-container-center order1">
               <div [innerHTML]="block.content" class="legalrights-content"></div>
             </ion-col>
             <!-- Image on right for even validWebImageIndex (0, 2, ...) -->

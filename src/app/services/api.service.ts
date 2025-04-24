@@ -841,7 +841,7 @@ getCriminalizationOfSurvivors(): Observable<any> {
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
       const resData = res.data?.[0];
-      debugger;
+    //  debugger;
       if (resData?.webImage?.length) {
         resData.imageList = resData.webImage.map((img: any) => ({
           ...img,
@@ -871,7 +871,7 @@ getQuizzes(): Observable<any> {
     map((res: any) => {
       const quiz = res.data?.[0];
       if (!quiz) return null;
-      debugger;
+     // debugger;
       return {
         id: quiz.id,
         title: quiz.title,
