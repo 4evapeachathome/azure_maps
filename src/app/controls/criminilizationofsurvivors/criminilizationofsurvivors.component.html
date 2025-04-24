@@ -1,49 +1,69 @@
-<ion-card *ngIf="isLoaded"  class="healthy-unhealthy-container p-0">
+<ion-card *ngIf="isLoaded" class="healthy-unhealthy-container p-0">
   <ion-card-content>
-  <div class="section-container">
+    <div class="section-container">
 
-    <!-- Top-left Image (10) -->
-    <div class="image-badge-top">
-      <img [src]="getImageUrl(0)" alt="Badge 10" />
-    </div>
+      <!-- Top-left Image (10) -->
+      <div class="image-badge top-left">
+        <img [src]="getImageUrl(0)" alt="Badge 10" />
+      </div>
 
-    <!-- Main Content Render -->
-    <div class="content-blocks">
-      <ng-container *ngFor="let block of contentBlocks">
-        <ng-container [ngSwitch]="block.type">
-          <h3 *ngSwitchCase="'heading'" [ngClass]="'h' + block.level">
-            <span *ngFor="let child of block.children" [ngClass]="{ 'bold': child.bold }">
-              {{ child.text }}
-            </span>
-          </h3>
-
-          <ion-text *ngSwitchCase="'paragraph'">
-            <span *ngFor="let child of block.children">
-              {{ child.text }}
-            </span>
-          </ion-text>
-
-          <ul *ngSwitchCase="'list'" [ngClass]="block.format">
-            <li *ngFor="let item of block.children">
-              <span *ngFor="let child of item.children">
+      <!-- Group A + B -->
+      <div class="content-blocks">
+        <ng-container *ngFor="let block of firstGroupBlocks">
+          <ng-container [ngSwitch]="block.type">
+            <h3 *ngSwitchCase="'heading'" [ngClass]="'h' + block.level">
+              <span *ngFor="let child of block.children" [ngClass]="{ 'bold': child.bold }">
                 {{ child.text }}
               </span>
-            </li>
-          </ul>
+            </h3>
+
+            <ion-text *ngSwitchCase="'paragraph'">
+              <span *ngFor="let child of block.children">
+                {{ child.text }}
+              </span>
+            </ion-text>
+
+            <ul *ngSwitchCase="'list'" [ngClass]="block.format">
+              <li *ngFor="let item of block.children">
+                <span *ngFor="let child of item.children">
+                  {{ child.text }}
+                </span>
+              </li>
+            </ul>
+          </ng-container>
         </ng-container>
-      </ng-container>
-    </div>
 
-    <!-- Side Image (11) -->
-    <div class="image-badge-middle">
-      <img [src]="getImageUrl(1)" alt="Badge 11" />
-    </div>
+        <!-- Image between A+B and C+D -->
+        <div class="image-badge right-middle">
+          <img [src]="getImageUrl(1)" alt="Badge 11" />
+        </div>
 
-    <!-- Bottom-left Image (12) -->
-    <div class="image-badge-right">
-      <img [src]="getImageUrl(2)" alt="Badge 12" />
+        <!-- Group C + D -->
+        <ng-container *ngFor="let block of secondGroupBlocks">
+          <ng-container [ngSwitch]="block.type">
+            <h3 *ngSwitchCase="'heading'" [ngClass]="'h' + block.level">
+              <span *ngFor="let child of block.children" [ngClass]="{ 'bold': child.bold }">
+                {{ child.text }}
+              </span>
+            </h3>
+
+            <ion-text *ngSwitchCase="'paragraph'">
+              <span *ngFor="let child of block.children">
+                {{ child.text }}
+              </span>
+            </ion-text>
+
+            <ul *ngSwitchCase="'list'" [ngClass]="block.format">
+              <li *ngFor="let item of block.children">
+                <span *ngFor="let child of item.children">
+                  {{ child.text }}
+                </span>
+              </li>
+            </ul>
+          </ng-container>
+        </ng-container>
+      </div>
+      
     </div>
-    
-  </div>
-</ion-card-content>
+  </ion-card-content>
 </ion-card>
