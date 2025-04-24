@@ -43,14 +43,28 @@
 
 //Hide scrollbar in all pages
 
-ion-content {
-  --offset-bottom: auto!important;
-  --overflow: hidden;
-  overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
+ion-content::part(scroll)::-webkit-scrollbar {
+  display: none;
   }
-}
+ 
+  // Hide scrollbar for IE, Edge and Firefox
+  ion-content::part(scroll) {
+  -ms-overflow-style: none; // IE and Edge
+  scrollbar-width: none; // Firefox
+  }
+
+// ion-content {
+//   // --offset-bottom: auto!important;
+//   // --overflow: hidden;
+//   // overflow: auto;
+//   &::-webkit-scrollbar {
+//     display: none;
+//   }
+//   // &::part(scroll){
+
+//   //   overflow: initial;
+//   //     }
+// }
 
 ion-header {
   padding-top: env(safe-area-inset-top); // respects iOS notch area too
@@ -994,10 +1008,11 @@ width: 100%;
     padding: 0;
     margin: 0;
     list-style: none;
-    position: fixed;
-    right: 20px;
-    top: 150px;
-   // width: 200px;
+    position: sticky;
+    position: -webkit-sticky ;
+    top: 20px;
+    margin-right: 10px;
+   
     li{
       text-align: right;
       border-right: 3px solid var(--color-Gray84);

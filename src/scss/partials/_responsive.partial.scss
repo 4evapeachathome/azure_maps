@@ -3,6 +3,10 @@
   .order1{
     order: 1 !important;
   }
+  .side-menu{
+    display: flex    ;
+        flex-wrap: wrap;
+  }
   .all-rights{
     margin-bottom: 24px;
   }

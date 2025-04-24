@@ -1,4 +1,5 @@
-<ion-card *ngIf="isLoaded">
+<ion-card *ngIf="isLoaded"  class="healthy-unhealthy-container p-0">
+  <ion-card-content>
   <div class="section-container">
 
     <!-- Top-left Image (10) -->
@@ -16,11 +17,11 @@
             </span>
           </h3>
 
-          <p *ngSwitchCase="'paragraph'">
+          <ion-text *ngSwitchCase="'paragraph'">
             <span *ngFor="let child of block.children">
               {{ child.text }}
             </span>
-          </p>
+          </ion-text>
 
           <ul *ngSwitchCase="'list'" [ngClass]="block.format">
             <li *ngFor="let item of block.children">
@@ -44,4 +45,5 @@
     </div>
     
   </div>
+</ion-card-content>
 </ion-card>
