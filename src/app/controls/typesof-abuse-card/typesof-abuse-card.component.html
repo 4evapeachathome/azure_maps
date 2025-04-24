@@ -19,6 +19,12 @@
   </ng-container>
   </ion-text>
 
+  <ion-text class="cb-content" *ngIf="getListItems().length > 0">
+    <ul>
+      <li *ngFor="let item of getListItems()">{{ item }}</li>
+    </ul>
+  </ion-text>
+
 <div class="m-t-16" *ngIf="isExpanded" @expandCollapse>
   
       <ion-text class="cb-content" >
