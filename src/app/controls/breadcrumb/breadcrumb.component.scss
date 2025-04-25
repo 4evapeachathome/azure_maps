@@ -3,9 +3,10 @@
 .breadcrumb {
  // display: flex;
   align-items: center;
-    font-size: $font-size-xll;
+    font-size: $font-size-l;
     color: var(--color-Gray34); // Default color for parent items
     margin-bottom: 8px;
+    margin-left: 5px;
   
     .breadcrumb-link {
       cursor: pointer;

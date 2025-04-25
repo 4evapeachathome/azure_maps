@@ -210,6 +210,7 @@
     transition: all 0.4s ease;
   }
 .st-close {
+  display: none;/* if you want to hide the icon */
   opacity: 0;
   transition: all 0.4s ease;
 }
@@ -217,8 +218,8 @@
 .sidebar-toggle:checked + .sidebar-toggle-label 
 {
   .st-open {
-    opacity: 0;
-    width: 0;
+    //opacity: 0;
+   // width: 0;
     transition: all 0.4s ease;
   }
 .st-close {
