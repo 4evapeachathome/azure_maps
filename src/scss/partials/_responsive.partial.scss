@@ -1,5 +1,22 @@
 
 @media (max-width: 768px) {
+  .hb-img{
+
+    max-height: 200px !important;
+    
+  }
+  .card-small ion-card-title {
+    font-size: $font-size-l !important;
+}
+.card-small h3 {
+  font-size: $font-size-l !important;
+}
+.card-small h4 {
+  font-size: $font-size-l !important;
+}
+.ii-power h2 {
+  font-size: $font-size-l !important;
+}
   .order1{
     order: 1 !important;
   }
@@ -11,12 +28,12 @@
     margin-bottom: 24px;
   }
   .carousel-header ion-card-title {
-    font-size: $font-size-base*2  !important;
-}
-    .container-banner {
-        ion-card-content {
-          .cb-header {
-            font-size: $font-size-base*2  !important;
+    font-size: $font-size-xlll   !important;
+  }
+      .container-banner {
+          ion-card-content {
+            .cb-header {
+              font-size: $font-size-xlll  !important;
           }         
 
         }
@@ -86,7 +103,7 @@
       }
       .container-banner {
       .ic-content{
-        padding: 8px 8px !important;
+        padding: 0 0 !important;
       }
     }
     .cb-p-se{
@@ -99,7 +116,7 @@
       flex-direction: column;
     }
       .common-container{
-        padding: 16px 8px !important;
+        padding: 8px 8px !important;
       }
       .form-container {
         padding: 16px 16px !important;
@@ -120,7 +137,7 @@
     .healthy-unhealthy-container{
       width: 100% !important;
       .lc-image{
-        height: 180px !important;
+        height: 150px !important;
           }
     }
     .vp-card{
@@ -153,4 +170,33 @@
         order: 1 !important; /* Content comes second */
       }
     }
+    .carousel-container .carousel .cc-image-container {
+      width: 150px !important;
+      height: 150px !important;
+      top: -80px !important;
+  }
+    .carousel-container .carousel .carousel-des-container, .carousel-container .carousel .text-container {
+      margin-top: 80px !important;
+      padding-top: 80px !important;
+  }
+  .carousel-container .carousel .carousel-des-container .carousel-description .description h3, .carousel-container .carousel .text-container .carousel-description .description h3 {
+    font-size: $font-size-l !important;
+
+}
+.lrc-img {
+  height: 150px !important;
+}
+.image-badge-top{
+  float: none !important;
+  width: 180px !important;
+  margin: 0 auto !important;
+ }
+ .image-badge-top-left {
+
+  width: 100% !important;
+
+}
+.support-d-flex100{
+height: auto !important;
+}
   }
