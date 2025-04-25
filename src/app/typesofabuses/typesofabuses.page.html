@@ -12,7 +12,7 @@
 
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row>
-      <ion-col size="12" size-sm="9" class="order1">
+      <ion-col size="12" size-md="9" class="order1">
         <ion-row class="comp-space">
       <ion-col size="12">
         <pathome-typesof-abuse-card id="physicalAbuse" [paramName]="'physicalAbuse'"  [endpoint]="physicalabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
@@ -81,7 +81,7 @@
     </ion-row>
     </ion-col>
     
-    <ion-col size="12" size-sm="3">
+    <ion-col size="12" size-md="3">
       <ul class="side-menu"   #stickyMenu   >
         <li [ngClass]="{'active': activeSection === 'physicalAbuse'}">  <a (click)="scrollToSection('physicalAbuse')" >Physical Abuse</a></li>
         <li  [ngClass]="{'active': activeSection === 'sexualAbuse'}">  <a (click)="scrollToSection('sexualAbuse')">Sexual Abuse</a></li>
