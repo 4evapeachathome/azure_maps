@@ -1,33 +1,36 @@
 <ion-footer>
   <ion-grid>
-    <ion-row > 
-      <ion-col size="12" size-sm="6" class="d-flex ion-align-items-center all-rights">
+    <ion-row class="ion-justify-content-between"> 
+      <ion-col size="12" size-sm="4" class="d-flex ion-align-items-center all-rights">
         <ion-text>
           All rights reserved &#64;4EVA
         </ion-text>
       </ion-col>
-      <ion-col size="12" size-sm="1">
-        <h5> <a routerLink="/home">Home</a></h5>
+      <ion-col size="12" size-sm="auto">
+        <div>
+          <ul>
+          <h5> <a routerLink="/home">Home</a></h5>
+          </ul>
+          <ul>
+            <h5><a routerLink="/peaceathome">Peace at Home</a></h5>
+            <li><a routerLink="/healthyrelationship" routerLinkActive="active">Healthy Relationship</a></li>
+            </ul>
+            <ul>
+              <h5><a routerLink="/nopeaceathome">No Peace at Home</a></h5>
+            
+                <li><a routerLink="/unhealthyrelationship" routerLinkActive="active" >Unhealthy Relationship</a></li>
+                <li><a routerLink="/typesofabuse" routerLinkActive="active">Types of Abuse</a></li>
+                <li><a routerLink="/uslawsbystate" routerLinkActive="active">Partner Violence</a></li>
+           
+              </ul>
+              <ul>
+                <h5> <a routerLink="/contactus">Contact Us</a></h5>
+                </ul>
+        </div>
+       
        
       </ion-col>
-      <ion-col size="12" size-sm="2">
-        <h5><a routerLink="/peaceathome">Peace at Home</a></h5>
-        <ul>
-          <li><a routerLink="/healthyrelationship" routerLinkActive="active">Healthy Relationship</a></li>
-        </ul>
-      </ion-col>
-      <ion-col size="12" size-sm="2">
-        <h5><a routerLink="/nopeaceathome">No Peace at Home</a></h5>
-        <ul>
-          <li><a routerLink="/unhealthyrelationship" routerLinkActive="active" >Unhealthy Relationship</a></li>
-          <li><a routerLink="/typesofabuse" routerLinkActive="active">Types of Abuse</a></li>
-          <li><a routerLink="/uslawsbystate" routerLinkActive="active">Partner Violence</a></li>
-        </ul>
-      </ion-col>
-      <ion-col size="12" size-sm="1">
-        <h5> <a routerLink="/contactus">Contact Us</a></h5>
-       
-      </ion-col>
+    
     </ion-row>
   </ion-grid>
  </ion-footer>

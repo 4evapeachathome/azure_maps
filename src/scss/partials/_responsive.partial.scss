@@ -1,4 +1,10 @@
-
+@media (max-width: 576px) {
+  ion-footer{
+    ul{
+      display: inline !important;
+    }
+  } 
+}
 @media (max-width: 768px) {
   .hb-img{
 
@@ -199,4 +205,5 @@
 .support-d-flex100{
 height: auto !important;
 }
+
   }
