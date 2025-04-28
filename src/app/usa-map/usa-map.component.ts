@@ -57,6 +57,13 @@ export class UsaMapComponent {
     this.showLawInfo = false; // Hide the state view when breadcrumb is clicked
   }
 
+  get filteredStates() {
+    debugger;
+    return this.usaMap?.locations?.filter(state => 
+      !['Washington, DC'].includes(state.name)
+    ) || [];
+  }
+
   private capitalizeWords(str: string): string {
     return str.replace(/\b\w/g, char => char.toUpperCase());
   }

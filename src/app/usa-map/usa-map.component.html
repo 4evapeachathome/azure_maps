@@ -33,7 +33,7 @@
           [(ngModel)]="selectedState" 
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
-            *ngFor="let state of usaMap.locations" 
+            *ngFor="let state of filteredStates" 
             [value]="state">
             {{ state.name }}
           </ion-select-option>
@@ -198,7 +198,7 @@
           [(ngModel)]="selectedState"  
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
-            *ngFor="let state of usaMap.locations" 
+            *ngFor="let state of filteredStates" 
             [value]="state">
             {{ state.name }}
           </ion-select-option>
