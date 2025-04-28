@@ -25,7 +25,7 @@
     </ul>
   </ion-text>
 
-<div class="m-t-16" *ngIf="isExpanded" @expandCollapse>
+<div class="m-t-16" *ngIf="physicalAbuse?.example?.length > 0 && isExpanded" @expandCollapse>
   
       <ion-text class="cb-content" >
            
@@ -50,7 +50,7 @@
     
 
 
-  <ion-button fill="clear" size="small" class="rmc-button" [ngClass]="{'button-left': buttonPosition === 'left'}" (click)="toggleReadMore()">   {{ isExpanded ? 'Read Less' : 'Read More' }}<ion-img [src]="isExpanded ? '../../../assets/upArrow.svg' : '../../../assets/downArrow.svg'" alt="Contact Us"></ion-img></ion-button>
+  <ion-button fill="clear" *ngIf="physicalAbuse?.example?.length > 0" size="small" class="rmc-button" [ngClass]="{'button-left': buttonPosition === 'left'}" (click)="toggleReadMore()">   {{ isExpanded ? 'Read Less' : 'Read More' }}<ion-img [src]="isExpanded ? '../../../assets/upArrow.svg' : '../../../assets/downArrow.svg'" alt="Contact Us"></ion-img></ion-button>
 
 
 

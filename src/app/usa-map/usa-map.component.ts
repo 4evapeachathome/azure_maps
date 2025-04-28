@@ -118,11 +118,19 @@ getLineCoordinates(pathData: string, stateId: string): { start: Point; end: Poin
     }
   }
 
-  private smallStrokeStates: string[] = ['vt', 'md', 'ct', 'nh', 'ma', 'ri', 'nj', 'de'];
+  private smallStrokeStates: string[] = ['hi','vt', 'md', 'ct', 'nh', 'ma', 'ri', 'nj', 'de'];
 
 isSmallState(stateId?: string): boolean {
   if (!stateId) return false;
   return this.smallStrokeStates.includes(stateId.toLowerCase());
+}
+
+private largeStrokeStates: string[] = ['ak', 'ca', 'tx'];
+
+
+isLargeState(stateId?: string): boolean {
+  if (!stateId) return false;
+  return this.largeStrokeStates.includes(stateId.toLowerCase());
 }
   
   

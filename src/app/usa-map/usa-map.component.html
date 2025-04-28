@@ -12,12 +12,12 @@
       </ion-button>
     </ion-col>
   </ion-row> 
-  <ion-row *ngIf="!selectedState && isMobile">
+  <ion-row *ngIf="!selectedState">
     <ion-col>
       <p class="m-0">Please select your state of residence to see the US LAWS BY STATE</p>
     </ion-col>
   </ion-row>
-  <ion-row *ngIf="selectedState && isMobile">
+  <ion-row *ngIf="selectedState">
     <ion-col>
     <!-- <ion-list class="select-container">
       <ion-item> -->
@@ -162,7 +162,8 @@
                       <svg [attr.viewBox]="getStateViewBox()">
                         <path [attr.d]="getSelectedStatePath()" class="active" [ngClass]="{
                           'small-stroke': selectedState && isSmallState(selectedState.id) && selectedState.id.toLowerCase() !== 'ri',
-                          'ri-stroke': selectedState && selectedState.id.toLowerCase() === 'ri'
+                          'ri-stroke': selectedState && selectedState.id.toLowerCase() === 'ri',
+                          'large-state-stroke': selectedState && isLargeState(selectedState.id)
                         }"/>
                         <text [attr.x]="50" [attr.y]="50" class="state-label selected"
                           text-anchor="middle" dominant-baseline="middle">
@@ -185,7 +186,7 @@
       </div>
       </ion-col>
   </ion-row>
-  <ion-row *ngIf="!selectedState && isMobile">
+  <ion-row *ngIf="!selectedState">
     <ion-col>
       <!-- <ion-list>
       <ion-item> -->

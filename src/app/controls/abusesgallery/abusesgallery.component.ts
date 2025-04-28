@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -16,10 +16,14 @@ export class AbusesgalleryComponent  implements OnInit {
   abuseGallery: any[] = [];
   title:any;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService,private router: Router) {}
 
   ngOnInit() {
     this.loadTypesOfAbuse();
+  }
+
+  navigateToPeaceAtHome() {
+    this.router.navigate(['/typesofabuse']); // Adjust the route path as needed
   }
 
   loadTypesOfAbuse() {

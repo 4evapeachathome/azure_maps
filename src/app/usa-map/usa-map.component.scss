@@ -143,11 +143,15 @@ margin-bottom: 32px;
             }
 
             path.small-stroke {
-              stroke-width: 0.2; /* Stroke width for VT, MD, CT, NH, MA, NJ, DE */
+              stroke-width: 0.1; /* Stroke width for VT, MD, CT, NH, MA, NJ, DE */
+            }
+
+            path.large-state-stroke{
+              stroke-width: 0.9;
             }
         
             path.ri-stroke {
-              stroke-width: 0.1; /* Specific stroke width for RI */
+              stroke-width: 0.07; /* Specific stroke width for RI */
             }
 
             line {
