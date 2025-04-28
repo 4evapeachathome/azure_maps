@@ -104,7 +104,8 @@
     &:hover {
       font-weight: $font-semibold;
       --background: var(--menu-selected-color);
-      --color: var(--ion-color-primary-contrast);
+      --color: var(--color-white );
+     
       ion-icon {
         color: var(--ion-color-primary-contrast);
         filter: brightness(0) invert(1);
@@ -112,6 +113,7 @@
       .icon-inner svg path {
         fill: var(--ion-color-primary-contrast);
       }
+   
     }
 
     ion-icon {
