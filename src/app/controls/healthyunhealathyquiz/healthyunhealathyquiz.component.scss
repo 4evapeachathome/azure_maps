@@ -6,56 +6,75 @@
   
   .quiz-subheading {
     font-size: 0.95rem;
-    margin-top: 0.25rem;
     color: #333;
   }
   
-  .quiz-slide {
-    margin-top: 1rem;
-  }
-  
-  .question {
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-  
-  .options {
+  .header-row {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  
+  .scenario-label {
+    flex: 2;
+    font-weight: bold;
+  }
+  
+  .healthy-unhealthy-header {
+    display: flex;
+    flex: 1;
+    justify-content: space-around;
+  }
+  
+  .column {
+    font-weight: bold;
+    color: #7f3f98;
+  }
+  
+  .question-row, .answer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     margin-bottom: 1rem;
   }
   
-  .option {
+  .question-text, .answer-text {
+    flex: 2;
+    font-size: 0.95rem;
+  }
+  
+  .option-columns {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     flex: 1;
+    justify-content: space-around;
+  }
+
+  .option-columns ion-icon {
+    font-size: 24px; /* Adjust size as needed */
+    color: grey; /* Default color for unselected */
+  }
+  
+  .option-columns ion-icon.selected {
+    color: purple; /* Color for selected state, match your theme */
+    font-weight: bold; /* Optional: make it stand out */
+  }
+  
+  .option, .answer-row ion-icon {
+    font-size: 1.5rem;
     cursor: pointer;
-  }
-  
-  .option span {
-    margin-bottom: 0.25rem;
-  }
-  
-  ion-icon {
-    font-size: 2rem;
     color: #ccc;
-    transition: color 0.3s;
   }
   
   ion-icon.selected {
     color: #7f3f98;
   }
   
-  .answer {
-    background-color: #f6f6f6;
-    padding: 0.75rem;
-    border-radius: 8px;
-    font-style: italic;
-    color: #444;
+  .answer-label {
+    font-weight: bold;
+    margin-right: 0.5rem;
   }
   
-  .navigation {
+  .nav-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 1rem;

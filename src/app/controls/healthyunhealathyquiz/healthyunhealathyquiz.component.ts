@@ -58,25 +58,30 @@ export class HealthyunhealathyquizComponent  implements OnInit {
     });
   }
 
-  selectOption(index: number, option: 'healthy' | 'unhealthy') {
+  selectOption(index: number, option: 'healthy' | 'unhealthy'): void {
     this.questions[index].selected = option;
-    this.showAnswers[index] = true;
+    this.showAnswers[index] = true; // Show the answer immediately after selection
   }
 
-  prevSlide() {
+  prevSlide(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
     }
   }
 
-  nextSlide() {
+  nextSlide(): void {
     if (this.currentIndex < this.questions.length - 1) {
       this.currentIndex++;
     }
   }
 
-  goToSlide(index: number) {
+  goToSlide(index: number): void {
     this.currentIndex = index;
+  }
+
+  // Helper to determine if the answer is healthy based on answerkey
+  isHealthyAnswer(answerkey: boolean | null): boolean {
+    return answerkey === true;
   }
 
 }

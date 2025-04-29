@@ -6,45 +6,68 @@
 
   <ion-card-content>
     <div class="quiz-slide" *ngFor="let q of questions; let i = index" [hidden]="i !== currentIndex">
-      <div class="question">
-        <strong>Q:</strong> {{ q.description }}
-      </div>
-
-      <div class="options">
-        <div class="option" (click)="selectOption(i, 'healthy')">
-          <span>Healthy</span>
-          <ion-icon
-            name="checkmark-circle"
-            [class.selected]="q.selected === 'healthy'"
-          ></ion-icon>
-        </div>
-        <div class="option" (click)="selectOption(i, 'unhealthy')">
-          <span>Unhealthy</span>
-          <ion-icon
-            name="close-circle"
-            [class.selected]="q.selected === 'unhealthy'"
-          ></ion-icon>
+      <div class="header-row">
+        <div class="scenario-label">Scenario:</div>
+        <div class="healthy-unhealthy-header">
+          <div class="column">Healthy</div>
+          <div class="column">Unhealthy</div>
         </div>
       </div>
 
-      <div class="answer" *ngIf="showAnswers[i]">
-        <strong>A:</strong>
-        <p>{{ q.answer }}</p>
+      <div class="question-row">
+        <div class="question-text"><strong>Q:</strong> {{ q.description }}</div>
+        <div class="option-columns">
+          <div class="option" (click)="selectOption(i, 'healthy')">
+            <ion-icon
+              [name]="q.selected === 'healthy' ? 'checkmark-circle' : 'checkmark-circle-outline'"
+              [class.selected]="q.selected === 'healthy'"
+            ></ion-icon>
+          </div>
+          <div class="option" (click)="selectOption(i, 'unhealthy')">
+            <ion-icon
+              [name]="q.selected === 'unhealthy' ? 'close-circle' : 'close-circle-outline'"
+              [class.selected]="q.selected === 'unhealthy'"
+            ></ion-icon>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="navigation">
-      <ion-icon name="chevron-back" (click)="prevSlide()" [class.disabled]="currentIndex === 0"></ion-icon>
-      <ion-icon name="chevron-forward" (click)="nextSlide()" [class.disabled]="currentIndex === questions.length - 1"></ion-icon>
-    </div>
+      <div class="answer-row" *ngIf="showAnswers[i]">
+        <div class="answer-label">A:</div>
+        <div class="answer-text">{{ q.answer }}</div>
+        <div class="option-columns">
+          <ion-icon
+            [name]="isHealthyAnswer(q.answerkey) ? 'checkmark-circle' : 'checkmark-circle-outline'"
+            [class.selected]="isHealthyAnswer(q.answerkey)"
+          ></ion-icon>
+          <ion-icon
+            [name]="!isHealthyAnswer(q.answerkey) ? 'close-circle' : 'close-circle-outline'"
+            [class.selected]="!isHealthyAnswer(q.answerkey)"
+          ></ion-icon>
+        </div>
+      </div>
 
-    <div class="pagination">
-      <span
-        *ngFor="let q of questions; let idx = index"
-        class="dot"
-        [class.active]="currentIndex === idx"
-        (click)="goToSlide(idx)"
-      ></span>
+      <div class="nav-buttons">
+        <ion-icon
+          name="chevron-back"
+          (click)="prevSlide()"
+          [class.disabled]="currentIndex === 0"
+        ></ion-icon>
+        <ion-icon
+          name="chevron-forward"
+          (click)="nextSlide()"
+          [class.disabled]="currentIndex === questions.length - 1"
+        ></ion-icon>
+      </div>
+
+      <div class="pagination">
+        <span
+          *ngFor="let q of questions; let idx = index"
+          class="dot"
+          [class.active]="currentIndex === idx"
+          (click)="goToSlide(idx)"
+        ></span>
+      </div>
     </div>
   </ion-card-content>
 </ion-card>
