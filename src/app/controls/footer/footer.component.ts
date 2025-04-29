@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'pathome-footer',
@@ -12,8 +13,11 @@ import { IonicModule } from '@ionic/angular';
 })
 export class FooterComponent  implements OnInit {
 
-  constructor() { }
+  constructor(private menuService:MenuService) { }
 
   ngOnInit() {}
 
+  expandMenu() {
+    this.menuService.toggleAdditionalMenus(true);
+  }
 }
