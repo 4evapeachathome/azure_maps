@@ -1,0 +1,50 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title class="quiz-title">{{ quizTitle }}</ion-card-title>
+    <p class="quiz-subheading">{{ quizSubheading }}</p>
+  </ion-card-header>
+
+  <ion-card-content>
+    <div class="quiz-slide" *ngFor="let q of questions; let i = index" [hidden]="i !== currentIndex">
+      <div class="question">
+        <strong>Q:</strong> {{ q.description }}
+      </div>
+
+      <div class="options">
+        <div class="option" (click)="selectOption(i, 'healthy')">
+          <span>Healthy</span>
+          <ion-icon
+            name="checkmark-circle"
+            [class.selected]="q.selected === 'healthy'"
+          ></ion-icon>
+        </div>
+        <div class="option" (click)="selectOption(i, 'unhealthy')">
+          <span>Unhealthy</span>
+          <ion-icon
+            name="close-circle"
+            [class.selected]="q.selected === 'unhealthy'"
+          ></ion-icon>
+        </div>
+      </div>
+
+      <div class="answer" *ngIf="showAnswers[i]">
+        <strong>A:</strong>
+        <p>{{ q.answer }}</p>
+      </div>
+    </div>
+
+    <div class="navigation">
+      <ion-icon name="chevron-back" (click)="prevSlide()" [class.disabled]="currentIndex === 0"></ion-icon>
+      <ion-icon name="chevron-forward" (click)="nextSlide()" [class.disabled]="currentIndex === questions.length - 1"></ion-icon>
+    </div>
+
+    <div class="pagination">
+      <span
+        *ngFor="let q of questions; let idx = index"
+        class="dot"
+        [class.active]="currentIndex === idx"
+        (click)="goToSlide(idx)"
+      ></span>
+    </div>
+  </ion-card-content>
+</ion-card>
