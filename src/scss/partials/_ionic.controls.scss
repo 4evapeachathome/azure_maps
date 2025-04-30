@@ -152,3 +152,10 @@ ion-select{
 //       --padding-end: 0 !important;
 //     }
 //   }
+.item-radio-checked.sc-ion-select-popover-md {
+  --background: var(--color-white-smoke);
+  --background-focused: var(--color-primary);
+  --background-focused-opacity: 0.2;
+  --background-hover: var(--color-primary);
+  --background-hover-opacity: 0.12;
+}

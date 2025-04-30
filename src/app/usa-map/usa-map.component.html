@@ -29,7 +29,7 @@
         </ion-select> -->
         <ion-select  
           placeholder="Choose Your State" fill="outline"  label="Choose Your State" label-placement="floating" 
-          interface="modal" 
+          interface="popover" 
           [(ngModel)]="selectedState" 
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
@@ -193,7 +193,7 @@
         <!-- <ion-label>Select State</ion-label> -->
          
         <ion-select
-          placeholder="Choose Your State" fill="outline" interface="modal" label="Choose Your State" label-placement="floating" 
+          placeholder="Choose Your State" fill="outline" interface="popover" label="Choose Your State" label-placement="floating" 
        
           [(ngModel)]="selectedState"  
           (ionChange)="onStateClick($event.detail.value)">

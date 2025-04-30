@@ -58,7 +58,7 @@ export class UsaMapComponent {
   }
 
   get filteredStates() {
-    debugger;
+   // debugger;
     return this.usaMap?.locations?.filter(state => 
       !['Washington, DC'].includes(state.name)
     ) || [];
