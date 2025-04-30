@@ -35,7 +35,7 @@
       <div class="answer-row" *ngIf="showAnswers[i]">
         <div class="answer-label">A:</div>
         <div class="answer-text">{{ q.answer }}</div>
-        <div class="option-columns">
+        <!-- <div class="option-columns">
           <ion-icon
             [name]="isHealthyAnswer(q.answerkey) ? 'checkmark-circle' : 'checkmark-circle-outline'"
             [class.selected]="isHealthyAnswer(q.answerkey)"
@@ -44,7 +44,7 @@
             [name]="!isHealthyAnswer(q.answerkey) ? 'close-circle' : 'close-circle-outline'"
             [class.selected]="!isHealthyAnswer(q.answerkey)"
           ></ion-icon>
-        </div>
+        </div> -->
       </div>
 
       <div class="nav-buttons">
