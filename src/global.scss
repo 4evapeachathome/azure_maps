@@ -1066,3 +1066,89 @@ width: 100%;
   width: 330px;
   text-align: center;
  }
+ .quiz-container{
+  ion-card-header{
+    ion-card-title{
+      font-weight: $font-bold ;
+      font-size: $font-size-xll;
+      color: var(--ion-color-primary);
+    }
+    ion-text{
+      font-weight: $font-bold ;
+      font-size: $font-size-l;
+      color: var(--color-dark-Gray );
+    }
+  }
+ 
+ }
+ .quiz-slide{
+  
+  .qs-row{
+    display: flex;
+  }
+  .qs-col{
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+color: var(--color-dark-Gray);
+  font-size: $font-size-md;
+  padding: 8px;
+  }
+  .qsc-1{
+    -ms-flex: 0 0 16.666667%;
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+  }
+  .qs-header{  
+    .qs-col{
+    font-size: $font-size-base;
+    color: var(--color-dark-Gray );
+    background: var(--color-white-smoke);
+    font-weight: $font-bold   ;
+    }
+    
+  }
+  .answer-row{
+    border-top: 1px dashed var(--color-primary );
+  }
+  ion-icon {
+      font-size: $font-size-xlll ; /* Adjust size as needed */
+      color: var(--color-dark-Gray ); /* Default color for unselected */
+      cursor: pointer;
+      &.selected {
+        color: var(--color-primary) ; /* Color for selected state, match your theme */
+        font-weight: $font-bold ; /* Optional: make it stand out */
+      }
+      &.disabled {
+          opacity: 0.3;
+          pointer-events: none;
+        }
+    }
+    .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    .dot {
+      height: 10px;
+      width: 10px;
+      background-color: $color-Gray84;
+      border-radius: 50%;
+      margin: 0 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      &.hover {
+        background-color: var(--color-primary);
+      }
+      &.active {
+        background-color: var(--color-primary);
+      }
+    }
+  }
+  
+  
+  
+ 
+    
+}
