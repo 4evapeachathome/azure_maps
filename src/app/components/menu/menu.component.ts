@@ -31,11 +31,13 @@ export class MenuComponent implements OnInit {
   @Input() fields: string[] = ['title', 'link'];
   @Input() populate: string[] = ['parentMenu'];
   @Input() sort: string[] = ['createdAt:asc'];
+  @Input() isSidebarExpanded: boolean = true;
 
   menuItems: MenuItem[] = [];
   processedMenu: MenuItem[] = [];
   selectedId: string | null = null;
   showAdditionalMenus: boolean = false;
+  @Input() isMenuOpen: boolean = true;
   public subscription!: Subscription;
 
   // Define the titles of menus to hide initially
@@ -66,6 +68,11 @@ export class MenuComponent implements OnInit {
         this.processedMenu = this.buildMenuTree(this.menuItems);
       }
     });
+  }
+
+  shouldHideIcon(item: any): boolean {
+    // If sidebar is expanded, hide icons for child items (i.e., those with parentMenu)
+    return this.isMenuOpen && item.parentMenu !== null;
   }
 
   loadMenuItems() {

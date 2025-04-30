@@ -109,6 +109,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
   @ViewChild('mobileToggle', { static: false }) mobileToggle!: ElementRef<HTMLInputElement>;
+  @ViewChild('desktopToggle', { static: false }) desktopToggle!: ElementRef<HTMLInputElement>;
+
   isMenuOpen = false;
   public readonly endPoint : string = APIEndpoints.supportService;
 
@@ -133,12 +135,15 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
 
   ngAfterViewInit() {
-  //  debugger;
-    if (this.mobileToggle) {
-      this.isMenuOpen = this.mobileToggle.nativeElement.checked;
-
-      this.mobileToggle.nativeElement.addEventListener('change', () => {
-        this.isMenuOpen = this.mobileToggle.nativeElement.checked;
+    const toggleRef = this.isMobile ? this.mobileToggle : this.desktopToggle;
+  
+    if (toggleRef) {
+      // Set initial value
+      this.isMenuOpen = toggleRef.nativeElement.checked;
+  
+      // Listen to changes
+      toggleRef.nativeElement.addEventListener('change', () => {
+        this.isMenuOpen = toggleRef.nativeElement.checked;
       });
     }
   }
