@@ -7,35 +7,41 @@
     <ng-container *ngIf="currentIndex < sripa.length">
     <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
       <div class="qs-row question-subheading">
+        <div class="qs-col">
         <strong>Question:</strong>
       </div>
+      </div>
       <div class="qs-row question-row">
-        <div class="qs-col">{{ q.question }}</div>
-        <div class="qs-col qsc-1">
-          <label>
-            <input
-              type="radio"
-              [name]="'yesNoChoice' + i"
-              [(ngModel)]="selectedOptions[i]"
-              [value]="'yes'"
-            />
-            Yes
-          </label>
-      
-        </div>
-        <div class="qs-col qsc-1">
+        <div class="qs-col" >{{ q.question }}</div>
+        <div class="qs-col qsc-1" >
+        <div  class="qs-row">
+          <div class="qs-col ta-center">
+            <label>
+              <input
+                type="radio"
+                [name]="'yesNoChoice' + i"
+                [(ngModel)]="selectedOptions[i]"
+                [value]="'yes'"
+              />
+              Yes
+            </label>
         
-        
-          <label>
-            <input
-              type="radio"
-              [name]="'yesNoChoice' + i"
-              [(ngModel)]="selectedOptions[i]"
-              [value]="'no'"
-            />
-            No
-          </label>
+          </div>
+          <div class="qs-col ta-center">
+            <label>
+              <input
+                type="radio"
+                [name]="'yesNoChoice' + i"
+                [(ngModel)]="selectedOptions[i]"
+                [value]="'no'"
+              />
+              No
+            </label>
+          </div>
         </div>
+          
+        </div>
+        
       </div>
 
       <div class="qs-row answer-row" *ngIf="selectedOptions[i] === 'yes'">

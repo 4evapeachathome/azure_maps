@@ -1092,6 +1092,7 @@ width: 100%;
   .qs-row{
     display: flex;
   }
+ 
   .qs-col{
     -ms-flex-preferred-size: 0;
     flex-basis: 0;
@@ -1103,9 +1104,9 @@ color: var(--color-dark-Gray);
   padding: 8px;
   }
   .qsc-1{
-    -ms-flex: 0 0 16.666667%;
-    flex: 0 0 16.666667%;
-    max-width: 16.666667%;
+    -ms-flex: 0 0 20%;
+    flex: 0 0 20%;
+    max-width: 20%;
   }
   .qs-header{  
     .qs-col{
@@ -1115,6 +1116,9 @@ color: var(--color-dark-Gray);
     font-weight: $font-bold   ;
     }
     
+  }
+  .qsp-0{
+    padding: 0;
   }
   .answer-row{
     border-top: 1px dashed var(--color-primary );
