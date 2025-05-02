@@ -2,7 +2,7 @@
 [ngClass]="{'reverse-image': imagePosition === 'right'}">
   <ion-row>
     <!-- First column - content (text/lists) based on contentPlacement -->
-    <ion-col size="12" size-sm="6" class="p-0 con-container-center order1">
+    <ion-col size="12" size-md="6" class="p-0 con-container-center order1">
       <ion-card >
         <ion-card-content>
     <!-- Image Section -->
@@ -19,7 +19,13 @@
   </ng-container>
   </ion-text>
 
-<div class="m-t-16" *ngIf="isExpanded" @expandCollapse>
+  <ion-text class="cb-content" *ngIf="getListItems().length > 0">
+    <ul>
+      <li *ngFor="let item of getListItems()">{{ item }}</li>
+    </ul>
+  </ion-text>
+
+<div class="m-t-16" *ngIf="physicalAbuse?.example?.length > 0 && isExpanded" @expandCollapse>
   
       <ion-text class="cb-content" >
            
@@ -44,7 +50,7 @@
     
 
 
-  <ion-button fill="clear" size="small" class="rmc-button" [ngClass]="{'button-left': buttonPosition === 'left'}" (click)="toggleReadMore()">   {{ isExpanded ? 'Read Less' : 'Read More' }}<ion-img [src]="isExpanded ? '../../../assets/upArrow.svg' : '../../../assets/downArrow.svg'" alt="Contact Us"></ion-img></ion-button>
+  <ion-button fill="clear" *ngIf="physicalAbuse?.example?.length > 0" size="small" class="rmc-button" [ngClass]="{'button-left': buttonPosition === 'left'}" (click)="toggleReadMore()">   {{ isExpanded ? 'Read Less' : 'Read More' }}<ion-img [src]="isExpanded ? '../../../assets/upArrow.svg' : '../../../assets/downArrow.svg'" alt="Contact Us"></ion-img></ion-button>
 
 
 
@@ -52,7 +58,7 @@
         </ion-card-content>
 </ion-card>
     </ion-col>
-    <ion-col size="12" size-sm="6" class="p-0 img-container">
+    <ion-col size="12" size-md="6" class="p-0 img-container">
       <ion-img class="lc-image"
         [src]="physicalAbuse.webImage?.fullUrl || 'assets/images/physical-abuse.png'" 
         alt="Physical Abuse"

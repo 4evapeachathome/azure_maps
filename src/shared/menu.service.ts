@@ -14,6 +14,10 @@ export class MenuService {
   filterOptions$ = this.filterOptionsSubject.asObservable();
   organizations$ = this.organizationsSubject.asObservable();
 
+  private showAdditionalMenusSource = new BehaviorSubject<boolean>(false);
+  showAdditionalMenus$ = this.showAdditionalMenusSource.asObservable();
+
+
   setMenuItems(items: any[]) {
     this.menuItemsSource.next(items);
   }
@@ -22,6 +26,10 @@ export class MenuService {
     return this.menuItemsSource.value;
   }
 
+ 
+  toggleAdditionalMenus(show: boolean) {
+    this.showAdditionalMenusSource.next(show);
+  }
 
 
   setFilterOptions(options: any[]) {

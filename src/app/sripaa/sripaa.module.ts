@@ -8,6 +8,7 @@ import { SripaaPageRoutingModule } from './sripaa-routing.module';
 
 import { SripaaPage } from './sripaa.page';
 import { FooterComponent } from "../controls/footer/footer.component";
+import { SripacompComponent } from "../controls/sripacomp/sripacomp.component";
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { FooterComponent } from "../controls/footer/footer.component";
     FormsModule,
     IonicModule,
     SripaaPageRoutingModule,
-    FooterComponent
+    FooterComponent,
+    SripacompComponent
 ],
   declarations: [SripaaPage]
 })

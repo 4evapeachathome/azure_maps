@@ -104,7 +104,8 @@
     &:hover {
       font-weight: $font-semibold;
       --background: var(--menu-selected-color);
-      --color: var(--ion-color-primary-contrast);
+      --color: var(--color-white );
+     
       ion-icon {
         color: var(--ion-color-primary-contrast);
         filter: brightness(0) invert(1);
@@ -112,6 +113,7 @@
       .icon-inner svg path {
         fill: var(--ion-color-primary-contrast);
       }
+   
     }
 
     ion-icon {
@@ -210,6 +212,7 @@
     transition: all 0.4s ease;
   }
 .st-close {
+  display: none;/* if you want to hide the icon */
   opacity: 0;
   transition: all 0.4s ease;
 }
@@ -217,8 +220,8 @@
 .sidebar-toggle:checked + .sidebar-toggle-label 
 {
   .st-open {
-    opacity: 0;
-    width: 0;
+    //opacity: 0;
+   // width: 0;
     transition: all 0.4s ease;
   }
 .st-close {

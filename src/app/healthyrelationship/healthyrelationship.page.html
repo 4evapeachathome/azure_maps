@@ -18,12 +18,12 @@
 </ion-row>
 <ion-row class="comp-space">
   <ion-col size="12">
-    <pathome-healthyrelationshipcontent [endpoint]="healthyrelationcontentwithbutton" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
+    <pathome-healthyrelationshipcontent [endpoint]="healthyrelationcontentwithbutton" [routerLink]="['/nopeaceathome']" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
   </ion-col>
  </ion-row>
  <ion-row class="comp-space">
   <ion-col class="ion-text-center">
-    <ion-button color="primary" size="small">Explore the Next Chapter.....</ion-button>
+    <ion-button color="primary" [routerLink]="['/nopeaceathome']" size="small">Explore the Next Chapter.....</ion-button>
     </ion-col>
     </ion-row>
 </ion-grid>

@@ -1,0 +1,73 @@
+<ion-card class="common-container quiz-container" style="min-height: 500px;">
+  <ion-card-header>
+    <ion-card-title>{{ quizTitle }}</ion-card-title>
+    <ion-text >{{ quizSubheading }}</ion-text>
+  </ion-card-header>
+
+  <ion-card-content>
+
+     
+
+    <div class="quiz-slide" *ngFor="let q of questions; let i = index" [hidden]="i !== currentIndex">
+      <div class="qs-row qs-header">
+        <div class="qs-col">Scenario:</div>
+        <!-- <div class="healthy-unhealthy-header"> -->
+          <div class="qs-col qsc-1">Healthy</div>
+          <div class="qs-col qsc-1">Unhealthy</div>
+        <!-- </div> -->
+      </div>
+
+      <div class="qs-row question-row">
+        <div class="qs-col"><strong>Q:</strong> {{ q.description }}</div>
+        <div class="qs-col qsc-1">
+          <div class="option" (click)="selectOption(i, 'healthy')">
+            <ion-icon  class="qz-icon"
+              [name]="q.selected === 'healthy' ? 'checkmark-circle' : 'checkmark-circle-outline'"
+              [class.selected]="q.selected === 'healthy'"
+            ></ion-icon>
+          </div>
+         
+        </div>
+        <div class="qs-col qsc-1">
+          
+          <div class="option" (click)="selectOption(i, 'unhealthy')">
+            <ion-icon class="qz-icon"
+              [name]="q.selected === 'unhealthy' ? 'close-circle' : 'close-circle-outline'"
+              [class.selected]="q.selected === 'unhealthy'"
+            ></ion-icon>
+          </div>
+        </div>
+      </div>
+
+      <div class="qs-row answer-row" *ngIf="showAnswers[i]">
+        <div class="qs-col"><strong>A:</strong>{{ q.answer }}</div>
+      </div>
+
+      <div class="qz-arrows">
+        <ion-icon 
+        name="chevron-back-outline"
+          class="nav-arrow prev" 
+          (click)="prevSlide()"
+          [class.disabled]="currentIndex === 0">
+        </ion-icon>
+        <ion-icon 
+        name="chevron-forward-outline"
+          class="nav-arrow next" 
+          (click)="nextSlide()"
+          [class.disabled]="currentIndex === questions.length - 1">
+        </ion-icon>
+      </div>
+
+    
+
+      <div class="pagination">
+        <span
+          *ngFor="let q of questions; let idx = index"
+          class="dot"
+          [class.active]="currentIndex === idx"
+          (click)="goToSlide(idx)"
+        ></span>
+      </div>
+    </div>
+  </ion-card-content>
+</ion-card>

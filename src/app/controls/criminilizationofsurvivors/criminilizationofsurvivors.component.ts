@@ -14,6 +14,8 @@ export class CriminilizationofsurvivorsComponent  implements OnInit {
   contentBlocks: any[] = [];
   webImages: any[] = [];
   isLoaded: boolean = false;
+  firstGroupBlocks:any;
+  secondGroupBlocks:any;
 
   constructor(private apiService:ApiService) { }
 
@@ -28,6 +30,23 @@ export class CriminilizationofsurvivorsComponent  implements OnInit {
          // debugger;
           this.contentBlocks = data.contentBlock;
           this.webImages = data.imageList;
+
+          const startIndexOfC = this.contentBlocks.findIndex(
+            block =>
+              block.type === 'heading' &&
+              block.children?.[0]?.text?.trim()?.startsWith('C. ')
+          );
+          
+          // If found, split into two groups
+          if (startIndexOfC !== -1) {
+            this.firstGroupBlocks = this.contentBlocks.slice(0, startIndexOfC);
+            this.secondGroupBlocks = this.contentBlocks.slice(startIndexOfC);
+          } else {
+            // fallback if "C." heading not found
+            this.firstGroupBlocks = this.contentBlocks;
+            this.secondGroupBlocks = [];
+          }
+
           this.isLoaded = true;
         }
       },

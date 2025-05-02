@@ -15,13 +15,13 @@
 
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row class="comp-space hc-spacing">
-      <ion-col size="12" size-sm="4" class="hcs-r hc-cp">
+      <ion-col size="12" size-md="4" class="hcs-r hc-cp">
         <pathome-daily-tips></pathome-daily-tips>
       </ion-col>      
-      <ion-col size="12" size-sm="4"  class="hcs hc-cp">
+      <ion-col size="12" size-md="4"  class="hcs hc-cp">
         <pathome-wellness-tips></pathome-wellness-tips>
       </ion-col>
-      <ion-col size="12" size-sm="4"  class="hcs-l hc-cp">
+      <ion-col size="12" size-md="4"  class="hcs-l hc-cp">
         <pathome-peace-harmony></pathome-peace-harmony>
       </ion-col>
     </ion-row>
@@ -29,7 +29,7 @@
     <!-- Third Row: Full-Width Slide Component -->
     <ion-row class="comp-space">
       <ion-col>
-        <pathome-home-slider [endpoint]="sliderEndpoint" [paramName]="'homeslider'"></pathome-home-slider>
+        <pathome-home-slider [routerLink]="['/peaceathome']" [endpoint]="sliderEndpoint" [paramName]="'homeslider'"></pathome-home-slider>
       </ion-col>
     </ion-row>
 
@@ -38,7 +38,7 @@
  
     <ion-row class="comp-space">
       <ion-col class="ion-text-center">
-        <ion-button color="primary" (click)="navigateToPeaceAtHome()" size="small">Explore the Next Chapter.....</ion-button>
+        <ion-button color="primary" (click)="expandMenu()" (click)="navigateToPeaceAtHome()" size="small">Explore the Next Chapter.....</ion-button>
         </ion-col>
         </ion-row>
  

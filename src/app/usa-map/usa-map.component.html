@@ -2,7 +2,7 @@
 <div class="common-container map-space-bottom">
   <ion-grid>
   <ion-row>
-    <ion-col size="12" size-sm="9">
+    <ion-col size="12" size-sm="9" style="padding-left: 0;">
       <pathome-breadcrumb [selectedState]="selectedState" (stateCleared)="clearSelectedState()"></pathome-breadcrumb>
     </ion-col>
     <ion-col size="12" size-sm="3" class="ion-text-right pr-0">
@@ -12,12 +12,12 @@
       </ion-button>
     </ion-col>
   </ion-row> 
-  <ion-row *ngIf="!selectedState && isMobile">
+  <ion-row *ngIf="!selectedState">
     <ion-col>
       <p class="m-0">Please select your state of residence to see the US LAWS BY STATE</p>
     </ion-col>
   </ion-row>
-  <ion-row *ngIf="selectedState && isMobile">
+  <ion-row *ngIf="selectedState">
     <ion-col>
     <!-- <ion-list class="select-container">
       <ion-item> -->
@@ -29,11 +29,11 @@
         </ion-select> -->
         <ion-select  
           placeholder="Choose Your State" fill="outline"  label="Choose Your State" label-placement="floating" 
-          interface="modal" 
+          interface="popover" 
           [(ngModel)]="selectedState" 
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
-            *ngFor="let state of usaMap.locations" 
+            *ngFor="let state of filteredStates" 
             [value]="state">
             {{ state.name }}
           </ion-select-option>
@@ -162,7 +162,8 @@
                       <svg [attr.viewBox]="getStateViewBox()">
                         <path [attr.d]="getSelectedStatePath()" class="active" [ngClass]="{
                           'small-stroke': selectedState && isSmallState(selectedState.id) && selectedState.id.toLowerCase() !== 'ri',
-                          'ri-stroke': selectedState && selectedState.id.toLowerCase() === 'ri'
+                          'ri-stroke': selectedState && selectedState.id.toLowerCase() === 'ri',
+                          'large-state-stroke': selectedState && isLargeState(selectedState.id)
                         }"/>
                         <text [attr.x]="50" [attr.y]="50" class="state-label selected"
                           text-anchor="middle" dominant-baseline="middle">
@@ -185,19 +186,19 @@
       </div>
       </ion-col>
   </ion-row>
-  <ion-row *ngIf="!selectedState && isMobile">
+  <ion-row *ngIf="!selectedState">
     <ion-col>
       <!-- <ion-list>
       <ion-item> -->
         <!-- <ion-label>Select State</ion-label> -->
          
         <ion-select
-          placeholder="Choose Your State" fill="outline" interface="modal" label="Choose Your State" label-placement="floating" 
+          placeholder="Choose Your State" fill="outline" interface="popover" label="Choose Your State" label-placement="floating" 
        
           [(ngModel)]="selectedState"  
           (ionChange)="onStateClick($event.detail.value)">
           <ion-select-option 
-            *ngFor="let state of usaMap.locations" 
+            *ngFor="let state of filteredStates" 
             [value]="state">
             {{ state.name }}
           </ion-select-option>

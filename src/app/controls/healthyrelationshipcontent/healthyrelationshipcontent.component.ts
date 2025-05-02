@@ -15,6 +15,7 @@ export class HealthyrelationshipcontentComponent  implements OnInit {
   content: any[] = [];
  @Input() isBtnVisible: boolean = false;
  @Input() endpoint: string='';
+ @Input() routerLink: string | string[] = [];
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {

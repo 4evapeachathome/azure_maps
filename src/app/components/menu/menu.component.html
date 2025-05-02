@@ -11,7 +11,10 @@
             [class.selected]="item.link === selectedId"
             [class.level-{{level}}]="true"
             (click)="toggleItem(item, $event)">
-    <ion-icon slot="start" [src]="item.icon?.url" class="menu-icon"></ion-icon>
+    <ion-icon slot="start" [ngStyle]="{
+      opacity: shouldHideIcon(item) ? '0' : '1',
+      transition: 'opacity 0.3s ease'
+    }" [src]="item.icon?.url" class="menu-icon"></ion-icon>
     <ion-label>{{ item.title }}</ion-label>
     <ion-icon *ngIf="item.children?.length" slot="end" 
               [name]="item.expanded ? 'chevron-down-outline' : 'chevron-forward-outline'">

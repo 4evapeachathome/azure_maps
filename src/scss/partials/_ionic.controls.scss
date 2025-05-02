@@ -84,6 +84,7 @@ ion-button{
     border: 0;
     box-shadow: none;
     padding-inline-start: 0;
+    color: var(--color-dark-Gray);
   }
   .searchbar-search-icon.sc-ion-searchbar-md {
     display: none;
@@ -129,6 +130,9 @@ ion-checkbox {
 .alert-radio-label.sc-ion-alert-md{
   padding-inline-start: 42px;
 }
+ion-select{
+  --highlight-color-valid: var(  --color-primary);
+}
   // ion-select{
   // border: 1px solid var(--color-dark-Gray);
   //   border-radius: 8px;
@@ -148,3 +152,10 @@ ion-checkbox {
 //       --padding-end: 0 !important;
 //     }
 //   }
+.item-radio-checked.sc-ion-select-popover-md {
+  --background: var(--color-white-smoke);
+  --background-focused: var(--color-primary);
+  --background-focused-opacity: 0.2;
+  --background-hover: var(--color-primary);
+  --background-hover-opacity: 0.12;
+}

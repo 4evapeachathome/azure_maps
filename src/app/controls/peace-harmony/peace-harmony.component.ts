@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'pathome-peace-harmony',
@@ -16,12 +17,15 @@ title: any;
 description:any;
 image:any;
 
-  constructor(private apiService:ApiService) { }
+  constructor(private apiService:ApiService, private menuService:MenuService) { }
 
   ngOnInit() {
     this.getExpertAdviceData();
   }
 
+  expandMenu() {
+    this.menuService.toggleAdditionalMenus(true);
+  }
 
   getExpertAdviceData() {
    this.apiService.getExpertAdvice().subscribe(

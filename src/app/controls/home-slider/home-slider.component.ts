@@ -4,6 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'pathome-home-slider',
@@ -41,11 +42,17 @@ export class HomeSliderComponent implements OnInit {
   sliderData: any;
   @Input() endpoint: string ='';
   @Input() paramName:string = '';
+  @Input() routerLink: string | string[] = [];
  
-  constructor(private apiService:ApiService) { }
+  constructor(private apiService:ApiService, private menuService:MenuService) { }
 
   ngOnInit() {
     this.getHomeSlidersData(this.endpoint, this.paramName);
+  }
+
+
+  expandMenu() {
+    this.menuService.toggleAdditionalMenus(true);
   }
 
   getHomeSlidersData(endpoint: string, paramName: string) {

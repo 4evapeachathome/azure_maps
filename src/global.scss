@@ -43,14 +43,28 @@
 
 //Hide scrollbar in all pages
 
-ion-content {
-  --offset-bottom: auto!important;
-  --overflow: hidden;
-  overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
+ion-content::part(scroll)::-webkit-scrollbar {
+  display: none;
   }
-}
+ 
+  // Hide scrollbar for IE, Edge and Firefox
+  ion-content::part(scroll) {
+  -ms-overflow-style: none; // IE and Edge
+  scrollbar-width: none; // Firefox
+  }
+
+// ion-content {
+//   // --offset-bottom: auto!important;
+//   // --overflow: hidden;
+//   // overflow: auto;
+//   &::-webkit-scrollbar {
+//     display: none;
+//   }
+//   // &::part(scroll){
+
+//   //   overflow: initial;
+//   //     }
+// }
 
 ion-header {
   padding-top: env(safe-area-inset-top); // respects iOS notch area too
@@ -110,6 +124,11 @@ ion-card {
   flex-direction: column;
 }
 .d-flex-h-100{
+  height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.support-d-flex100{
   height: 100%;
     display: flex;
     flex-direction: column;
@@ -174,8 +193,8 @@ ion-card {
     ion-img {
       width: 100%;
       height: 100%;
-      min-width: 200px;
-      min-height: 200px;
+      min-width: 150px;
+      // min-height: 200px;
     }
     h3{
       color: var(--color-deep-Gray);
@@ -208,7 +227,7 @@ ion-card {
   h3 {
     color: $color-dark-Gray;
     font-size: $font-size-xlll;
-    margin-bottom: 5px;
+    margin-bottom: 12px;
   }
   h4 {
     color: $color-dark-Gray;
@@ -259,7 +278,7 @@ ion-card {
   margin-bottom: 60px;
 }
 .scc-content{
-  padding: 16px 16px;
+  padding: 8px 16px;
   padding-bottom: 0;
 }
 .b-l-r-border-radius{
@@ -674,15 +693,17 @@ ion-card {
         font-size: 2rem;
         cursor: pointer;
         z-index: 2;
-        color: #ab52c5;
+        color: #AB52C5;
         transition: color 0.3s ease;
 
-        &:hover {
-          color: darken(#ab52c5, 10%);
-        }
+        
 .nav-arrow{
   position: relative;
   background: var(--color-white );
+  color: #AB52C5;
+  &:hover {
+    color: darken(#AB52C5, 10%);
+  }
 }
         .prev {
           left: 8px;
@@ -707,7 +728,7 @@ ion-card {
 }
 .hb-img{
 
-  max-height: 500px;
+  max-height: 450px;
   
 }
 // .contact-img{
@@ -766,6 +787,12 @@ margin: 0 auto;
       border-radius: 16px;
       border: 1px solid var(--color-primary);
       --min-height: auto;
+      --inner-border-width: 0;
+      &::part(native){
+      .item-inner{
+        border: 0;
+      }
+    }
       ion-label{
         width: auto;
         margin: 4px 0;
@@ -796,7 +823,8 @@ margin: 0 auto;
   display: block;
   }
   .lc-image{
-height: 320px;
+height: 250px;
+margin: 8px;
   }
  
 }
@@ -851,6 +879,7 @@ width: 100%;
 .lrc-img{
 
   height: 320px;
+  margin: 8px;
   
 }
 .huc-list-item{
@@ -994,10 +1023,11 @@ width: 100%;
     padding: 0;
     margin: 0;
     list-style: none;
-    position: fixed;
-    right: 20px;
-    top: 150px;
-   // width: 200px;
+    position: sticky;
+    position: -webkit-sticky ;
+    top: 20px;
+    margin-right: 10px;
+   
     li{
       text-align: right;
       border-right: 3px solid var(--color-Gray84);
@@ -1032,4 +1062,161 @@ width: 100%;
     }
   }
  
+ .image-badge-top-left{
+  float: left;
+  margin-right: 24px;
+  width: 330px;
+  text-align: center;
+ }
+ .quiz-container{
+  ion-card-header{
+    display: flex    ;
+        flex-direction: column;
+    ion-card-title{
+      font-weight: $font-bold ;
+      font-size: $font-size-xll;
+      color: var(--ion-color-primary);
+      order: 1;
+    }
+    ion-text{
+      font-weight: $font-bold ;
+      font-size: $font-size-l;
+      color: var(--color-dark-Gray );
+      order: 2;
+    }
+  }
  
+ }
+ .quiz-slide{
+  
+  .qs-row{
+    display: flex;
+  }
+  .qs-col{
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+color: var(--color-dark-Gray);
+  font-size: $font-size-md;
+  padding: 8px;
+  }
+  .qsc-1{
+    -ms-flex: 0 0 16.666667%;
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+  }
+  .qs-header{  
+    .qs-col{
+    font-size: $font-size-base;
+    color: var(--color-dark-Gray );
+    background: var(--color-white-smoke);
+    font-weight: $font-bold   ;
+    }
+    
+  }
+  .answer-row{
+    border-top: 1px dashed var(--color-primary );
+  }
+  .qz-icon {
+      font-size: $font-size-xlll ; /* Adjust size as needed */
+      color: var(--color-dark-Gray ); /* Default color for unselected */
+      cursor: pointer;
+      &.selected {
+        color: var(--color-primary) ; /* Color for selected state, match your theme */
+        font-weight: $font-bold ; /* Optional: make it stand out */
+      }
+      &.disabled {
+          opacity: 0.3;
+          pointer-events: none;
+        }
+    }
+    .qz-arrows {
+      width: 100%;
+      justify-content: space-between;
+      display: flex;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      cursor: pointer;
+      z-index: 2;
+      color: var(--color-primary);
+      transition: color 0.3s ease;
+      pointer-events: none;
+     
+.nav-arrow{
+position: relative;
+background: var(--color-white );
+color: var(--color-primary);
+pointer-events: all;
+&:hover {
+  color: darken(#AB52C5, 10%);
+}
+&.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+}
+      .prev {
+        left: 0;
+        margin-left: -40px;
+      }
+
+      .next {
+        right: 0;
+      }
+    }
+    .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    .dot {
+      height: 10px;
+      width: 10px;
+      background-color: $color-Gray84;
+      border-radius: 50%;
+      margin: 0 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      &.hover {
+        background-color: var(--color-primary);
+      }
+      &.active {
+        background-color: var(--color-primary);
+      }
+    }
+  }
+  
+  
+  
+ 
+    
+}
+.header-ios ion-toolbar:last-of-type {
+  --border-width: 0 0 0;
+  --background: transparent;
+    
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --padding-start: 0;
+    --padding-end: 0;
+    --min-height: 56px;
+    ion-button{
+      --padding-top: 8px;
+    --padding-bottom: 8px;
+    --padding-start: 1.1em;
+    --padding-end: 1.1em;
+    -webkit-margin-start: 2px;
+    margin-inline-start: 2px;
+    -webkit-margin-end: 2px;
+    margin-inline-end: 2px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    min-height: 36px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    }
+}

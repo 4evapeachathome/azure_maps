@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { MenuService } from 'src/shared/menu.service';
+import { Subscription } from 'rxjs';
 
 interface MenuItem {
   id: number;
@@ -30,11 +31,14 @@ export class MenuComponent implements OnInit {
   @Input() fields: string[] = ['title', 'link'];
   @Input() populate: string[] = ['parentMenu'];
   @Input() sort: string[] = ['createdAt:asc'];
+  @Input() isSidebarExpanded: boolean = true;
 
   menuItems: MenuItem[] = [];
   processedMenu: MenuItem[] = [];
   selectedId: string | null = null;
   showAdditionalMenus: boolean = false;
+  @Input() isMenuOpen: boolean = true;
+  public subscription!: Subscription;
 
   // Define the titles of menus to hide initially
   private initiallyHiddenMenuTitles = [
@@ -58,6 +62,17 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.loadMenuItems();
+    this.subscription = this.menuService.showAdditionalMenus$.subscribe(show => {
+      this.showAdditionalMenus = show;
+      if (show && this.menuItems.some(item => item.title === 'Peace at Home')) {
+        this.processedMenu = this.buildMenuTree(this.menuItems);
+      }
+    });
+  }
+
+  shouldHideIcon(item: any): boolean {
+    // If sidebar is expanded, hide icons for child items (i.e., those with parentMenu)
+    return this.isMenuOpen && item.parentMenu !== null;
   }
 
   loadMenuItems() {

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
+import { MenuService } from 'src/shared/menu.service';
 
 interface RichTextBox {
   type: string;
@@ -32,10 +33,14 @@ export class HappyHomeComponent  implements OnInit {
    content: any;
    bannerDescription: string= '';
    peaceathomeImg: any = '';
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private menuService:MenuService) { }
 
   ngOnInit() {
     this.fetchHappyHomeData();
+  }
+
+  expandMenu() {
+    this.menuService.toggleAdditionalMenus(true);
   }
 
   fetchHappyHomeData(): void {

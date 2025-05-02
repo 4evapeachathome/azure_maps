@@ -36,7 +36,7 @@
                 </p>
               </ng-container>
               
-              <ion-button color="primary"  size="small" [routerLink]="['/healthyrelationship']"
+              <ion-button color="primary"  size="small" [routerLink]="routerLink" (click)="expandMenu()"
                         *ngIf="i === 0 && showButton">
                 Read More
               </ion-button>

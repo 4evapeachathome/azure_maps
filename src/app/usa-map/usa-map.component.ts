@@ -57,6 +57,13 @@ export class UsaMapComponent {
     this.showLawInfo = false; // Hide the state view when breadcrumb is clicked
   }
 
+  get filteredStates() {
+   // debugger;
+    return this.usaMap?.locations?.filter(state => 
+      !['Washington, DC'].includes(state.name)
+    ) || [];
+  }
+
   private capitalizeWords(str: string): string {
     return str.replace(/\b\w/g, char => char.toUpperCase());
   }
@@ -118,11 +125,19 @@ getLineCoordinates(pathData: string, stateId: string): { start: Point; end: Poin
     }
   }
 
-  private smallStrokeStates: string[] = ['vt', 'md', 'ct', 'nh', 'ma', 'ri', 'nj', 'de'];
+  private smallStrokeStates: string[] = ['hi','vt', 'md', 'ct', 'nh', 'ma', 'ri', 'nj', 'de'];
 
 isSmallState(stateId?: string): boolean {
   if (!stateId) return false;
   return this.smallStrokeStates.includes(stateId.toLowerCase());
+}
+
+private largeStrokeStates: string[] = ['ak', 'ca', 'tx'];
+
+
+isLargeState(stateId?: string): boolean {
+  if (!stateId) return false;
+  return this.largeStrokeStates.includes(stateId.toLowerCase());
 }
   
   

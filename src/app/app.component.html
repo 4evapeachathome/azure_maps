@@ -7,7 +7,7 @@
   <div class="d-flex-ion div-scroll">
   
 <div class="d-flex-ion pos-relative flex-grow-1" >
-  <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
+  <input #desktopToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
   <input #mobileToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
 
   <label for="sidebar-toggle" class="sidebar-toggle-label ">
@@ -32,6 +32,7 @@
       [fields]="['title', 'link']"
       [populate]="['parentMenu']"
       [sort]="['createdAt:asc']"
+      [isMenuOpen]="isMenuOpen"     
     >
     </app-menu>
   </aside>

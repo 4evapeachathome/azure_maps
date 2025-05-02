@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-home',
@@ -12,9 +13,13 @@ import { APIEndpoints } from 'src/shared/endpoints';
 export class HomePage {
   sliderEndpoint:string = APIEndpoints.sliderapi;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private menuService:MenuService) {}
 
   navigateToPeaceAtHome() {
     this.router.navigate(['/peaceathome']);
+  }
+
+  expandMenu() {
+    this.menuService.toggleAdditionalMenus(true);
   }
 }
