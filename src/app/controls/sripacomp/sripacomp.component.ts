@@ -26,7 +26,6 @@ import { FormsModule } from '@angular/forms';
 })
 export class SripacompComponent  implements OnInit {
   quizTitle = '';
-quizSubheading = '';
 sripa: any[] = [];
 yesanswer: any[] = [];
 rating = '';
@@ -44,7 +43,6 @@ loadQuiz(): void {
   this.apiService.getSripaa().subscribe((quiz) => {
     if (quiz) {
       this.quizTitle = quiz.title;
-      this.quizSubheading = quiz.subheading;
       this.sripa = quiz.sripa || [];
       this.rating = quiz.rating || '';
       this.yesanswer = quiz.yesanswer || [];
