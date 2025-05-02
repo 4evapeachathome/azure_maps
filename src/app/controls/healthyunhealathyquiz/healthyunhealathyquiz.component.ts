@@ -60,9 +60,13 @@ export class HealthyunhealathyquizComponent  implements OnInit {
 
   selectOption(index: number, option: 'healthy' | 'unhealthy'): void {
     this.questions[index].selected = option;
-    this.showAnswers[index] = true; // Show the answer immediately after selection
+  
+    const isCorrect = (option === 'healthy' && this.questions[index].answerkey === true) ||
+                      (option === 'unhealthy' && this.questions[index].answerkey === false);
+  
+    this.showAnswers[index] = !isCorrect; // Show answer if user's selection is wrong
   }
-
+  
   prevSlide(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
