@@ -1,14 +1,14 @@
-<ion-card>
+<ion-card class="common-container quiz-container" style="min-height: 500px;">
   <ion-card-header>
-    <ion-card-title class="quiz-title">{{ quizTitle }}</ion-card-title>
-    <p class="quiz-subheading">{{ quizSubheading }}</p>
+    <ion-card-title>{{ quizTitle }}</ion-card-title>
+    <ion-text>{{ quizSubheading }}</ion-text>
   </ion-card-header>
 
   <ion-card-content>
     <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
-      <div class="question-row">
-        <div class="question-text"><strong>Q:</strong> {{ q.question }}</div>
-        <div class="option-columns">
+      <div class="qs-row question-row">
+        <div class="qs-col"><strong>Q:</strong> {{ q.question }}</div>
+        <div class="qs-col qsc-1">
           <label>
             <input
               type="radio"
@@ -18,6 +18,10 @@
             />
             Yes
           </label>
+      
+        </div>
+        <div class="qs-col qsc-1">
+        
         
           <label>
             <input
@@ -29,17 +33,26 @@
             No
           </label>
         </div>
-        
       </div>
 
-      <div class="answer-row" *ngIf="selectedOptions[i] === 'yes'">
-        <div class="answer-label">A:</div>
-        <div class="answer-text" [innerHTML]="renderRichText(q.responseyes)"></div>
+      <div class="qs-row answer-row" *ngIf="selectedOptions[i] === 'yes'">
+        <div class="qs-col">
+          <div style="float: left;"><strong>A:</strong></div>
+          <div [innerHTML]="renderRichText(q.responseyes)"></div>
+        </div>     
+       
       </div>
-
-      <div class="nav-buttons">
-        <ion-icon name="chevron-back" (click)="prevSlide()" [class.disabled]="currentIndex === 0"></ion-icon>
-        <ion-icon name="chevron-forward" (click)="nextSlide()" [class.disabled]="currentIndex === sripa.length - 1"></ion-icon>
+      <div class="qz-arrows">
+        <ion-icon 
+        name="chevron-back-outline"
+          class="nav-arrow prev" 
+          (click)="prevSlide()" [class.disabled]="currentIndex === 0">
+        </ion-icon>
+        <ion-icon 
+        name="chevron-forward-outline"
+          class="nav-arrow next" 
+          (click)="nextSlide()" [class.disabled]="currentIndex === sripa.length - 1">
+        </ion-icon>
       </div>
 
       <div class="pagination">
@@ -51,8 +64,9 @@
     </div>
 
     <hr />
-    <div class="rating">
-      <strong>Rating:</strong> {{ rating }}
+    <div class="qs-row answer-row">
+      <div class="qs-col"><strong>Rating:</strong> {{ rating }}</div>
+      
     </div>
 
     <!-- <div class="yesanswer-content">
