@@ -41,21 +41,6 @@
 
       <div class="qs-row answer-row" *ngIf="showAnswers[i]">
         <div class="qs-col"><strong>A:</strong>{{ q.answer }}</div>
-   
-        <div class="qs-col qsc-1">
-          <ion-icon  class="qz-icon"
-            [name]="isHealthyAnswer(q.answerkey) ? 'checkmark-circle' : 'checkmark-circle-outline'"
-            [class.selected]="isHealthyAnswer(q.answerkey)"
-          ></ion-icon>
-        
-        </div>
-        <div class="qs-col qsc-1">
-         
-          <ion-icon  class="qz-icon"
-            [name]="!isHealthyAnswer(q.answerkey) ? 'close-circle' : 'close-circle-outline'"
-            [class.selected]="!isHealthyAnswer(q.answerkey)"
-          ></ion-icon>
-        </div> 
       </div>
 
       <div class="qz-arrows">
