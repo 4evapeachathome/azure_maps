@@ -1,6 +1,6 @@
 <nav class="breadcrumb">
   <ng-container *ngFor="let item of breadcrumbPath; let last = last">
-    <span *ngIf="!last">
+    <span *ngIf="!last" class="bc-content">
       <a *ngIf="item.link" (click)="navigateTo(item.link)" class="breadcrumb-link">{{ item.title }}</a> >
       <span *ngIf="!item.link">{{ item.title }} ></span>
     </span>
