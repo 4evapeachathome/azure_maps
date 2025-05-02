@@ -4,6 +4,7 @@
   </ion-card-header>
 
   <ion-card-content>
+    <ng-container *ngIf="currentIndex < sripa.length">
     <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
       <div class="qs-row question-subheading">
         <strong>Question:</strong>
@@ -52,7 +53,7 @@
         <ion-icon 
         name="chevron-forward-outline"
           class="nav-arrow next" 
-          (click)="nextSlide()" [class.disabled]="currentIndex === sripa.length - 1">
+          (click)="nextSlide()" [class.disabled]="currentIndex === sripa.length">
         </ion-icon>
       </div>
 
@@ -63,18 +64,10 @@
               (click)="goToSlide(idx)"></span>
       </div>
     </div>
-
-    <hr />
-    <div class="qs-row answer-row">
-      <div class="qs-col"><strong>Rating:</strong> {{ rating }}</div>
-      
-    </div>
-
-    <!-- <div class="yesanswer-content">
+  </ng-container>
+    <div class="yesanswer-content" *ngIf="currentIndex === sripa.length">
       <div [innerHTML]="renderRichText(yesanswer)"></div>
     </div>
-
-    <hr /> -->
 
   </ion-card-content>
 </ion-card>

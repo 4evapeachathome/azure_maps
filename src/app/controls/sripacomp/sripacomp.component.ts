@@ -63,7 +63,7 @@ prevSlide(): void {
 }
 
 nextSlide(): void {
-  if (this.currentIndex < this.sripa.length - 1) {
+  if (this.currentIndex < this.sripa.length) {
     this.currentIndex++;
   }
 }
