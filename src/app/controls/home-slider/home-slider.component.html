@@ -54,13 +54,13 @@
     <ion-icon 
     name="chevron-back-outline"
       class="nav-arrow prev" 
-      (click)="prevSlide()"
+      (click)="prevSlide($event)"
       [class.disabled]="descriptions.length <= 1">
     </ion-icon>
     <ion-icon 
     name="chevron-forward-outline"
       class="nav-arrow next" 
-      (click)="nextSlide()"
+      (click)="nextSlide($event)"
       [class.disabled]="descriptions.length <= 1">
     </ion-icon>
   </div>
