@@ -113,14 +113,24 @@
               </div>
               <div class="qs-row qz-button-row">
                 <div class="qs-col ta-center">
-                  <ion-button  color="primary"  size="small"  (click)="selectOption(i, 'healthy')"
-                    [class.selected]="q.selected === 'healthy'">
+                  <ion-button
+                    class="qz-btn"
+                    fill="outline"
+                    size="small"
+                    (click)="selectOption(i, 'healthy')"
+                    [class.selected]="q.selected === 'healthy'"
+                  >
                     Healthy
                   </ion-button>
                 </div>
-                <div class="qs-col  ta-center">
-                  <ion-button  color="primary"  size="small"  (click)="selectOption(i, 'unhealthy')"
-                    [class.selected]="q.selected === 'unhealthy'">
+                <div class="qs-col ta-center">
+                  <ion-button
+                    class="qz-btn"
+                    fill="outline"
+                    size="small"
+                    (click)="selectOption(i, 'unhealthy')"
+                    [class.selected]="q.selected === 'unhealthy'"
+                  >
                     Unhealthy
                   </ion-button>
                 </div>
