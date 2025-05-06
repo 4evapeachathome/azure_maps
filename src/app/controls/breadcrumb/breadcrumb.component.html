@@ -1,9 +1,44 @@
-<nav class="breadcrumb">
+<!-- <nav class="breadcrumb">
   <ng-container *ngFor="let item of breadcrumbPath; let last = last">
     <span *ngIf="!last" class="bc-content">
       <a *ngIf="item.link" (click)="navigateTo(item.link)" class="breadcrumb-link">{{ item.title }}</a> >
       <span *ngIf="!item.link">{{ item.title }} ></span>
     </span>
     <span *ngIf="last" class="breadcrumb-current">{{ item.title }}</span>
+  </ng-container>
+</nav> -->
+<nav class="breadcrumb">
+  <ng-container *ngFor="let item of breadcrumbPath; let last = last">
+    <span *ngIf="!last" class="bc-content">
+      <a *ngIf="item.link" (click)="navigateTo(item.link)" class="breadcrumb-link">{{ item.title }}</a> >
+      <span *ngIf="!item.link">{{ item.title }} ></span>
+    </span>
+    <span *ngIf="last">
+      <!-- Case 1: On /uslawsbystate page, no state selected -->
+      <span *ngIf="isUsLawsByStatePage && !selectedState" class="breadcrumb-current">
+        {{ item.title }}
+      </span>
+      <!-- Case 2: On /uslawsbystate page, state selected (show dropdown) -->
+      <span *ngIf="isUsLawsByStatePage && selectedState" class="breadcrumb-current">
+        <ion-select
+          class="state-selectbox"
+          placeholder="Select a State"
+          fill="outline"
+          interface="popover"
+          [compareWith]="compareStates"
+          [(ngModel)]="tempSelectedState"
+          (ionChange)="onStateSelect($event.detail.value)">
+          <ion-select-option
+            *ngFor="let state of states"
+            [value]="state">
+            {{ state.name }}
+          </ion-select-option>
+        </ion-select>
+      </span>
+      <!-- Case 3: On other pages -->
+      <span *ngIf="!isUsLawsByStatePage" class="breadcrumb-current">
+        <span>{{ item.title }}</span>
+      </span>
+    </span>
   </ng-container>
 </nav>

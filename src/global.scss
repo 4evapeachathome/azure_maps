@@ -829,6 +829,8 @@ margin: 0 auto;
 height: 250px;
 margin: 8px;
   }
+
+
  
 }
 .typeCont-health{
@@ -1196,11 +1198,37 @@ pointer-events: all;
     }
   }
   
+  .qz-button-row {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
   
+  .qz-btn {
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: 2px solid var(--color-primary);
+    border-radius: 6px;
+    font-size: $font-size-base;
+    color: var(--color-dark-Gray);
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
   
- 
-    
+    &:hover {
+      background-color: var(--color-primary);
+      color: #fff;
+    }
+  
+    &.selected {
+      background-color: var(--color-primary);
+      color: #fff;
+      font-weight: $font-bold;
+    }
+  }
 }
+
+
 .header-ios ion-toolbar:last-of-type {
   --border-width: 0 0 0;
   --background: transparent;
@@ -1229,4 +1257,14 @@ pointer-events: all;
 }
 .dflex-button{
   display: flex;
+}
+
+.tcrm{
+  display:none;
+
+}
+
+.tcrl{
+  display:block;
+  
 }
