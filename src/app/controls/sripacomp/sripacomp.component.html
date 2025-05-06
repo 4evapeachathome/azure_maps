@@ -1,4 +1,5 @@
-<ion-card class="common-container quiz-container" style="min-height: 500px;">
+<ion-card class="common-container quiz-container" style="min-height: 500px; padding-left: 16px;
+    padding-right: 16px;">
   <ion-card-header>
     <ion-card-title>{{ quizTitle }}</ion-card-title>
   </ion-card-header>
@@ -50,7 +51,7 @@
         </div>     
        
       </div>
-      <div class="qz-arrows">
+      <!-- <div class="qz-arrows">
         <ion-icon 
         name="chevron-back-outline"
           class="nav-arrow prev" 
@@ -61,13 +62,23 @@
           class="nav-arrow next" 
           (click)="nextSlide()" [class.disabled]="currentIndex === sripa.length">
         </ion-icon>
-      </div>
+      </div> -->
 
       <div class="pagination">
+        <ion-icon 
+        name="chevron-back-outline"
+          class="nav-arrow prev" 
+          (click)="prevSlide()" [class.disabled]="currentIndex === 0">
+        </ion-icon>
         <span *ngFor="let q of sripa; let idx = index"
               class="dot"
               [class.active]="currentIndex === idx"
               (click)="goToSlide(idx)"></span>
+              <ion-icon 
+              name="chevron-forward-outline"
+                class="nav-arrow next" 
+                (click)="nextSlide()" [class.disabled]="currentIndex === sripa.length">
+              </ion-icon>
       </div>
     </div>
   </ng-container>
