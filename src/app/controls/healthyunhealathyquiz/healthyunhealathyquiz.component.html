@@ -90,7 +90,9 @@
     padding-right: 16px;">
   <ion-card-header>
     <ion-card-title>{{ quizTitle }}</ion-card-title>
-    <ion-text >{{ quizSubheading }}</ion-text>
+    <ion-text style="white-space: pre-line; text-indent: 0; padding-left: 0; margin-left: 0; line-height: 1.5;">
+      {{ quizSubheading }}
+    </ion-text>
   </ion-card-header>
 
   <ion-card-content>
@@ -133,7 +135,7 @@
      
 
       <div class="qs-row answer-row" *ngIf="showAnswers[i]">
-        <div class="qs-col"><strong>A:</strong>{{ q.answer }}</div>
+        <div class="qs-col"><strong>A:</strong> {{ q.answer }}</div>
       </div>
 
       <!-- <div class="qz-arrows">

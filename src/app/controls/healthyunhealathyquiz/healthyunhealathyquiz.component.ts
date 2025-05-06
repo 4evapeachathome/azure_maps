@@ -48,7 +48,7 @@ export class HealthyunhealathyquizComponent  implements OnInit {
     this.apiService.getQuizzes().subscribe((quiz) => {
       if (quiz) {
         this.quizTitle = quiz.title;
-        this.quizSubheading = quiz.subheading;
+        this.quizSubheading = quiz.subheading.replace('.', '.\n').replace(/\n\s+/, '\n');
         this.questions = quiz.questions.map((q: any) => ({
           ...q,
           selected: null // 'healthy' or 'unhealthy'
@@ -66,7 +66,7 @@ export class HealthyunhealathyquizComponent  implements OnInit {
   
     this.showAnswers[index] = !isCorrect; // Show answer if user's selection is wrong
   }
-  
+
   prevSlide(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
