@@ -26,7 +26,6 @@ import { FormsModule } from '@angular/forms';
 })
 export class SripacompComponent  implements OnInit {
   quizTitle = '';
-quizSubheading = '';
 sripa: any[] = [];
 yesanswer: any[] = [];
 rating = '';
@@ -44,7 +43,6 @@ loadQuiz(): void {
   this.apiService.getSripaa().subscribe((quiz) => {
     if (quiz) {
       this.quizTitle = quiz.title;
-      this.quizSubheading = quiz.subheading;
       this.sripa = quiz.sripa || [];
       this.rating = quiz.rating || '';
       this.yesanswer = quiz.yesanswer || [];
@@ -54,8 +52,8 @@ loadQuiz(): void {
   });
 }
 
-selectOption(index: number): void {
-  this.showAnswers[index] = true;
+selectOption(index: number, option: 'yes' | 'no'): void {
+  this.selectedOptions[index] = option;
 }
 
 prevSlide(): void {
@@ -65,7 +63,7 @@ prevSlide(): void {
 }
 
 nextSlide(): void {
-  if (this.currentIndex < this.sripa.length - 1) {
+  if (this.currentIndex < this.sripa.length) {
     this.currentIndex++;
   }
 }

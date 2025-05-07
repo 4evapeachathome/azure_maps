@@ -1,11 +1,9 @@
 <ion-grid class="healthy-unhealthy-container p-0 width-100"   *ngIf="physicalAbuse" 
 [ngClass]="{'reverse-image': imagePosition === 'right'}">
   <ion-row>
-    <!-- First column - content (text/lists) based on contentPlacement -->
     <ion-col size="12" size-md="6" class="p-0 con-container-center order1">
       <ion-card >
         <ion-card-content>
-    <!-- Image Section -->
     <ion-text class="content-heading" *ngIf="physicalAbuse.titleContent.length > 0">
       <h3>
      
@@ -25,7 +23,7 @@
     </ul>
   </ion-text>
 
-<div class="m-t-16" *ngIf="physicalAbuse?.example?.length > 0 && isExpanded" @expandCollapse>
+<div class="m-t-16 tcrm" [ngClass]="{'tcrl': isExpanded}" *ngIf="physicalAbuse?.example?.length > 0 && isExpanded">
   
       <ion-text class="cb-content" >
            

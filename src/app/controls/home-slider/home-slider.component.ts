@@ -88,11 +88,17 @@ export class HomeSliderComponent implements OnInit {
   onImageLoad(index: number) {
   }
 
-  prevSlide() {
+  prevSlide(event?: Event) {
+    if (event) {
+      event.stopPropagation(); // Prevent event bubbling
+    }
     this.currentIndex = this.currentIndex === 0 ? this.descriptions.length - 1 : this.currentIndex - 1;
   }
   
-  nextSlide() {
+  nextSlide(event?: Event) {
+    if (event) {
+      event.stopPropagation(); // Prevent event bubbling
+    }
     this.currentIndex = this.currentIndex === this.descriptions.length - 1 ? 0 : this.currentIndex + 1;
   }
 

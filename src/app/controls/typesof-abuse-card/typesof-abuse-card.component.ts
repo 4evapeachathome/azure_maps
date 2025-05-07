@@ -10,17 +10,17 @@ import { ApiService } from 'src/app/services/api.service';
   styleUrls: ['./typesof-abuse-card.component.scss'],
   standalone: true,
         imports: [CommonModule, IonicModule],
-        animations: [
-          trigger('expandCollapse', [
-            transition(':enter', [
-              style({ height: '0', opacity: 0 }),
-              animate('300ms ease-in-out', style({ height: '*', opacity: 1 })),
-            ]),
-            transition(':leave', [
-              animate('300ms ease-in-out', style({ height: '0', opacity: 0 })),
-            ])
-          ])
-        ]
+        // animations: [
+        //   trigger('expandCollapse', [
+        //     transition(':enter', [
+        //       style({ height: '0', opacity: 0 }),
+        //       animate('300ms ease-in-out', style({ height: '*', opacity: 1 })),
+        //     ]),
+        //     transition(':leave', [
+        //       animate('300ms ease-in-out', style({ height: '0', opacity: 0 })),
+        //     ])
+        //   ])
+        // ]
   
 })
 export class TypesofAbuseCardComponent  implements OnInit {

@@ -1,79 +1,77 @@
-<ion-card class="common-container quiz-container" style="min-height: 500px;">
+<ion-card class="common-container quiz-container" style="min-height: 500px; padding-left: 16px;
+    padding-right: 16px;">
   <ion-card-header>
     <ion-card-title>{{ quizTitle }}</ion-card-title>
-    <ion-text>{{ quizSubheading }}</ion-text>
   </ion-card-header>
 
   <ion-card-content>
-    <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
-      <div class="qs-row question-row">
-        <div class="qs-col"><strong>Q:</strong> {{ q.question }}</div>
-        <div class="qs-col qsc-1">
-          <label>
-            <input
-              type="radio"
-              [name]="'yesNoChoice' + i"
-              [(ngModel)]="selectedOptions[i]"
-              [value]="'yes'"
-            />
+    <ng-container *ngIf="currentIndex < sripa.length">
+      <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
+        <div class="qs-row qs-header">
+          <div class="qs-col">
+            <strong>Question:</strong>
+          </div>
+        </div>
+    
+        <div class="qs-row question-row">
+          <div class="qs-col">{{ q.question }}</div>
+        
+        </div>
+        <div class="qs-row qz-button-row">
+          <div class="qs-col ta-center">
+            <ion-button
+            class="qz-btn"
+            fill="outline"
+        
+            (click)="selectOption(i, 'yes')"
+            [class.selected]="selectedOptions[i] === 'yes'">
             Yes
-          </label>
-      
+          </ion-button>
+          </div>
+          <div class="qs-col ta-center">
+            <ion-button
+            class="qz-btn"
+                  fill="outline"
+               
+                  (click)="selectOption(i, 'no')"
+                  [class.selected]="selectedOptions[i] === 'no'">
+                  No
+                </ion-button>
+          </div>
         </div>
-        <div class="qs-col qsc-1">
-        
-        
-          <label>
-            <input
-              type="radio"
-              [name]="'yesNoChoice' + i"
-              [(ngModel)]="selectedOptions[i]"
-              [value]="'no'"
-            />
-            No
-          </label>
+    
+        <div class="qs-row answer-row" *ngIf="selectedOptions[i] === 'yes'">
+          <div class="qs-col">
+            <div [innerHTML]="renderRichText(q.responseyes)"></div>
+          </div>
+        </div>
+    
+        <div class="pagination">
+          <ion-icon 
+            name="chevron-back-outline"
+            class="nav-arrow prev" 
+            (click)="prevSlide()" 
+            [class.disabled]="currentIndex === 0">
+          </ion-icon>
+          
+          <span *ngFor="let q of sripa; let idx = index"
+            class="dot"
+            [class.active]="currentIndex === idx"
+            (click)="goToSlide(idx)">
+          </span>
+          
+          <ion-icon 
+            name="chevron-forward-outline"
+            class="nav-arrow next" 
+            (click)="nextSlide()" 
+            [class.disabled]="currentIndex === sripa.length - 1">
+          </ion-icon>
         </div>
       </div>
-
-      <div class="qs-row answer-row" *ngIf="selectedOptions[i] === 'yes'">
-        <div class="qs-col">
-          <div style="float: left;"><strong>A:</strong></div>
-          <div [innerHTML]="renderRichText(q.responseyes)"></div>
-        </div>     
-       
-      </div>
-      <div class="qz-arrows">
-        <ion-icon 
-        name="chevron-back-outline"
-          class="nav-arrow prev" 
-          (click)="prevSlide()" [class.disabled]="currentIndex === 0">
-        </ion-icon>
-        <ion-icon 
-        name="chevron-forward-outline"
-          class="nav-arrow next" 
-          (click)="nextSlide()" [class.disabled]="currentIndex === sripa.length - 1">
-        </ion-icon>
-      </div>
-
-      <div class="pagination">
-        <span *ngFor="let q of sripa; let idx = index"
-              class="dot"
-              [class.active]="currentIndex === idx"
-              (click)="goToSlide(idx)"></span>
-      </div>
-    </div>
-
-    <hr />
-    <div class="qs-row answer-row">
-      <div class="qs-col"><strong>Rating:</strong> {{ rating }}</div>
-      
-    </div>
-
-    <!-- <div class="yesanswer-content">
+    </ng-container>
+    <div class="yesanswer-content" *ngIf="currentIndex === sripa.length">
       <div [innerHTML]="renderRichText(yesanswer)"></div>
     </div>
-
-    <hr /> -->
 
   </ion-card-content>
 </ion-card>
