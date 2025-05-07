@@ -52,8 +52,8 @@ loadQuiz(): void {
   });
 }
 
-selectOption(index: number): void {
-  this.showAnswers[index] = true;
+selectOption(index: number, option: 'yes' | 'no'): void {
+  this.selectedOptions[index] = option;
 }
 
 prevSlide(): void {
