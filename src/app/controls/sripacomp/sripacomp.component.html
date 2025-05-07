@@ -7,7 +7,7 @@
   <ion-card-content>
     <ng-container *ngIf="currentIndex < sripa.length">
       <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
-        <div class="qs-row question-subheading">
+        <div class="qs-row qs-header">
           <div class="qs-col">
             <strong>Question:</strong>
           </div>
@@ -15,29 +15,28 @@
     
         <div class="qs-row question-row">
           <div class="qs-col">{{ q.question }}</div>
-          <div class="qs-col qsc-1">
-            <div class="qs-row">
-              <div class="qs-col ta-center">
-                <ion-button
-                  class="qz-btn"
+        
+        </div>
+        <div class="qs-row qz-button-row">
+          <div class="qs-col ta-center">
+            <ion-button
+            class="qz-btn"
+            fill="outline"
+        
+            (click)="selectOption(i, 'yes')"
+            [class.selected]="selectedOptions[i] === 'yes'">
+            Yes
+          </ion-button>
+          </div>
+          <div class="qs-col ta-center">
+            <ion-button
+            class="qz-btn"
                   fill="outline"
-                  size="small"
-                  (click)="selectOption(i, 'yes')"
-                  [class.selected]="selectedOptions[i] === 'yes'">
-                  Yes
-                </ion-button>
-              </div>
-              <div class="qs-col ta-center">
-                <ion-button
-                  class="qz-btn"
-                  fill="outline"
-                  size="small"
+               
                   (click)="selectOption(i, 'no')"
                   [class.selected]="selectedOptions[i] === 'no'">
                   No
                 </ion-button>
-              </div>
-            </div>
           </div>
         </div>
     

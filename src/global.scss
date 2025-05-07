@@ -846,6 +846,7 @@ width: 100%;
 }
 .rmc-button{
   margin-top: 16px;
+  --ripple-color: transparent;
   ion-img{
     margin-left: 12px;
     height: 12px;
@@ -1093,9 +1094,7 @@ width: 100%;
  
  }
  .quiz-slide{
-  .ta-center{
-   // text-align: center;
-  }
+
   .ta-center:first-child{
     text-align: right;
   }
@@ -1113,7 +1112,7 @@ width: 100%;
     flex-grow: 1;
     max-width: 100%;
 color: var(--color-dark-Gray);
-  font-size: $font-size-md;
+  font-size: $font-size-base;
   padding: 8px;
   }
   .qsc-1{
@@ -1220,14 +1219,14 @@ color: var(--color-dark-Gray);
   }
   
   .qz-btn {
-    --border-width: 1px;
-    --border-color: var(--ion-color-primary);
-    --background: transparent;
-    --color: var(--ion-color-primary);
-font-size: $font-size-base;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s ease-in-out;
+//     --border-width: 1px;
+//     --border-color: var(--ion-color-primary);
+//     --background: transparent;
+//     --color: var(--ion-color-primary);
+// font-size: $font-size-base;
+     border-radius: 6px;
+//     cursor: pointer;
+//     transition: 0.2s ease-in-out;
   
     &:hover {
       background-color: var(--color-primary);
@@ -1238,7 +1237,7 @@ font-size: $font-size-base;
       --background: var(--ion-color-primary);
       --color: #fff;
       --border-color: var(--ion-color-primary);
-      font-weight: bold;
+    //  font-weight: bold;
     }
   }
 }

@@ -159,3 +159,10 @@ ion-select{
   --background-hover: var(--color-primary);
   --background-hover-opacity: 0.12;
 }
+.button-outline {
+  --border-width: 1px;
+  --border-color: var(--ion-color-primary);
+  --background-hover: var(--color-primary);
+  --background-activated: var(--color-primary);
+  --ripple-color: var(--color-primary);
+}
