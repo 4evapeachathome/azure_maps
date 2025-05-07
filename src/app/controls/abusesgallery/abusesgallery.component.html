@@ -1,0 +1,24 @@
+<div class="pv-gallery">
+
+  <h3>{{title}}</h3>
+
+
+<ul>
+  <li *ngFor="let item of abuseGallery">
+    <ion-img [src]="item.webImageUrl" alt="{{ item.caption }}" (click)="navigateToPeaceAtHome()" />
+    <p>{{ item.caption }}</p>
+  </li>
+</ul>
+  <!-- <ion-grid class="ion-padding">
+    <ion-row>
+      <ion-col size="4" *ngFor="let item of abuseGallery" class="ion-text-center">
+        <ion-card>
+          <ion-img [src]="item.webImageUrl" alt="{{ item.caption }}" />
+          <ion-card-content>
+            <p>{{ item.caption }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid> -->
+</div>

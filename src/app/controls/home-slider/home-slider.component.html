@@ -1,0 +1,76 @@
+<ion-card-header class="carousel-header">
+  <ion-card-title>{{ mainTitle }}</ion-card-title>
+</ion-card-header>
+
+<ion-card-content class="carousel-container">
+  <div class="slider-wrapper carousel">
+    <ng-container *ngFor="let description of descriptions; let i = index">
+      <div class="slide" 
+           *ngIf="currentIndex === i"
+          >
+        <div class="slide-content">
+          <!-- Image Section -->
+          <div class="cc-image-container" *ngIf="imageUrls?.length" [@slideAnimation]>
+            <ion-img 
+              [src]="imageUrls[i]" 
+              [alt]="mainTitle || 'Slider Image'"
+              (ionImgDidLoad)="onImageLoad(i)"
+            ></ion-img>
+          </div>
+          
+          <!-- Text Content Section -->
+          <div class="text-container">
+            <div class="carousel-description">
+              <div class="description"  [@slideAnimation]>
+              <ng-container *ngFor="let content of description">
+                <h3 *ngIf="content.type === 'heading'"
+                    [innerHTML]="getStyledText(content.children[0])">
+                </h3>
+              </ng-container>
+              
+              <ng-container *ngFor="let content of description">
+                <p *ngIf="content.type === 'paragraph'">
+                  <span *ngFor="let child of content.children" 
+                        [innerHTML]="getStyledText(child)">
+                  </span>
+                </p>
+              </ng-container>
+              
+              <ion-button color="primary"  size="small" [routerLink]="routerLink" (click)="expandMenu()"
+                        *ngIf="i === 0 && showButton">
+                Read More
+              </ion-button>
+            </div>
+              <!-- Pagination Dots -->
+  <div class="pagination-dots dots">
+    <span *ngFor="let item of descriptions; let i = index" 
+          [class.active]="currentIndex === i"
+          (click)="currentIndex = i">
+    </span>
+  </div>
+            </div>
+              <!-- Navigation Arrows -->
+  <div class="navigation-arrows">
+    <ion-icon 
+    name="chevron-back-outline"
+      class="nav-arrow prev" 
+      (click)="prevSlide($event)"
+      [class.disabled]="descriptions.length <= 1">
+    </ion-icon>
+    <ion-icon 
+    name="chevron-forward-outline"
+      class="nav-arrow next" 
+      (click)="nextSlide($event)"
+      [class.disabled]="descriptions.length <= 1">
+    </ion-icon>
+  </div>
+
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+
+</ion-card-content>

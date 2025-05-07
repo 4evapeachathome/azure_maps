@@ -1,0 +1,70 @@
+<ion-grid class="p-b-0">
+<ion-row class="comp-space">
+  <ion-col size="12">
+    <ion-card class="container-banner cb-p-se" >
+      <ion-card-content class="ic-content">
+    <ion-grid>
+      <pathome-breadcrumb></pathome-breadcrumb>
+      <ion-row>
+    
+          <ion-col  size="12" size-sm="6">
+            <ng-container *ngFor="let item of title">
+              <ng-container *ngIf="item.type === 'heading'">
+            
+                  <ng-container *ngFor="let child of item.children">
+                    <ion-text class="cb-header" [ngClass]="{'cb-header-highlight': child.bold}">
+                      <strong *ngIf="child.bold">{{ child.text }}</strong>
+                      <span *ngIf="!child.bold">{{ child.text }}</span>
+                    </ion-text>
+                  </ng-container>
+           
+              </ng-container>
+              <ng-container *ngIf="item.type === 'paragraph'">
+                <ion-text>
+                  <ng-container *ngFor="let child of item.children">
+                    {{ child.text }}
+                  </ng-container>
+                </ion-text>
+              </ng-container>
+            </ng-container>
+          </ion-col>
+          <ion-col  size="12" size-sm="6"  class="img-container ">
+            <ion-img [src]="imageUrl" alt="Healthy Relationship Illustration" *ngIf="imageUrl" class="hb-img"></ion-img>
+          </ion-col>
+    
+      </ion-row>
+    
+      
+    </ion-grid>
+    </ion-card-content>
+    </ion-card>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col size="12">
+    <!-- <ion-card>
+      <ion-card-content> -->
+        <div class="lr-main-container">
+        <ng-container *ngFor="let block of contentBlocks">
+          <ion-row class="comp-space content-block-row">
+            <!-- Image on left for odd validWebImageIndex (1, 3, ...) -->
+            <ion-col size="12" size-md="6" *ngIf="block.webImage && block.validWebImageIndex % 2 === 1" class="p-0 img-container">
+              <ion-img [src]="block.image" alt="Content Block Image" class="lrc-img"></ion-img>
+            </ion-col>
+            <!-- Content column -->
+            <ion-col [size]="block.webImage ? '12' : '12'" [sizeMd]="block.webImage ? '6' : '12'" class="p-0 con-container-center order1">
+              <div [innerHTML]="block.content" class="legalrights-content"></div>
+            </ion-col>
+            <!-- Image on right for even validWebImageIndex (0, 2, ...) -->
+            <ion-col size="12" size-md="6" *ngIf="block.webImage && block.validWebImageIndex % 2 === 0" class="p-0 img-container">
+              <ion-img [src]="block.image" alt="Content Block Image" class="lrc-img"></ion-img>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+      </div>
+      <!-- </ion-card-content>
+      </ion-card> -->
+  </ion-col>
+</ion-row>
+
+</ion-grid>

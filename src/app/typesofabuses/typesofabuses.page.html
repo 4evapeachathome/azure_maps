@@ -1,0 +1,127 @@
+
+
+<ion-content [fullscreen]="true">
+  <ion-grid  class="p-b-0 sm-cont-margin">
+
+    <!-- First Row: Single Component -->
+    <ion-row class="comp-space">
+      <ion-col size="12">
+        <pathome-typeofabusetitle></pathome-typeofabusetitle>
+      </ion-col>
+    </ion-row>
+
+    <!-- Second Row: Three Components in Flex Display -->
+    <ion-row>
+      <ion-col size="12" size-md="9" class="order1">
+        <ion-row class="comp-space">
+      <ion-col size="12">
+        <pathome-typesof-abuse-card id="physicalAbuse" [paramName]="'physicalAbuse'"  [endpoint]="physicalabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
+      </ion-col>
+    </ion-row>
+
+    <!-- Third Row: Full-Width Slide Component -->
+    <ion-row class="comp-space">
+      <ion-col size="12">
+        <pathome-typesof-abuse-card id="sexualAbuse" [paramName]="'sexualAbuse'"  [endpoint]="sexualabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
+      </ion-col>
+    </ion-row>
+    
+
+    <ion-row class="comp-space">
+          <ion-col size="12">
+            <pathome-typesof-abuse-card id="emotionalAbuse" [paramName]="'emotionalAbuse'"  [endpoint]="emotionalabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="comp-space">
+          <ion-col size="12">
+            <pathome-typesof-abuse-card id="verbalAbuse" [paramName]="'verbalAbuse'"  [endpoint]="verbalabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
+          </ion-col>
+        </ion-row>
+        
+    
+        <ion-row class="comp-space">
+              <ion-col size="12">
+                <pathome-typesof-abuse-card id="financialAbuse" [paramName]="'financialAbuse'"  [endpoint]="financialabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
+
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="comp-space">
+              <ion-col size="12">
+                <pathome-typesof-abuse-card id="technologicalAbuse" [paramName]="'technologicalAbuse'"  [endpoint]="technologicalabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
+              </ion-col>
+            </ion-row>
+            
+        
+            <ion-row class="comp-space">
+                  <ion-col size="12">
+                    <pathome-typesof-abuse-card id="immigrantAbuse" [paramName]="'immigrantAbuse'"  [endpoint]="immigrantabuse" [imagePosition]="'left'" [buttonPosition]="'right'"></pathome-typesof-abuse-card>
+    
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="comp-space">
+                  <ion-col size="12">
+                    <pathome-typesof-abuse-card id="systemAbuse" [paramName]="'systemAbuse'"  [endpoint]="systemabuse" [imagePosition]="'right'" [buttonPosition]="'left'"></pathome-typesof-abuse-card>
+    
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="comp-space">
+                  <ion-col size="12" class="typeCont-health">
+                    <pathome-criminilizationofsurvivors></pathome-criminilizationofsurvivors>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="comp-space">
+      <ion-col size="12" class="typeCont-health">
+        <pathome-healthyrelationshipcontent [endpoint]="ipvtypesofabusesendpoint" [routerLink]="['/partnerviolence']" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
+      </ion-col>
+    </ion-row>
+    </ion-col>
+    
+    <ion-col size="12" size-md="3">
+      <ul class="side-menu"   #stickyMenu   >
+        <li [ngClass]="{'active': activeSection === 'physicalAbuse'}">  <a (click)="scrollToSection('physicalAbuse')" >Physical Abuse</a></li>
+        <li  [ngClass]="{'active': activeSection === 'sexualAbuse'}">  <a (click)="scrollToSection('sexualAbuse')">Sexual Abuse</a></li>
+        <li [ngClass]="{'active': activeSection === 'emotionalAbuse'}"> <a (click)="scrollToSection('emotionalAbuse')" >Emotional Abuse</a></li>
+        <li [ngClass]="{'active': activeSection === 'verbalAbuse'}">
+          <a (click)="scrollToSection('verbalAbuse')" >Verbal Abuse</a>
+        </li>
+        <li  [ngClass]="{'active': activeSection === 'financialAbuse'}">
+          <a (click)="scrollToSection('financialAbuse')">Financial Abuse</a>
+        </li>
+        <li [ngClass]="{'active': activeSection === 'technologicalAbuse'}"> <a (click)="scrollToSection('technologicalAbuse')" >Technological Abuse</a></li>
+        <li  [ngClass]="{'active': activeSection === 'immigrantAbuse'}">   <a (click)="scrollToSection('immigrantAbuse')">Immigrant Related Abuse</a></li>
+        <li [ngClass]="{'active': activeSection === 'systemAbuse'}">  <a (click)="scrollToSection('systemAbuse')" >System Abuse</a></li>
+ 
+      
+      
+      
+     
+        
+       
+     
+      
+      </ul>
+    
+    </ion-col>
+    </ion-row>
+    <ion-row class="comp-space">
+      <ion-col class="ion-text-center">
+        <ion-button [routerLink]="['/legalrights']" color="primary" size="small">Explore the Next Chapter.....</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button [routerLink]="['/sripaa']" color="primary" size="small">Take Sripaa</ion-button>
+          </ion-col>
+        </ion-row>
+  </ion-grid>
+  <ion-grid class="footer-container">
+    <ion-row>
+      <ion-col class="p-0">
+        <pathome-footer></pathome-footer>
+        </ion-col>
+        </ion-row>
+  </ion-grid>
+</ion-content>

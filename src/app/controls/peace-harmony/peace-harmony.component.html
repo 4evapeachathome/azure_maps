@@ -1,0 +1,27 @@
+<ion-card class="card-small expert-advice">
+  <ion-card-header>
+    <ion-card-title>{{ title }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col class="plr-0">
+          <div class="image-container">
+            <ion-img [src]="image" alt="Peace and Harmony Image"></ion-img>
+            <div class="overlay">
+              <p>
+               {{description}}
+              </p>
+              <div class="ol-bg"></div>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button color="primary" (click)="expandMenu()" [routerLink]="['/peaceathome']" size="small">Read More</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

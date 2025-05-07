@@ -1,0 +1,168 @@
+.ion-color-primary {
+  --box-shadow: none;
+  --ion-color-base: var(--color-primary ) !important;
+  --ion-color-base-rgb: var(--color-primary ) !important;
+  --ion-color-contrast: var(--color-primary-contrast) !important;
+  --ion-color-contrast-rgb: var(--color-primary-contrast) !important;
+  --ion-color-shade: var(--color-primary ) !important;
+  --ion-color-tint: var(--color-primary ) !important;
+  --border-radius: 8px;
+  line-height: inherit;
+}
+.ion-color-secondary {
+  --box-shadow: none;
+  --ion-color-base: var(--color-secondary) !important;
+  --ion-color-base-rgb: var(--color-secondary) !important;
+  --ion-color-contrast: var(--color-primary-contrast) !important;
+  --ion-color-contrast-rgb: var(--color-primary-contrast) !important;
+  --ion-color-shade: var(--color-secondary) !important;
+  --ion-color-tint: var(--color-secondary) !important;
+  --border-radius: 8px;
+}
+.icon-button{
+  --box-shadow: none;
+  --ion-color-base: var(--color-white) !important;
+  --ion-color-base-rgb: var(--color-white) !important;
+  --ion-color-contrast: var(--icon-dark-Gray) !important;
+  --ion-color-contrast-rgb: var(--icon-dark-Gray) !important;
+  --ion-color-shade: var(--icon-dark-Gray) !important;
+  --ion-color-tint: var(--icon-dark-Gray) !important;
+  --border-radius: 8px !important;
+  --padding-start: 8px !important;
+  --padding-end: 8px !important;
+  --border-color: var(--color-Gray54);
+  --border-width: 1px;
+}
+.button-clear {
+  --background-activated: transparent;
+  --background-focused: transparent;
+  --background-hover: transparent;
+  --background-activated-opacity: 0;
+  --background-focused-opacity: .12;
+  --background-hover-opacity: .04;
+  --color: var(--color-primary) !important;
+  --color-hover: var(--color-dark-Gray) !important;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+.sc-ion-buttons-md-s ion-button:not(.button-round) {
+  --border-radius: 8px;
+  --padding-start: 1.1em;
+  --padding-end: 1.1em;
+}
+ion-content {
+  --background: var(--color-container);
+  // --offset-bottom: auto !important;
+  // --overflow: hidden;
+  // overflow: auto;
+  // &::-webkit-scrollbar {
+  //   display: none;
+  // }
+}
+ion-card-content {
+  color: var(--color-dark-Gray);
+  font-size: $font-size-md !important;
+  padding-inline-start: 16px !important;
+  padding-inline-end: 16px !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  ul{
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    li{
+      line-height: inherit;
+    }
+  }
+}
+ion-button{
+  text-transform: inherit;
+}
+.search-toolbar {
+  .searchbar-input.sc-ion-searchbar-md {
+    border: 0;
+    box-shadow: none;
+    padding-inline-start: 0;
+    color: var(--color-dark-Gray);
+  }
+  .searchbar-search-icon.sc-ion-searchbar-md {
+    display: none;
+  }
+}
+.filter-search{
+  border: 1px solid var(--color-Gray54)  ;
+  border-radius: 8px;
+  font-size: $font-size-base;
+  --box-shadow: none;
+  --border-radius: 8px;
+  .searchbar-input.sc-ion-searchbar-md{
+    padding-inline-start: 36px;
+    padding-inline-end: 48px;
+  }
+  .searchbar-search-icon.sc-ion-searchbar-md{
+    inset-inline-start: 8px;
+  }
+}
+ion-checkbox {
+  font-size: $font-size-base ;
+  --border-radius: 5px;
+  --border-color: var(--color-primary) ; /* Change the border color to purple */
+  --background: var(--color-white) ; /* Background color when unchecked */
+  ----checkmark-color: var(--color-white); /* Background color when checked */
+  --checkbox-background-checked: var(--color-primary);
+  --border-color-checked: var(--color-primary);
+  color: var(--color-dark-Gray) ;
+  &::part(label)
+  {
+     margin-inline-start: 8px;
+     white-space: normal;
+     margin-top: -3px;
+  }
+
+  
+ 
+}
+.select-fill-outline{
+  --border-radius: 8px;
+  //min-height: 48px;
+}
+.alert-radio-label.sc-ion-alert-md{
+  padding-inline-start: 42px;
+}
+ion-select{
+  --highlight-color-valid: var(  --color-primary);
+}
+  // ion-select{
+  // border: 1px solid var(--color-dark-Gray);
+  //   border-radius: 8px;
+  //   padding: 0 10px;
+  //   :host(.select-label-placement-start) {     
+    
+  //   .select-wrapper-inner{
+  //     justify-content: space-between;
+  //     width: 100%;
+  //   }
+  // }
+  // }
+
+// .ss-search-button {
+//     .sc-ion-buttons-md-s ion-button {
+//       --padding-start: 0 !important;
+//       --padding-end: 0 !important;
+//     }
+//   }
+.item-radio-checked.sc-ion-select-popover-md {
+  --background: var(--color-white-smoke);
+  --background-focused: var(--color-primary);
+  --background-focused-opacity: 0.2;
+  --background-hover: var(--color-primary);
+  --background-hover-opacity: 0.12;
+}
+.button-outline {
+  --border-width: 1px;
+  --border-color: var(--ion-color-primary);
+  --background-hover: var(--color-primary);
+  --background-activated: var(--color-primary);
+  --ripple-color: var(--color-primary);
+}

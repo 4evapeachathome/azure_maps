@@ -1,0 +1,101 @@
+
+<ion-card class="container-banner cb-p-se" >
+  <ion-card-content class="ic-content">
+ <ion-grid>
+  <pathome-breadcrumb></pathome-breadcrumb>
+  <ion-row>
+  <ion-col  size="12" size-sm="6" *ngIf="titleContent?.length > 0">
+    <!-- <h2 class="happyhome-title"> -->
+      <ng-container *ngFor="let item of titleContent[0]?.children">
+        <ng-container [ngSwitch]="item.type">
+          <ion-text class="cb-header" *ngSwitchCase="'text'" [ngClass]="{'cb-header-highlight': item.bold}">
+            <strong *ngIf="item.bold">{{ item.text }}</strong>
+            <span *ngIf="!item.bold">{{ item.text }}</span>
+          </ion-text>
+        </ng-container>
+      </ng-container>
+    <!-- </h2> -->
+    </ion-col>
+    <ion-col  size="12" size-sm="6"  class="img-container ">
+    <ion-img [src]="partnerviolenceimg" alt="Happy Home Image" class="hb-img"></ion-img>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col>
+    <div class="cc-box-content">
+      <ion-card *ngFor="let block of contentBlocks">
+        <ion-card-header>
+          <ion-card-title>
+            <ng-container *ngFor="let content of block.multilinerichtextbox">
+              <ng-container [ngSwitch]="content.type">
+                <!-- Handle headings -->
+                <ng-container *ngSwitchCase="'heading'">
+                  <ng-container *ngFor="let item of content.children">
+                    <ion-text [ngClass]="{'cardhighlight': item.bold}">
+                      <strong *ngIf="item.bold">{{ item.text }}</strong>
+                      <span *ngIf="!item.bold">{{ item.text }}</span>
+                    </ion-text>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ng-container *ngFor="let content of block.multilinerichtextbox">
+            <ng-container [ngSwitch]="content.type">
+              <!-- Handle paragraphs -->
+              <div *ngSwitchCase="'paragraph'">
+                <ng-container *ngFor="let item of content.children">
+                  <ng-container [ngSwitch]="item.type">
+                    <ion-text *ngSwitchCase="'text'">{{ item.text }}</ion-text>
+                  </ng-container>
+                </ng-container>
+              </div>
+              <!-- Handle unordered lists -->
+              <ul *ngSwitchCase="'list'" [ngClass]="{'unordered-list': content.format === 'unordered'}">
+                <ng-container *ngFor="let listItem of content.children">
+                  <li *ngIf="listItem.type === 'list-item'">
+                    <ng-container *ngFor="let item of listItem.children">
+                      <ng-container [ngSwitch]="item.type">
+                        <span *ngSwitchCase="'text'">{{ item.text }}</span>
+                      </ng-container>
+                    </ng-container>
+                  </li>
+                </ng-container>
+              </ul>
+            </ng-container>
+          </ng-container>
+        </ion-card-content>
+      </ion-card>
+    </div>
+</ion-col>
+</ion-row>
+<ion-row>
+  <ion-col>
+    <ng-container *ngFor="let content of titleparaContent">
+      <ng-container [ngSwitch]="content.type">
+        <!-- Handle headings -->
+        <ion-text *ngSwitchCase="'heading'">
+          <h3>
+            <ng-container *ngFor="let item of content.children">
+              <strong *ngIf="item.bold">{{ item.text }}</strong>
+              <span *ngIf="!item.bold">{{ item.text }}</span>
+            </ng-container>
+          </h3>
+        </ion-text>
+        <!-- Handle paragraphs -->
+        <ion-text *ngSwitchCase="'paragraph'">
+        
+            <ng-container *ngFor="let item of content.children">
+              {{ item.text }}
+            </ng-container>
+        
+        </ion-text>
+      </ng-container>
+    </ng-container>
+  </ion-col>
+</ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

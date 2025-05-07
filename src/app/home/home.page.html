@@ -1,27 +1,54 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Peace at Home</ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content>
-  <div class="content-container">
-    <h1>Welcome to Peace at Home</h1>
-    <p>Your one-stop solution for managing home-related activities.</p>
+
+
+<ion-content [fullscreen]="true">
+
+   
+  <ion-grid class="p-b-0 sm-cont-margin">
+
+    <!-- First Row: Single Component -->
+    <ion-row class="comp-space">
+      <ion-col>
+        <pathome-happy-home></pathome-happy-home>
+      </ion-col>
+    </ion-row>
+
+    <!-- Second Row: Three Components in Flex Display -->
+    <ion-row class="comp-space hc-spacing">
+      <ion-col size="12" size-md="4" class="hcs-r hc-cp">
+        <pathome-daily-tips></pathome-daily-tips>
+      </ion-col>      
+      <ion-col size="12" size-md="4"  class="hcs hc-cp">
+        <pathome-wellness-tips></pathome-wellness-tips>
+      </ion-col>
+      <ion-col size="12" size-md="4"  class="hcs-l hc-cp">
+        <pathome-peace-harmony></pathome-peace-harmony>
+      </ion-col>
+    </ion-row>
+
+    <!-- Third Row: Full-Width Slide Component -->
+    <ion-row class="comp-space">
+      <ion-col>
+        <pathome-home-slider [routerLink]="['/peaceathome']" [endpoint]="sliderEndpoint" [paramName]="'homeslider'"></pathome-home-slider>
+      </ion-col>
+    </ion-row>
+
     
-    <app-daily-tips></app-daily-tips>
-    
-    <ion-button expand="block" color="primary" routerLink="/your-new-page">
-      Go to New Page
-    </ion-button>
-  </div>
+
+ 
+    <ion-row class="comp-space">
+      <ion-col class="ion-text-center">
+        <ion-button color="primary" (click)="expandMenu()" (click)="navigateToPeaceAtHome()" size="small">Explore the Next Chapter.....</ion-button>
+        </ion-col>
+        </ion-row>
+ 
+  </ion-grid>
+  <ion-grid class="footer-container">
+    <ion-row>
+      <ion-col class="p-0">
+        <pathome-footer></pathome-footer>
+        </ion-col>
+        </ion-row>
+  </ion-grid>
+
 </ion-content>
-
-<ion-footer>
-  <ion-toolbar>
-    <ion-title> 2024 Peace at Home</ion-title>
-  </ion-toolbar>
-</ion-footer>

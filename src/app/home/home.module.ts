@@ -6,6 +6,24 @@ import { HomePage } from './home.page';
 import { DailyTipsComponent } from '../controls/daily-tips/daily-tips.component';
 
 import { HomePageRoutingModule } from './home-routing.module';
+import { HappyHomeComponent } from '../controls/happy-home/happy-home.component';
+import { PeaceHarmonyComponent } from '../controls/peace-harmony/peace-harmony.component';
+import { HomeSliderComponent } from '../controls/home-slider/home-slider.component';
+import { WellnessTipsComponent } from '../controls/wellness-tips/wellness-tips.component';
+import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
+import { FooterComponent } from "../controls/footer/footer.component";
+import { PeaceathomeComponent } from "../controls/peaceathome/peaceathome.component";
+import { HealthyrelatitonshipComponent } from "../controls/healthyrelatitonship/healthyrelatitonship.component";
+import { BrowserModule } from '@angular/platform-browser';
+import { SupportserviceComponent } from '../controls/supportservice/supportservice.component';
+import { PartnerViolenceProgressbarComponent } from "../controls/partner-violence-progressbar/partner-violence-progressbar.component";
+import { TypesofAbuseCardComponent } from "../controls/typesof-abuse-card/typesof-abuse-card.component";
+import { RelationalComponent } from '../controls/relational/relational.component';
+import { UsaMapComponent } from '../usa-map/usa-map.component';
+import { HeaderComponent } from "../controls/header/header.component";
+import { UnhealthyRelationshipContent } from "../controls/unhealthyrelationship-contents/unhealthyrelationshipcontent";
+import { BreadcrumbComponent } from "../controls/breadcrumb/breadcrumb.component";
+import { MenuComponent } from "../components/menu/menu.component";
 
 @NgModule({
   imports: [
@@ -13,8 +31,25 @@ import { HomePageRoutingModule } from './home-routing.module';
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
-    DailyTipsComponent
-  ],
+    DailyTipsComponent,
+    HappyHomeComponent,
+    PeaceHarmonyComponent,
+    HomeSliderComponent,
+    WellnessTipsComponent,
+    ContactUsFormComponent,
+    FooterComponent,
+    PeaceathomeComponent,
+    HealthyrelatitonshipComponent,
+    SupportserviceComponent,
+    PartnerViolenceProgressbarComponent,
+    TypesofAbuseCardComponent,
+    UsaMapComponent,
+    RelationalComponent,
+    HeaderComponent,
+    UnhealthyRelationshipContent,
+    BreadcrumbComponent,
+    MenuComponent
+],
   declarations: [
     HomePage
   ]

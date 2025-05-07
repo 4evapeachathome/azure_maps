@@ -1,0 +1,112 @@
+<!-- <ion-content [fullscreen]="true" > -->
+  <div class="common-container">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-sm="8">
+      
+        <h1>Contact Us</h1>
+      
+        <ion-text class="cc-content">
+        
+            Whether <span class="ccc-highlight">YOU NEED HELP</span> with our app or want to
+            <span class="ccc-highlight">SUPPORT OUR MISSION</span>, reach out to us for assistance or to discuss funding opportunities.
+       
+        </ion-text>
+        </ion-col>
+        </ion-row>
+
+  <ion-row>
+    <ion-col size="12" size-sm="6">
+ 
+      
+      
+
+      <ion-card class="form-container">
+        <!-- <ion-card-content class="form-container"> -->
+          <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
+            <ion-item>
+          
+              <ion-input label="Name" labelPlacement="stacked" 
+                type="text"
+                [(ngModel)]="formData.name"
+                name="name"
+                required
+                 placeholder="Please enter your name here..."
+                minlength="3"
+                #name="ngModel"
+               >
+              </ion-input>
+         
+            </ion-item>
+            <ion-text color="danger" *ngIf="name.invalid && (name.dirty || name.touched)" class="validation-error">
+              <p *ngIf="name.errors?.['required']">Name is required.</p>
+              <p *ngIf="name.errors?.['minlength']">Name must be at least 3 characters long.</p>
+            </ion-text>
+          
+            <ion-item>
+        
+              <ion-input label="Email" labelPlacement="stacked" 
+                type="email"
+                [(ngModel)]="formData.email"
+                name="email"
+                required
+                email
+                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                #email="ngModel"
+                 placeholder="Please enter your email here..."
+              >
+              </ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="email.invalid && (email.dirty || email.touched)" class="validation-error">
+              <p *ngIf="email.errors?.['required']">Email is required.</p>
+              <p *ngIf="email.errors?.['pattern']">Please enter a valid email address.</p>
+            </ion-text>
+          
+            <ion-item>
+        
+              <ion-textarea label="Your Feedback" labelPlacement="stacked" 
+                [(ngModel)]="formData.feedback"
+                name="feedback"
+                required
+                minlength="3"
+                #feedback="ngModel"
+                placeholder="Please enter your feedback here..."
+              >
+                
+              </ion-textarea>
+            </ion-item>
+            <ion-text color="danger" *ngIf="feedback.invalid && (feedback.dirty || feedback.touched)" class="validation-error">
+              <p *ngIf="feedback.errors?.['required']">Feedback is required.</p>
+              <p *ngIf="feedback.errors?.['minlength']">Feedback must be at least 3 characters long.</p>
+            </ion-text>
+            <!-- Captcha -->
+            <div class="captcha-container">
+              <div #recaptcha></div>
+            </div>        
+            <div class="button-group">
+              <ion-button color="secondary" [disabled]="isFormEmpty()"  (click)="onClear()">Clear</ion-button>
+              <ion-button color="primary" [disabled]="!contactForm.valid || !isCaptchaVerified" (click)="onSubmit()">Submit</ion-button>
+            </div>
+          </form>
+        <!-- </ion-card-content> -->
+      </ion-card>
+
+      
+    </ion-col>
+    <ion-col size="12" size-sm="6"  class="img-container">
+      <ion-img class="contact-img" src="../../../assets/contactusimg/contactus.svg" alt="Contact Us"></ion-img>
+    </ion-col>
+  </ion-row>
+ 
+</ion-grid>
+</div>
+<ion-row>
+  <ion-col class="ion-text-center">
+    <div class="footer-note">
+      If you are in immediate danger, please <span class="fn-highlight">CONTACT THE LOCAL LAW ENFORCEMENT</span> right away.
+    </div>
+    </ion-col>
+    </ion-row>
+ 
+<!-- </ion-content> -->
+

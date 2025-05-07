@@ -1,0 +1,54 @@
+@import "styles-dir";
+
+ion-footer {
+  background-color: $color-dark-Gray;
+  --color: $color-Gray64;
+  font-size: $font-size-md;
+ // margin-top: 16px;
+  box-shadow: none;
+  a {
+    cursor: pointer; 
+    &.active { 
+      text-decoration: underline; 
+      color: $color-Gray64; 
+    }
+  }
+
+ 
+
+  ion-text {
+    color: $color-Gray64;
+    font-size: $font-size-md;
+  }
+  h5 {
+    font-size: $font-size-base;
+    color: $color-Gray64;
+    margin: 0;
+    padding: 0;
+    font-weight: $font-regular;
+    a {
+      color: $color-Gray64;
+      font-size: $font-size-md;
+      text-decoration: none;
+    }
+  }
+  ul {
+    padding: 0;
+    margin: 0;
+    color: $color-Gray64;
+    font-size: $font-size-md;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 50px;
+    li {
+      padding: 4px 0;
+      margin-left: 26px;
+      cursor: pointer;
+      a {
+        color: $color-Gray64;
+        font-size: $font-size-md;
+        text-decoration: none;
+      }
+    }
+  }
+}

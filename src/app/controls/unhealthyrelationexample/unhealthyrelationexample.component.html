@@ -1,0 +1,18 @@
+<ion-card class="healthy-unhealthy-container p-0">
+  <ion-card-content>
+ 
+
+    <h3>{{title}}</h3>
+        <ul class="huc-list-item">
+          
+          <li *ngFor="let example of content; let i = index">
+            <span class="circle">{{ i + 1 }}</span>
+            <ion-text>{{ example.description }}</ion-text>
+          </li>
+       
+      
+        </ul>
+        <h5>{{description}}</h5>
+   
+  </ion-card-content>
+</ion-card>

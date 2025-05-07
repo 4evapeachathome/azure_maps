@@ -1,0 +1,233 @@
+@media (max-width: 576px) {
+  ion-footer{
+    ul{
+      display: inline !important;
+    }
+  } 
+}
+@media (max-width: 768px) {
+  .hb-img{
+
+    max-height: 200px !important;
+    
+  }
+  .card-small ion-card-title {
+    font-size: $font-size-l !important;
+}
+.card-small h3 {
+  font-size: $font-size-l !important;
+}
+.card-small h4 {
+  font-size: $font-size-l !important;
+}
+.ii-power h2 {
+  font-size: $font-size-l !important;
+}
+  .order1{
+    order: 1 !important;
+  }
+  .side-menu{
+    display: flex    ;
+        flex-wrap: wrap;
+  }
+  .all-rights{
+    margin-bottom: 24px;
+  }
+  .carousel-header ion-card-title {
+    font-size: $font-size-xlll   !important;
+  }
+      .container-banner {
+          ion-card-content {
+            .cb-header {
+              font-size: $font-size-xlll  !important;
+          }         
+
+        }
+      }
+    .calendar-strip {
+        .weekdays {
+         // gap: 4px;
+          
+          .day-item {
+            min-width: 35px !important;
+            padding: 4px !important;
+          }
+        }
+      }
+      .comp-space{
+        margin: 8px 0 !important;
+      }
+      .hc-spacing{
+        .hc-cp{
+          margin-bottom: 8px;
+        }
+      }
+      .sidebar{
+        // position: absolute !important;
+        // display: block !important;
+        // .sidebar-header{
+        //   display: none !important;
+        
+        // }
+        height: 100% !important;
+        left: -500px !important;
+        transition: margin-left 0.5s;
+      }
+      .slider-content {
+      
+      //  margin-left: 0 !important; 
+        .sm-cont-margin{
+          margin-left: 0 !important; 
+        }
+      }
+      .sidebar-toggle:checked + .sidebar-toggle-label + .sidebar {
+        position: absolute;
+       // transform: translateX(-258px);
+        display: block;
+        z-index: 10000;
+        left: 0 !important;
+      //  transition: margin-left 0.5s;
+        .sidebar-header{
+          display: none;
+        }
+       
+      }
+ 
+      .gmap-container{
+        min-height: 1000px;
+
+      }
+      .search-toolbar {
+        width: 80% !important;
+      }
+      .cards-container{
+        flex-direction: column !important;
+      }
+      .cc-cont-contaner{
+        width: 100% !important;
+        height: auto !important;
+      }
+      .container-banner {
+      .ic-content{
+        padding: 0 0 !important;
+      }
+    }
+    .cb-p-se{
+      padding-inline-start:8px !important;
+      padding-inline-end:8px !important;
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+    }
+    .cc-box-content{
+      flex-direction: column;
+    }
+      .common-container{
+        padding: 8px 8px !important;
+      }
+      .form-container {
+        padding: 16px 16px !important;
+    }
+    .map-space-bottom{
+      margin-bottom: 10px;
+    }
+    .ii-power{
+      width: 100% !important;
+      ion-list {    
+        gap: 6px !important;
+        width: 100% !important;
+    }
+    }
+    .law-content{
+      margin-bottom: 16px;
+    }
+    .healthy-unhealthy-container{
+      width: 100% !important;
+      .lc-image{
+        height: 150px !important;
+          }
+    }
+    .vp-card{
+      width: 100% !important;
+      .progress-bar {
+
+      .progress-segment {
+        width: 80px !important;
+    }
+  }
+    }
+    .pv-gallery
+    {
+      width: 100% !important;
+      .pv-card{
+        width: 100% !important;     
+      }
+     ul li ion-img {      
+        height: 80px !important;
+    }
+    }
+    .lr-main-container{
+      width: 100% !important;
+    }
+    .reverse-image {
+      .img-container {
+        order: inherit !important; /* Image comes first */
+      }
+      .con-container-center {
+        order: 1 !important; /* Content comes second */
+      }
+    }
+    .carousel-container .carousel .cc-image-container {
+      width: 150px !important;
+      height: 150px !important;
+      top: -80px !important;
+  }
+    .carousel-container .carousel .carousel-des-container, .carousel-container .carousel .text-container {
+      margin-top: 80px !important;
+      padding-top: 80px !important;
+  }
+  .carousel-container .carousel .carousel-des-container .carousel-description .description h3, .carousel-container .carousel .text-container .carousel-description .description h3 {
+    font-size: $font-size-l !important;
+
+}
+.lrc-img {
+  height: 150px !important;
+}
+.image-badge-top{
+  float: none !important;
+  width: 180px !important;
+  margin: 0 auto !important;
+ }
+ .image-badge-top-left {
+
+  width: 100% !important;
+
+}
+.support-d-flex100{
+height: auto !important;
+}
+.quiz-slide{
+  .qsc-1{
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+  .question-row{
+    display: block !important;
+  }
+  .ta-center{
+    max-width: 100%;
+    text-align: center;
+  }
+  .qz-arrows {
+    .prev {
+      margin-left: -25px !important;
+    }
+   .next {
+  
+      margin-right: 10px !important;
+  }
+  }
+} 
+.state-selectbox{
+  width: 100% !important;
+}
+  }

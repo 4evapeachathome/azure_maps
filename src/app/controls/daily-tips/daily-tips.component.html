@@ -1,34 +1,50 @@
-<div class="daily-tips-container">
-  <h2>Daily Peace Tips</h2>
-  
-  <div class="month-year">
-    {{ currentDate | date:'MMM, yyyy' }}
-  </div>
+<ion-card class="card-small daily-tips-container">
+  <ion-card-header>
+    <ion-card-title>{{dailyPeaceTitle}}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-grid class="ion-no-padding d-flex-h-100 ion-align-items-stretch">
+      <ion-row>
+       <ion-col> 
+          <h3 class="ion-text-center">
+            {{ currentDate | date:'MMM, yyyy' }}        
+          </h3>
+        </ion-col>
+        </ion-row>
+        <ion-row>
+        <ion-col>
+          <div class="calendar-strip">
+            <ion-button fill="clear" class="nav-button" (click)="navigateWeek('prev')">
+              <ion-icon name="arrow-back-outline"></ion-icon>
+            </ion-button>
+        
+            <div class="calendar-wrapper">
+              <div class="weekdays" [class.slide-left]="slideDirection === 'left'" [class.slide-right]="slideDirection === 'right'">
+                <div *ngFor="let date of weekDates; let i = index" 
+                     class="day-item" 
+                     [class.selected]="selectedDay === i"
+                     [class.current]="isCurrentDay(i)"
+                     (click)="selectDay(i)">
+                  <div class="day-name">{{ weekDays[i] }}</div>
+                  <div class="day-number">{{ date | date:'d' }}</div>
+                </div>
+              </div>
+            </div>
+        
+            <ion-button fill="clear" class="nav-button" (click)="navigateWeek('next')">
+              <ion-icon name="arrow-forward-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-col>
+        </ion-row>
+        <ion-row class="h-100">
+          <ion-col class="cs-footer">
+            <p [@tipFade]="currentTip">
+              {{ currentTip }}
+            </p>
+          </ion-col>
+          </ion-row>
+    </ion-grid>
 
-  <div class="calendar-strip">
-    <ion-button fill="clear" class="nav-button" (click)="navigateWeek('prev')">
-      <ion-icon name="chevron-back-outline"></ion-icon>
-    </ion-button>
-
-    <div class="calendar-wrapper">
-      <div class="weekdays" [class.slide-left]="slideDirection === 'left'" [class.slide-right]="slideDirection === 'right'">
-        <div *ngFor="let date of weekDates; let i = index" 
-             class="day-item" 
-             [class.selected]="selectedDay === i"
-             [class.current]="isCurrentDay(i)"
-             (click)="selectDay(i)">
-          <div class="day-name">{{ weekDays[i] }}</div>
-          <div class="day-number">{{ date | date:'d' }}</div>
-        </div>
-      </div>
-    </div>
-
-    <ion-button fill="clear" class="nav-button" (click)="navigateWeek('next')">
-      <ion-icon name="chevron-forward-outline"></ion-icon>
-    </ion-button>
-  </div>
-
-  <div class="tip-container" [@tipFade]="currentTip">
-    {{ currentTip }}
-  </div>
-</div>
+</ion-card-content>
+</ion-card>

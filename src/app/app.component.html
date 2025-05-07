@@ -1,20 +1,52 @@
-<ion-app>
-  <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Menu</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <app-menu 
-          [fields]="['Title', 'link']"
-          [populate]="['Parent']"
-          [sort]="['createdAt:desc']">
-        </app-menu>
-      </ion-content>
-    </ion-menu>
+<ion-app [ngClass]="{'mobile-container':  isMobile && isMenuOpen}">
+  <div class="header-cont-container">
+    <div class="menu-hidden-bg-header" (click)="closeMobileMenu()"></div>
+    <pathome-header></pathome-header>
+    </div>
+    <div class="d-flex-ion pos-relative flex-grow-1">
+  <div class="d-flex-ion div-scroll">
+  
+<div class="d-flex-ion pos-relative flex-grow-1" >
+  <input #desktopToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
+  <input #mobileToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
+
+  <label for="sidebar-toggle" class="sidebar-toggle-label ">
+  
+    <ion-icon name="menu-outline" class="st-open"></ion-icon>   
+    <ion-icon name="close" class="st-close"></ion-icon>
+  </label>
+
+  <!-- <label for="sidebar-toggle" class="sidebar-toggle-label">&#9776;</label> -->
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <!-- <ion-icon
+      name="menu-outline" 
+     
     
-    <ion-router-outlet id="main-content"></ion-router-outlet>
-  </ion-split-pane>
+    ></ion-icon> -->
+      <!-- <span class="material-symbols-outlined"> menu </span> -->
+      <h2>Menu</h2>
+    </div>
+    <app-menu class="h-100"
+      [fields]="['title', 'link']"
+      [populate]="['parentMenu']"
+      [sort]="['createdAt:asc']"
+      [isMenuOpen]="isMenuOpen"     
+    >
+    </app-menu>
+  </aside>
+<div class="menu-hidden-bg" (click)="closeMobileMenu()"></div>
+  <ion-router-outlet
+    id="main-content"
+    class="slider-content"
+  ></ion-router-outlet>
+
+</div>
+<!-- <div>
+  <pathome-footer></pathome-footer>
+  </div> -->
+</div>
+</div>
+
 </ion-app>

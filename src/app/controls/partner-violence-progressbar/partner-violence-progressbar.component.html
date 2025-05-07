@@ -1,0 +1,20 @@
+<ng-container *ngFor="let level of levels">
+  <ion-card class="vp-card">
+    <!-- Card Header -->
+    <ion-card-header class="vp-header">
+      <h3>{{ getHeadingText(level) }}</h3>
+    </ion-card-header>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div
+        *ngFor="let segment of getProgressBarClasses(getLevelNumber(level))"
+        class="progress-segment"
+        [ngClass]="segment"
+      ></div>
+    </div>
+
+    <!-- Description Content -->
+    <p [innerHTML]="getDescription(level)"></p>
+  </ion-card>
+</ng-container>

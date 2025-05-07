@@ -1,0 +1,71 @@
+
+<ion-card class="container-banner cb-p-se" >
+  <ion-card-content class="ic-content">
+ <ion-grid>
+  <pathome-breadcrumb></pathome-breadcrumb>
+  <ion-row>
+  <ion-col  size="12" size-sm="6" *ngIf="titleContent?.length > 0">
+    <!-- <h2 class="happyhome-title"> -->
+      <ng-container *ngFor="let item of titleContent[0]?.children">
+        <ng-container [ngSwitch]="item.type">
+          <ion-text class="cb-header" *ngSwitchCase="'text'" [ngClass]="{'cb-header-highlight': item.bold}">
+            <strong *ngIf="item.bold">{{ item.text }}</strong>
+            <span *ngIf="!item.bold">{{ item.text }}</span>
+          </ion-text>
+        </ng-container>
+      </ng-container>
+    <!-- </h2> -->
+    </ion-col>
+    <ion-col  size="12" size-sm="6"  class="img-container ">
+    <ion-img [src]="peaceathomeImg" alt="Happy Home Image" class="hb-img"></ion-img>
+  </ion-col>
+</ion-row>
+  <ion-row  class="comp-space">
+    <ion-col >
+      <ion-text *ngIf="paragraphContent">
+        {{ paragraphContent }}
+      </ion-text>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col>
+    <div class="cc-box-content">
+      <ion-card *ngFor="let block of contentBlocks">
+        <ion-card-header>
+          <ion-card-title>
+            <ng-container *ngFor="let content of block.multilinerichtextbox">
+              <ng-container [ngSwitch]="content.type">
+                <!-- Handle headings -->
+                <ng-container *ngSwitchCase="'heading'">
+                  <ng-container *ngFor="let item of content.children">
+                    <ion-text [ngClass]="{'cardhighlight': item.bold}">
+                      <strong *ngIf="item.bold">{{ item.text }}</strong>
+                      <span *ngIf="!item.bold">{{ item.text }}</span>
+                    </ion-text>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ng-container *ngFor="let content of block.multilinerichtextbox">
+            <ng-container [ngSwitch]="content.type">
+              <!-- Handle paragraphs -->
+              <div *ngSwitchCase="'paragraph'">
+                <ng-container *ngFor="let item of content.children">
+                  <ng-container [ngSwitch]="item.type">
+                    <div *ngSwitchCase="'text'">{{ item.text }}</div>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
+        </ion-card-content>
+      </ion-card>
+    </div>
+</ion-col>
+</ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

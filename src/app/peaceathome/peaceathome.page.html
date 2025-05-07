@@ -1,0 +1,40 @@
+
+
+<ion-content [fullscreen]="true">
+  <ion-grid  class="p-b-0 sm-cont-margin">
+
+    <!-- First Row: Single Component -->
+    <ion-row class="comp-space">
+      <ion-col size="12">
+        <pathome-peaceathome></pathome-peaceathome>
+      </ion-col>
+    </ion-row>
+
+    <!-- Second Row: Three Components in Flex Display -->
+    <ion-row class="comp-space">
+      <ion-col size="12">
+        <pathome-home-slider [endpoint]="peaceathomeslider" [showButton]="false" [paramName]="'peaceathomeslider'"></pathome-home-slider>
+      </ion-col>
+    </ion-row>
+
+    <!-- Third Row: Full-Width Slide Component -->
+    <ion-row class="comp-space">
+      <ion-col size="12">
+       <pathome-relational></pathome-relational>
+      </ion-col>
+    </ion-row>
+    <ion-row class="comp-space">
+      <ion-col class="ion-text-center">
+        <ion-button color="primary" size="small" [routerLink]="['/healthyrelationship']">Explore the Next Chapter.....</ion-button>
+        </ion-col>
+        </ion-row>
+
+  </ion-grid>
+  <ion-grid class="footer-container">
+    <ion-row>
+      <ion-col class="p-0">
+        <pathome-footer></pathome-footer>
+        </ion-col>
+        </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,54 @@
+<ion-content [fullscreen]="true">
+
+  <ion-grid class="p-b-0 sm-cont-margin">
+
+    <!-- First Row: Single Component -->
+    <ion-row class="comp-space">
+      <ion-col size="12">
+        <pathome-healthyrelatitonship [endpoint]="unhealthyrelationcontent"></pathome-healthyrelatitonship>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="comp-space">
+      <ion-col size="12">
+        <pathome-home-slider [endpoint]="unhealthyrelationslider" [showButton]="false" [paramName]="'unhealthyrelationslider'" ></pathome-home-slider>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="comp-space">
+      <ion-col size="12">
+      <pathome-unhealthyrelationshipcontent [contentPlacement]="'left'" [endPoint]="unhealthyrelationcontentone"></pathome-unhealthyrelationshipcontent>
+      </ion-col>
+    </ion-row>
+    
+
+    <ion-row class="comp-space">
+          <ion-col size="12">
+            <pathome-unhealthyrelationshipcontent [contentPlacement]="'right'" [endPoint]="unhealthyrelationcontenttwo"></pathome-unhealthyrelationshipcontent>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="comp-space">
+          <ion-col size="12">
+            <pathome-unhealthyrelationshipcontent [contentPlacement]="'left'" [endPoint]="unhealthyrelationcontentthree"></pathome-unhealthyrelationshipcontent>
+          </ion-col>
+        </ion-row>
+        <ion-row class="comp-space">
+      <ion-col class="ion-text-center">
+        <ion-button [routerLink]="['/parterviolence']" color="primary" size="small">Explore the Next Chapter.....</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button [routerLink]="['/quiz']" color="primary" size="small">Take Quiz</ion-button>
+          </ion-col>
+        </ion-row>
+        
+    
+  </ion-grid>
+  <ion-grid class="footer-container">
+    <ion-row>
+      <ion-col class="p-0">
+        <pathome-footer></pathome-footer>
+        </ion-col>
+        </ion-row>
+  </ion-grid>
+</ion-content>
