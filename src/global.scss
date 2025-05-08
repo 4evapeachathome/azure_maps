@@ -274,9 +274,10 @@ ion-card {
     font-size: $font-size-base;
   }
 }
-.state-selectbox{
-  width: 30%;
-}
+// .state-selectbox{
+//   width: 30%;
+// }
+
 .map-space-bottom{
   margin-bottom: 60px;
 }
@@ -838,9 +839,9 @@ margin: 8px;
 width: 100%;
   }
 }
-// .backtomap-button{
-//   margin-top: -14px;
-// }
+.backtomap-button{
+  margin-right: 5px;
+}
 .m-t-16{
   margin-top: 16px;
 }
