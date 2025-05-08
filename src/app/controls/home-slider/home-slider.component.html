@@ -1,8 +1,8 @@
-<ion-card-header class="carousel-header">
+<ion-card-header class="carousel-header" (click)="stopEventPropagation($event)">
   <ion-card-title>{{ mainTitle }}</ion-card-title>
 </ion-card-header>
 
-<ion-card-content class="carousel-container">
+<ion-card-content class="carousel-container" (click)="stopEventPropagation($event)">
   <div class="slider-wrapper carousel">
     <ng-container *ngFor="let description of descriptions; let i = index">
       <div class="slide" 
@@ -54,13 +54,13 @@
     <ion-icon 
     name="chevron-back-outline"
       class="nav-arrow prev" 
-      (click)="prevSlide($event)"
+      (click)="prevSlide()"
       [class.disabled]="descriptions.length <= 1">
     </ion-icon>
     <ion-icon 
     name="chevron-forward-outline"
       class="nav-arrow next" 
-      (click)="nextSlide($event)"
+      (click)="nextSlide()"
       [class.disabled]="descriptions.length <= 1">
     </ion-icon>
   </div>
