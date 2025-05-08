@@ -19,7 +19,7 @@
         {{ item.title }}
       </span>
       <!-- Case 2: On /uslawsbystate page, state selected (show dropdown) -->
-      <span *ngIf="isUsLawsByStatePage && selectedState" class="breadcrumb-current">
+      <div *ngIf="isUsLawsByStatePage && selectedState" class="breadcrumb-current">
         <ion-select
           class="state-selectbox"
           placeholder="Select a State"
@@ -34,7 +34,7 @@
             {{ state.name }}
           </ion-select-option>
         </ion-select>
-      </span>
+      </div>
       <!-- Case 3: On other pages -->
       <span *ngIf="!isUsLawsByStatePage" class="breadcrumb-current">
         <span>{{ item.title }}</span>
