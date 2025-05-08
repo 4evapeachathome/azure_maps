@@ -365,19 +365,19 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
 
   
 
-  sendContactData(contactData: any): Observable<any> {
-    const endpoint = APIEndpoints.contactus;
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${environment.apitoken}`
-    });
-  
-    //const secretKey = '0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9'; // Use a secure key, store it safely
-    const secretKey = environment.secretKey; // Use a secure key, store it safely
-    const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(contactData), secretKey).toString();
-  
-    return this.http.post(`${endpoint}`, { data: encryptedData }, { headers });
-  }
+sendContactData(contactData: any): Observable<any> {
+  const endpoint = APIEndpoints.contactus;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+
+  //const secretKey = '0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9'; // Use a secure key, store it safely
+  const secretKey = environment.secretKey; // Use a secure key, store it safely
+  const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(contactData), secretKey).toString();
+
+  return this.http.post(`${endpoint}`, { data: encryptedData }, { headers });
+}
 
     // Fetch Relational, which includes both personal and interpersonal items
     getRelationalContent(): Observable<any> {
@@ -1178,9 +1178,3 @@ getHitsResultCalculation(): Observable<any> {
 
 
 }
-
-
-
-
-
-
