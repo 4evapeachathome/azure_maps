@@ -11,6 +11,10 @@
       <ion-col class="ion-text-center">
         <ion-button color="primary" [routerLink]="['/legalrights']" size="small">Next</ion-button>
         </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button color="primary" [disabled]="!sripaCompRef?.hasAnyAnswer" 
+          (click)="onFinalAnswerClick()" size="small">Final Answer</ion-button>
+          </ion-col>
         </ion-row>
   </ion-grid>
   <ion-grid class="footer-container">

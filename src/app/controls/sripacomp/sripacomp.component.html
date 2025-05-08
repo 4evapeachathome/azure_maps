@@ -5,7 +5,7 @@
   </ion-card-header>
 
   <ion-card-content>
-    <ng-container *ngIf="currentIndex < sripa.length">
+    <ng-container *ngIf="currentIndex < sripa.length && !finalAnswerVisible">
       <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
         <div class="qs-row qs-header">
           <div class="qs-col">
@@ -69,8 +69,12 @@
         </div>
       </div>
     </ng-container>
-    <div class="yesanswer-content" *ngIf="currentIndex === sripa.length">
+    <!-- <div class="yesanswer-content" *ngIf="currentIndex === sripa.length">
       <div [innerHTML]="renderRichText(yesanswer)"></div>
+    </div> -->
+    <div *ngIf="finalAnswerVisible" class="yesanswer-content">
+      <h3>Final Answer</h3>
+      <div [innerHTML]="finalAnswerHtml"></div>
     </div>
 
   </ion-card-content>
