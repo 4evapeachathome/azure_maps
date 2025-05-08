@@ -32,6 +32,9 @@ rating = '';
 currentIndex = 0;
 showAnswers: boolean[] = [];
 selectedOptions: string[] = [];
+hasAnyAnswer = false;
+finalAnswerHtml: string = '';
+finalAnswerVisible = false;
 
 constructor(private apiService: ApiService) {}
 
@@ -45,15 +48,27 @@ loadQuiz(): void {
       this.quizTitle = quiz.title;
       this.sripa = quiz.sripa || [];
       this.rating = quiz.rating || '';
-      this.yesanswer = quiz.yesanswer || [];
+      //this.yesanswer = quiz.yesanswer || [];
       this.showAnswers = new Array(this.sripa.length).fill(false);
       this.selectedOptions = new Array(this.sripa.length).fill(null);
     }
   });
 }
 
+setFinalAnswer(answerText: string) {
+  this.finalAnswerHtml = this.renderRichTextFromText(answerText);
+  this.finalAnswerVisible = true;
+}
+
+renderRichTextFromText(text: string): string {
+  if (!text) return '';
+  return text.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+}
+
+
 selectOption(index: number, option: 'yes' | 'no'): void {
   this.selectedOptions[index] = option;
+  this.hasAnyAnswer = this.selectedOptions.some(opt => opt !== null);
 }
 
 prevSlide(): void {

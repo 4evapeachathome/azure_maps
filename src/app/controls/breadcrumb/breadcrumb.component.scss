@@ -29,23 +29,21 @@
     color: var(--ion-color-primary); // Primary color for the current page
 
     .state-selectbox {
-      --padding-start: 8px; // Reduced padding to decrease height
+      --padding-start: 16px; // Reduced padding to decrease height
       --padding-end: 16px; // Slightly reduced for arrow space
       --padding-top: 2px; // Reduce top padding
       --padding-bottom: 2px; // Reduce bottom padding
-      min-width: 200px;
-      max-width: 300px;
+      
+      min-width: 100px;
+      //max-width: 300px;
       font-size: $font-size-xll;
       color: var(--ion-color-primary);
       --border-width: 1px; // Reduce border thickness
       --border-style: solid;
       --border-color: var(--ion-color-primary);
       --min-height: 32px; // Reduce the height of the dropdown
-
-      ion-select {
-        width: 100%;
-        height: 100%; // Ensure it fits within the adjusted height
-      }
+      min-height: 38px;
+   
 
       &::part(icon) {
         color: var(--ion-color-primary);
@@ -59,23 +57,37 @@
       &::part(text) {
         color: var(--ion-color-primary);
       }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .breadcrumb {
-    .breadcrumb-current {
-      .state-selectbox {
-        min-width: 150px;
-        max-width: 200px;
-        font-size: $font-size-l;
-        --min-height: 28px; // Slightly smaller height on mobile
-        --padding-start: 6px; // Further reduced padding on mobile
-        --padding-end: 14px;
-        --padding-top: 1px;
-        --padding-bottom: 1px;
+      &::part(container) {
+        width: 100%;
+      }
+      &::part(.select-wrapper-inner) {     
+        width: 100%;
+       
       }
     }
   }
 }
+
+:host(.select-wrapper) .select-wrapper-inner {     
+  width: 100%;
+  .native-wrapper{
+    width: 100%;
+  }
+}
+
+// @media (max-width: 768px) {
+//   .breadcrumb {
+//     .breadcrumb-current {
+//       .state-selectbox {
+//         min-width: 150px;
+//         max-width: 200px;
+//         font-size: $font-size-l;
+//         --min-height: 28px; // Slightly smaller height on mobile
+//         --padding-start: 6px; // Further reduced padding on mobile
+//         --padding-end: 14px;
+//         --padding-top: 1px;
+//         --padding-bottom: 1px;
+//       }
+//     }
+//   }
+// }
