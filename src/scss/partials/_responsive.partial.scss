@@ -30,8 +30,12 @@
     display: flex    ;
         flex-wrap: wrap;
   }
+  .footer-menu{
+    display: none;
+  }
   .all-rights{
-    margin-bottom: 24px;
+   // margin-bottom: 24px;
+   justify-content: center;
   }
   .carousel-header ion-card-title {
     font-size: $font-size-xlll   !important;
