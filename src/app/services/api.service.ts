@@ -928,6 +928,46 @@ getSripaa(): Observable<any> {
 
 
 
+//Risk Assessment Module
+
+getUserLogins(): Observable<any> {
+  const endpoint = APIEndpoints.userLogins;
+  const options: QueryOptions = {
+    populate: {
+      type: {
+        fields: ['assessment_type']
+      }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      if (!res.data || res.data.length === 0) return [];
+
+      return res.data.map((item: any) => ({
+        id: item.id,
+        username: CryptoJS.AES.decrypt(item.Username, environment.secretKey).toString(CryptoJS.enc.Utf8),
+        email: CryptoJS.AES.decrypt(item.email, environment.secretKey).toString(CryptoJS.enc.Utf8),
+        phone: CryptoJS.AES.decrypt(item.phone, environment.secretKey).toString(CryptoJS.enc.Utf8),
+        orgname: CryptoJS.AES.decrypt(item.orgname, environment.secretKey).toString(CryptoJS.enc.Utf8),
+        password: CryptoJS.AES.decrypt(item.password, environment.secretKey).toString(CryptoJS.enc.Utf8),
+        address: CryptoJS.AES.decrypt(item.address, environment.secretKey).toString(CryptoJS.enc.Utf8),
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        types: item.type?.map((typeItem: any) => ({
+          id: typeItem.id,
+          assessmentType: CryptoJS.AES.decrypt(typeItem.assessment_type, environment.secretKey).toString(CryptoJS.enc.Utf8)
+        })) || []
+      }));
+    }),
+    catchError(error => {
+      console.error('Error fetching and decrypting user login data', error);
+      return throwError(error);
+    })
+  );
+}
+
+
 
 }
 

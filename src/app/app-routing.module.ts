@@ -1,7 +1,9 @@
+import { LoginPagePageModule } from './riskAssessment/login-page/login-page.module';
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
-const routes: Routes = [
+const educationModule: Routes =  [
   { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomePageModule) },
   { path: 'peaceathome', loadChildren: () => import('./peaceathome/peaceathome.module').then(m => m.PeaceathomePageModule) },
   { path: 'healthyrelationship', loadChildren: () => import('./healthyrelationship/healthyrelationship.module').then(m => m.HealthyrelationshipPageModule) },
@@ -23,7 +25,8 @@ const routes: Routes = [
   {
     path: 'legalrights',
     loadChildren: () => import('./legalrightshome/legalrightshome.module').then( m => m.LegalrightshomePageModule)
-  },  {
+  },
+  {
     path: 'sripaa',
     loadChildren: () => import('./sripaa/sripaa.module').then( m => m.SripaaPageModule)
   },
@@ -31,15 +34,11 @@ const routes: Routes = [
     path: 'quiz',
     loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizPageModule)
   }
-
-
-
 ];
 
-@NgModule({
-  imports: [ 
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
-  ],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
+const riskAssessmentModule: Routes = [
+  { path: '', redirectTo: 'loginPage', pathMatch: 'full' },
+  { path: 'loginPage', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule) }
+];
+
+export const routes: Routes = environment.isRiskassessment ? riskAssessmentModule : educationModule;

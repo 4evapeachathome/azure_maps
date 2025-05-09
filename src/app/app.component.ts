@@ -5,12 +5,13 @@ import { FooterComponent } from './controls/footer/footer.component';
 import { HeaderComponent } from "./controls/header/header.component";
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { ApiService } from './services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { Capacitor } from '@capacitor/core';
+import { environment } from 'src/environments/environment';
 
 
 export interface OrganizationResponse {
@@ -102,7 +103,7 @@ interface PlaceDetails {
   templateUrl: './app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-  imports: [IonicModule, MenuComponent, HeaderComponent, CommonModule]
+  imports: [IonicModule, MenuComponent, HeaderComponent, CommonModule,RouterModule]
 })
 export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMobile!: boolean;
@@ -110,6 +111,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   filterOptions: FilterOption[] = [];
   @ViewChild('mobileToggle', { static: false }) mobileToggle!: ElementRef<HTMLInputElement>;
   @ViewChild('desktopToggle', { static: false }) desktopToggle!: ElementRef<HTMLInputElement>;
+  isRiskAssessment!: boolean;
+  isRouteLoaded = false;
 
   isMenuOpen = false;
   public readonly endPoint : string = APIEndpoints.supportService;
@@ -120,7 +123,14 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
 
   ngOnInit() {
-    this.loadInitialData();
+    this.isRiskAssessment = environment.isRiskassessment;
+    if(!this.isRiskAssessment){
+      this.loadInitialData();
+      const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+    if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
+      this.router.navigate(['/home']); // Redirect to home if page is refreshed
+    }
+    }
     if (Capacitor.isNativePlatform()) {
       this.platform.ready().then(() => {
         StatusBar.setOverlaysWebView({ overlay: false });
@@ -128,11 +138,14 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       });
     }
 
-    const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-    if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
-      this.router.navigate(['/home']); // Redirect to home if page is refreshed
-    }
+    
   }
+
+  onRouteLoaded() {
+    this.isRouteLoaded = true;
+    console.log('Route loaded in ion-router-outlet'); // Debug
+  }
+
 
   ngAfterViewInit() {
     const toggleRef = this.isMobile ? this.mobileToggle : this.desktopToggle;
