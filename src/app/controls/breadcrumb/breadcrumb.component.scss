@@ -38,13 +38,17 @@
       //max-width: 300px;
       font-size: $font-size-xll;
       color: var(--ion-color-primary);
-      --border-width: 1px; // Reduce border thickness
+      --border-width: 0px; // Reduce border thickness
       --border-style: solid;
       --border-color: var(--ion-color-primary);
       --min-height: 32px; // Reduce the height of the dropdown
       min-height: 38px;
-   
-
+      border-width: 1px; // Reduce border thickness
+      border-style: solid;
+      border-color: var(--ion-color-primary);
+border-radius: 8px;
+margin-top: 5px;
+margin-bottom: 5px;
       &::part(icon) {
         color: var(--ion-color-primary);
         margin-left: 5px;
