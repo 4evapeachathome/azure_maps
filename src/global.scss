@@ -1048,7 +1048,12 @@ width: 100%;
       border-left: 4px solid transparent;
       transition: all 0.3s ease;
     }
-    
+    &:hover {
+      a {
+        color: var(--color-primary);
+        font-weight: $font-bold;
+      }
+    }
      
   }
   li.active, li:active{
