@@ -217,10 +217,10 @@ height: auto !important;
   .question-row{
     display: block !important;
   }
-  .ta-center{
-    max-width: 100%;
-    text-align: center;
-  }
+  // .ta-center{
+  //   max-width: 100%;
+  //   text-align: center;
+  // }
   .qz-arrows {
     .prev {
       margin-left: -25px !important;
@@ -234,4 +234,7 @@ height: auto !important;
 // .state-selectbox{
 //   width: 100% !important;
 // }
+.quiz-slide .nav-arrow {
+  margin: 0 6px !important;
+}
   }

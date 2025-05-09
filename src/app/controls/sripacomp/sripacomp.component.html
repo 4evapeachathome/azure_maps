@@ -19,16 +19,23 @@
         </div>
         <div class="qs-row qz-button-row">
           <div class="qs-col ta-center">
-            <ion-button
+            <ion-radio-group class="qz-btn-radio">
+              <ion-radio value="healthy"     (click)="selectOption(i, 'yes')"
+              [class.selected]="selectedOptions[i] === 'yes'">Yes</ion-radio><br />
+              <ion-radio value="unhealthy"   (click)="selectOption(i, 'no')"
+              [class.selected]="selectedOptions[i] === 'no'">No</ion-radio><br />                
+            </ion-radio-group>
+
+            <!-- <ion-button
             class="qz-btn"
             fill="outline"
         
             (click)="selectOption(i, 'yes')"
             [class.selected]="selectedOptions[i] === 'yes'">
             Yes
-          </ion-button>
+          </ion-button> -->
           </div>
-          <div class="qs-col ta-center">
+          <!-- <div class="qs-col ta-center">
             <ion-button
             class="qz-btn"
                   fill="outline"
@@ -37,7 +44,7 @@
                   [class.selected]="selectedOptions[i] === 'no'">
                   No
                 </ion-button>
-          </div>
+          </div> -->
         </div>
     
         <div class="qs-row answer-row" *ngIf="selectedOptions[i] === 'yes'">
