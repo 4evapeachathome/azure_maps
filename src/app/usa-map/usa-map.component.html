@@ -232,8 +232,8 @@
                     stroke-width="0.5"
                   />
                   <text
-                    [attr.x]="getLineCoordinates(location.path, location.id).end.x"
-                    [attr.y]="getLineCoordinates(location.path, location.id).end.y"
+                      [attr.x]="getLineCoordinates(location.path, location.id).end.x + getLabelOffset(location.id).x"
+                      [attr.y]="getLineCoordinates(location.path, location.id).end.y + getLabelOffset(location.id).y"
                     class="state-label"
                     (click)="onStateClick(location)"
                     text-anchor="start"

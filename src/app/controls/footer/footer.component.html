@@ -1,13 +1,13 @@
 <ion-footer>
-  <ion-grid>
+  <ion-grid *ngIf="!isMobile">
     <ion-row class="ion-justify-content-between"> 
-      <ion-col size="12" size-sm="4" class="d-flex ion-align-items-center all-rights">
+      <ion-col size="12" size-sm="2" class="d-flex all-rights">
         <ion-text>
           All rights reserved &#64;4EVA
         </ion-text>
       </ion-col>
-      <ion-col size="12" size-sm="auto">
-        <div>
+      <ion-col size="12" size-sm="10" class="footer-menu">
+        <div >
           <ul>
           <h5> <a routerLink="/home">Home</a></h5>
           </ul>
@@ -24,6 +24,16 @@
            
               </ul>
               <ul>
+                <h5><a (click)="expandMenu()" routerLink="/nopeaceathome">Legal Rights</a></h5>
+              
+                  <li><a (click)="expandMenu()" routerLink="/unhealthyrelationship" routerLinkActive="active" >Federal Level Law</a></li>
+                  <li><a (click)="expandMenu()" routerLink="/typesofabuse" routerLinkActive="active">US Law by State</a></li>
+             
+                </ul>
+              <ul>
+                <h5> <a routerLink="/supportservice">Support Service</a></h5>
+                </ul>
+              <ul>
                 <h5> <a routerLink="/contactus">Contact Us</a></h5>
                 </ul>
         </div>
@@ -31,6 +41,15 @@
        
       </ion-col>
     
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngIf="isMobile">
+    <ion-row class="ion-justify-content-between"> 
+      <ion-col size="12" size-sm="4" class="d-flex ion-align-items-center all-rights">
+        <ion-text>
+          All rights reserved &#64;4EVA
+        </ion-text>
+      </ion-col>  
     </ion-row>
   </ion-grid>
  </ion-footer>

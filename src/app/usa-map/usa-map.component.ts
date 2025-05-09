@@ -425,21 +425,25 @@ export class UsaMapComponent {
 
   getLineCoordinates(pathData: string, stateId: string): { start: Point; end: Point } {
     const center = this.getStateCenter(pathData, stateId);
-    const bbox = this.calculateBoundingBox(pathData);
-
-    let endX = bbox.maxX + 20;
+    let endX = center.x + 20;
     let endY = center.y;
-
+  
+    // Customize for specific states
     if (stateId.toLowerCase() === 'ri') {
-      endX = bbox.maxX + 30;
-      endY = center.y + 40;
+      // Reduce line length for Rhode Island
+      const dx = 45;
+      const dy = 45;
+      const factor = 0.5; // 50% of the original offset
+  
+      endX = center.x + dx * factor;
+      endY = center.y + dy * factor;
     } else if (stateId.toLowerCase() === 'hi') {
-      endX = bbox.minX + 60;
-      endY = center.y + 30;
+      endX = center.x + 60;
+      endY = center.y + 20;
     }
-
+  
     return {
-      start: { x: bbox.maxX, y: center.y },
+      start: { x: center.x, y: center.y },
       end: { x: endX, y: endY },
     };
   }
@@ -483,6 +487,15 @@ export class UsaMapComponent {
       this.stateSelected.emit(match);
       this.showLawInfo = true;
     }
+  }
+
+  getLabelOffset(stateId: string): { x: number; y: number } {
+    if (stateId.toLowerCase() === 'ri') {
+      return { x: 6, y: 4 }; // move label slightly right and down
+    } else if (stateId.toLowerCase() === 'hi') {
+      return { x: 8, y: 4 };
+    }
+    return { x: 0, y: 0 };
   }
 
   resetState() {

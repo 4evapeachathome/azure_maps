@@ -143,6 +143,9 @@ ion-searchbar {
         text-transform: capitalize;
         margin-inline-start: 0;
         margin-inline-end: 0;
+        --border-radius: 8px;
+        --padding-start: 1.1em;
+        --padding-end: 1.1em;
         ion-icon {
           margin-right: 6px;
         }
@@ -334,4 +337,31 @@ ion-badge {
     font-size: $font-size-md;
     color: var(--color-dark-Gray);
   }
+}
+.sc-ion-searchbar-ios-h {
+  min-height: 42px;
+    --background: white;
+    form, input, optgroup, select {  
+      padding-inline-start: 0 !important;
+  }
+  &:input{
+    -webkit-padding-start: 0!important;
+    padding-inline-start: 0!important;
+  }
+    &::input{
+      -webkit-padding-start: 0!important;
+      padding-inline-start: 0!important;
+    }
+    &::name(ion-searchbar-0){
+      -webkit-padding-start: 0 !important;
+    padding-inline-start: 0 !important;
+    }
+    
+}
+.searchbar-input.sc-ion-searchbar-ios {
+  background: transparent
+}
+:host(.searchbar-left-aligned.sc-ion-searchbar-ios-h .searchbar-input.sc-ion-searchbar-ios){
+  -webkit-padding-start: 0 !important;
+  padding-inline-start: 0 !important;
 }

@@ -30,8 +30,12 @@
     display: flex    ;
         flex-wrap: wrap;
   }
+  .footer-menu{
+    display: none;
+  }
   .all-rights{
-    margin-bottom: 24px;
+   // margin-bottom: 24px;
+   justify-content: center;
   }
   .carousel-header ion-card-title {
     font-size: $font-size-xlll   !important;
@@ -213,10 +217,10 @@ height: auto !important;
   .question-row{
     display: block !important;
   }
-  .ta-center{
-    max-width: 100%;
-    text-align: center;
-  }
+  // .ta-center{
+  //   max-width: 100%;
+  //   text-align: center;
+  // }
   .qz-arrows {
     .prev {
       margin-left: -25px !important;
@@ -230,4 +234,16 @@ height: auto !important;
 // .state-selectbox{
 //   width: 100% !important;
 // }
+.quiz-slide .nav-arrow {
+  margin: 0 6px !important;
+}
+.side-menu li {
+text-align: left !important;
+  width: 50% !important;
+  border: 1px solid var(--color-Gray84) !important;
+}
+.pv-gallery ul {
+ 
+  justify-content: center !important;
+}
   }
