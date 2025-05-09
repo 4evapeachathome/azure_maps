@@ -1095,13 +1095,16 @@ width: 100%;
  
  }
  .quiz-slide{
-
-  .ta-center:first-child{
-    text-align: right;
+  .ta-center{
+    display: flex;
+    justify-content: center;
   }
-  .ta-center:last-child{
-    text-align: left;
-  }
+  // .ta-center:first-child{
+  //   text-align: right;
+  // }
+  // .ta-center:last-child{
+  //   text-align: left;
+  // }
   .qs-row{
     display: flex;
   }
@@ -1218,7 +1221,58 @@ color: var(--color-dark-Gray);
     justify-content: center;
     gap: 12px;
   }
-  
+  .qz-btn-radio{
+    display: flex;
+    gap: 8px;
+    ion-radio{    
+      border: 1px solid var(--color-primary);
+      border-radius: 6px;
+    padding: 5px 10px;
+    &::part(container){
+      width: 1.5rem;
+    height: 1.5rem;
+      margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+      border-radius: 50%;
+      border-width: 0.125rem;
+      border-style: solid;
+      border-color: rgb(var(--ion-text-color-rgb, 0, 0, 0), 0.6);
+      
+    }
+    &::part(mark){
+      border-radius: 50%;
+    width: calc(50% + 0.125rem);
+    height: calc(50% + 0.125rem);
+  //  -webkit-transform: scale3d(0, 0, 0);
+   // transform: scale3d(0, 0, 0);
+    -webkit-transition: -webkit-transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: -webkit-transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1), -webkit-transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+   // background: var(--ion-color-primary,);
+   
+    }
+    &:hover,  &.selected {
+      background: var(--ion-color-primary);
+      --border-color: var(--color-white);
+      color: var(--color-white);
+      &::part(container)
+      {
+        border-color: var(--color-white)
+      }
+      &::part(mark)
+      {
+        background: var(--color-white);
+        border-top-width: inherit;
+        border-left-width: inherit;
+        border-style: initial;
+      }
+    }
+    }
+   
+  }
   .qz-btn {
 //     --border-width: 1px;
 //     --border-color: var(--ion-color-primary);
