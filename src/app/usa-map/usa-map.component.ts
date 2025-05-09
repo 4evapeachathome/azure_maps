@@ -430,8 +430,13 @@ export class UsaMapComponent {
   
     // Customize for specific states
     if (stateId.toLowerCase() === 'ri') {
-      endX = center.x + 45; // increase horizontal spacing
-      endY = center.y + 45;
+      // Reduce line length for Rhode Island
+      const dx = 45;
+      const dy = 45;
+      const factor = 0.5; // 50% of the original offset
+  
+      endX = center.x + dx * factor;
+      endY = center.y + dy * factor;
     } else if (stateId.toLowerCase() === 'hi') {
       endX = center.x + 60;
       endY = center.y + 20;
