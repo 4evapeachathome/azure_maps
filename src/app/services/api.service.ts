@@ -151,6 +151,13 @@ export class ApiService {
     });
   }
 
+  getImageUrl(relativeUrl: string): string {
+    return environment.apiHost.includes('localhost')
+      ? `${environment.apiHost}${relativeUrl}`
+      : relativeUrl;
+  }
+
+
   getDailyTip(): Observable<any> {
     return this.getWithQuery(APIEndpoints.dailytip, {
       fields: ['title'],
@@ -185,10 +192,10 @@ export class ApiService {
         if (res && res.data) {
           return res.data.map((item: any) => {
             if (item.icon && item.icon.url) {
-              item.icon.url = `${environment.apiHost}${item.icon.url}`;
+              item.icon.url = this.getImageUrl(item.icon.url);
             }
             if (item.parentMenu && item.parentMenu.icon && item.parentMenu.icon.url) {
-              item.parentMenu.icon.url = `${environment.apiHost}${item.parentMenu.icon.url}`;
+              item.parentMenu.icon.url = this.getImageUrl(item.parentMenu.icon.url);
             }
             return item;
           });
@@ -223,7 +230,7 @@ export class ApiService {
         map((res: any) => {
             return res.data.map((resData: any) => {
                 if (resData && resData.webImage && resData.webImage.url) {
-                    resData.image = `${environment.apiHost}${resData.webImage.url}`;
+                    resData.image = this.getImageUrl(resData.webImage.url);
                 } else {
                     resData.image = '';
                 }
@@ -256,7 +263,7 @@ export class ApiService {
       map((res: any) => {
         return res.data.map((resData: any) => {
           if (resData && resData.webImage && resData.webImage.url) {
-            resData.image = `${environment.apiHost}${resData.webImage.url}`;
+            resData.image = this.getImageUrl(resData.webImage.url);
           } else {
             resData.image = ''; 
           }
@@ -286,7 +293,7 @@ export class ApiService {
         map((res: any) => {
             return res.data.map((resData: any) => {
                 if (resData && resData.webImage && resData.webImage.url) {
-                    resData.image = `${environment.apiHost}${resData.webImage.url}`;
+                    resData.image = this.getImageUrl(resData.webImage.url);
                 } else {
                     resData.image = '';
                 }
@@ -328,7 +335,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
           ? resData[mainParam].sliderContent.map((content: any) => ({
               slidercontent: content.slidercontent || [],
               imageUrl: content.webImage?.url 
-                ? `${environment.apiHost}${content.webImage.url}` 
+                ? this.getImageUrl(content.webImage.url)
                 : null
             }))
           : [];
@@ -398,7 +405,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
       map((res: any) => {
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
-          resData.image = `${environment.apiHost}${resData.webImage.url}`;
+          resData.image = this.getImageUrl(resData.webImage.url);
         } else {
           resData.image = ''; 
         }
@@ -426,7 +433,7 @@ getSliders(endpoint: string, mainParam: string): Observable<any[]> {
       map((res: any) => {
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
-          resData.image = `${environment.apiHost}${resData.webImage.url}`;
+          resData.image = this.getImageUrl(resData.webImage.url);
         } else {
           resData.image = ''; 
         }
@@ -477,7 +484,7 @@ UnhealthyRelationshipContents(endPoint: string): Observable<any> {
     map((res: any) => {
       const resData = res.data;
       if (resData[0] && resData[0]?.Content?.webImage?.url) {
-        resData.image = `${environment.apiHost}${resData[0].Content.webImage.url}`;
+        resData.image = this.getImageUrl(resData[0]?.Content?.webImage?.url);
       } else {
         resData.image = ''; 
       }
@@ -614,7 +621,7 @@ getPartnerViolenceTitle(): Observable<any> {
     map((res: any) => {
       const resData = res.data;
       if (resData && resData.webImage && resData.webImage.url) {
-        resData.image = `${environment.apiHost}${resData.webImage.url}`;
+        resData.image = this.getImageUrl(resData.webImage.url);
       } else {
         resData.image = ''; 
       }
@@ -677,7 +684,7 @@ getPartnerViolenceTitle(): Observable<any> {
         if (resData.AbuseGallery && Array.isArray(resData.AbuseGallery)) {
           resData.AbuseGallery = resData.AbuseGallery.map((item: any) => ({
             ...item,
-            webImageUrl: item.webImage?.url ? `${environment.apiHost}${item.webImage.url}` : '',
+            webImageUrl: item.webImage?.url ? this.getImageUrl(item.webImage?.url) : '',
             mobileImageUrls: item.mobileImage?.map((img: any) => `${environment.apiHost}${img.url}`) || []
           }));
         } else {
@@ -707,7 +714,7 @@ getPartnerViolenceTitle(): Observable<any> {
       map((res: any) => {
         const resData = res.data;
         if (resData && resData.webImage && resData.webImage.url) {
-          resData.image = `${environment.apiHost}${resData.webImage.url}`;
+          resData.image = this.getImageUrl(resData.webImage.url)
         } else {
           resData.image = ''; 
         }
@@ -740,7 +747,7 @@ getPartnerViolenceTitle(): Observable<any> {
   
         if (resData && resData[mainParam]) {
           if (resData[mainParam].webImage && resData[mainParam].webImage.url) {
-            resData[mainParam].webImage.fullUrl = `${environment.apiHost}${resData[mainParam].webImage.url}`;
+            resData[mainParam].webImage.fullUrl = this.getImageUrl(resData[mainParam].webImage.url);
           } else {
             resData[mainParam].webImage = { fullUrl: '' };
           }
@@ -801,7 +808,7 @@ getPartnerViolenceTitle(): Observable<any> {
         
         // Handle top-level webImage
         if (resData && resData.webImage && resData.webImage.url) {
-          resData.image = `${environment.apiHost}${resData.webImage.url}`;
+          resData.image = this.getImageUrl(resData.webImage.url)
         } else {
           resData.image = '';
         }
@@ -810,7 +817,7 @@ getPartnerViolenceTitle(): Observable<any> {
         if (resData && resData.contentBlocks && Array.isArray(resData.contentBlocks)) {
           resData.contentBlocks = resData.contentBlocks.map((block: any) => {
             if (block.webImage && block.webImage.url) {
-              block.image = `${environment.apiHost}${block.webImage.url}`;
+              block.image = this.getImageUrl(block.webImage.url);
             } else {
               block.image = '';
             }
@@ -845,7 +852,7 @@ getCriminalizationOfSurvivors(): Observable<any> {
       if (resData?.webImage?.length) {
         resData.imageList = resData.webImage.map((img: any) => ({
           ...img,
-          fullUrl: `${environment.apiHost}${img.url}`
+          fullUrl: this.getImageUrl(img.url)
         }));
       } else {
         resData.imageList = [];
