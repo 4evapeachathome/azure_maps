@@ -12,7 +12,7 @@
         <ion-button color="primary" [routerLink]="['/legalrights']" size="small">Next</ion-button>
         </ion-col>
         <ion-col class="ion-text-center">
-          <ion-button color="primary" [disabled]="!sripaCompRef?.hasAnyAnswer" 
+          <ion-button color="primary" [disabled]="!sripaCompRef?.hasAnyAnswer || sripaCompRef.finalAnswerVisible" 
           (click)="onFinalAnswerClick()" size="small">Take me to Results</ion-button>
           </ion-col>
         </ion-row>
