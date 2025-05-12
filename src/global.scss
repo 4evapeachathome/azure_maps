@@ -1356,7 +1356,10 @@ border-top-left-radius: 8px;
 border-bottom-left-radius: 8px;
 }
 .ra-container{
-  margin: 16px 0;
+  padding: 16px 0;
+}
+.ra-grid{
+height: calc(100% - 40px);
 }
 .risk-assessment-container{
   padding: 0 !important;
