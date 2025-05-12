@@ -1343,3 +1343,108 @@ color: var(--color-dark-Gray);
   opacity: 1;
   display: block;
 }
+.risk-login-banner{
+background: $risk-login-background ;
+height: 100%;
+background-image: url(assets/riskAssesment1.svg);
+background-position: bottom center;
+background-repeat: no-repeat;
+background-size: 50%;
+min-height: 530px;
+padding: 0;
+border-top-left-radius: 8px;
+border-bottom-left-radius: 8px;
+}
+.ra-container{
+  margin: 16px 0;
+}
+.risk-assessment-container{
+  padding: 0 !important;
+  h1{
+    color: $color-primary;
+    font-size: $font-size-risk-xlll;
+    margin: 0;
+    margin-bottom: 35px;
+  }
+  h3{
+    color: $color-dark-Gray;
+    font-size: $font-size-xlll;
+    margin: 0;
+    margin-bottom: 12px;
+  }
+  .ra-banner{
+    padding: 0;
+    padding-right: 20px;
+  }
+  .ra-form-container{
+    padding-left: 20px;
+    padding-right: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .ra-login-buttons{
+display: flex;
+justify-content: end;
+    align-items: center;
+    ion-button{
+      margin-left: 24px;
+    }
+  }
+}
+ion-footer {
+  background-color: $color-dark-Gray;
+  --color: $color-Gray64;
+  font-size: $font-size-md;
+ // margin-top: 16px;
+  box-shadow: none;
+  a {
+    cursor: pointer; 
+    &.active { 
+      text-decoration: underline; 
+      color: $color-Gray64; 
+    }
+  }
+
+ 
+
+  ion-text {
+    color: $color-Gray64;
+    font-size: $font-size-md;
+  }
+  h5 {
+    font-size: $font-size-base;
+    color: $color-Gray64;
+    margin: 0;
+    padding: 0;
+    font-weight: $font-regular;
+    a {
+      color: $color-Gray64;
+      font-size: $font-size-md;
+      text-decoration: none;
+    }
+  }
+  ul {
+    padding: 0;
+    margin: 0;
+    color: $color-Gray64;
+    font-size: $font-size-md;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 50px;
+    li {
+      padding: 4px 0;
+      margin-left: 26px;
+      cursor: pointer;
+      a {
+        color: $color-Gray64;
+        font-size: $font-size-md;
+        text-decoration: none;
+      }
+    }
+  }
+}
+.footer-menu{
+  display: flex;
+  justify-content: end;
+}

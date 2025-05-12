@@ -26,12 +26,15 @@
   .order1{
     order: 1 !important;
   }
+  .order2{
+    order: 2 !important;
+  }
   .side-menu{
     display: flex    ;
         flex-wrap: wrap;
   }
   .footer-menu{
-    display: none;
+    display: none !important;
   }
   .all-rights{
    // margin-bottom: 24px;
@@ -245,5 +248,15 @@ text-align: left !important;
 .pv-gallery ul {
  
   justify-content: center !important;
+}
+.risk-assessment-container .ra-banner {
+  padding-right: 0 !important;
+  padding-top: 20px !important;
+}
+.risk-login-banner {
+  border-top-left-radius: 0 !important;
+    border-bottom-right-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+    min-height: 230px !important;
 }
   }

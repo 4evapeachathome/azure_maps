@@ -33,6 +33,7 @@
   --color-yellow                  :   #F69204;
   --color-orange                  :   #F65B04;
   --color-red                     :   #F60404;
+  --risk-login-background         :   #d5c4da;
   
 
   
@@ -61,6 +62,8 @@ $color-map-state-selected         :   var(--color-map-state-selected);
 $color-yellow                     :   var(--color-yellow);
 $color-orange                     :   var(--color-orange);
 $color-red                        :   var(--color-red);
+$risk-login-background            :   var(--risk-login-background);
+
 
 
 $colors: () !default;
