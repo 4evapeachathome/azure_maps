@@ -197,13 +197,18 @@ export class MenuComponent implements OnInit {
 
   getTooltip(name: string): string | null {
     if (name === 'Quiz') {
-      return 'Quiz for unhealthy and healthy relationship';
+      return 'Quiz for Healthy and Unhealthy Relationship';
     } else if (name === 'SSRIPA') {
       return 'Signs of Self-Recognition in Intimate Partner Abuse';
     }
     return null;
   }
 
+  hasTooltip(title: string): boolean {
+    return title === 'Quiz' || title === 'SSRIPA';
+  }
+
+  
   expandCurrentSection() {
     const expandParents = (items: MenuItem[]) => {
       items.forEach(item => {

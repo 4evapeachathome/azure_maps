@@ -11,6 +11,7 @@
             [class.selected]="item.link === selectedId"
             [class.level-{{level}}]="true"
             (click)="toggleItem(item, $event)"
+            [ngClass]="{ 'thirdlevel-menu': hasTooltip(item.title) }"
             [attr.title]="getTooltip(item.title)">
     <ion-icon slot="start" [ngStyle]="{
       opacity: shouldHideIcon(item) ? '0' : '1',
