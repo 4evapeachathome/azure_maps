@@ -184,6 +184,15 @@
      
     }
   }
+  .thirdlevel-menu{
+    margin-left: 32px !important;
+    ion-icon{
+      display: none;
+    }
+    ion-label{
+      margin-left: 8px;
+    }
+  }
 }
 // ion-icon {
 //   .s-ion-icon {
@@ -231,4 +240,13 @@
   opacity: 1;
   transition: all 0.4s ease;
 }
+}
+.thirdlevel-menu{
+  margin-left: 0 !important;
+  ion-icon{
+    display: block;
+  }
+  ion-label{
+    margin-left: 0;
+  }
 }
