@@ -16,7 +16,7 @@
 .sidebar-toggle-label {
   position: fixed;
   top: 15px;
-  left: 15px;
+  left: 12px;
   cursor: pointer;
   z-index: 1000;
   color: var(--color-deep-Gray);
@@ -87,7 +87,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
-  padding-top: 8px;
+ // padding-right: 0;
   ion-item {
     font-family: $font-Inter;
     font-size: var(--font-size-base);
@@ -98,7 +98,7 @@
     --ripple-color: var(--ion-color-primary--contrast);
     border-radius: 8px;
     margin: 2px 0;
-    --padding-start: 12px;
+    --padding-start: 10px;
     --inner-padding-end: 8px;
     &.selected,
     &:hover {
@@ -117,7 +117,7 @@
     }
 
     ion-icon {
-      font-size: 20px;
+      font-size: 17px;
       color: var(--ion-color-medium);
 
       &[slot="start"] {
@@ -143,7 +143,7 @@
     transition: transform 0.5s ease;
     opacity: 0;
     transform: scaleX(0);
-    height: 16px;
+    height: 19px;
     transform: scaleY(0);    
     //transform-origin: top;
    
@@ -178,7 +178,10 @@
 
       &[slot="start"] {
         margin-right: 8px;
+        // margin-top: 8px;
+        // margin-bottom: 8px;
       }
+     
     }
   }
 }
