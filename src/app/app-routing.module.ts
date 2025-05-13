@@ -38,7 +38,9 @@ const educationModule: Routes =  [
 
 const riskAssessmentModule: Routes = [
   { path: '', redirectTo: 'loginPage', pathMatch: 'full' },
-  { path: 'loginPage', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule) }
+  { path: 'loginPage', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule) },
+  { path: 'assessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule) }
+
 ];
 
 export const routes: Routes = environment.isRiskassessment ? riskAssessmentModule : educationModule;

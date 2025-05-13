@@ -934,8 +934,8 @@ getUserLogins(): Observable<any> {
   const endpoint = APIEndpoints.userLogins;
   const options: QueryOptions = {
     populate: {
-      type: {
-        fields: ['assessment_type']
+      assessment_type: {
+        fields: ['name', 'description']
       }
     }
   };
@@ -954,9 +954,10 @@ getUserLogins(): Observable<any> {
         address: CryptoJS.AES.decrypt(item.address, environment.secretKey).toString(CryptoJS.enc.Utf8),
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
-        types: item.type?.map((typeItem: any) => ({
+        types: item.assessment_type?.map((typeItem: any) => ({
           id: typeItem.id,
-          assessmentType: CryptoJS.AES.decrypt(typeItem.assessment_type, environment.secretKey).toString(CryptoJS.enc.Utf8)
+          name: typeItem.name ? CryptoJS.AES.decrypt(typeItem.name, environment.secretKey).toString(CryptoJS.enc.Utf8) : null,
+          description: typeItem.description ? CryptoJS.AES.decrypt(typeItem.description, environment.secretKey).toString(CryptoJS.enc.Utf8) : null
         })) || []
       }));
     }),

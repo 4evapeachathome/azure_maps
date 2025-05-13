@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'login-page',
@@ -19,7 +20,8 @@ export class LoginPageComponent  implements OnInit {
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    private menuService:MenuService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -46,10 +48,10 @@ export class LoginPageComponent  implements OnInit {
     }
 
     const { username, password } = this.loginForm.value;
-
     // Check if username exists
-    const user = this.userLogins.find(u => u.username === username);
+    const user = this.userLogins.find(u => u.email.toLowerCase() === username.trim().toLowerCase());
     if (!user) {
+      console.log('Username not found:', username);
       this.loginForm.get('username')?.setErrors({ userNotFound: true });
       return;
     }
@@ -60,8 +62,9 @@ export class LoginPageComponent  implements OnInit {
       return;
     }
 
-    // Successful login - navigate to the next page (e.g., dashboard)
-    this.router.navigate(['/dashboard']);
+    this.menuService.setLoggedInUser(user);
+    // Successful login - navigate to the next page (e.g., assessment)
+    this.router.navigate(['/assessment']);
   }
 
 }

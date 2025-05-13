@@ -1,0 +1,64 @@
+<div class="common-container risk-assessment-container h-100">
+  <ion-grid class="p-0 h-100">
+    <ion-row class="h-100">
+      <!-- Left Image Panel -->
+      <ion-col size="12" size-sm="6" class="ra-banner order2">
+        <div class="risk-login-banner banner-img"></div>
+      </ion-col>
+
+      <!-- Right Form Panel -->
+      <ion-col size="12" size-sm="6" class="ra-form-container order1">
+        <div class="top-bar">
+          <ion-label>Case Number</ion-label>
+          <ion-input 
+            [(ngModel)]="caseNumber" 
+            placeholder="Enter Case Number"></ion-input>
+          <div class="user-info">
+            <div>Hi, {{ loggedInUser?.username || 'User' }}</div>
+            <div class="guided-options">
+              <ion-radio-group (ngModelChange)="onGuidedTypeChange()">
+                <ion-item lines="none">
+                  <ion-label>Self-Guided</ion-label>
+                  <ion-radio slot="start" value="self-guided"></ion-radio>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-label>Staff-Guided</ion-label>
+                  <ion-radio slot="start" value="staff-guided"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </div>
+          </div>
+        </div>
+
+        <h1 class="assessment-title">Risk Assessment</h1>
+        <ion-label>Select the assessment type you'd like to conduct*</ion-label>
+
+        <ion-select 
+          class="state-selectbox"
+          placeholder="Select" 
+          fill="outline" 
+          interface="popover" 
+          label="Choose Your Assessment" 
+          label-placement="floating"
+          [(ngModel)]="selectedAssessment"
+          (ionChange)="onAssessmentChange()">
+          <ion-select-option *ngFor="let type of assessmentTypes" [value]="type.name">
+            {{ type.name }}
+          </ion-select-option>
+        </ion-select>
+
+        <ion-card class="assessment-description" *ngIf="selectedAssessment">
+          <ion-card-content>
+            <h2 class="desc-heading">{{ selectedAssessment }}</h2>
+            <p>{{ getSelectedAssessmentDescription() }}</p>
+          </ion-card-content>
+        </ion-card>
+
+        <div class="button-group">
+          <ion-button fill="outline" color="medium" (click)="goBack()">Back</ion-button>
+          <ion-button color="primary" (click)="goToTest()">Go to Test</ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>

@@ -5,9 +5,11 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class MenuService {
+  //Menu items as shared service
   private menuItemsSource = new BehaviorSubject<any[]>([]);
   menuItems$ = this.menuItemsSource.asObservable();
 
+  //Service filter options as shared service
   private filterOptionsSubject = new BehaviorSubject<any[]>([]);
   private organizationsSubject = new BehaviorSubject<any[]>([]);
 
@@ -16,6 +18,9 @@ export class MenuService {
 
   private showAdditionalMenusSource = new BehaviorSubject<boolean>(false);
   showAdditionalMenus$ = this.showAdditionalMenusSource.asObservable();
+
+  private loggedInUser = new BehaviorSubject<any | null>(null);
+  loggedInUser$ = this.loggedInUser.asObservable();
 
 
   setMenuItems(items: any[]) {
@@ -38,6 +43,18 @@ export class MenuService {
 
   setOrganizations(orgs: any[]) {
     this.organizationsSubject.next(orgs);
+  }
+
+  setLoggedInUser(user: any) {
+    this.loggedInUser.next(user);
+  }
+
+  getLoggedInUser() {
+    return this.loggedInUser.getValue();
+  }
+
+  clearLoggedInUser() {
+    this.loggedInUser.next(null);
   }
 
 }
