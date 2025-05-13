@@ -195,6 +195,15 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  getTooltip(name: string): string | null {
+    if (name === 'Quiz') {
+      return 'Quiz for unhealthy and healthy relationship';
+    } else if (name === 'SSRIPA') {
+      return 'Signs of Self-Recognition in Intimate Partner Abuse';
+    }
+    return null;
+  }
+
   expandCurrentSection() {
     const expandParents = (items: MenuItem[]) => {
       items.forEach(item => {

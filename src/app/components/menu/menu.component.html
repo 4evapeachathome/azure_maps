@@ -10,7 +10,8 @@
   <ion-item button detail="false" 
             [class.selected]="item.link === selectedId"
             [class.level-{{level}}]="true"
-            (click)="toggleItem(item, $event)">
+            (click)="toggleItem(item, $event)"
+            [attr.title]="getTooltip(item.title)">
     <ion-icon slot="start" [ngStyle]="{
       opacity: shouldHideIcon(item) ? '0' : '1',
       transition: 'opacity 0.3s ease'
