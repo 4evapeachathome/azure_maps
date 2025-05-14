@@ -19,7 +19,7 @@ export class FooterComponent  implements OnInit {
   ngOnInit() {
     this.isMobile = this.platform.is('android') || this.platform.is('ios');  }
 
-  expandMenu() {
-    this.menuService.toggleAdditionalMenus(true);
-  }
+    expandMenu(sectionTitle: string) {
+      this.menuService.toggleAdditionalMenus(true, sectionTitle);
+    }
 }
