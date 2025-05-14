@@ -30,7 +30,7 @@
 }
 .sidebar {
   position: fixed;
-  top: 0;
+  top: 65px;
   left: 0;
  // height: 100%;
  height: calc(100% - 115px);
@@ -43,8 +43,11 @@
   padding: 0;
   transition: all 0.4s ease;
   z-index: 1;
+  // -ms-overflow-style: none; // IE and Edge
+  // scrollbar-width: none; // Firefox
   .sidebar-header {
-    display: flex;
+    display: none;
+    //display: flex;
     align-items: center;
     color: var(--color-deep-Gray);
     padding: 16px 12px;
@@ -84,7 +87,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
  // padding-right: 0;
@@ -92,7 +95,7 @@
     font-family: $font-Inter;
     font-size: $font-size-md;
    
-    --min-height: 40px;
+    --min-height: 38px;
     --background: transparent;
     --background-hover: var(--ion-color-light);
     --ripple-color: var(--ion-color-primary--contrast);
@@ -123,6 +126,10 @@
       &[slot="start"] {
         margin-right: 0;
       }
+      &[slot] {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
     }
 
     @for $i from 0 through 5 {
