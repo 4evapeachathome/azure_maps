@@ -4,6 +4,30 @@
       <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item, level: 0 }"></ng-container>
     </ng-container>
   </ion-list>
+  <div class="signinout-container">
+    <div class="signin-container">
+      <ion-button color="primary" fill="outline" size="small" class="signin-button">Sign In</ion-button>
+    
+        <div class="username-container">
+          Hi, <ion-text class="username">Username</ion-text>
+          <ion-button fill="clear" size="small" class="signout-button">Sign Out</ion-button>
+      
+       
+     
+  
+      </div>
+    </div>
+    
+    <ion-list lines="none">
+      <ion-item button detail="false"            >
+    <ion-icon slot="start"class="menu-icon"><ion-img src="../../assets/riskAssesmentIcon.svg"></ion-img></ion-icon>
+    <ion-label>Risk Assessment</ion-label>
+    <!-- <ion-icon *ngIf="item.children?.length" slot="end" 
+              [name]="item.expanded ? 'chevron-down-outline' : 'chevron-forward-outline'">
+    </ion-icon> -->
+  </ion-item>
+  </ion-list>
+  </div>
 </div>
 
 <ng-template #menuItemTemplate let-item let-level="level">
