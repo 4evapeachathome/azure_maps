@@ -14,9 +14,26 @@ export class MenuService {
   filterOptions$ = this.filterOptionsSubject.asObservable();
   organizations$ = this.organizationsSubject.asObservable();
 
-  private showAdditionalMenusSource = new BehaviorSubject<boolean>(false);
-  showAdditionalMenus$ = this.showAdditionalMenusSource.asObservable();
 
+  private showAdditionalMenusSource = new BehaviorSubject<{ show: boolean, sectionTitle: string | null }>({
+    show: false,
+    sectionTitle: null
+  });
+  
+  showAdditionalMenus$ = this.showAdditionalMenusSource.asObservable();
+  
+  private lastExpandedSection: string | null = null;
+
+toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
+  // Prevent re-emitting the same section
+  if (this.lastExpandedSection === sectionTitle && show) {
+    return;
+  }
+
+  this.lastExpandedSection = sectionTitle;
+
+  this.showAdditionalMenusSource.next({ show, sectionTitle });
+}
 
   setMenuItems(items: any[]) {
     this.menuItemsSource.next(items);
@@ -24,11 +41,6 @@ export class MenuService {
 
   getMenuItems() {
     return this.menuItemsSource.value;
-  }
-
- 
-  toggleAdditionalMenus(show: boolean) {
-    this.showAdditionalMenusSource.next(show);
   }
 
 
