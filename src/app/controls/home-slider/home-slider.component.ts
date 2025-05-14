@@ -43,6 +43,7 @@ export class HomeSliderComponent implements OnInit {
   @Input() endpoint: string ='';
   @Input() paramName:string = '';
   @Input() routerLink: string | string[] = [];
+  @Input() routerLinkTitle!: string;
  
   constructor(private apiService:ApiService, private menuService:MenuService) { }
 
@@ -51,8 +52,8 @@ export class HomeSliderComponent implements OnInit {
   }
 
 
-  expandMenu() {
-    this.menuService.toggleAdditionalMenus(true);
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
   getHomeSlidersData(endpoint: string, paramName: string) {

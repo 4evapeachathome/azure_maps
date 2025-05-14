@@ -19,7 +19,7 @@ export class HomePage {
     this.router.navigate(['/peaceathome']);
   }
 
-  expandMenu() {
-    this.menuService.toggleAdditionalMenus(true);
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 }
