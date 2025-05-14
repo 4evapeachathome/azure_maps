@@ -52,8 +52,8 @@ export const APIEndpoints = {
     criminalizationOfSurvivors :`${environment.apiHost}/api/criminizalationof-survivors`,
     quiz :`${environment.apiHost}/api/quizzes`,
     sripa :`${environment.apiHost}/api/sripaas`,
-
+    ssripaQuestions :`${environment.apiHost}/api/ssripa-questions`,
+    
     //Risk assessment modules
     userLogins :`${environment.apiHost}/api/user-logins`,
-
   }
