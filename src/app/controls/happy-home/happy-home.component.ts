@@ -39,8 +39,8 @@ export class HappyHomeComponent  implements OnInit {
     this.fetchHappyHomeData();
   }
 
-  expandMenu() {
-    this.menuService.toggleAdditionalMenus(true);
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
   fetchHappyHomeData(): void {

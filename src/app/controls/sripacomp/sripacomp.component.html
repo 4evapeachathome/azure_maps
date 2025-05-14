@@ -14,8 +14,10 @@
         </div>
     
         <div class="qs-row question-row">
-          <div class="qs-col">{{ q.question }}</div>
-        
+          <div class="qs-col">
+            <div><strong>{{ q.text }}</strong></div>
+            <div class="question-severity">Rating: {{ q.severity }}</div>
+          </div>
         </div>
         <div class="qs-row qz-button-row">
           <div class="qs-col ta-center">
@@ -26,30 +28,12 @@
               [class.selected]="selectedOptions[i] === 'no'">No</ion-radio><br />                
             </ion-radio-group>
 
-            <!-- <ion-button
-            class="qz-btn"
-            fill="outline"
-        
-            (click)="selectOption(i, 'yes')"
-            [class.selected]="selectedOptions[i] === 'yes'">
-            Yes
-          </ion-button> -->
           </div>
-          <!-- <div class="qs-col ta-center">
-            <ion-button
-            class="qz-btn"
-                  fill="outline"
-               
-                  (click)="selectOption(i, 'no')"
-                  [class.selected]="selectedOptions[i] === 'no'">
-                  No
-                </ion-button>
-          </div> -->
         </div>
     
         <div class="qs-row answer-row" *ngIf="selectedOptions[i] === 'yes'">
           <div class="qs-col">
-            <div [innerHTML]="renderRichText(q.responseyes)"></div>
+            <div [innerHTML]="renderRichText(q.actions[0]?.description)"></div>
           </div>
         </div>
     

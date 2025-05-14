@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-typesofabuses',
@@ -21,9 +22,13 @@ export class TypesofabusesPage implements OnInit {
 
   @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
 
-  constructor() { }
+  constructor(private menuService:MenuService) { }
 
   ngOnInit() {
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
   scrollToSection(sectionId: string) {
