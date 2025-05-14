@@ -40,6 +40,7 @@ export class MenuComponent implements OnInit {
   @Input() isMenuOpen: boolean = true;
   public subscription!: Subscription;
   currentExpandedSection: string | null = null;
+  showUserName:boolean = false;
 
   // Define the titles of menus to hide initially
   private initiallyHiddenMenuTitles = [
@@ -59,6 +60,15 @@ export class MenuComponent implements OnInit {
       this.selectedId = this.router.url;
       this.expandCurrentSection();
     });
+  }
+
+  signOut(){
+    this.showUserName = false;
+  }
+
+  UserLogin(){
+    this.showUserName = true;
+    this.router.navigate(['/loginPage']);
   }
 
   ngOnInit() {
