@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-peaceathome',
@@ -9,8 +10,11 @@ import { APIEndpoints } from 'src/shared/endpoints';
 })
 export class PeaceathomePage implements OnInit {
   peaceathomeslider:string = APIEndpoints.peaceathomeslider;
-  constructor() { }
+  constructor(private menuService:MenuService) { }
 
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
+  }
   ngOnInit() {
   }
 

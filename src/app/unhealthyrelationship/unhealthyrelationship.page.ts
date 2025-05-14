@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-unhealthyrelationship',
@@ -14,9 +15,13 @@ public readonly unhealthyrelationcontentone :string = APIEndpoints.unhealthyrela
 public readonly unhealthyrelationcontenttwo :string = APIEndpoints.unhealthyrelationcontenttwo
 public readonly unhealthyrelationcontentthree :string = APIEndpoints.unhealthyrelationcontentthree
 
-  constructor() { }
+  constructor(private menuService:MenuService) { }
 
   ngOnInit() {
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
 }

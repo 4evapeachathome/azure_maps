@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/api.service';
+import { MenuService } from 'src/shared/menu.service';
 
 interface IpvPartnerViolence {
   id: number;
@@ -21,7 +22,7 @@ export class PartnerviolencePage implements OnInit {
   title: string = '';
   levels: IpvPartnerViolence[] = [];
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService,private menuService:MenuService) {}
 
   ngOnInit() {
     this.apiService.getPartnerViolenceContent().subscribe(
@@ -35,6 +36,10 @@ export class PartnerviolencePage implements OnInit {
         console.error('Error in PartnerViolencePage:', error.message);
       }
     );
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
 }

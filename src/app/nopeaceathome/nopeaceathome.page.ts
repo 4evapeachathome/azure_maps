@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-nopeaceathome',
@@ -13,9 +14,13 @@ export class NopeaceathomePage implements OnInit {
   nopeacepartnerviolencecontent:string=APIEndpoints.nopeacepartnerviolencecontent;
   nopeacehouseholdconflicts:string=APIEndpoints.nopeacehouseholdconflicts;
   nopeacetoxicrelationship:string=APIEndpoints.nopeacetoxicrelationship;
-  constructor() { }
+  constructor(private menuService:MenuService) { }
 
   ngOnInit() {
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
 }

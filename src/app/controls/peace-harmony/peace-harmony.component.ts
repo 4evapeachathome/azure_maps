@@ -23,8 +23,8 @@ image:any;
     this.getExpertAdviceData();
   }
 
-  expandMenu() {
-    this.menuService.toggleAdditionalMenus(true);
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
   getExpertAdviceData() {

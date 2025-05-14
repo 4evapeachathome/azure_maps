@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-federallaw',
@@ -14,9 +15,13 @@ export class FederallawPage implements OnInit {
   public readonly childwaiver : string =APIEndpoints.childwaiver;
   public readonly immigrationbenfit : string =APIEndpoints.immigrationbenfit;
 
-  constructor() { }
+  constructor(private menuService:MenuService) { }
 
   ngOnInit() {
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
 }
