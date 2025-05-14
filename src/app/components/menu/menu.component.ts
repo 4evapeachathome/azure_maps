@@ -232,16 +232,16 @@ export class MenuComponent implements OnInit {
   }
 
   getTooltip(name: string): string | null {
-    if (name === 'Quiz') {
+    if (name === '/quiz') {
       return 'Quiz for Healthy and Unhealthy Relationship';
-    } else if (name === 'SSRIPA') {
+    } else if (name === '/sripaa') {
       return 'Signs of Self-Recognition in Intimate Partner Abuse';
     }
     return null;
   }
 
   hasTooltip(title: string): boolean {
-    return title === 'Quiz' || title === 'SSRIPA';
+    return title === '/quiz' || title === '/sripaa';
   }
 
   
