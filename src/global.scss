@@ -41,7 +41,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 //Hide scrollbar in all pages
-
+html {
+  --scrollbarBG: transparent;
+ // --thumbBG: #90A4AE;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbarBG);
+}
 ion-content::part(scroll)::-webkit-scrollbar {
   display: none;
   }

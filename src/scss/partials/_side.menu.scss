@@ -33,7 +33,7 @@
   top: 65px;
   left: 0;
  // height: 100%;
- height: calc(100% - 115px);
+ height: calc(100% - 200px);
   width: $slider-menu-width;
   display: flex;
   overflow-x: hidden;
@@ -41,7 +41,7 @@
   background: var(--color-container);
   // padding: 16px 8px;
   padding: 0;
-  transition: all 0.4s ease;
+  transition: all 0.5s ease-out allow-discrete;
   z-index: 1;
   // -ms-overflow-style: none; // IE and Edge
   // scrollbar-width: none; // Firefox
@@ -91,6 +91,7 @@
   overflow-x: hidden;
   padding: 8px;
  // padding-right: 0;
+ scrollbar-color: var(--color-Gray34) transparent;
   ion-item {
     font-family: $font-Inter;
     font-size: $font-size-md;
