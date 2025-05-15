@@ -39,7 +39,11 @@ const educationModule: Routes =  [
 const riskAssessmentModule: Routes = [
   { path: '', redirectTo: 'loginPage', pathMatch: 'full' },
   { path: 'loginPage', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule) },
-  { path: 'assessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule) }
+  { path: 'assessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule) },
+  { path: 'assessmentresult', loadChildren: () => import('./riskAssessment/assessment-result/assessment-result.module').then(m => m.AssessmentResultPageModule) },
+  { path: 'assessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule) }
+
+
 
 ];
 

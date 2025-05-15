@@ -1,0 +1,61 @@
+<div class="common-container risk-assessment-container h-100">
+  <ion-grid class="p-0 h-100">
+    <ion-row class="h-100">
+      <!-- Left Image Panel -->
+      <ion-col size="12" size-sm="6" class="ra-banner order2">
+        <div class="risk-login-banner banner-img"></div>
+      </ion-col>
+
+      <!-- Right Form Panel -->
+      <ion-col size="12" size-sm="6" class="ra-form-container order1">
+        <div class="top-bar">
+          <ion-label>Case Number</ion-label>
+          <ion-input 
+            [(ngModel)]="caseNumber" 
+            [placeholder]="caseNumberPlaceholder"></ion-input>
+          <div class="user-info">
+            <div>Hi, {{ loggedInUser?.username || userName }}</div>
+            <div class="guided-options">
+              <ion-label>{{ guidedType }}</ion-label>
+            </div>
+          </div>
+        </div>
+
+        <h1 class="assessment-title">{{ assessmentTitle }}</h1>
+
+        <!-- Test Results Section -->
+        <div class="test-results">
+          <h2>{{ testResultsTitle }}</h2>
+          <ion-card>
+            <ion-card-content>
+              <div class="result-header">
+                <span class="result-label">{{ testResultLabel }}</span>
+                <span class="result-value danger">{{ riskValue }}%</span>
+              </div>
+              <p>{{ recommendationIntro }}</p>
+              <p>{{ recommendationText }}</p>
+            </ion-card-content>
+          </ion-card>
+        </div>
+
+        <!-- Risk Meter -->
+        <div class="risk-meter">
+          <h3>{{ riskLevelsTitle }}</h3>
+          <div class="meter-container">
+            <canvas id="risk-gauge"></canvas>
+            <p>{{ stressCurveLabel }}: {{ riskValue }}%</p>
+          </div>
+        </div>
+
+        <!-- Unique Access Button -->
+        <div class="unique-access">
+          <ion-button color="primary" (click)="viewUniqueAccess()">
+            <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+            {{ uniqueAccessLabel }}
+          </ion-button>
+          <p class="access-code">{{ accessCodeLabel }}: {{ accessCode }}</p>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>

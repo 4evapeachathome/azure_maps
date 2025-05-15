@@ -53,7 +53,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   goToTest() {
     if (this.selectedAssessment) {
-      this.router.navigate(['/test'], { state: { assessmentType: this.selectedAssessment } });
+      this.router.navigate(['/assessmentresult'], { state: { assessmentType: this.selectedAssessment } });
     } else {
       console.log('Please select an assessment type');
     }

@@ -1,0 +1,24 @@
+.risk-meter {
+    text-align: center;
+  
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+  
+    .meter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  
+      canvas {
+        width: 200px !important;
+        height: 120px !important; // Adjust height for semi-circle
+      }
+  
+      p {
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+    }
+  }

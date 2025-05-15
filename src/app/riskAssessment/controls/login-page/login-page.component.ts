@@ -41,12 +41,34 @@ export class LoginPageComponent  implements OnInit {
     });
   }
 
+  onForgotPassword(event: Event) {
+    event.preventDefault(); // prevent link behavior
+    const username = this.loginForm.get('username')?.value;
+  
+    if (!username) {
+      alert('Please enter your username first.');
+      return;
+    }
+    fetch('http://localhost:1337/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username })
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || 'Reset email sent if username exists');
+      })
+      .catch(() => {
+        alert('Failed to send reset email');
+      });
+  }
+
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
-
+debugger;
     const { username, password } = this.loginForm.value;
     // Check if username exists
     const user = this.userLogins.find(u => u.email.toLowerCase() === username.trim().toLowerCase());

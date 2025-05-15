@@ -1,4 +1,4 @@
-<ion-app [ngClass]="{'mobile-container':  isMobile && isMenuOpen}">
+<ion-app [ngClass]="{'mobile-container':  isMobile && isMenuOpen}" ngClass="{'risk-assessment-app':  isRiskAssessment}">
   <ng-container *ngIf="!isRiskAssessment">
   <div class="header-cont-container">
     <div class="menu-hidden-bg-header" (click)="closeMobileMenu()"></div>
