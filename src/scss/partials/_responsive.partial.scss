@@ -6,9 +6,10 @@
   } 
 }
 @media (max-width: 768px) {
-  // .container-min-height{
-  //   height: 100%;
-  // }
+  .container-min-height{
+    height: calc(100% - 35px);
+    display: table;
+  }
   .hb-img{
 
     max-height: 200px !important;
