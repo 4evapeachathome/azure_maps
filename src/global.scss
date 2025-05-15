@@ -1357,58 +1357,6 @@ color: var(--color-dark-Gray);
   right: 0;
   height: 100%;
 }
-.risk-login-banner{
-background: $risk-login-background ;
-height: 100%;
-background-image: url(assets/riskAssesment1.svg);
-background-position: bottom center;
-background-repeat: no-repeat;
-background-size: 50%;
-min-height: 530px;
-padding: 0;
-border-top-left-radius: 8px;
-border-bottom-left-radius: 8px;
-}
-.ra-container{
-  padding: 16px 0;
-}
-.ra-grid{
-height: calc(100% - 40px);
-}
-.risk-assessment-container{
-  padding: 0 !important;
-  h1{
-    color: $color-primary;
-    font-size: $font-size-risk-xlll;
-    margin: 0;
-    margin-bottom: 35px;
-  }
-  h3{
-    color: $color-dark-Gray;
-    font-size: $font-size-xlll;
-    margin: 0;
-    margin-bottom: 12px;
-  }
-  .ra-banner{
-    padding: 0;
-    padding-right: 20px;
-  }
-  .ra-form-container{
-    padding-left: 20px;
-    padding-right: 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .ra-login-buttons{
-display: flex;
-justify-content: end;
-    align-items: center;
-    ion-button{
-      margin-left: 24px;
-    }
-  }
-}
 ion-footer {
   background-color: $color-dark-Gray;
   --color: $color-Gray64;
