@@ -220,6 +220,7 @@ ion-card {
 }
 .footer-container{
   padding: 0;
+  width: 100%;
 }
 .card-small {
   display: flex  ;
@@ -1347,4 +1348,11 @@ color: var(--color-dark-Gray);
 .tcrl{
   opacity: 1;
   display: block;
+}
+.cmh-container{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
 }
