@@ -942,7 +942,7 @@ getSripaa(): Observable<any> {
 
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
-      debugger;
+     // debugger;
       // Check if response has data
       if (!res.data || !Array.isArray(res.data)) {
         return [];

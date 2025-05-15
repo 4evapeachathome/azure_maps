@@ -30,10 +30,10 @@
 }
 .sidebar {
   position: fixed;
-  top: 0;
+  top: 65px;
   left: 0;
  // height: 100%;
- height: calc(100% - 115px);
+ height: calc(100% - 200px);
   width: $slider-menu-width;
   display: flex;
   overflow-x: hidden;
@@ -41,10 +41,13 @@
   background: var(--color-container);
   // padding: 16px 8px;
   padding: 0;
-  transition: all 0.4s ease;
+  transition: all 0.5s ease-out allow-discrete;
   z-index: 1;
+  // -ms-overflow-style: none; // IE and Edge
+  // scrollbar-width: none; // Firefox
   .sidebar-header {
-    display: flex;
+    display: none;
+    //display: flex;
     align-items: center;
     color: var(--color-deep-Gray);
     padding: 16px 12px;
@@ -84,15 +87,16 @@
   display: block;
   width: 100%;
   height: 100%;
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
  // padding-right: 0;
+ scrollbar-color: var(--color-Gray34) transparent;
   ion-item {
     font-family: $font-Inter;
     font-size: $font-size-md;
    
-    --min-height: 40px;
+    --min-height: 38px;
     --background: transparent;
     --background-hover: var(--ion-color-light);
     --ripple-color: var(--ion-color-primary--contrast);
@@ -123,6 +127,10 @@
       &[slot="start"] {
         margin-right: 0;
       }
+      &[slot] {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
     }
 
     @for $i from 0 through 5 {
