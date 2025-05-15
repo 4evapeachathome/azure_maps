@@ -6,6 +6,9 @@
   } 
 }
 @media (max-width: 768px) {
+  .container-min-height{
+    height: 100%;
+  }
   .hb-img{
 
     max-height: 200px !important;
@@ -90,6 +93,7 @@
         display: block;
         z-index: 10000;
         left: 0 !important;
+        top: 0 !important;
       //  transition: margin-left 0.5s;
         .sidebar-header{
           display: none;
