@@ -68,7 +68,6 @@ export class LoginPageComponent  implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
-debugger;
     const { username, password } = this.loginForm.value;
     // Check if username exists
     const user = this.userLogins.find(u => u.email.toLowerCase() === username.trim().toLowerCase());
@@ -85,6 +84,7 @@ debugger;
     }
 
     this.menuService.setLoggedInUser(user);
+    sessionStorage.setItem('username', btoa(username));
     // Successful login - navigate to the next page (e.g., assessment)
     this.router.navigate(['/assessment']);
   }

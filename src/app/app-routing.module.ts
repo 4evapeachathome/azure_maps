@@ -2,8 +2,9 @@ import { LoginPagePageModule } from './riskAssessment/login-page/login-page.modu
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { RiskAssessmentGuard } from './guards/risk-assessment.guard';
 
-const educationModule: Routes =  [
+const routes: Routes = [
   { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomePageModule) },
   { path: 'peaceathome', loadChildren: () => import('./peaceathome/peaceathome.module').then(m => m.PeaceathomePageModule) },
   { path: 'healthyrelationship', loadChildren: () => import('./healthyrelationship/healthyrelationship.module').then(m => m.HealthyrelationshipPageModule) },
@@ -33,18 +34,21 @@ const educationModule: Routes =  [
   {
     path: 'quiz',
     loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizPageModule)
-  }
-];
-
-const riskAssessmentModule: Routes = [
+  },
+  //Risk Assessment
   { path: '', redirectTo: 'loginPage', pathMatch: 'full' },
-  { path: 'loginPage', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule) },
-  { path: 'assessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule) },
-  { path: 'assessmentresult', loadChildren: () => import('./riskAssessment/assessment-result/assessment-result.module').then(m => m.AssessmentResultPageModule) },
-  { path: 'assessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule) }
-
+  { path: 'loginPage', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule) },  
+  { path: 'riskassessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule),canActivate: [RiskAssessmentGuard] },
+  { path: 'riskassessmentresult', loadChildren: () => import('./riskAssessment/assessment-result/assessment-result.module').then(m => m.AssessmentResultPageModule),canActivate: [RiskAssessmentGuard] },
+  { path: 'riskassessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule),canActivate: [RiskAssessmentGuard] }
 
 
 ];
 
-export const routes: Routes = environment.isRiskassessment ? riskAssessmentModule : educationModule;
+@NgModule({
+  imports: [ 
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+  ],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }

@@ -3,9 +3,9 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
 import { HeaderComponent } from "./controls/header/header.component";
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { ApiService } from './services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
@@ -111,39 +111,37 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   filterOptions: FilterOption[] = [];
   @ViewChild('mobileToggle', { static: false }) mobileToggle!: ElementRef<HTMLInputElement>;
   @ViewChild('desktopToggle', { static: false }) desktopToggle!: ElementRef<HTMLInputElement>;
-  isRiskAssessment!: boolean;
+  isRiskAssessment: boolean = false;
   isRouteLoaded = false;
 
   isMenuOpen = false;
   public readonly endPoint : string = APIEndpoints.supportService;
 
+  private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary'];
+
   constructor(private platform: Platform, private router:Router, private apiService: ApiService, private sharedDataService:MenuService) {
     this.isMobile = this.platform.is('android') || this.platform.is('ios');
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      const currentRoute = event.urlAfterRedirects.split('/')[1]; // get the first segment
+      this.isRiskAssessment = this.riskRoutes.includes(currentRoute);
+    });
 
   }
 
   ngOnInit() {
-    this.isRiskAssessment = environment.isRiskassessment;
-    if(!this.isRiskAssessment){
       this.loadInitialData();
       const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
     if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
       this.router.navigate(['/home']); // Redirect to home if page is refreshed
-    }
     }
     if (Capacitor.isNativePlatform()) {
       this.platform.ready().then(() => {
         StatusBar.setOverlaysWebView({ overlay: false });
         StatusBar.setStyle({ style: Style.Dark }); // or Style.Light
       });
-    }
-
-    
-  }
-
-  onRouteLoaded() {
-    this.isRouteLoaded = true;
-    console.log('Route loaded in ion-router-outlet'); // Debug
+    }  
   }
 
 

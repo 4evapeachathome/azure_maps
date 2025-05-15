@@ -1,5 +1,4 @@
 <ion-app [ngClass]="{'mobile-container':  isMobile && isMenuOpen}" ngClass="{'risk-assessment-app':  isRiskAssessment}">
-  <ng-container *ngIf="!isRiskAssessment">
   <div class="header-cont-container">
     <div class="menu-hidden-bg-header" (click)="closeMobileMenu()"></div>
     <pathome-header></pathome-header>
@@ -49,25 +48,4 @@
   </div> -->
 </div>
 </div>
-</ng-container>
-<ng-container *ngIf="isRiskAssessment">
-  <div class="header-cont-container">
-    <div class="menu-hidden-bg-header"></div>
-    <pathome-header></pathome-header>
-    </div>
-    <div class="d-flex-ion pos-relative flex-grow-1">
-  <div class="d-flex-ion div-scroll">
-  
-<div class="d-flex-ion pos-relative flex-grow-1" >
-
-
-  <ion-router-outlet
-    id="main-content"
-    class="slider-content"
-  ></ion-router-outlet>
-
-</div>
-</div>
-</div>
-</ng-container>
 </ion-app>
