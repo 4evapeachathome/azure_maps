@@ -7,7 +7,8 @@
 }
 @media (max-width: 768px) {
   .container-min-height{
-    height: 100%;
+    height: calc(100% - 35px);
+    display: table;
   }
   .hb-img{
 
