@@ -10,6 +10,7 @@ const routes: Routes = [
   { path: 'healthyrelationship', loadChildren: () => import('./healthyrelationship/healthyrelationship.module').then(m => m.HealthyrelationshipPageModule) },
   { path: 'nopeaceathome', loadChildren: () => import('./nopeaceathome/nopeaceathome.module').then(m => m.NopeaceathomePageModule) },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
+  //{ path: '**', redirectTo: 'home', pathMatch: 'full' },
   { path: 'contactus', loadChildren: () => import('./contactus/contactus.module').then(m => m.ContactusPageModule) },
   { path: 'supportservice', loadChildren: () => import('./supportservice/supportservice.module').then(m => m.SupportservicePageModule) },
   { path: 'unhealthyrelationship', loadChildren: () => import('./unhealthyrelationship/unhealthyrelationship.module').then(m => m.UnhealthyrelationshipPageModule) },

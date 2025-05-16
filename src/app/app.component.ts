@@ -124,11 +124,15 @@ isRouteCheckComplete = false;
     this.router.events
   .pipe(filter(event => event instanceof NavigationEnd))
   .subscribe((event: NavigationEnd) => {
-    const url = (event as NavigationEnd).urlAfterRedirects;
+    const url = event.urlAfterRedirects;
     const currentPath = url.split('/')[1];
 
     this.isRiskAssessment = this.riskRoutes.includes(currentPath);
     this.isRouteCheckComplete = true;
+
+    if (this.isRiskAssessment) {
+      localStorage.setItem('lastRiskAssessmentUrl', url);
+    }
   });
 
   }
@@ -136,9 +140,16 @@ isRouteCheckComplete = false;
   ngOnInit() {
       this.loadInitialData();
       const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-    if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
-      this.router.navigate(['/home']); // Redirect to home if page is refreshed
-    }
+
+      if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
+        const lastRiskUrl = localStorage.getItem('lastRiskAssessmentUrl');
+    
+        if (lastRiskUrl && this.riskRoutes.includes(lastRiskUrl.split('/')[1])) {
+          this.router.navigateByUrl(lastRiskUrl); // Go back to the same page
+        } else {
+          this.router.navigate(['/home']);
+        }
+      }
     if (Capacitor.isNativePlatform()) {
       this.platform.ready().then(() => {
         StatusBar.setOverlaysWebView({ overlay: false });

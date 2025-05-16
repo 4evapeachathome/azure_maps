@@ -89,11 +89,19 @@ export class LoginPageComponent  implements OnInit {
     this.menuService.setLoggedInUser(user);
     
     const encodedUsername = btoa(username);
-  this.cookieService.set('username', encodedUsername, {
-    path: '/',
-    sameSite: 'Strict',
-    secure: true, // Only over HTTPS
-  });
+const loginTimestamp = Date.now().toString();
+
+this.cookieService.set('username', encodedUsername, {
+  path: '/',
+  sameSite: 'Strict',
+  secure: true,
+});
+
+this.cookieService.set('loginTime', loginTimestamp, {
+  path: '/',
+  sameSite: 'Strict',
+  secure: true,
+});
 
     // Successful login - navigate to the next page (e.g., assessment)
     this.router.navigate(['/riskassessment']);

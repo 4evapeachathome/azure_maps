@@ -11,17 +11,26 @@ export class RiskAssessmentGuard implements CanActivate {
   
   canActivate(): boolean {
     const encodedUsername = this.cookieService.get('username');
-
-    if (encodedUsername) {
+    const loginTimestamp = parseInt(this.cookieService.get('loginTime'), 10);
+  
+    const currentTime = Date.now();
+    const maxSessionDuration = 60 * 60 * 1000; // 60 minutes in milliseconds
+  
+    if (encodedUsername && loginTimestamp) {
       try {
         const username = atob(encodedUsername);
-        if (username) return true;
+  
+        if (username && currentTime - loginTimestamp < maxSessionDuration) {
+          return true;
+        }
       } catch {
-        // if atob fails
-        this.cookieService.delete('username');
+        // atob or parsing fails
       }
+  
+      this.cookieService.delete('username');
+      this.cookieService.delete('loginTime');
     }
-
+  
     this.router.navigate(['/loginPage']);
     return false;
   }

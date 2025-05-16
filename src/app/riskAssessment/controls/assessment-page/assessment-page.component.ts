@@ -27,7 +27,7 @@ export class AssessmentPageComponent  implements OnInit {
   ngOnInit() {
     this.loggedInUser = this.menuService.getLoggedInUser();
     console.log('Logged-in user on dashboard:', this.loggedInUser);
-
+    debugger;
     // Subscribe to changes (if the user might change while on this page)
     this.menuService.loggedInUser$.subscribe(user => {
       this.loggedInUser = user;
