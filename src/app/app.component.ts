@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { IonicModule, Platform } from '@ionic/angular';
+import { AlertController, IonicModule, Platform } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
 import { HeaderComponent } from "./controls/header/header.component";
@@ -13,6 +13,8 @@ import { MenuService } from 'src/shared/menu.service';
 import { Capacitor } from '@capacitor/core';
 import { environment } from 'src/environments/environment';
 import { FormsModule } from '@angular/forms';
+import { SessionActivityService } from './guards/session-activity.service';
+import { CookieService } from 'ngx-cookie-service';
 
 
 export interface OrganizationResponse {
@@ -113,14 +115,15 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   @ViewChild('mobileToggle', { static: false }) mobileToggle!: ElementRef<HTMLInputElement>;
   @ViewChild('desktopToggle', { static: false }) desktopToggle!: ElementRef<HTMLInputElement>;
   isRiskAssessment = false;
-isRouteCheckComplete = false;
+  isRouteCheckComplete = false;
+  showSessionWarning = false;
 
-isMenuOpen = true;
+  isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
 
   private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary','loginPage'];
 
-  constructor(private platform: Platform, private router:Router, private apiService: ApiService, private sharedDataService:MenuService) {
+  constructor(private sessionActivityService: SessionActivityService,private alertController: AlertController,private cookieService: CookieService,private platform: Platform, private router:Router, private apiService: ApiService, private sharedDataService:MenuService) {
     this.router.events
   .pipe(filter(event => event instanceof NavigationEnd))
   .subscribe((event: NavigationEnd) => {
@@ -137,27 +140,73 @@ isMenuOpen = true;
 
   }
 
-  ngOnInit() {
-      this.loadInitialData();
-      if (Capacitor.isNativePlatform()) {
-        this.platform.ready().then(() => {
-          StatusBar.setOverlaysWebView({ overlay: false });
-          StatusBar.setStyle({ style: Style.Dark }); // or Style.Light
-        });
-      }  
-      this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
-      const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+  stayLoggedIn() {
+    this.showSessionWarning = false;
+    const now = Date.now().toString();
+    this.cookieService.set('loginTime', now, {
+      path: '/',
+      sameSite: 'Strict',
+      secure: true,
+    });
+  }
 
-      if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
-        const lastRiskUrl = localStorage.getItem('lastRiskAssessmentUrl');
-    
-        if (lastRiskUrl && this.riskRoutes.includes(lastRiskUrl.split('/')[1])) {
-          this.router.navigateByUrl(lastRiskUrl); // Go back to the same page
-        } else {
-          this.router.navigate(['/home']);
-        }
+  logout() {
+    this.cookieService.delete('username');
+    this.cookieService.delete('loginTime');
+    this.showSessionWarning = false;
+    this.router.navigate(['/loginPage']);
+  }
+
+  ngOnInit() {
+    this.loadInitialData();
+  
+    if (Capacitor.isNativePlatform()) {
+      this.platform.ready().then(() => {
+        StatusBar.setOverlaysWebView({ overlay: false });
+        StatusBar.setStyle({ style: Style.Dark });
+      });
+    }
+  
+    this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
+  
+    this.sessionActivityService.sessionWarning$.subscribe(() => {
+      this.presentSessionAlert();
+    });
+  
+    this.sessionActivityService.sessionExpired$.subscribe(() => {
+      this.logout();
+    });
+  
+    const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+    if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
+      const lastRiskUrl = localStorage.getItem('lastRiskAssessmentUrl');
+      if (lastRiskUrl && this.riskRoutes.includes(lastRiskUrl.split('/')[1])) {
+        this.router.navigateByUrl(lastRiskUrl);
+      } else {
+        this.router.navigate(['/home']);
       }
-    
+    }
+  }
+
+  async presentSessionAlert() {
+    const alert = await this.alertController.create({
+      header: 'Session Expiring',
+      message: 'You’ve been idle for a while. Do you want to stay logged in?',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'Stay Logged In',
+          handler: () => this.stayLoggedIn()
+        },
+        {
+          text: 'Logout',
+          role: 'destructive',
+          handler: () => this.logout()
+        }
+      ]
+    });
+  
+    await alert.present();
   }
 
 
