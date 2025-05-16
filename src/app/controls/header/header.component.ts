@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'pathome-header',
@@ -15,7 +16,7 @@ export class HeaderComponent  implements OnInit {
   showExitButton: boolean = true;
 
   constructor(private router: Router,
-    private location: Location) { }
+    private location: Location, private menuService:MenuService) { }
 
   ngOnInit() {
     this.checkRoute();
@@ -24,6 +25,10 @@ export class HeaderComponent  implements OnInit {
     this.router.events.subscribe(() => {
       this.checkRoute();
     });
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
   private checkRoute() {

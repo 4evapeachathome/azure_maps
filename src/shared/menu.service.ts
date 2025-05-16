@@ -22,10 +22,19 @@ export class MenuService {
   
   showAdditionalMenus$ = this.showAdditionalMenusSource.asObservable();
   
-  private lastExpandedSection: string | null = null;
+  private _lastExpandedSection: string | null = null;
+
+  get lastExpandedSection(): string | null {
+    return this._lastExpandedSection;
+  }
+
+  set lastExpandedSection(value: string | null) {
+    this._lastExpandedSection = value;
+  }
 
 toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
   // Prevent re-emitting the same section
+  debugger;
   if (this.lastExpandedSection === sectionTitle && show) {
     return;
   }
