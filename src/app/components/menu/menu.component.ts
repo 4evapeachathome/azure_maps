@@ -194,7 +194,7 @@ export class MenuComponent implements OnInit {
       this.processedMenu = this.buildMenuTree(this.menuItems);
       this.collapseAllItems(this.processedMenu);
     }
-  
+    this.menuService.lastExpandedSection = item.title;
     // Handle root-level items (no parent)
     if (!item.parentMenu && item.children && item.children.length > 0) {
       // Collapse all other root items and their children
