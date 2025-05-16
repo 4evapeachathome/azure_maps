@@ -985,26 +985,48 @@ getUserLogins(): Observable<any> {
     map((res: any) => {
       if (!res.data || res.data.length === 0) return [];
 
-      return res.data.map((item: any) => ({
-        id: item.id,
-        username: CryptoJS.AES.decrypt(item.Username, environment.secretKey).toString(CryptoJS.enc.Utf8),
-        email: CryptoJS.AES.decrypt(item.email, environment.secretKey).toString(CryptoJS.enc.Utf8),
-        phone: CryptoJS.AES.decrypt(item.phone, environment.secretKey).toString(CryptoJS.enc.Utf8),
-        orgname: CryptoJS.AES.decrypt(item.orgname, environment.secretKey).toString(CryptoJS.enc.Utf8),
-        password: CryptoJS.AES.decrypt(item.password, environment.secretKey).toString(CryptoJS.enc.Utf8),
-        address: CryptoJS.AES.decrypt(item.address, environment.secretKey).toString(CryptoJS.enc.Utf8),
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        types: item.assessment_type?.map((typeItem: any) => ({
-          id: typeItem.id,
-          name: typeItem.name ? CryptoJS.AES.decrypt(typeItem.name, environment.secretKey).toString(CryptoJS.enc.Utf8) : null,
-          description: typeItem.description ? CryptoJS.AES.decrypt(typeItem.description, environment.secretKey).toString(CryptoJS.enc.Utf8) : null
-        })) || []
-      }));
+      return res.data.map((item: any) => {
+        // Helper function to safely decrypt fields
+        const decryptField = (encryptedValue: any): string | null => {
+          if (encryptedValue == null || encryptedValue === '') return null;
+          
+          try {
+            // Trim whitespace and handle non-string values
+            const encryptedString = encryptedValue.toString().trim();
+            if (!encryptedString) return null;
+
+            const bytes = CryptoJS.AES.decrypt(encryptedString, environment.secretKey);
+            const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+            
+            // Handle cases where decryption returns empty (invalid key/data)
+            return decrypted || encryptedString;
+          } catch (error) {
+            console.warn('Decryption failed for value:', encryptedValue, error);
+            return encryptedValue; // Return original value if decryption fails
+          }
+        };
+
+        return {
+          id: item.id,
+          username: decryptField(item.Username),
+          email: decryptField(item.email),
+          phone: decryptField(item.phone),
+          orgname: decryptField(item.orgname),
+          password: decryptField(item.password),
+          address: decryptField(item.address),
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          types: item.assessment_type?.map((typeItem: any) => ({
+            id: typeItem.id,
+            name: decryptField(typeItem.name),
+            description: decryptField(typeItem.description)
+          })) || []
+        };
+      });
     }),
-    catchError(error => {
-      console.error('Error fetching and decrypting user login data', error);
-      return throwError(error);
+    catchError((error) => {
+      console.error('Error fetching/decrypting user data:', error);
+      return throwError(() => new Error('Failed to load user logins. Please try again.'));
     })
   );
 }
