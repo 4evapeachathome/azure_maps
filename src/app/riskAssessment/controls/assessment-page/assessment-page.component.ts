@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { CookieService } from 'ngx-cookie-service';
 import { MenuService } from 'src/shared/menu.service';
 
 @Component({
@@ -21,22 +22,25 @@ export class AssessmentPageComponent  implements OnInit {
 
   constructor(
     private menuService: MenuService,
-    private router: Router
+    private router: Router,
+    private cookieService: CookieService
   ) { }
 
   ngOnInit() {
-    this.loggedInUser = this.menuService.getLoggedInUser();
-    console.log('Logged-in user on dashboard:', this.loggedInUser);
-    debugger;
-    // Subscribe to changes (if the user might change while on this page)
-    this.menuService.loggedInUser$.subscribe(user => {
-      this.loggedInUser = user;
-      // Populate assessment types from the user's types array
-      this.assessmentTypes = this.loggedInUser?.types || [];
-      // Set default selected assessment (if any)
-      //this.selectedAssessment = this.assessmentTypes.length > 0 ? this.assessmentTypes[0].name : null;
-      this.selectedAssessment = null;
-    });
+    const encodedUser = this.cookieService.get('userdetails'); // Or 'username'
+    if (encodedUser) {
+      try {
+        this.loggedInUser = JSON.parse(atob(encodedUser));
+        this.assessmentTypes = this.loggedInUser?.types || [];
+        this.selectedAssessment = null;
+      } catch {
+        console.error('Invalid cookie format, logging out...');
+        this.cookieService.delete('user');
+        this.router.navigate(['/loginPage']);
+      }
+    } else {
+      this.router.navigate(['/loginPage']);
+    }
   }
 
   onGuidedTypeChange() {

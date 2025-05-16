@@ -86,10 +86,16 @@ export class LoginPageComponent  implements OnInit {
       return;
     }
 
-    this.menuService.setLoggedInUser(user);
     
     const encodedUsername = btoa(username);
-const loginTimestamp = Date.now().toString();
+    const encodedUser = btoa(JSON.stringify(user));
+    this.cookieService.set('userdetails', encodedUser, {
+      path: '/',
+      sameSite: 'Strict',
+      secure: true,
+      expires: 1/24, 
+    });
+    const loginTimestamp = Date.now().toString();
 
 this.cookieService.set('username', encodedUsername, {
   path: '/',

@@ -13,9 +13,6 @@ export class MenuService {
 
   filterOptions$ = this.filterOptionsSubject.asObservable();
   organizations$ = this.organizationsSubject.asObservable();
-  
-   private loggedInUser = new BehaviorSubject<any | null>(null);
-  loggedInUser$ = this.loggedInUser.asObservable();
 
 
 
@@ -65,16 +62,6 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
     this.organizationsSubject.next(orgs);
   }
 
-  setLoggedInUser(user: any) {
-    this.loggedInUser.next(user);
-  }
-
-  getLoggedInUser() {
-    return this.loggedInUser.getValue();
-  }
-
-  clearLoggedInUser() {
-    this.loggedInUser.next(null);
-  }
+  
 
 }
