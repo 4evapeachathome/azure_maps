@@ -1,53 +1,51 @@
-<ion-app *ngIf="isRouteCheckComplete" [ngClass]="{'mobile-container':  isMobile && isMenuOpen}" ngClass="{'risk-assessment-app':  isRiskAssessment}">
+<ion-app  [ngClass]="{'mobile-container': isMobile && isMenuOpen}" ngClass="{'risk-assessment-app': isRiskAssessment}">
   <div class="header-cont-container">
     <div class="menu-hidden-bg-header" (click)="closeMobileMenu()"></div>
     <pathome-header></pathome-header>
+  </div>
+  <div class="d-flex-ion pos-relative flex-grow-1">
+    <div class="d-flex-ion div-scroll">
+      <div class="d-flex-ion pos-relative flex-grow-1">
+        
+        <!-- Case 1: Risk Assessment (No Menu) -->
+        <ng-container *ngIf="isRiskAssessment && isRouteCheckComplete">
+          <ion-router-outlet
+            id="main-content"
+            class="slider-content"
+          ></ion-router-outlet>
+        </ng-container>
+
+        <!-- Case 2: Default Layout (With Menu) -->
+        <ng-container *ngIf="!isRiskAssessment && isRouteCheckComplete">
+          <input #desktopToggle [(ngModel)]="isMenuOpen"  type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
+          <input #mobileToggle  type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
+
+          <label for="sidebar-toggle" class="sidebar-toggle-label">
+            <ion-icon name="menu-outline" class="st-open"></ion-icon>
+            <ion-icon name="close" class="st-close"></ion-icon>
+          </label>
+
+          <aside class="sidebar">
+            <div class="sidebar-header">
+              <h2>Menu</h2>
+            </div>
+            <app-menu class="h-100"
+              [fields]="['title', 'link']"
+              [populate]="['parentMenu']"
+              [sort]="['createdAt:asc']"
+              [isMenuOpen]="isMenuOpen"
+            ></app-menu>
+          </aside>
+          
+          <div class="menu-hidden-bg" (click)="closeMobileMenu()"></div>
+          
+          <ion-router-outlet
+            id="main-content"
+            class="slider-content"
+          ></ion-router-outlet>
+        </ng-container>
+
+      </div>
     </div>
-    <div class="d-flex-ion pos-relative flex-grow-1">
-  <div class="d-flex-ion div-scroll">
-  
-<div class="d-flex-ion pos-relative flex-grow-1" >
-  <ng-container *ngIf="!isRiskAssessment">
-  <input #desktopToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
-  <input #mobileToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
-
-  <label for="sidebar-toggle" class="sidebar-toggle-label ">
-  
-    <ion-icon name="menu-outline" class="st-open"></ion-icon>   
-    <ion-icon name="close" class="st-close"></ion-icon>
-  </label>
-
-  <!-- <label for="sidebar-toggle" class="sidebar-toggle-label">&#9776;</label> -->
-
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <!-- <ion-icon
-      name="menu-outline" 
-     
-    
-    ></ion-icon> -->
-      <!-- <span class="material-symbols-outlined"> menu </span> -->
-      <h2>Menu</h2>
-    </div>
-    <app-menu class="h-100"
-      [fields]="['title', 'link']"
-      [populate]="['parentMenu']"
-      [sort]="['createdAt:asc']"
-      [isMenuOpen]="isMenuOpen"     
-    >
-    </app-menu>
-  </aside>
-<div class="menu-hidden-bg" (click)="closeMobileMenu()"></div>
-</ng-container>
-  <ion-router-outlet
-    id="main-content"
-    class="slider-content"
-  ></ion-router-outlet>
-
-</div>
-<!-- <div>
-  <pathome-footer></pathome-footer>
-  </div> -->
-</div>
-</div>
+  </div>
 </ion-app>

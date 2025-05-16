@@ -12,6 +12,7 @@ import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { Capacitor } from '@capacitor/core';
 import { environment } from 'src/environments/environment';
+import { FormsModule } from '@angular/forms';
 
 
 export interface OrganizationResponse {
@@ -103,7 +104,7 @@ interface PlaceDetails {
   templateUrl: './app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-  imports: [IonicModule, MenuComponent, HeaderComponent, CommonModule,RouterModule]
+  imports: [IonicModule, MenuComponent, HeaderComponent,FormsModule, CommonModule,RouterModule]
 })
 export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMobile!: boolean;
@@ -114,13 +115,12 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isRiskAssessment = false;
 isRouteCheckComplete = false;
 
-  isMenuOpen = false;
+isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
 
   private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary','loginPage'];
 
   constructor(private platform: Platform, private router:Router, private apiService: ApiService, private sharedDataService:MenuService) {
-    this.isMobile = this.platform.is('android') || this.platform.is('ios');
     this.router.events
   .pipe(filter(event => event instanceof NavigationEnd))
   .subscribe((event: NavigationEnd) => {
@@ -139,6 +139,13 @@ isRouteCheckComplete = false;
 
   ngOnInit() {
       this.loadInitialData();
+      if (Capacitor.isNativePlatform()) {
+        this.platform.ready().then(() => {
+          StatusBar.setOverlaysWebView({ overlay: false });
+          StatusBar.setStyle({ style: Style.Dark }); // or Style.Light
+        });
+      }  
+      this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
       const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
 
       if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
@@ -150,12 +157,7 @@ isRouteCheckComplete = false;
           this.router.navigate(['/home']);
         }
       }
-    if (Capacitor.isNativePlatform()) {
-      this.platform.ready().then(() => {
-        StatusBar.setOverlaysWebView({ overlay: false });
-        StatusBar.setStyle({ style: Style.Dark }); // or Style.Light
-      });
-    }  
+    
   }
 
 
