@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { MenuService } from 'src/shared/menu.service';
 
@@ -20,6 +21,7 @@ export class LoginPageComponent  implements OnInit {
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
+    private cookieService: CookieService,
     private router: Router,
     private menuService:MenuService
   ) {
@@ -68,6 +70,7 @@ export class LoginPageComponent  implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
+    debugger;
     const { username, password } = this.loginForm.value;
     // Check if username exists
     const user = this.userLogins.find(u => u.email.toLowerCase() === username.trim().toLowerCase());
@@ -84,9 +87,16 @@ export class LoginPageComponent  implements OnInit {
     }
 
     this.menuService.setLoggedInUser(user);
-    sessionStorage.setItem('username', btoa(username));
+    
+    const encodedUsername = btoa(username);
+  this.cookieService.set('username', encodedUsername, {
+    path: '/',
+    sameSite: 'Strict',
+    secure: true, // Only over HTTPS
+  });
+
     // Successful login - navigate to the next page (e.g., assessment)
-    this.router.navigate(['/assessment']);
+    this.router.navigate(['/riskassessment']);
   }
 
 }

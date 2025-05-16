@@ -111,22 +111,25 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   filterOptions: FilterOption[] = [];
   @ViewChild('mobileToggle', { static: false }) mobileToggle!: ElementRef<HTMLInputElement>;
   @ViewChild('desktopToggle', { static: false }) desktopToggle!: ElementRef<HTMLInputElement>;
-  isRiskAssessment: boolean = false;
-  isRouteLoaded = false;
+  isRiskAssessment = false;
+isRouteCheckComplete = false;
 
   isMenuOpen = false;
   public readonly endPoint : string = APIEndpoints.supportService;
 
-  private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary'];
+  private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary','loginPage'];
 
   constructor(private platform: Platform, private router:Router, private apiService: ApiService, private sharedDataService:MenuService) {
     this.isMobile = this.platform.is('android') || this.platform.is('ios');
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      const currentRoute = event.urlAfterRedirects.split('/')[1]; // get the first segment
-      this.isRiskAssessment = this.riskRoutes.includes(currentRoute);
-    });
+    this.router.events
+  .pipe(filter(event => event instanceof NavigationEnd))
+  .subscribe((event: NavigationEnd) => {
+    const url = (event as NavigationEnd).urlAfterRedirects;
+    const currentPath = url.split('/')[1];
+
+    this.isRiskAssessment = this.riskRoutes.includes(currentPath);
+    this.isRouteCheckComplete = true;
+  });
 
   }
 

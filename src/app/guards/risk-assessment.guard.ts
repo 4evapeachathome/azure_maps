@@ -1,19 +1,29 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RiskAssessmentGuard implements CanActivate {
-  constructor(private router: Router) {}
+  constructor(private router: Router,private cookieService: CookieService,) {}
 
-  canActivate(): boolean | UrlTree {
-    const encodedUsername = sessionStorage.getItem('username');
-if (encodedUsername) {
-  const username = atob(encodedUsername);
-  return true;
-} else {
-  return this.router.parseUrl('/loginPage');
-}
+  
+  canActivate(): boolean {
+    const encodedUsername = this.cookieService.get('username');
+
+    if (encodedUsername) {
+      try {
+        const username = atob(encodedUsername);
+        if (username) return true;
+      } catch {
+        // if atob fails
+        this.cookieService.delete('username');
+      }
+    }
+
+    this.router.navigate(['/loginPage']);
+    return false;
   }
+
 }

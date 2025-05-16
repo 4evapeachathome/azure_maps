@@ -22,7 +22,7 @@ export class AssessmentresultComponent  implements OnInit {
 
   viewResult() {
     debugger;
-    this.router.navigate(['/assessmentsummary']);
+    this.router.navigate(['/riskassessmentsummary']);
   }
 
   onSearchChange() {  

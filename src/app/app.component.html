@@ -1,4 +1,4 @@
-<ion-app [ngClass]="{'mobile-container':  isMobile && isMenuOpen}" ngClass="{'risk-assessment-app':  isRiskAssessment}">
+<ion-app *ngIf="isRouteCheckComplete" [ngClass]="{'mobile-container':  isMobile && isMenuOpen}" ngClass="{'risk-assessment-app':  isRiskAssessment}">
   <div class="header-cont-container">
     <div class="menu-hidden-bg-header" (click)="closeMobileMenu()"></div>
     <pathome-header></pathome-header>
@@ -7,6 +7,7 @@
   <div class="d-flex-ion div-scroll">
   
 <div class="d-flex-ion pos-relative flex-grow-1" >
+  <ng-container *ngIf="!isRiskAssessment">
   <input #desktopToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
   <input #mobileToggle type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
 
@@ -37,6 +38,7 @@
     </app-menu>
   </aside>
 <div class="menu-hidden-bg" (click)="closeMobileMenu()"></div>
+</ng-container>
   <ion-router-outlet
     id="main-content"
     class="slider-content"
