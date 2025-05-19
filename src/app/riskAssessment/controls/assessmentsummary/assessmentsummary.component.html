@@ -1,4 +1,4 @@
-<div #pdfContent class="common-container risk-assessment-container h-100">
+<div class="common-container risk-assessment-container h-100">
   <ion-grid class="p-0 h-100">
     <ion-row class="h-100">
       <!-- Left Image Panel -->
@@ -46,7 +46,7 @@
   <ion-col>
         <!-- Unique Access Button -->
         <div class="qr-code-wrapper">
-          <qrcode [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+          <qrcode #qrcodeEl [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
           <p class="access-code">{{ accessCodeLabel }}: {{ accessCode }}</p>
         </div>
   </ion-col>
@@ -67,4 +67,17 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+</div>
+<div #pdfExportContainer [style.display]="hidePdfContainer ? 'none' : 'block'" 
+     style="position: absolute; left: -9999px; top: -9999px; width: 800px; background: white; padding: 20px;">
+  <h1>{{ assessmentTitle }}</h1>
+  <p><strong>Case Number:</strong> {{ caseNumber }}</p>
+  <p><strong>User:</strong> {{ loggedInUser?.username || userName }}</p>
+  <p><strong>{{ testResultsTitle }}</strong></p>
+  <p>{{ testResultLabel }} - {{ riskValue }}%</p>
+  <p>{{ recommendationIntro }}</p>
+  <p>{{ recommendationText }}</p>
+  <p><strong>{{ riskLevelsTitle }}:</strong> {{ stressCurveLabel }} - {{ riskValue }}%</p>
+  <p><strong>{{ accessCodeLabel }}:</strong> {{ accessCode }}</p>
+  <img #qrImage alt="QR Code Image" style="width: 150px; height: 150px;" />
 </div>

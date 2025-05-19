@@ -34,3 +34,20 @@
     height: 200px;
   }
   
+
+  .pdf-export-container {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    padding: 20px;
+    color: black;
+    
+    // Ensure all elements are visible
+    * {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+  }
