@@ -1,20 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { interval, Subscription } from 'rxjs';
-import * as Gauge from 'gauge.js'; // Import the Gauge library
+import * as Gauge from 'gauge.js';
+import html2pdf from 'html2pdf.js'; 
+import { QRCodeComponent  } from 'angularx-qrcode';
 
 @Component({
   selector: 'app-assessmentsummary',
   templateUrl: './assessmentsummary.component.html',
   styleUrls: ['./assessmentsummary.component.scss'],
   standalone: true,
-          imports: [CommonModule, IonicModule, FormsModule],
+          imports: [CommonModule, IonicModule, FormsModule,QRCodeComponent],
 })
 export class AssessmentsummaryComponent  implements OnInit, AfterViewInit, OnDestroy {
  
-
+  myAngularxQrCode = 'Your QR code data string';
   caseNumber: string='';
   caseNumberPlaceholder: string = 'Pick Assessment Results';
   loggedInUser: { username: string } = { username: '' };
@@ -32,7 +34,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit, OnDes
   uniqueAccessLabel: string = 'This XXXX Unique Access'; // Replace XXXX with dynamic value
   accessCodeLabel: string = 'Access Code';
   accessCode: string = 'empathy-direction-potato-yankee';
-  
+  @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
+
 
   private gauge: any; // Store the gauge instance
   private updateSubscription!: Subscription; // For dynamic updates
@@ -52,6 +55,19 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit, OnDes
       this.updateSubscription.unsubscribe(); // Clean up subscription
     }
   }
+
+
+downloadPDF() {
+  const element = this.pdfContent.nativeElement;
+  const opt = {
+    margin:       0.5,
+    filename:     'Assessment-Summary.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  html2pdf().from(element).set(opt).save();
+}
 
   initGauge() {
     const canvas = document.getElementById('risk-gauge') as HTMLCanvasElement;

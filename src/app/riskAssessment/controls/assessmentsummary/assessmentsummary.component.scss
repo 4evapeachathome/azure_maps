@@ -22,3 +22,15 @@
       }
     }
   }
+
+  .qr-code-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  .qr-code {
+    width: 200px;
+    height: 200px;
+  }
+  
