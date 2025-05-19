@@ -51,13 +51,23 @@
         </div>
   </ion-col>
   <ion-col>        <!-- Risk Meter -->
-        <div class="risk-meter">
-          <h3>{{ riskLevelsTitle }}</h3>
-          <div class="meter-container">
-            <canvas id="risk-gauge"></canvas>
-            <p>{{ stressCurveLabel }}: {{ riskValue }}%</p>
-          </div>
-        </div>
+    <div class="risk-meter">
+      <h3>{{ riskLevelsTitle }}</h3>
+      <ngx-gauge
+        [value]="riskValue"
+        [label]="stressCurveLabel"
+        [append]="'%'"
+        [type]="'semi'"
+        [min]="0"
+        [max]="100"
+        [thick]="10"
+        [thresholds]="[
+          { 'color': 'green', 'value': 33 },
+          { 'color': 'yellow', 'value': 66 },
+          { 'color': 'red', 'value': 100 }
+        ]"
+      ></ngx-gauge>
+    </div>
         <ion-button (click)="downloadPDF()">Download as PDF</ion-button>
   </ion-col>
 </ion-row>
