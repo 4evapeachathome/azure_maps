@@ -14,6 +14,23 @@
               <ion-col size="12" size-sm="12">
                 <div class="user-info">
                   <ion-text>Hi, {{ loggedInUser?.username || "User" }}</ion-text>
+                
+                
+                
+
+
+            <div class="dropdown">
+
+  <ion-button shape="round" fill="clear">
+  <ion-icon name="person-circle"></ion-icon>
+</ion-button>
+  <div class="dropdown-content">
+  <a href="#">Logout</a>
+
+  </div>
+
+
+                  </div>
                 </div>
               </ion-col>
             </ion-row>
@@ -36,14 +53,15 @@
             </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="12">
-              
+              <div class="asses-radio">
+                   <ion-text>This Assessment will be:</ion-text>
                   <ion-radio-group (ngModelChange)="onGuidedTypeChange()">
-                    <ion-text>This Assessment will be:</ion-text>
+                 
                      <ion-radio value="self-guided" labelPlacement="end">Self-Guided</ion-radio>
                       <ion-radio value="staff-guided" labelPlacement="end">Staff-Guided</ion-radio>
                   
                   </ion-radio-group>
-              
+              </div>
               </ion-col>
             </ion-row>
 
@@ -78,7 +96,7 @@
               </ion-col>
               </ion-row>
               <ion-row class="d-flex-h-100">
-               <ion-col size="12" size-sm="12" class="d-flex-h-100">
+               <ion-col size="12" size-sm="12" class="d-flex-h-100" style="min-height: 150px;">
                  <div class="assessment-description" *ngIf="selectedAssessment">
                   <div class="asses-desc-border">
                     <h2 class="desc-heading">{{ selectedAssessment }}</h2>
