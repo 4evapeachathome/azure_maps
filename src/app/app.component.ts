@@ -120,24 +120,60 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
 
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
-
+  private hasHandledReload = false;
   private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary','loginPage'];
 
-  constructor(private sessionActivityService: SessionActivityService,private alertController: AlertController,private cookieService: CookieService,private platform: Platform, private router:Router, private apiService: ApiService, private sharedDataService:MenuService) {
+  constructor(
+    private sessionActivityService: SessionActivityService,
+    private alertController: AlertController,
+    private cookieService: CookieService,
+    private platform: Platform,
+    private router: Router,
+    private apiService: ApiService,
+    private sharedDataService: MenuService
+  ) {
     this.router.events
-  .pipe(filter(event => event instanceof NavigationEnd))
-  .subscribe((event: NavigationEnd) => {
-    const url = event.urlAfterRedirects;
-    const currentPath = url.split('/')[1];
-
-    this.isRiskAssessment = this.riskRoutes.includes(currentPath);
-    this.isRouteCheckComplete = true;
-
-    if (this.isRiskAssessment) {
-      localStorage.setItem('lastRiskAssessmentUrl', url);
-    }
-  });
-
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        const url = event.urlAfterRedirects;
+        const currentPath = url.split('/')[1];
+  
+        this.isRiskAssessment = this.riskRoutes.includes(currentPath);
+        this.isRouteCheckComplete = true;
+  
+        // Store or clear last risk URL based on current route
+        if (this.isRiskAssessment) {
+          localStorage.setItem('lastRiskAssessmentUrl', url);
+        } else {
+          localStorage.removeItem('lastRiskAssessmentUrl');
+        }
+  
+        // Handle page reload only once
+        if (!this.hasHandledReload) {
+          this.hasHandledReload = true;
+  
+          const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+          const isReload = navigationEntries.length > 0 && navigationEntries[0].type === "reload";
+  
+          if (isReload) {
+            const lastRiskUrl = localStorage.getItem('lastRiskAssessmentUrl');
+  
+            if (
+              lastRiskUrl &&
+              this.riskRoutes.includes(lastRiskUrl.split('/')[1]) &&
+              this.isValidSession()
+            ) {
+              if (url !== lastRiskUrl) {
+                this.router.navigateByUrl(lastRiskUrl);
+              }
+            } else {
+              if (url !== '/home') {
+                this.router.navigate(['/home']);
+              }
+            }
+          }
+        }
+      });
   }
 
   stayLoggedIn() {
@@ -176,17 +212,28 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     this.sessionActivityService.sessionExpired$.subscribe(() => {
       this.logout();
     });
-  
-    const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-    if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
-      const lastRiskUrl = localStorage.getItem('lastRiskAssessmentUrl');
-      if (lastRiskUrl && this.riskRoutes.includes(lastRiskUrl.split('/')[1])) {
-        this.router.navigateByUrl(lastRiskUrl);
-      } else {
-        this.router.navigate(['/home']);
-      }
-    }
   }
+
+ private isValidSession(): boolean {
+  try {
+    const encodedUsername = this.cookieService.get('username');
+    const loginTimestamp = parseInt(this.cookieService.get('loginTime'), 10);
+    const currentTime = Date.now();
+    const maxSessionDuration = 60 * 60 * 1000; // 60 minutes
+
+    // Explicit boolean checks
+    if (!encodedUsername || !loginTimestamp) {
+      return false;
+    }
+
+    const username = atob(encodedUsername);
+    return !!username && (currentTime - loginTimestamp < maxSessionDuration);
+  } catch {
+    this.cookieService.delete('username');
+    this.cookieService.delete('loginTime');
+    return false;
+  }
+}
 
   async presentSessionAlert() {
     const alert = await this.alertController.create({
