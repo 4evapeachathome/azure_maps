@@ -40,14 +40,78 @@ height: calc(100% - 40px);
   }
   .ra-banner{
     padding: 0;
-    padding-right: 20px;
+  //  padding-right: 20px;
   }
   .ra-form-container{
-    padding-left: 20px;
-    padding-right: 24px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+      color: $color-deep-Gray;
+      .rafc-container{   
+    padding: 8px;
+    height: 100%;
+      }
+      ion-item{
+        margin-bottom: 8px;
+      }
+      ion-text, ion-label{
+       color: $color-deep-Gray;
+      }
+     h1 {
+    color: $color-primary;
+    font-size: $font-size-xlll;
+    margin: 0;  
+  }
+  ion-radio-group{
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+ ion-radio{
+  color: $color-deep-Gray;
+  gap: 24px;
+   &::part(label){
+    margin-inline-start: 8px;
+   }
+}
+  }
+ ion-select{
+    --background: var(--color-white);
+    margin-bottom: 8px;
+ }
+ .assessment-description{
+
+  position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    overflow-y: auto;
+  border: 0;
+    .asses-desc-border{
+  border-left: 4px solid $color-primary;
+    padding: 0 20px;
+    }
+  h2{
+    font-size: $font-size-base;
+    color: $color-deep-Gray;
+    margin: 0;
+    margin-bottom: 8px;
+    font-weight: $font-bold  ;
+  }
+  ion-text{ 
+    font-size: $font-size-md;
+    color: $color-deep-Gray;
+
+  }
+ }
+ .assessment-button{
+  display: flex;
+  align-items: end ;
+  justify-content: end;
+  padding-bottom: 0;
+  padding-top: 0;
+ }
   }
   .ra-login-buttons{
 display: flex;
@@ -56,5 +120,13 @@ justify-content: end;
     ion-button{
       margin-left: 24px;
     }
+  }
+}
+.user-info{
+  justify-content: end;
+    display: flex;
+  ion-text{
+    font-size: $font-size-md;
+    color: $color-deep-Gray;
   }
 }

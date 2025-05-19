@@ -21,7 +21,7 @@ export class AssessmentresultComponent  implements OnInit {
   ngOnInit() {}
 
   viewResult() {
-    debugger;
+   // debugger;
     this.router.navigate(['/riskassessmentsummary']);
   }
 

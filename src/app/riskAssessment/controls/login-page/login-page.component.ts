@@ -70,7 +70,7 @@ export class LoginPageComponent  implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
-    debugger;
+   // debugger;
     const { username, password } = this.loginForm.value;
     // Check if username exists
     const user = this.userLogins.find(u => u.email.toLowerCase() === username.trim().toLowerCase());

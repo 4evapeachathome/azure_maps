@@ -35,7 +35,7 @@ export class MenuService {
 
 toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
   // Prevent re-emitting the same section
-  debugger;
+  //debugger;
   if (this.lastExpandedSection === sectionTitle && show) {
     return;
   }
