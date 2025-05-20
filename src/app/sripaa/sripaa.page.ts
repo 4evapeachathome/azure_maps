@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { SripacompComponent } from '../controls/sripacomp/sripacomp.component';
 import { MenuService } from 'src/shared/menu.service';
+import { LoadingController } from '@ionic/angular';
 
 
 @Component({
@@ -9,12 +10,41 @@ import { MenuService } from 'src/shared/menu.service';
   styleUrls: ['./sripaa.page.scss'],
   standalone: false,
 })
-export class SripaaPage implements OnInit {
+export class SripaaPage implements OnInit,AfterViewInit {
   @ViewChild(SripacompComponent) sripaCompRef!: SripacompComponent;
+  loading: HTMLIonLoadingElement | null = null;
 
-  constructor(private menuService:MenuService) { }
+  constructor(private menuService:MenuService,private loadingController: LoadingController) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    // Optional: show loader early if needed
+    await this.showLoader();
+  }
+
+  async ngAfterViewInit() {
+    // Wait for images and components to render
+    requestIdleCallback(async () => {
+      // Give a slight delay to ensure child components/images are painted
+      setTimeout(() => {
+        this.hideLoader();
+      }, 500); // adjust if needed based on image/component loading
+    });
+  }
+
+  async showLoader() {
+    this.loading = await this.loadingController.create({
+      message: 'Loading...',
+      spinner: 'crescent',
+      backdropDismiss: false,
+    });
+    await this.loading.present();
+  }
+
+  async hideLoader() {
+    if (this.loading) {
+      await this.loading.dismiss();
+      this.loading = null;
+    }
   }
 
   expandMenu(sectionTitle: string) {

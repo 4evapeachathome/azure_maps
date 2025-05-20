@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { MenuService } from 'src/shared/menu.service';
+import { LoadingController } from '@ionic/angular';
 
 interface IpvPartnerViolence {
   id: number;
@@ -18,16 +19,17 @@ interface IpvPartnerViolence {
   styleUrls: ['./partnerviolence.page.scss'],
   standalone: false,
 })
-export class PartnerviolencePage implements OnInit {
+export class PartnerviolencePage implements OnInit,AfterViewInit {
   title: string = '';
+  loading: HTMLIonLoadingElement | null = null;
   levels: IpvPartnerViolence[] = [];
 
-  constructor(private apiService: ApiService,private menuService:MenuService) {}
+  constructor(private apiService: ApiService,private menuService:MenuService,private loadingController: LoadingController) {}
 
-  ngOnInit() {
+
+  async ngOnInit() {
     this.apiService.getPartnerViolenceContent().subscribe(
       (response) => {
-        //debugger;
         const data = response.data[0];
         this.title = data.title;
         this.levels = data.ipvpartnerviolence;
@@ -36,6 +38,34 @@ export class PartnerviolencePage implements OnInit {
         console.error('Error in PartnerViolencePage:', error.message);
       }
     );
+    // Optional: show loader early if needed
+    await this.showLoader();
+  }
+
+  async ngAfterViewInit() {
+    // Wait for images and components to render
+    requestIdleCallback(async () => {
+      // Give a slight delay to ensure child components/images are painted
+      setTimeout(() => {
+        this.hideLoader();
+      }, 500); // adjust if needed based on image/component loading
+    });
+  }
+
+  async showLoader() {
+    this.loading = await this.loadingController.create({
+      message: 'Loading...',
+      spinner: 'crescent',
+      backdropDismiss: false,
+    });
+    await this.loading.present();
+  }
+
+  async hideLoader() {
+    if (this.loading) {
+      await this.loading.dismiss();
+      this.loading = null;
+    }
   }
 
   expandMenu(sectionTitle: string) {

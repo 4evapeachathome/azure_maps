@@ -68,7 +68,7 @@ export class AssessmentPageComponent  implements OnInit {
   goBack() {
     this.selectedAssessment = null;
     this.caseNumber = '';
-    this.guidedType = 'self-guided';
+    this.guidedType = 'staff-guided';
   }
 
   logout(){
