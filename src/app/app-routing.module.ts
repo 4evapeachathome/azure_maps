@@ -38,7 +38,7 @@ const routes: Routes = [
     loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizPageModule)
   },
   //Risk Assessment
-  { path: '', redirectTo: 'loginPage', pathMatch: 'full' },
+  // { path: '', redirectTo: 'loginPage', pathMatch: 'full' },
   { path: 'loginPage', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule),canActivate: [LoginGuard] },  
   { path: 'riskassessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule),canActivate: [RiskAssessmentGuard] },
   { path: 'riskassessmentresult', loadChildren: () => import('./riskAssessment/assessment-result/assessment-result.module').then(m => m.AssessmentResultPageModule),canActivate: [RiskAssessmentGuard] },

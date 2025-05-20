@@ -20,7 +20,7 @@ export class LoginPageComponent  implements OnInit {
   userLogins: any[] = [];
   showNewPasswordField = false;
   showPassword = false;
-showNewPassword = false;
+  showNewPassword = false;
 
   constructor(
     private fb: FormBuilder,
