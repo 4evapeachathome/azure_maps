@@ -1,4 +1,4 @@
-<div class="common-container risk-assessment-container h-100">
+<div *ngIf="loaded" class="common-container risk-assessment-container h-100">
   <ion-grid class="p-0 h-100">
     <ion-row class="h-100">
       <!-- Left Image Panel -->
@@ -55,7 +55,7 @@
               <ion-col size="12" size-sm="12">
               <div class="asses-radio">
                    <ion-text>This Assessment will be:</ion-text>
-                  <ion-radio-group (ngModelChange)="onGuidedTypeChange()">
+                  <ion-radio-group [(ngModel)]="guidedType" (ngModelChange)="onGuidedTypeChange()">
                  
                      <ion-radio value="self-guided" labelPlacement="end">Self-Guided</ion-radio>
                       <ion-radio value="staff-guided" labelPlacement="end">Staff-Guided</ion-radio>

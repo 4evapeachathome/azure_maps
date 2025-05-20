@@ -40,7 +40,6 @@ showNewPassword = false;
     this.apiService.getUserLogins().subscribe({
       next: (data: any) => {
         this.userLogins = data || [];
-        debugger
       },
       error: (error: any) => {
         console.error('Failed to fetch user logins', error);
@@ -55,7 +54,6 @@ showNewPassword = false;
   }
 
   onUsernameInput() {
-    debugger;
     const usernameInput = this.loginForm.get('username')?.value?.trim()?.toLowerCase();
     const user = this.userLogins.find(u => u.username?.toLowerCase() === usernameInput);
     if (user && user.IsPasswordChanged === false) {
@@ -174,5 +172,5 @@ showNewPassword = false;
       secure: true,
     });
   }
-  
+
 }

@@ -17,7 +17,8 @@ export class AssessmentPageComponent  implements OnInit {
   loggedInUser: any = null;
   selectedAssessment: string | null = null;
   caseNumber: string = '';
-  guidedType: 'self-guided' | 'staff-guided' = 'self-guided';
+  loaded: boolean = false;
+  guidedType: 'self-guided' | 'staff-guided' = 'staff-guided';
   assessmentTypes: { id: number; name: string; description: string }[] = [];
 
   constructor(
@@ -30,10 +31,10 @@ export class AssessmentPageComponent  implements OnInit {
     const encodedUser = this.cookieService.get('userdetails'); // Or 'username'
     if (encodedUser) {
       try {
-        debugger;
         this.loggedInUser = JSON.parse(atob(encodedUser));
         this.assessmentTypes = this.loggedInUser?.assessment_type || [];
         this.selectedAssessment = null;
+        this.loaded = true;
       } catch {
         console.error('Invalid cookie format, logging out...');
         this.cookieService.delete('user');
@@ -71,7 +72,9 @@ export class AssessmentPageComponent  implements OnInit {
   }
 
   logout(){
-    this.cookieService.delete('user');
+    this.selectedAssessment = null;
+    this.guidedType = 'staff-guided';
+    this.cookieService.delete('username');
     this.cookieService.delete('loginTime');
     this.cookieService.delete('userdetails');
     this.router.navigate(['/loginPage']);
