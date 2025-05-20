@@ -19,17 +19,19 @@ export class HomePage implements OnInit,AfterViewInit {
   constructor(private router: Router, private menuService:MenuService, private loadingController: LoadingController) {}
 
   async ngOnInit() {
-    // Optional: show loader early if needed
+    // Only show loader if not pre-rendered
     await this.showLoader();
   }
 
   async ngAfterViewInit() {
-    // Wait for images and components to render
-    requestIdleCallback(async () => {
-      // Give a slight delay to ensure child components/images are painted
+    const idleCallback = window['requestIdleCallback'] || function (cb: any) {
+      setTimeout(cb, 1000);
+    };
+
+    idleCallback(() => {
       setTimeout(() => {
         this.hideLoader();
-      }, 500); // adjust if needed based on image/component loading
+      }, 500);
     });
   }
 
@@ -40,11 +42,20 @@ export class HomePage implements OnInit,AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
+
+    // Force dismiss after 10 seconds just in case
+    setTimeout(() => {
+      this.hideLoader();
+    }, 7000);
   }
 
   async hideLoader() {
     if (this.loading) {
-      await this.loading.dismiss();
+      try {
+        await this.loading.dismiss();
+      } catch (e) {
+        console.warn('Loader already dismissed or not yet created');
+      }
       this.loading = null;
     }
   }
