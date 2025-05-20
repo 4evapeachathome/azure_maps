@@ -14,8 +14,6 @@ export class MenuService {
   filterOptions$ = this.filterOptionsSubject.asObservable();
   organizations$ = this.organizationsSubject.asObservable();
 
-
-
   private showAdditionalMenusSource = new BehaviorSubject<{ show: boolean, sectionTitle: string | null }>({
     show: false,
     sectionTitle: null
@@ -60,8 +58,6 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
 
   setOrganizations(orgs: any[]) {
     this.organizationsSubject.next(orgs);
-  }
-
-  
+  } 
 
 }

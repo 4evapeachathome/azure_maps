@@ -538,6 +538,9 @@ getAllSupportServices(endpoint: string): Observable<any> {
   );
 }
 
+
+
+
 //Get support service filter options
 
 getServiceFilterOptions(): Observable<any> {
@@ -970,67 +973,54 @@ getSripaa(): Observable<any> {
 
 
 //Risk Assessment Module
-
-getUserLogins(): Observable<any> {
+getUserLogins(): Observable<any[]> {
   const endpoint = APIEndpoints.userLogins;
   const options: QueryOptions = {
     populate: {
       assessment_type: {
         fields: ['name', 'description']
+      },
+      support_service: {
+        fields: ['OrgName']
       }
     }
   };
 
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
-     // debugger;
       if (!res.data || res.data.length === 0) return [];
 
-      return res.data.map((item: any) => {
-        // Helper function to safely decrypt fields
-        const decryptField = (encryptedValue: any): string | null => {
-          if (encryptedValue == null || encryptedValue === '') return null;
-          
-          try {
-            // Trim whitespace and handle non-string values
-            const encryptedString = encryptedValue.toString().trim();
-            if (!encryptedString) return null;
+      const decryptField = (encryptedValue: any): string | null => {
+        if (!encryptedValue) return null;
 
-            const bytes = CryptoJS.AES.decrypt(encryptedString, environment.secretKey);
-            const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-            
-            // Handle cases where decryption returns empty (invalid key/data)
-            return decrypted || encryptedString;
-          } catch (error) {
-            console.warn('Decryption failed for value:', encryptedValue, error);
-            return encryptedValue; // Return original value if decryption fails
-          }
-        };
+        try {
+          const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
+          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+          return decrypted || encryptedValue;
+        } catch (error) {
+          console.warn('Decryption failed for:', encryptedValue, error);
+          return encryptedValue;
+        }
+      };
 
-        return {
-          id: item.id,
-          username: decryptField(item.Username),
-          email: decryptField(item.email),
-          phone: decryptField(item.phone),
-          orgname: decryptField(item.orgname),
-          password: decryptField(item.password),
-          address: decryptField(item.address),
-          createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
-          types: item.assessment_type?.map((typeItem: any) => ({
-            id: typeItem.id,
-            name: decryptField(typeItem.name),
-            description: decryptField(typeItem.description)
-          })) || []
-        };
-      });
+      return res.data.map((item: any) => ({
+        id: item.id,
+        username: decryptField(item.Username),
+        password: decryptField(item.password),
+        orgName: item.support_service?.OrgName ?? 'N/A',
+        assessment_type: item.assessment_type ?? [],
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt
+      }));
     }),
     catchError((error) => {
-      console.error('Error fetching/decrypting user data:', error);
-      return throwError(() => new Error('Failed to load user logins. Please try again.'));
+      console.error('Error fetching/decrypting user logins:', error);
+      return throwError(() => new Error('Failed to load user logins.'));
     })
   );
 }
+
+
 
 
 
