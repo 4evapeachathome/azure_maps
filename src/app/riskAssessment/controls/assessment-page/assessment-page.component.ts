@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { MenuService } from 'src/shared/menu.service';
 
@@ -24,7 +24,8 @@ export class AssessmentPageComponent  implements OnInit {
   constructor(
     private menuService: MenuService,
     private router: Router,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
@@ -71,13 +72,41 @@ export class AssessmentPageComponent  implements OnInit {
     this.guidedType = 'staff-guided';
   }
 
-  logout(){
-    this.selectedAssessment = null;
-    this.guidedType = 'staff-guided';
-    this.cookieService.delete('username');
-    this.cookieService.delete('loginTime');
-    this.cookieService.delete('userdetails');
-    this.router.navigate(['/loginPage']);
+  stayLoggedIn() {
+    const now = Date.now().toString();
+    this.cookieService.set('loginTime', now, {
+      path: '/',
+      sameSite: 'Strict',
+      secure: true,
+    });
+  }
+
+
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            this.selectedAssessment = null;
+            this.guidedType = 'staff-guided';
+            this.cookieService.delete('username');
+            this.cookieService.delete('loginTime');
+            this.cookieService.delete('userdetails');
+            this.router.navigate(['/loginPage']);
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
   }
 
 }
