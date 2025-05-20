@@ -214,31 +214,38 @@ collapseAllSections(): void {
     if (item.title === 'Peace at Home' && !this.showAdditionalMenus) {
       this.showAdditionalMenus = true;
       this.processedMenu = this.buildMenuTree(this.menuItems);
-    }
-    // Collapse additional menus when clicking "Home"
-    else if (item.title === 'Home' && this.showAdditionalMenus) {
+    } 
+    // Always reset additional menus when clicking Home
+    else if (item.title === 'Home') {
       this.showAdditionalMenus = false;
       this.processedMenu = this.buildMenuTree(this.menuItems);
       this.collapseAllItems(this.processedMenu);
-    }
-    this.menuService.lastExpandedSection = item.title;
-    // Handle root-level items (no parent)
-    if (!item.parentMenu && item.children && item.children.length > 0) {
-      // Collapse all other root items and their children
-      this.processedMenu.forEach(rootItem => {
-        if (rootItem !== item) {
-          rootItem.expanded = false;
-          if (rootItem.children) {
-            this.collapseAllItems(rootItem.children);
+    } 
+    else {
+      // For any other main menu click, collapse all other root menus
+      if (!item.parentMenu) {
+        this.showAdditionalMenus = false; // reset additional menus on other main menus
+        this.processedMenu.forEach(rootItem => {
+          if (rootItem !== item) {
+            rootItem.expanded = false;
+            if (rootItem.children) {
+              this.collapseAllItems(rootItem.children);
+            }
           }
-        }
-      });
-      // Expand the clicked item if not already expanded
+        });
+      }
+    }
+  
+    this.menuService.lastExpandedSection = item.title;
+  
+    // Expand clicked root-level menu if it has children
+    if (!item.parentMenu && item.children && item.children.length > 0) {
       if (!item.expanded) {
         item.expanded = true;
       }
-    } else if (item.children && item.children.length > 0) {
-      // For non-root items with children, toggle only if not expanded
+    } 
+    // Expand non-root items with children if not already expanded
+    else if (item.children && item.children.length > 0) {
       if (!item.expanded) {
         item.expanded = true;
       }
