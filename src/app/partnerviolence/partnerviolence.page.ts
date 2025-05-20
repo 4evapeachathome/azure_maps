@@ -65,7 +65,7 @@ export class PartnerviolencePage implements OnInit,AfterViewInit {
     // Force dismiss after 10 seconds just in case
     setTimeout(() => {
       this.hideLoader();
-    }, 7000);
+    }, 5000);
   }
 
   async hideLoader() {

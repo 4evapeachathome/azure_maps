@@ -291,6 +291,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
 
   closeMobileMenu() {
+    debugger;
     if (this.isMobile && this.mobileToggle?.nativeElement.checked) {
       this.mobileToggle.nativeElement.checked = false;
       this.isMenuOpen = false;

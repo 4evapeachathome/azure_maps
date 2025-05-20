@@ -63,11 +63,11 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
   //Menu inital load
 
     get hasAppLoadedOnce(): boolean {
-      return localStorage.getItem('appLoadedOnce') === 'true';
+      return sessionStorage.getItem('appLoadedOnce') === 'true';
     }
   
     set hasAppLoadedOnce(value: boolean) {
-      localStorage.setItem('appLoadedOnce', value ? 'true' : 'false');
+      sessionStorage.setItem('appLoadedOnce', value ? 'true' : 'false');
     }
 
 }

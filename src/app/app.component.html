@@ -18,7 +18,7 @@
         <!-- Case 2: Default Layout (With Menu) -->
         <ng-container *ngIf="!isRiskAssessment && isRouteCheckComplete">
           <input #desktopToggle [(ngModel)]="isMenuOpen"  type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
-          <input #mobileToggle  type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
+          <input #mobileToggle [(ngModel)]="isMenuOpen" type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
 
           <label for="sidebar-toggle" class="sidebar-toggle-label">
             <ion-icon name="menu-outline" class="st-open"></ion-icon>
