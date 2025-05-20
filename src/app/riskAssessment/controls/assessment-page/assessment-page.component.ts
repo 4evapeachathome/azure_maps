@@ -30,8 +30,9 @@ export class AssessmentPageComponent  implements OnInit {
     const encodedUser = this.cookieService.get('userdetails'); // Or 'username'
     if (encodedUser) {
       try {
+        debugger;
         this.loggedInUser = JSON.parse(atob(encodedUser));
-        this.assessmentTypes = this.loggedInUser?.types || [];
+        this.assessmentTypes = this.loggedInUser?.assessment_type || [];
         this.selectedAssessment = null;
       } catch {
         console.error('Invalid cookie format, logging out...');
@@ -69,5 +70,11 @@ export class AssessmentPageComponent  implements OnInit {
     this.guidedType = 'self-guided';
   }
 
+  logout(){
+    this.cookieService.delete('user');
+    this.cookieService.delete('loginTime');
+    this.cookieService.delete('userdetails');
+    this.router.navigate(['/loginPage']);
+  }
 
 }

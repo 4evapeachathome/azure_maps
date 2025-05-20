@@ -72,7 +72,7 @@ export class LoginPageComponent  implements OnInit {
     debugger;
     const { username, password } = this.loginForm.value;
     // Check if username exists
-    const user = this.userLogins.find(u => u.email.toLowerCase() === username.trim().toLowerCase());
+    const user = this.userLogins.find(u => u.username?.toLowerCase() === username.trim()?.toLowerCase());
     if (!user) {
       console.log('Username not found:', username);
       this.loginForm.get('username')?.setErrors({ userNotFound: true });
