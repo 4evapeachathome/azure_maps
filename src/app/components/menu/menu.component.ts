@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, Input, CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -52,13 +52,18 @@ export class MenuComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private zone: NgZone
   ) {
+    
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       this.selectedId = this.router.url;
       this.expandCurrentSection();
+    });
+    this.zone.run(() => {
+      setTimeout(() => this.expandCurrentSection(), 0);
     });
   }
 
@@ -71,21 +76,33 @@ export class MenuComponent implements OnInit {
     this.router.navigate(['/loginPage']);
   }
 
-  ngOnInit() {
-    this.loadMenuItems();
-    this.subscription = this.menuService.showAdditionalMenus$.subscribe(({ show, sectionTitle }) => {
-      this.showAdditionalMenus = show;
-    
-      if (show) {
-        this.processedMenu = this.buildMenuTree(this.menuItems);
-    
-        if (sectionTitle) {
-          this.expandOnlySection(sectionTitle); // Collapse all and expand the right one
-        }
-      }
-    });
-  }
+  ngOnInit(): void {
+  this.loadMenuItems();
 
+  this.subscription = this.menuService.showAdditionalMenus$.subscribe(({ show, sectionTitle }) => {
+    this.showAdditionalMenus = show;
+
+    if (show) {
+      // First process the menu tree
+      this.processedMenu = this.buildMenuTree(this.menuItems);
+
+      // Collapse all sections initially
+      this.collapseAllSections();
+
+      // Then expand only the target section (if provided)
+      if (sectionTitle) {
+        this.expandOnlySection(sectionTitle);
+      }
+    } else {
+      // If not showing, make sure all sections are collapsed
+      this.collapseAllSections();
+    }
+  });
+}
+
+collapseAllSections(): void {
+  this.processedMenu.forEach(item => item.expanded = false);
+}
   expandOnlySection(title: string) {
     this.currentExpandedSection = title;
   
@@ -108,6 +125,8 @@ export class MenuComponent implements OnInit {
           this.menuItems = response;
           this.processedMenu = this.buildMenuTree(this.menuItems);
           this.menuService.setMenuItems(this.menuItems);
+          this.selectedId = this.router.url;
+         this.expandCurrentSection();
         } else {
           console.error('Invalid response format:', response);
         }
@@ -172,12 +191,20 @@ export class MenuComponent implements OnInit {
       return a.order === null ? 1 : -1; // Null orders come last
     });
 
-    return sortedRootItems.filter(item => {
-      if (this.initiallyHiddenMenuTitles.includes(item.title)) {
-        return this.showAdditionalMenus;
+    const filteredItems = sortedRootItems.filter(item => {
+      if (
+        this.initiallyHiddenMenuTitles.includes(item.title) &&
+        !this.menuService.hasAppLoadedOnce
+      ) {
+        return false; // Hide on first load only
       }
       return true;
     });
+  
+    // After building for the first time, mark as loaded
+    this.menuService.hasAppLoadedOnce = true;
+  
+    return filteredItems;
   }
 
   toggleItem(item: MenuItem, event: Event) {

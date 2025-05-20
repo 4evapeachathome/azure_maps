@@ -1010,7 +1010,9 @@ getUserLogins(): Observable<any[]> {
         orgName: item.support_service?.OrgName ?? 'N/A',
         assessment_type: item.assessment_type ?? [],
         createdAt: item.createdAt,
-        updatedAt: item.updatedAt
+        updatedAt: item.updatedAt,
+        IsPasswordChanged: item.IsPasswordChanged,
+        isSendInvite: item.sendInvite,
       }));
     }),
     catchError((error) => {
@@ -1021,6 +1023,16 @@ getUserLogins(): Observable<any[]> {
 }
 
 
+updateUserLogin(userId: string | number, payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/user-logins/${userId}`;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+
+  // Strapi requires the payload inside a `data` key
+  return this.http.put(endpoint, { data: payload }, { headers });
+}
 
 
 

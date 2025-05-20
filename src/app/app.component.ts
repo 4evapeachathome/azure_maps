@@ -141,38 +141,38 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
         this.isRiskAssessment = this.riskRoutes.includes(currentPath);
         this.isRouteCheckComplete = true;
   
-        // Store or clear last risk URL based on current route
-        if (this.isRiskAssessment) {
-          localStorage.setItem('lastRiskAssessmentUrl', url);
-        } else {
-          localStorage.removeItem('lastRiskAssessmentUrl');
-        }
+        // // Store or clear last risk URL based on current route
+        // if (this.isRiskAssessment) {
+        //   localStorage.setItem('lastRiskAssessmentUrl', url);
+        // } else {
+        //   localStorage.removeItem('lastRiskAssessmentUrl');
+        // }
   
-        // Handle page reload only once
-        if (!this.hasHandledReload) {
-          this.hasHandledReload = true;
+        // // Handle page reload only once
+        // if (!this.hasHandledReload) {
+        //   this.hasHandledReload = true;
   
-          const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-          const isReload = navigationEntries.length > 0 && navigationEntries[0].type === "reload";
+        //   const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+        //   const isReload = navigationEntries.length > 0 && navigationEntries[0].type === "reload";
   
-          if (isReload) {
-            const lastRiskUrl = localStorage.getItem('lastRiskAssessmentUrl');
+        //   if (isReload) {
+        //     const lastRiskUrl = localStorage.getItem('lastRiskAssessmentUrl');
   
-            if (
-              lastRiskUrl &&
-              this.riskRoutes.includes(lastRiskUrl.split('/')[1]) &&
-              this.isValidSession()
-            ) {
-              if (url !== lastRiskUrl) {
-                this.router.navigateByUrl(lastRiskUrl);
-              }
-            } else {
-              if (url !== '/home') {
-                this.router.navigate(['/home']);
-              }
-            }
-          }
-        }
+        //     if (
+        //       lastRiskUrl &&
+        //       this.riskRoutes.includes(lastRiskUrl.split('/')[1]) &&
+        //       this.isValidSession()
+        //     ) {
+        //       if (url !== lastRiskUrl) {
+        //         this.router.navigateByUrl(lastRiskUrl);
+        //       }
+        //     } else {
+        //       if (url !== '/home') {
+        //         this.router.navigate(['/home']);
+        //       }
+        //     }
+        //   }
+        // }
       });
   }
 
@@ -189,6 +189,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   logout() {
     this.cookieService.delete('username');
     this.cookieService.delete('loginTime');
+    this.cookieService.delete('userdetails');
     this.showSessionWarning = false;
     this.router.navigate(['/loginPage']);
   }

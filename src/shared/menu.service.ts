@@ -60,4 +60,14 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
     this.organizationsSubject.next(orgs);
   } 
 
+  //Menu inital load
+
+    get hasAppLoadedOnce(): boolean {
+      return localStorage.getItem('appLoadedOnce') === 'true';
+    }
+  
+    set hasAppLoadedOnce(value: boolean) {
+      localStorage.setItem('appLoadedOnce', value ? 'true' : 'false');
+    }
+
 }
