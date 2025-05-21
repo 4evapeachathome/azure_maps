@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast, Utility } from 'src/shared/utility';
 
@@ -88,7 +89,7 @@ export class LoginPageComponent  implements OnInit {
       alert('Please enter your username first.');
       return;
     }
-    fetch('http://localhost:1337/api/auth/forgot-password', {
+    fetch(APIEndpoints.forgetPw, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username })

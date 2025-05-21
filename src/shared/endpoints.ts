@@ -56,4 +56,5 @@ export const APIEndpoints = {
     
     //Risk assessment modules
     userLogins :`${environment.apiHost}/api/user-logins`,
+    forgetPw :`${environment.apiHost}/api/auth/forgot-password`,
   }
