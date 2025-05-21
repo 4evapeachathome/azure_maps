@@ -32,8 +32,18 @@ export class HeaderComponent  implements OnInit {
   }
 
   private checkRoute() {
-    const currentPath = this.location.path();
-    this.showExitButton = currentPath !== '/home' && currentPath !== '';
+    const currentPath = this.location.path().split('?')[0]; // remove query params
+  
+    const excludedPaths = [
+      '/home',
+      '',
+      '/loginPage',
+      '/riskassessment',
+      '/riskassessmentresult',
+      '/riskassessmentsummary'
+    ];
+  
+    this.showExitButton = !excludedPaths.includes(currentPath);
   }
 
 }
