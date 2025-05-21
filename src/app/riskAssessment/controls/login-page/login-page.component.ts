@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -22,6 +22,7 @@ export class LoginPageComponent  implements OnInit {
   showNewPasswordField = false;
   showPassword = false;
   showNewPassword = false;
+  @Input() reloadFlag: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -37,19 +38,30 @@ export class LoginPageComponent  implements OnInit {
   }
 
   ngOnInit() {
-    // Fetch user logins on component initialization
+    // Fetch user logins on component initialization 
+    this.getUserLogins();
+    this.loginForm.get('username')?.valueChanges.subscribe(() => this.onUsernameInput());
+    this.loginForm.get('password')?.valueChanges.subscribe(() => {
+      if (this.loginForm.contains('newPassword')) {
+        this.loginForm.get('newPassword')!.updateValueAndValidity();
+      }
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    debugger;
+    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true) {
+      this.getUserLogins()  // Call your API or logic
+    }
+  }
+
+  getUserLogins() {
     this.apiService.getUserLogins().subscribe({
       next: (data: any) => {
         this.userLogins = data || [];
       },
       error: (error: any) => {
         console.error('Failed to fetch user logins', error);
-      }
-    });
-    this.loginForm.get('username')?.valueChanges.subscribe(() => this.onUsernameInput());
-    this.loginForm.get('password')?.valueChanges.subscribe(() => {
-      if (this.loginForm.contains('newPassword')) {
-        this.loginForm.get('newPassword')!.updateValueAndValidity();
       }
     });
   }
@@ -83,8 +95,8 @@ export class LoginPageComponent  implements OnInit {
 
   onForgotPassword(event: Event) {
     event.preventDefault(); // prevent link behavior
-    const username = this.loginForm.get('username')?.value;
-  
+    const rawUsername = this.loginForm.get('username')?.value || '';
+    const username = rawUsername.trim().toLowerCase();
     if (!username) {
       alert('Please enter your username first.');
       return;
@@ -96,10 +108,12 @@ export class LoginPageComponent  implements OnInit {
     })
       .then(res => res.json())
       .then(data => {
-        alert(data.message || 'Reset email sent if username exists');
+        alert(data.message || 'Reset email sent, please contact your administrator');
+        this.loginForm.reset();
       })
       .catch(() => {
         alert('Failed to send reset email');
+        this.loginForm.reset();
       });
   }
 
@@ -138,6 +152,7 @@ export class LoginPageComponent  implements OnInit {
           await this.handleSuccessfulLogin(username, user);
           await presentToast(this.toastController, 'Password updated successfully!', 2500, 'top');
           this.router.navigate(['/riskassessment']);
+          this.loginForm.reset();
         },
         error: async err => {
           console.error('Failed to update user login', err);
@@ -149,6 +164,7 @@ export class LoginPageComponent  implements OnInit {
       await this.handleSuccessfulLogin(username, user);
       await presentToast(this.toastController, 'Login successful.', 2000, 'top');
       this.router.navigate(['/riskassessment']);
+      this.loginForm.reset();
     }
   }
   

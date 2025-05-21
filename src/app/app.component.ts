@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, Vie
 import { AlertController, IonicModule, Platform } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
+import { Location } from '@angular/common';
 import { HeaderComponent } from "./controls/header/header.component";
 import { filter, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -110,6 +111,7 @@ interface PlaceDetails {
 })
 export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMobile!: boolean;
+  private sessionAlert: HTMLIonAlertElement | null = null;
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
   @ViewChild('mobileToggle', { static: false }) mobileToggle!: ElementRef<HTMLInputElement>;
@@ -117,7 +119,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isRiskAssessment = false;
   isRouteCheckComplete = false;
   showSessionWarning = false;
-
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
   private hasHandledReload = false;
@@ -128,6 +129,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     private alertController: AlertController,
     private cookieService: CookieService,
     private platform: Platform,
+    private location:Location,
     private router: Router,
     private apiService: ApiService,
     private sharedDataService: MenuService
@@ -185,15 +187,18 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       secure: true,
     });
   }
-
-  logout() {
+  async logout() {
+    if (this.sessionAlert) {
+      await this.sessionAlert.dismiss();
+      this.sessionAlert = null;
+    }
+  
     this.cookieService.delete('username');
     this.cookieService.delete('loginTime');
     this.cookieService.delete('userdetails');
-    this.showSessionWarning = false;
+  
     this.router.navigate(['/loginPage']);
   }
-
   ngOnInit() {
     this.loadInitialData();
   
@@ -207,11 +212,15 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
   
     this.sessionActivityService.sessionWarning$.subscribe(() => {
-      this.presentSessionAlert();
+      if (this.shouldShowSessionAlert()) {
+        this.presentSessionAlert();
+      }
     });
   
     this.sessionActivityService.sessionExpired$.subscribe(() => {
-      this.logout();
+      if (this.isUserLoggedIn()) {
+        this.logout();
+      }
     });
   }
 
@@ -236,26 +245,44 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
 }
 
-  async presentSessionAlert() {
-    const alert = await this.alertController.create({
-      header: 'Session Expiring',
-      message: 'You’ve been idle for a while. Do you want to stay logged in?',
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: 'Stay Logged In',
-          handler: () => this.stayLoggedIn()
-        },
-        {
-          text: 'Logout',
-          role: 'destructive',
-          handler: () => this.logout()
+private isUserLoggedIn(): boolean {
+  return this.cookieService.check('username') &&
+         this.cookieService.check('userdetails') &&
+         this.cookieService.check('loginTime');
+}
+
+private shouldShowSessionAlert(): boolean {
+  const currentPath = this.location.path();
+
+  const validRoutes = [
+    '/riskassessment',
+    '/riskassessmentresult',
+    '/riskassessmentsummary'
+  ];
+
+  return this.isUserLoggedIn() && validRoutes.some(route => currentPath.startsWith(route));
+}
+
+async presentSessionAlert() {
+  if (this.sessionAlert) return; // prevent duplicate popups
+
+  this.sessionAlert = await this.alertController.create({
+    header: 'Session Expiring',
+    message: 'You will be logged out in 5 minutes due to inactivity.',
+    buttons: [
+      {
+        text: 'Stay Logged In',
+        handler: () => {
+          this.sessionActivityService.resetSessionTimers(); // Optionally restart timer
+          this.sessionAlert = null;
         }
-      ]
-    });
-  
-    await alert.present();
-  }
+      }
+    ],
+    backdropDismiss: false
+  });
+
+  await this.sessionAlert.present();
+}
 
 
   ngAfterViewInit() {

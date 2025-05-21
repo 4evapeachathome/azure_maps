@@ -9,12 +9,24 @@ import { LoadingController } from '@ionic/angular';
 })
 export class LoginPagePage implements OnInit,AfterViewInit {
   loading: HTMLIonLoadingElement | null = null;
+  reloadLoginData: boolean = false;
 
   constructor(private loadingController: LoadingController) { }
 
   async ngOnInit() {
     // Only show loader if not pre-rendered
     await this.showLoader();
+  }
+
+  
+  ionViewWillEnter() {
+    // Toggle off first
+    this.reloadLoginData = false;
+  
+    // Then toggle on after a small delay to trigger ngOnChanges in the child
+    setTimeout(() => {
+      this.reloadLoginData = true;
+    }, 0); // Delay can be 0 or a few ms
   }
 
   async ngAfterViewInit() {

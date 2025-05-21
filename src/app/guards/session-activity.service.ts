@@ -29,6 +29,15 @@ export class SessionActivityService {
     this.resetTimers(); // Initialize
   }
 
+  public resetSessionTimers() {
+    this.resetTimers();
+  }
+
+  clearTimers() {
+    clearTimeout(this.warningTimer);
+    clearTimeout(this.logoutTimer);
+  }
+
   private resetTimers() {
     const now = Date.now().toString();
     this.cookieService.set('loginTime', now, {
@@ -37,8 +46,7 @@ export class SessionActivityService {
       secure: true,
     });
 
-    clearTimeout(this.warningTimer);
-    clearTimeout(this.logoutTimer);
+   this.clearTimers();
 
     this.warningTimer = setTimeout(() => {
       this.ngZone.run(() => this.sessionWarning$.next());
