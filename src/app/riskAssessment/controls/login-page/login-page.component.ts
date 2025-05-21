@@ -109,11 +109,13 @@ export class LoginPageComponent  implements OnInit {
       .then(res => res.json())
       .then(data => {
         alert(data.message || 'Reset email sent, please contact your administrator');
-        this.loginForm.reset();
+        this.loginForm.patchValue({ password: '' });
+        this.loginForm.get('password')?.setErrors(null);
       })
       .catch(() => {
         alert('Failed to send reset email');
-        this.loginForm.reset();
+        this.loginForm.patchValue({ password: '' });
+        this.loginForm.get('password')?.setErrors(null);
       });
   }
 
