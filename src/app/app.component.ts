@@ -122,7 +122,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
   private hasHandledReload = false;
-  private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary','loginPage'];
+  private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary','loginPage','hitsassessment'];
 
   constructor(
     private sessionActivityService: SessionActivityService,

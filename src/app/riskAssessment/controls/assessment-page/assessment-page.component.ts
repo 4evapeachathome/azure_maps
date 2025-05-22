@@ -60,7 +60,30 @@ export class AssessmentPageComponent  implements OnInit {
 
   goToTest() {
     if (this.selectedAssessment) {
-      this.router.navigate(['/riskassessmentresult'], { state: { assessmentType: this.selectedAssessment } });
+      const assessmentName = this.selectedAssessment?.toLowerCase().trim();
+  
+      switch (assessmentName) {
+        case 'hits assessment':
+          this.router.navigate(['/hitsassessment'], { state: { assessmentType: this.selectedAssessment } });
+          break;
+        case 'conflict tactic scale 2':
+          this.router.navigate(['/cts2'], { state: { assessmentType: this.selectedAssessment } });
+          break;
+        case 'danger assessment for immigrants':
+          this.router.navigate(['/danger-assessment-immigrants'], { state: { assessmentType: this.selectedAssessment } });
+          break;
+        case 'the danger assessment (da)':
+          this.router.navigate(['/danger-assessment'], { state: { assessmentType: this.selectedAssessment } });
+          break;
+        case 'relationship assessment tool originally called web scale':
+          this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });
+          break;
+        case 'signs of self-recognition in intimate partner abuse (ssripa)':
+          this.router.navigate(['/ssripa'], { state: { assessmentType: this.selectedAssessment } });
+          break;
+        default:
+          console.warn('No matching route found for selected assessment.');
+      }
     } else {
       console.log('Please select an assessment type');
     }

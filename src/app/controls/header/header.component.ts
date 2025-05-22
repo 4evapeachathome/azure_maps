@@ -38,6 +38,7 @@ export class HeaderComponent  implements OnInit {
       '/home',
       '',
       '/loginPage',
+      '/hitsassessment',
       '/riskassessment',
       '/riskassessmentresult',
       '/riskassessmentsummary'
