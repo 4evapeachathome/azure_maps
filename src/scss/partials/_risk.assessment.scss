@@ -44,9 +44,16 @@ height: calc(100% - 40px);
     margin-bottom: 12px;
   }
   h4{
-    color: $color-dark-Gray;
-    font-size: $font-size-l;
+   color: $color-deep-Gray;
+    font-size: $font-size-md;
+    font-weight: $font-bold ;
     margin: 0;  
+  }
+  h5{
+     color: $color-deep-Gray;
+    font-size: $font-size-sm;
+    margin: 0; 
+    font-weight: $font-bold ;
   }
    ion-searchbar{
   background: var(--color-white) !important;
@@ -76,10 +83,12 @@ height: calc(100% - 40px);
       ion-item{
         margin-bottom: 8px;
       }
-      ion-text, ion-label{
+      ion-text, ion-label, p{
        color: $color-deep-Gray;
       }
-   
+   p{
+    margin-block-start: 0;
+   }
   .asses-radio{
     display: flex;
     gap: 16px;
@@ -227,3 +236,59 @@ justify-content: end;
         font-weight: $font-bold ;
   }
 }
+.qr-code-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0rem;
+   .qrcode canvas {
+      width: 100px !important;
+      height: 100px !important;
+    }
+
+  }
+  .risk-meter {
+    text-align: center;
+  
+    h4 {
+      text-transform: uppercase;
+    }
+    .reading-block, .reading-label{
+
+   color: $icon-tint-Gray;
+    font-weight: $font-bold ;
+
+    }
+  
+    .meter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  
+      canvas {
+        width: 200px !important;
+        height: 120px !important; // Adjust height for semi-circle
+      }
+  
+      p {
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+    }
+  }
+    .pdf-export-container {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    padding: 20px;
+    color: black;
+    
+    // Ensure all elements are visible
+    * {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+  }
