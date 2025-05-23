@@ -19,6 +19,9 @@ border-bottom-left-radius: 8px;
 .ra-grid{
 height: calc(100% - 40px);
 }
+.risk-assessment-container::-webkit-scrollbar {
+  display: none;
+  }
 .risk-assessment-container, .risk-container{
   padding: 0 !important;
   position: absolute;
@@ -143,6 +146,7 @@ height: calc(100% - 40px);
 line-height: 1.5;
   }
  }
+ 
  .assessment-button{
   display: flex;
   align-items: end ;
@@ -160,6 +164,7 @@ justify-content: end;
     }
   }
 }
+
 .user-info{
   justify-content: end;
     display: flex;
