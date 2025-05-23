@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
+import { ApiService } from 'src/app/services/api.service';
 import { MenuService } from 'src/shared/menu.service';
 
 @Component({
@@ -20,11 +21,12 @@ export class AssessmentPageComponent  implements OnInit {
   loaded: boolean = false;
   guidedType: 'self-guided' | 'staff-guided' = 'staff-guided';
   assessmentTypes: { id: number; name: string; description: string }[] = [];
-
+  guidedTypeLabel: string = 'Staff-Guided';
   constructor(
     private menuService: MenuService,
     private router: Router,
     private cookieService: CookieService,
+    private apiService: ApiService,
     private alertController: AlertController
   ) { }
 
@@ -47,6 +49,7 @@ export class AssessmentPageComponent  implements OnInit {
   }
 
   onGuidedTypeChange() {
+    this.updateGuidedTypeLabel();
   }
 
   onAssessmentChange() {
@@ -58,13 +61,41 @@ export class AssessmentPageComponent  implements OnInit {
     return selectedType?.description || 'Please select an assessment type.';
   }
 
+  navigateWithHitsCache(targetRoute: string) {
+    const cached = this.menuService.getHitsAssessment();
+    if (cached) {
+      this.router.navigate([targetRoute]);
+    } else {
+      this.apiService.getHitsAssessmentQuestions().subscribe({
+        next: (res: any) => {
+          const hitsData = res || [];
+          // Sort answer options for each question
+          hitsData.forEach((q: any) => {
+            q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
+          });
+  
+          this.menuService.setHitsAssessment(hitsData);
+          this.router.navigate([targetRoute]);
+        },
+        error: (err) => {
+          console.error('Failed to load HITS data:', err);
+        }
+      });
+    }
+  }
+
+  private updateGuidedTypeLabel() {
+    // Update the label based on the selected guidedType
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+  }
+
   goToTest() {
     if (this.selectedAssessment) {
       const assessmentName = this.selectedAssessment?.toLowerCase().trim();
   
       switch (assessmentName) {
         case 'hits assessment':
-          this.router.navigate(['/hitsassessment'], { state: { assessmentType: this.selectedAssessment } });
+          this.navigateWithHitsCache('/hitsassessment');
           break;
         case 'conflict tactic scale 2':
           this.router.navigate(['/cts2'], { state: { assessmentType: this.selectedAssessment } });

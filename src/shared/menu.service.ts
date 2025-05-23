@@ -70,4 +70,19 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
       sessionStorage.setItem('appLoadedOnce', value ? 'true' : 'false');
     }
 
+    //Hits Assessment
+    private hitsAssessmentData: any[] | null = null;
+
+    setHitsAssessment(data: any[]) {
+      this.hitsAssessmentData = data;
+    }
+  
+    getHitsAssessment(): any[] | null {
+      return this.hitsAssessmentData;
+    }
+  
+    clearHitsAssessment() {
+      this.hitsAssessmentData = null;
+    }
+
 }

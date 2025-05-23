@@ -58,27 +58,22 @@
                 <div class="hits-header">
                   <h3>How often does your partner?</h3>
                   <div class="hits-scale">
-                    <span>1. Never</span>
-                    <span>2. Rarely</span>
-                    <span>3. Sometimes</span>
-                    <span>4. Fairly Often</span>
-                    <span>5. Frequently</span>
+                    <span *ngFor="let scale of scaleOptions">{{ scale }}</span>
                   </div>
                 </div>
               
-                <div class="hits-question" *ngFor="let q of hitsQuestions; let i = index">
-                  <label>{{ i + 1 }}. {{ q.text }}</label>
-                  <div class="hits-options">
-                    <ion-radio-group [(ngModel)]="q.selected">
-                      <ion-radio *ngFor="let option of [1, 2, 3, 4, 5]" 
-                                 [value]="option"
-                                 labelPlacement="stacked"
-                                 mode="md"
-                                 class="hits-radio">
-                      </ion-radio>
-                    </ion-radio-group>
+                <div class="hits-questions">
+                  <div *ngFor="let question of hitsQuestions" class="question-block">
+                    <p class="question-text">{{ question.text }}</p>
+                    <div class="options">
+                      <ion-radio-group [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>                        <ion-item *ngFor="let option of question.options">
+                          <ion-label>{{ option.label }}</ion-label>
+                          <ion-radio slot="start" [value]="option.score"></ion-radio>
+                        </ion-item>
+                      </ion-radio-group>
+                    </div>
                   </div>
-                </div>
+                </div>                          
               </ion-col>
             </ion-row>
           

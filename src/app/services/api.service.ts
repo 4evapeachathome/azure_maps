@@ -1035,6 +1035,51 @@ updateUserLogin(userId: string | number, payload: any): Observable<any> {
 }
 
 
+//Hits assessment
+getHitsAssessmentQuestions(): Observable<any> {
+  const endpoint = APIEndpoints.hitsAssessmentQuestions; // Update this in your APIEndpoints
+  const options: QueryOptions = {
+    fields: ['question_text', 'weight_critical_alert'],
+    populate: {
+      multiple_answer_option: {
+        fields: ['label', 'score']
+      },
+      HitsAssessment: {
+        fields: ['HitsExceptional']
+      }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      if (!res.data || !Array.isArray(res.data)) {
+        return [];
+      }
+      return res.data.map((item: any) => ({
+        id: item.id,
+        documentId: item.documentId,
+        question_text: item.question_text || '',
+        weight_critical_alert: item.weight_critical_alert || false,
+        multiple_answer_option: (item.multiple_answer_option || []).map((opt: any) => ({
+          id: opt.id,
+          documentId: opt.documentId,
+          label: opt.label || '',
+          score: opt.score ?? null
+        })),
+        HitsAssessment: (item.HitsAssessment || []).map((caseItem: any) => ({
+          id: caseItem.id,
+          HitsExceptional: caseItem.HitsExceptional ?? null
+        }))
+      }));
+    }),
+    catchError(error => {
+      console.error('Error fetching hits-assessment-questions data', error);
+      return throwError(error);
+    })
+  );
+}
+
+
 
 }
 
