@@ -1356,6 +1356,8 @@ color: var(--color-dark-Gray);
   left: 0;
   right: 0;
   height: 100%;
+  overflow: hidden;
+    overflow-y: auto;
 }
 ion-footer {
   background-color: $color-dark-Gray;

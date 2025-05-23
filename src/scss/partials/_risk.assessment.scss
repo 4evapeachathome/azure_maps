@@ -19,13 +19,15 @@ border-bottom-left-radius: 8px;
 .ra-grid{
 height: calc(100% - 40px);
 }
-.risk-assessment-container{
+.risk-assessment-container, .risk-container{
   padding: 0 !important;
   position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
   h1{
     color: $color-primary;
     font-size: $font-size-risk-xlll;
@@ -110,6 +112,9 @@ height: calc(100% - 40px);
     margin-bottom: 8px;
         --padding-start: 16px;
             --padding-end: 16px;
+ }
+ .ass-description{
+  min-height: 150px;
  }
  .assessment-description{
 
