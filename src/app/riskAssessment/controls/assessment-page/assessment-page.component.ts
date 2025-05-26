@@ -53,6 +53,7 @@ export class AssessmentPageComponent  implements OnInit {
   }
 
   onAssessmentChange() {
+    sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
     console.log('Selected assessment:', this.selectedAssessment);
   }
 

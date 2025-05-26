@@ -59,7 +59,12 @@
             </ion-row>
             <ion-row>
               <ion-col>
-                <ion-text>Total Score: {{riskValue}}</ion-text>
+                <ion-text>
+                  Thanks for taking the <strong>{{ selectedAssessment }}</strong> assessment.<br />
+                  Here is your score: <strong>{{ riskValue }}</strong><br /><br />
+                  <strong>Note:</strong> {{ note }}<br />
+                  <strong>Caution:</strong> {{ caution }}
+                </ion-text>
               </ion-col>
             </ion-row>
             

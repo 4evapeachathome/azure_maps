@@ -1160,15 +1160,16 @@ getHitsAssessmentQuestions(): Observable<any> {
 //getresultfor hits assessment
 getHitsResultCalculation(): Observable<any> {
   return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
-    fields: [
-      'ColorCode',
-      'minvalue',
-      'maxvalue',
-    ]
+    populate: {
+      AnswerOption: {
+        fields: ['label', 'minScore', 'maxScore']
+      }
+    }, 
+    fields: ['Note', 'Caution'] 
   }, environment.apitoken).pipe(
     catchError((error: any) => {
-      console.error('Error fetching Hits result api:', error);
-      return throwError('An error occurred while Hits result api. Please try again later.');
+      console.error('Error fetching Hits result API:', error);
+      return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
     })
   );
 }

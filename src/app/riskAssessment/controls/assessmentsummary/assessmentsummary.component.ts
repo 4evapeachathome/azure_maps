@@ -45,7 +45,9 @@ export class AssessmentsummaryComponent  implements OnInit {
   gaugeThresholds: any[] = [];
   thresholdValues: { [key: string]: { color: string } } = {};
   criticalalert: boolean = false;
-
+  note!: string;
+  caution!: string;
+  selectedAssessment: string | null = null; // To store the selected assessment type
 
   constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController) { }
 
@@ -72,14 +74,13 @@ export class AssessmentsummaryComponent  implements OnInit {
   
     this.updateGuidedTypeLabel();
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
-  
+    this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
     const resultStr = sessionStorage.getItem('hitsAssessmentResult');
-  debugger;
     if (resultStr) {
       const result = JSON.parse(resultStr);
       this.riskValue = result.totalScore;
-      this.answerSummary = result.answers;
-      this.criticalalert = result.criticalAlert === 'true';
+      this.answerSummary = result.summary;
+      this.criticalalert = result.criticalAlert === 'true' || result.criticalAlert === true;
     }
   
     this.fetchHitResults();
@@ -195,28 +196,42 @@ export class AssessmentsummaryComponent  implements OnInit {
         if (response && response.data) {
           debugger;
           this.hitResults = response.data;
-          // Set min and max for the gauge
-          this.riskGaugeMin = Math.min(...this.hitResults.map((r: any) => r.minvalue));
-          this.riskGaugeMax = Math.max(...this.hitResults.map((r: any) => r.maxvalue));
-
+  
+          // Extract and store Note and Caution (assumes only one item in hitResults)
+          const hitData = this.hitResults[0];
+          this.note = hitData?.Note || '';
+          this.caution = hitData?.Caution || '';
+  
+          const answerOptions = hitData?.AnswerOption || [];
+  
+          // Set min and max for the gauge from nested AnswerOption scores
+          const allMinScores = answerOptions.map((opt: any) => opt.minScore);
+          const allMaxScores = answerOptions.map((opt: any) => opt.maxScore ?? opt.minScore);
+  
+          this.riskGaugeMin = Math.min(...allMinScores);
+          this.riskGaugeMax = Math.max(...allMaxScores);
+  
           // Handle critical alert case
           if (this.criticalalert) {
+            debugger;
             this.thresholdValues = {
-              [this.riskGaugeMin]: { color: 'red' },
+              10: { color: 'red' },
+              20: { color: 'red' }
             };
           } else {
             // Map API data to thresholds
             this.thresholdValues = {};
-            this.hitResults.forEach((result: any) => {
-              // Set threshold at the minvalue of each range
-              this.thresholdValues[result.minvalue] = {
-                color: result.ColorCode.toLowerCase(),
+            answerOptions.forEach((option: any) => {
+              this.thresholdValues[option.minScore] = {
+                color: this.getColorForLabel(option.label),
               };
             });
           }
         } else {
           this.hitResults = [];
           this.thresholdValues = {};
+          this.note = '';
+          this.caution = '';
         }
       },
       error: (error: any) => {
@@ -227,6 +242,15 @@ export class AssessmentsummaryComponent  implements OnInit {
         console.log('Hit results fetch completed');
       },
     });
+  }
+
+  getColorForLabel(label: string): string {
+    switch (label?.toLowerCase()) {
+      case 'yellow': return 'green';
+      case 'orange': return 'orange';
+      case 'red': return 'red';
+      default: return 'gray';
+    }
   }
 
 }
