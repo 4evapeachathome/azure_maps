@@ -73,14 +73,15 @@
                   <div *ngFor="let question of hitsQuestions" class="question-block">
                     <p class="question-text">{{ question.text }}</p>
                     <div class="options">
-                      <ion-radio-group [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>                        <ion-item *ngFor="let option of question.options">
+                      <ion-radio-group [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>
+                        <ion-item *ngFor="let option of question.options">
                           <ion-label>{{ option.label }}</ion-label>
-                          <ion-radio slot="start" [value]="option.score"></ion-radio>
+                          <ion-radio slot="start" [value]="option"></ion-radio>
                         </ion-item>
                       </ion-radio-group>
                     </div>
                   </div>
-                </div>                          
+                </div>                         
               </ion-col>
             </ion-row>
           

@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+   //Hits Assessment
+   interface HitsAssessmentData {
+    questions: any[];
+    answerOptions: any[];
+  }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -70,19 +76,15 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
       sessionStorage.setItem('appLoadedOnce', value ? 'true' : 'false');
     }
 
-    //Hits Assessment
-    private hitsAssessmentData: any[] | null = null;
-
-    setHitsAssessment(data: any[]) {
+    
+    private hitsAssessmentData: HitsAssessmentData | null = null;
+    
+    setHitsAssessment(data: HitsAssessmentData) {
       this.hitsAssessmentData = data;
     }
-  
-    getHitsAssessment(): any[] | null {
+    
+    getHitsAssessment(): HitsAssessmentData | null {
       return this.hitsAssessmentData;
-    }
-  
-    clearHitsAssessment() {
-      this.hitsAssessmentData = null;
     }
 
 }

@@ -58,5 +58,6 @@ export const APIEndpoints = {
     userLogins :`${environment.apiHost}/api/user-logins`,
     forgetPw :`${environment.apiHost}/api/auth/forgot-password`,
     hitsAssessmentQuestions :`${environment.apiHost}/api/hits-assessment-questions`,
+    scaleOptions :`${environment.apiHost}/api/multiple-answer-options`,
     hitsresultcalculation :`${environment.apiHost}/api/hit-results`,
   }

@@ -68,13 +68,15 @@ export class AssessmentPageComponent  implements OnInit {
     } else {
       this.apiService.getHitsAssessmentQuestions().subscribe({
         next: (res: any) => {
-          const hitsData = res || [];
-          // Sort answer options for each question
-          hitsData.forEach((q: any) => {
+          const { questions, answerOptions } = res;
+
+          // Sort the multiple_answer_option for each question (if still needed)
+          questions.forEach((q: any) => {
             q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
           });
-  
-          this.menuService.setHitsAssessment(hitsData);
+      
+          // Store both questions and answerOptions in the service
+          this.menuService.setHitsAssessment({ questions, answerOptions });
           this.router.navigate([targetRoute]);
         },
         error: (err) => {

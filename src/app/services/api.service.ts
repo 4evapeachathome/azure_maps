@@ -1,6 +1,6 @@
 import { Injectable, Query } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from 'src/environments/environment';
 import { APIEndpoints } from 'src/shared/endpoints';
@@ -1093,47 +1093,70 @@ updateUserLogin(userId: string | number, payload: any): Observable<any> {
 
 //Hits assessment
 getHitsAssessmentQuestions(): Observable<any> {
-  const endpoint = APIEndpoints.hitsAssessmentQuestions; // Update this in your APIEndpoints
-  const options: QueryOptions = {
+  // Define the two endpoints
+  const endpoint1 = APIEndpoints.hitsAssessmentQuestions; // Existing endpoint for questions
+  const endpoint2 = APIEndpoints.scaleOptions; // New endpoint for answer options
+
+  // Define query options for the first endpoint (questions)
+  const options1: QueryOptions = {
     fields: ['question_text', 'weight_critical_alert'],
     populate: {
       multiple_answer_option: {
         fields: ['label', 'score']
-      },
-      HitsAssessment: {
-        fields: ['HitsExceptional']
       }
     }
   };
 
-  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
-    map((res: any) => {
-      if (!res.data || !Array.isArray(res.data)) {
-        return [];
-      }
-      return res.data.map((item: any) => ({
-        id: item.id,
-        documentId: item.documentId,
-        question_text: item.question_text || '',
-        weight_critical_alert: item.weight_critical_alert || false,
-        multiple_answer_option: (item.multiple_answer_option || []).map((opt: any) => ({
-          id: opt.id,
-          documentId: opt.documentId,
-          label: opt.label || '',
-          score: opt.score ?? null
-        })),
-        HitsAssessment: (item.HitsAssessment || []).map((caseItem: any) => ({
-          id: caseItem.id,
-          HitsExceptional: caseItem.HitsExceptional ?? null
-        }))
-      }));
+  // Define query options for the second endpoint (answer options)
+  const options2: QueryOptions = {
+    fields: ['label', 'score']
+  };
+
+  // Make the two API calls in parallel using forkJoin
+  return forkJoin([
+    this.getWithQuery(endpoint1, options1, environment.apitoken), // First API call (questions)
+    this.getWithQuery(endpoint2, options2, environment.apitoken)  // Second API call (answer options)
+  ]).pipe(
+    map(([res1, res2]: [any, any]) => {
+      // Process the first API response (questions)
+      const questions = !res1.data || !Array.isArray(res1.data)
+        ? []
+        : res1.data.map((item: any) => ({
+            id: item.id,
+            documentId: item.documentId,
+            question_text: item.question_text || '',
+            weight_critical_alert: item.weight_critical_alert || false,
+            multiple_answer_option: (item.multiple_answer_option || []).map((opt: any) => ({
+              id: opt.id,
+              documentId: opt.documentId,
+              label: opt.label || '',
+              score: opt.score ?? null
+            }))
+          }));
+
+      // Process the second API response (answer options)
+      const answerOptions = !res2.data || !Array.isArray(res2.data)
+        ? []
+        : res2.data.map((item: any) => ({
+            id: item.id,
+            documentId: item.documentId,
+            label: item.label || '',
+            score: item.score ?? null
+          }));
+
+      // Combine the results into a single object
+      return {
+        questions,
+        answerOptions
+      };
     }),
     catchError(error => {
-      console.error('Error fetching hits-assessment-questions data', error);
+      console.error('Error fetching data from one or more endpoints', error);
       return throwError(error);
     })
   );
 }
+
 //getresultfor hits assessment
 getHitsResultCalculation(): Observable<any> {
   return this.getWithQuery(APIEndpoints.hitsresultcalculation, {

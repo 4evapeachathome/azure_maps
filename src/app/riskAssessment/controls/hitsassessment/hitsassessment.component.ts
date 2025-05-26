@@ -57,17 +57,22 @@ export class HitsassessmentComponent  implements OnInit {
     this.updateGuidedTypeLabel();
   
     const cachedHits = this.menuService.getHitsAssessment();
-    if (cachedHits && cachedHits.length > 0) {
-      this.setupHitsQuestions(cachedHits);
+if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
+  this.setupHitsQuestions(cachedHits.questions, cachedHits.answerOptions);
     } else {
       // Load from API if cache is empty
       this.apiService.getHitsAssessmentQuestions().subscribe({
         next: (hitsData: any) => {
-          hitsData.forEach((q: any) => {
-            q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
-          });
-          this.menuService.setHitsAssessment(hitsData);
-          this.setupHitsQuestions(hitsData);
+          const { questions, answerOptions } = hitsData;
+
+    // Sort the multiple_answer_option for each question (if still needed)
+    questions.forEach((q: any) => {
+      q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
+    });
+
+    // Store both questions and answerOptions in the service
+    this.menuService.setHitsAssessment({ questions, answerOptions });
+    this.setupHitsQuestions(questions, answerOptions);
         },
         error: (err:any) => {
           console.error('Failed to load HITS data from API:', err);
@@ -81,19 +86,24 @@ export class HitsassessmentComponent  implements OnInit {
   }
 
 
-  setupHitsQuestions(hitsData: any[]) {
+  setupHitsQuestions(questions: any[], answerOptions: any[]) {
     const scaleSet = new Set<string>();
-    hitsData[0].multiple_answer_option.forEach((opt: any) => {
+    answerOptions.forEach((opt: any) => {
       scaleSet.add(`${opt.score}. ${opt.label}`);
     });
   
     this.scaleOptions = [...scaleSet];
-    this.hitsQuestions = hitsData.map((q: any) => ({
+  
+    this.hitsQuestions = questions.map((q: any) => ({
       id: q.id,
       text: q.question_text,
       selected: null,
       weight_critical_alert: q.weight_critical_alert,
-      options: q.multiple_answer_option.map((opt: any) => ({
+      options: answerOptions.map((opt: any) => ({
+        score: opt.score,
+        label: opt.label
+      })),
+      criticalOptions: (q.multiple_answer_option || []).map((opt: any) => ({
         score: opt.score,
         label: opt.label
       }))
@@ -109,42 +119,45 @@ export class HitsassessmentComponent  implements OnInit {
   submit() {
     let totalScore = 0;
     const answerSummary: { questionId: number; questionText: string; selectedScore: number | null }[] = [];
+    let criticalAlert = false;
   
-    let criticalAlert = false; // <- flag to check
-  
-    this.hitsQuestions.forEach((question) => {
-      const selectedScore = question.selected;
+    // Single loop to calculate totalScore, build answerSummary, and check for critical alert
+    for (const question of this.hitsQuestions) {
+      // Handle selected score for totalScore and answerSummary
+      const selectedScore = question.selected ? question.selected.score : null;
       if (selectedScore !== null) {
         totalScore += selectedScore;
       }
   
-      // Check for critical alert condition
-      if (
-        question.weight_critical_alert &&
-        question.options.some((opt:any) =>
-          [4, 5].includes(opt.score) &&
-          question.selected === opt.score
-        )
-      ) {
-        criticalAlert = true;
-      }
-  
+      // Add to answerSummary
       answerSummary.push({
         questionId: question.id,
         questionText: question.text,
         selectedScore: selectedScore
       });
-    });
+  
+      // Check for critical alert condition
+      if (!criticalAlert && question.weight_critical_alert && question.selected) {
+        const matchFound = question.criticalOptions.some((opt: any) =>
+          opt.score === question.selected.score || opt.label === question.selected.label
+        );
+  
+        if (matchFound) {
+          criticalAlert = true;
+          // No break needed since we'll exit after this loop iteration if needed
+        }
+      }
+    }
   
     const result = {
       totalScore,
       summary: answerSummary,
-      criticalAlert  // <- add flag to session
+      criticalAlert
     };
   
     sessionStorage.setItem('hitsAssessmentResult', JSON.stringify(result));
-  
-    this.router.navigate(['/usercreation']);
+    debugger;
+    this.router.navigate(['/riskassessmentsummary']);
   }
 
   goBack() {
