@@ -39,18 +39,13 @@ export class LoginPageComponent  implements OnInit {
 
   ngOnInit() {
     // Fetch user logins on component initialization 
+    this.loginForm.reset();
     this.getUserLogins();
-    this.loginForm.get('username')?.valueChanges.subscribe(() => this.onUsernameInput());
-    this.loginForm.get('password')?.valueChanges.subscribe(() => {
-      if (this.loginForm.contains('newPassword')) {
-        this.loginForm.get('newPassword')!.updateValueAndValidity();
-      }
-    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    debugger;
     if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true) {
+      this.loginForm.reset();
       this.getUserLogins()  // Call your API or logic
     }
   }
@@ -59,6 +54,7 @@ export class LoginPageComponent  implements OnInit {
     this.apiService.getUserLogins().subscribe({
       next: (data: any) => {
         this.userLogins = data || [];
+        debugger;
       },
       error: (error: any) => {
         console.error('Failed to fetch user logins', error);
@@ -66,32 +62,7 @@ export class LoginPageComponent  implements OnInit {
     });
   }
 
-  onUsernameInput() {
-    const usernameInput = this.loginForm.get('username')?.value?.trim()?.toLowerCase();
-    const user = this.userLogins.find(u => u.username?.toLowerCase() === usernameInput);
-    if (user && user.IsPasswordChanged === false) {
-      this.showNewPasswordField = true;
-  
-      // Add newPassword control if not already present
-      if (!this.loginForm.contains('newPassword')) {
-        this.loginForm.addControl(
-          'newPassword',
-          this.fb.control('', [
-            Validators.required,
-            Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/),
-            Utility.newPasswordValidator(() => this.loginForm.get('password')?.value)
-          ])
-        );
-      }
-    } else {
-      this.showNewPasswordField = false;
-  
-      // Remove newPassword control if present
-      if (this.loginForm.contains('newPassword')) {
-        this.loginForm.removeControl('newPassword');
-      }
-    }
-  }
+
 
   onForgotPassword(event: Event) {
     event.preventDefault(); // prevent link behavior
@@ -124,8 +95,8 @@ export class LoginPageComponent  implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
-  
-    const { username, password, newPassword } = this.loginForm.value;
+
+    const { username, password } = this.loginForm.value;
     const user = this.userLogins.find(u => u.username?.toLowerCase() === username.trim()?.toLowerCase());
   
     if (!user) {
@@ -137,37 +108,23 @@ export class LoginPageComponent  implements OnInit {
       this.loginForm.get('password')?.setErrors({ incorrectPassword: true });
       return;
     }
-  
-    // ✅ Check if newPassword control exists and if password change is required
-    const newPasswordControl = this.loginForm.get('newPassword');
-    const shouldUpdatePassword = newPasswordControl && !user.IsPasswordChanged;
-  
-    if (shouldUpdatePassword) {
+
       const updatePayload = {
-        password: newPassword,
         IsPasswordChanged: true,
-        sendInvite: true
       };
   
       this.apiService.updateUserLogin(user.id, updatePayload).subscribe({
         next: async () => {
           await this.handleSuccessfulLogin(username, user);
-          await presentToast(this.toastController, 'Password updated successfully!', 2500, 'top');
+          await presentToast(this.toastController, 'Successfully Logged In!', 2500, 'top');
           this.router.navigate(['/riskassessment']);
           this.loginForm.reset();
         },
         error: async err => {
           console.error('Failed to update user login', err);
-          await presentToast(this.toastController, 'Failed to update password. Please try again.', 3000, 'top');
+          await presentToast(this.toastController, 'Failed to login. Please try again.', 3000, 'top');
         }
       });
-    } else {
-      // ✅ Proceed without update if password change not required
-      await this.handleSuccessfulLogin(username, user);
-      await presentToast(this.toastController, 'Login successful.', 2000, 'top');
-      this.router.navigate(['/riskassessment']);
-      this.loginForm.reset();
-    }
   }
   
   private async handleSuccessfulLogin(username: string, user: any) {

@@ -7,8 +7,8 @@ export class SessionActivityService {
   private activityEvents = ['click', 'keydown', 'mousemove', 'scroll'];
   private warningTime = 55 * 60 * 1000; // 55 minutes
   private expiryTime = 60 * 60 * 1000; // 60 minutes
-// private warningTime = 40 * 1000; // 40 seconds for testing
-// private expiryTime = 60 * 1000;
+// private warningTime = 30 * 1000; // 40 seconds for testing
+// private expiryTime = 50 * 1000;
   private warningTimer: any;
   private logoutTimer: any;
 

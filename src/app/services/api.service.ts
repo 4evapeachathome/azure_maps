@@ -137,9 +137,14 @@ export class ApiService {
     return this.http.patch(`${environment.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
   }
 
-  getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string): Observable<any> {
+  getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string,extraHeaders?: HttpHeaders): Observable<any> {
     const params = this.buildQueryParams(options);
     let headers = this.createHeaders(token);
+    if (extraHeaders) {
+      extraHeaders.keys().forEach(key => {
+        headers = headers.set(key, extraHeaders.get(key)!);
+      });
+    }
   
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
@@ -989,7 +994,7 @@ getUserLogins(): Observable<any[]> {
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
       if (!res.data || res.data.length === 0) return [];
-
+      debugger;
       const decryptField = (encryptedValue: any): string | null => {
         if (!encryptedValue) return null;
 
@@ -1004,20 +1009,71 @@ getUserLogins(): Observable<any[]> {
       };
 
       return res.data.map((item: any) => ({
-        id: item.id,
-        username: decryptField(item.Username),
-        password: decryptField(item.password),
-        orgName: item.support_service?.OrgName ?? 'N/A',
-        assessment_type: item.assessment_type ?? [],
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        IsPasswordChanged: item.IsPasswordChanged,
-        isSendInvite: item.sendInvite,
+        id: item?.id ?? null,
+        username: item?.Username ? decryptField(item.Username) : '',
+        temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
+        orgName: item?.support_service?.OrgName ?? 'N/A',
+        assessment_type: item?.assessment_type ?? [],
+        createdAt: item?.createdAt ?? '',
+        IsPasswordChanged: item?.IsPasswordChanged ?? false,
+        updatedAt: item?.updatedAt ?? '',
+        password: item?.password ? decryptField(item.password) : '',
+        isSendInvite: item?.sendInvite ?? false,
       }));
     }),
     catchError((error) => {
       console.error('Error fetching/decrypting user logins:', error);
       return throwError(() => new Error('Failed to load user logins.'));
+    })
+  );
+}
+
+//get user login by id
+getUserLoginById(uid: number | string): Observable<any> {
+  const endpoint = `${APIEndpoints.userLogins}/${uid}`;
+debugger;
+  const noCacheHeaders = new HttpHeaders({
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+
+  return this.getWithQuery(endpoint, {
+    fields: [
+      'Username',
+      'password',
+      'IsPasswordChanged',
+      'sendInvite',
+      'temp_password']}, environment.apitoken, noCacheHeaders).pipe(
+    map((res: any) => {
+      const item = res?.data;
+      if (!item) return null;
+      debugger;
+      const decryptField = (encryptedValue: any): string | null => {
+        if (!encryptedValue) return null;
+
+        try {
+          const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
+          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+          return decrypted || encryptedValue;
+        } catch (error) {
+          console.warn('Decryption failed for:', encryptedValue, error);
+          return encryptedValue;
+        }
+      };
+
+      return {
+        id: item?.id ?? null,
+        username: item?.Username ? decryptField(item.Username) : '',
+        temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
+        IsPasswordChanged: item?.IsPasswordChanged ?? false,
+        password: item?.password ? decryptField(item.password) : '',
+        isSendInvite: item?.sendInvite ?? false,
+      };
+    }),
+    catchError((error) => {
+      console.error('Error fetching user login by ID:', error);
+      return throwError(() => new Error('Failed to load user login.'));
     })
   );
 }
@@ -1078,6 +1134,22 @@ getHitsAssessmentQuestions(): Observable<any> {
     })
   );
 }
+//getresultfor hits assessment
+getHitsResultCalculation(): Observable<any> {
+  return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
+    fields: [
+      'ColorCode',
+      'minvalue',
+      'maxvalue',
+    ]
+  }, environment.apitoken).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching Hits result api:', error);
+      return throwError('An error occurred while Hits result api. Please try again later.');
+    })
+  );
+}
+
 
 
 

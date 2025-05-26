@@ -30,6 +30,6 @@ export class LoginGuard implements CanActivate {
       }
     }
 
-    return true; // allow navigation to loginPage if not logged in or expired
+    return true; // allow navigation to login if not logged in or expired
   }
 }

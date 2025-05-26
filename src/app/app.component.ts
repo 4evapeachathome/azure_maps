@@ -122,7 +122,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
   private hasHandledReload = false;
-  private riskRoutes = ['riskassessment', 'riskassessmentresult', 'riskassessmentsummary','loginPage','hitsassessment'];
+  private riskRoutes = ['riskassessment', 'usercreation', 'riskassessmentsummary','login','hitsassessment'];
 
   constructor(
     private sessionActivityService: SessionActivityService,
@@ -138,7 +138,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         const url = event.urlAfterRedirects;
-        const currentPath = url.split('/')[1];
+        const currentPath = url.split('/')[1]?.split('?')[0];
   
         this.isRiskAssessment = this.riskRoutes.includes(currentPath);
         this.isRouteCheckComplete = true;
@@ -197,7 +197,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     this.cookieService.delete('loginTime');
     this.cookieService.delete('userdetails');
   
-    this.router.navigate(['/loginPage']);
+    this.router.navigate(['/login']);
   }
   ngOnInit() {
     this.loadInitialData();
@@ -221,29 +221,26 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       if (this.isUserLoggedIn()) {
         this.logout();
       }
+
+      if (this.sessionAlert) {
+        this.sessionAlert.dismiss();
+        this.sessionAlert = null;
+      }
+    });
+
+    this.router.events.subscribe(() => {
+      const currentPath = this.location.path();
+      const stillValid = ['/riskassessment', '/hitsassessment', '/riskassessmentsummary']
+        .some(route => currentPath.startsWith(route));
+    
+      if (!stillValid && this.sessionAlert) {
+        this.sessionAlert.dismiss();
+        this.sessionAlert = null;
+      }
     });
   }
 
- private isValidSession(): boolean {
-  try {
-    const encodedUsername = this.cookieService.get('username');
-    const loginTimestamp = parseInt(this.cookieService.get('loginTime'), 10);
-    const currentTime = Date.now();
-    const maxSessionDuration = 60 * 60 * 1000; // 60 minutes
 
-    // Explicit boolean checks
-    if (!encodedUsername || !loginTimestamp) {
-      return false;
-    }
-
-    const username = atob(encodedUsername);
-    return !!username && (currentTime - loginTimestamp < maxSessionDuration);
-  } catch {
-    this.cookieService.delete('username');
-    this.cookieService.delete('loginTime');
-    return false;
-  }
-}
 
 private isUserLoggedIn(): boolean {
   return this.cookieService.check('username') &&
@@ -256,7 +253,7 @@ private shouldShowSessionAlert(): boolean {
 
   const validRoutes = [
     '/riskassessment',
-    '/riskassessmentresult',
+    '/hitsassessment',
     '/riskassessmentsummary'
   ];
 

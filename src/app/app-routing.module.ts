@@ -4,6 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { RiskAssessmentGuard } from './guards/risk-assessment.guard';
 import { LoginGuard } from './guards/login-assessment.gaurd';
+import { UserCreationAuthGuard } from './guards/usercreation-auth.guard';
 
 const routes: Routes = [
   { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomePageModule) },
@@ -38,10 +39,10 @@ const routes: Routes = [
     loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizPageModule)
   },
   //Risk Assessment
-  // { path: '', redirectTo: 'loginPage', pathMatch: 'full' },
-  { path: 'loginPage', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule),canActivate: [LoginGuard] },  
+  // { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule),canActivate: [LoginGuard] },  
   { path: 'riskassessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule),canActivate: [RiskAssessmentGuard] },
-  { path: 'riskassessmentresult', loadChildren: () => import('./riskAssessment/assessment-result/assessment-result.module').then(m => m.AssessmentResultPageModule),canActivate: [RiskAssessmentGuard] },
+  { path: 'usercreation', loadChildren: () => import('./riskAssessment/user-creation/user-creation.module').then(m => m.AssessmentResultPageModule),canActivate: [UserCreationAuthGuard] },
   { path: 'riskassessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule),canActivate: [RiskAssessmentGuard] },
   {
     path: 'hitsassessment',

@@ -41,10 +41,10 @@ export class AssessmentPageComponent  implements OnInit {
       } catch {
         console.error('Invalid cookie format, logging out...');
         this.cookieService.delete('user');
-        this.router.navigate(['/loginPage']);
+        this.router.navigate(['/login']);
       }
     } else {
-      this.router.navigate(['/loginPage']);
+      this.router.navigate(['/login']);
     }
   }
 
@@ -87,6 +87,7 @@ export class AssessmentPageComponent  implements OnInit {
   private updateGuidedTypeLabel() {
     // Update the label based on the selected guidedType
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+    sessionStorage.setItem('guidedType', this.guidedType);
   }
 
   goToTest() {
@@ -111,6 +112,7 @@ export class AssessmentPageComponent  implements OnInit {
           break;
         case 'signs of self-recognition in intimate partner abuse (ssripa)':
           this.router.navigate(['/ssripa'], { state: { assessmentType: this.selectedAssessment } });
+          sessionStorage.setItem('isSSripa', 'true');
           break;
         default:
           console.warn('No matching route found for selected assessment.');
@@ -154,7 +156,7 @@ export class AssessmentPageComponent  implements OnInit {
             this.cookieService.delete('username');
             this.cookieService.delete('loginTime');
             this.cookieService.delete('userdetails');
-            this.router.navigate(['/loginPage']);
+            this.router.navigate(['/login']);
           }
         }
       ]

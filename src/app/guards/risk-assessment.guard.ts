@@ -31,7 +31,7 @@ export class RiskAssessmentGuard implements CanActivate {
       this.cookieService.delete('loginTime');
     }
   
-    this.router.navigate(['/loginPage']);
+    this.router.navigate(['/login']);
     return false;
   }
 

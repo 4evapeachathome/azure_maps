@@ -20,6 +20,8 @@ export class HitsassessmentComponent  implements OnInit {
   loaded: boolean = false;
   hitsQuestions: any[] = [];
   scaleOptions: string[] = [];
+  guidedType: string = 'self-guided'; // Default value
+  guidedTypeLabel: string = 'Self-Guided';
 
   constructor(
     private router: Router,
@@ -37,13 +39,22 @@ export class HitsassessmentComponent  implements OnInit {
       } catch {
         console.error('Invalid cookie format, logging out...');
         this.cookieService.delete('userdetails');
-        this.router.navigate(['/loginPage']);
+        this.router.navigate(['/login']);
         return;
       }
     } else {
-      this.router.navigate(['/loginPage']);
+      this.router.navigate(['/login']);
       return;
     }
+    const storedGuidedType = sessionStorage.getItem('guidedType');
+    
+    // If a value exists in sessionStorage, use it; otherwise, keep the default
+    if (storedGuidedType) {
+      this.guidedType = storedGuidedType;
+    }
+
+    // Update the label based on the retrieved guidedType
+    this.updateGuidedTypeLabel();
   
     const cachedHits = this.menuService.getHitsAssessment();
     if (cachedHits && cachedHits.length > 0) {
@@ -64,6 +75,11 @@ export class HitsassessmentComponent  implements OnInit {
       });
     }
   }
+
+  private updateGuidedTypeLabel() {
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+  }
+
 
   setupHitsQuestions(hitsData: any[]) {
     const scaleSet = new Set<string>();
@@ -86,9 +102,49 @@ export class HitsassessmentComponent  implements OnInit {
     this.loaded = true;
   }
   
+  isAllQuestionsAnswered(): boolean {
+    return this.hitsQuestions.every(q => q.selected !== null && q.selected !== undefined);
+  }
 
-  submit() {  
-      this.router.navigate(['/riskassessmentresult']);
+  submit() {
+    let totalScore = 0;
+    const answerSummary: { questionId: number; questionText: string; selectedScore: number | null }[] = [];
+  
+    let criticalAlert = false; // <- flag to check
+  
+    this.hitsQuestions.forEach((question) => {
+      const selectedScore = question.selected;
+      if (selectedScore !== null) {
+        totalScore += selectedScore;
+      }
+  
+      // Check for critical alert condition
+      if (
+        question.weight_critical_alert &&
+        question.options.some((opt:any) =>
+          [4, 5].includes(opt.score) &&
+          question.selected === opt.score
+        )
+      ) {
+        criticalAlert = true;
+      }
+  
+      answerSummary.push({
+        questionId: question.id,
+        questionText: question.text,
+        selectedScore: selectedScore
+      });
+    });
+  
+    const result = {
+      totalScore,
+      summary: answerSummary,
+      criticalAlert  // <- add flag to session
+    };
+  
+    sessionStorage.setItem('hitsAssessmentResult', JSON.stringify(result));
+  
+    this.router.navigate(['/usercreation']);
   }
 
   goBack() {
@@ -122,7 +178,7 @@ export class HitsassessmentComponent  implements OnInit {
             this.cookieService.delete('username');
             this.cookieService.delete('loginTime');
             this.cookieService.delete('userdetails');
-            this.router.navigate(['/loginPage']);
+            this.router.navigate(['/login']);
           }
         }
       ]

@@ -73,7 +73,7 @@ export class MenuComponent implements OnInit {
 
   UserLogin(){
     this.showUserName = true;
-    this.router.navigate(['/loginPage']);
+    this.router.navigate(['/login']);
   }
 
   ngOnInit(): void {

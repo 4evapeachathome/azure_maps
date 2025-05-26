@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { AssessmentResultPageRoutingModule } from './assessment-result-routing.module';
+import { AssessmentResultPageRoutingModule } from './user-creation-routing.module';
 
-import { AssessmentResultPage } from './assessment-result.page';
+import { UserCreationPage } from './user-creation.page';
 import { RiskassessmentFooterComponent } from "../controls/riskassessment-footer/riskassessment-footer.component";
-import { AssessmentresultComponent } from "../controls/assessmentresult/assessmentresult.component";
+import { UserCreationComponent } from "../controls/usercreation/usercreation.component";
 
 @NgModule({
   imports: [
@@ -17,8 +17,8 @@ import { AssessmentresultComponent } from "../controls/assessmentresult/assessme
     IonicModule,
     AssessmentResultPageRoutingModule,
     RiskassessmentFooterComponent,
-    AssessmentresultComponent
+    UserCreationComponent
 ],
-  declarations: [AssessmentResultPage]
+  declarations: [UserCreationPage]
 })
 export class AssessmentResultPageModule {}

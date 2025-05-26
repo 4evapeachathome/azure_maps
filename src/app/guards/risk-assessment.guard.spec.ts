@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn } from '@angular/router';
 
-import { riskAssessmentGuard } from './risk-assessment.guard';
+import { RiskAssessmentGuard } from './risk-assessment.guard';
 
 describe('riskAssessmentGuard', () => {
   const executeGuard: CanActivateFn = (...guardParameters) => 

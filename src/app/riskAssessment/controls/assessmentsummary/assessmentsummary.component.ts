@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule } from '@ionic/angular';
 import { interval, Subscription } from 'rxjs';
 import html2pdf from 'html2pdf.js'; 
 import { QRCodeComponent  } from 'angularx-qrcode';
 import domtoimage from 'dom-to-image-more';
 import { NgxGaugeModule } from 'ngx-gauge';
+import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
+import { ApiService } from 'src/app/services/api.service';
 
 
 @Component({
@@ -16,49 +19,78 @@ import { NgxGaugeModule } from 'ngx-gauge';
   standalone: true,
           imports: [CommonModule, IonicModule, FormsModule,QRCodeComponent,NgxGaugeModule],
 })
-export class AssessmentsummaryComponent  implements OnInit, AfterViewInit, OnDestroy {
+export class AssessmentsummaryComponent  implements OnInit {
   hidePdfContainer = true;
-  myAngularxQrCode = 'Your QR code data string';
   caseNumber: string='';
-  caseNumberPlaceholder: string = 'Pick Assessment Results';
-  loggedInUser: { username: string } = { username: '' };
-  userName: string = 'Janet Molson';
-  guidedType: string = 'Staff-Guided';
-  assessmentTitle: string = 'Risk Assessment Results';
-  testResultsTitle: string = 'Your Test results';
-  testResultLabel: string = 'XXXXX'; // Replace with actual dynamic value
-  riskValue: number = 65; // Dynamic risk value (0-100)
-  recommendationIntro: string = 'We recommend a few courses of action:';
-  recommendationText: string =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum fermentum odio id aliquet faucibus. Pellentesque et dictum purus.';
+  loggedInUser:any = null;
+  loaded: boolean = false;
+  riskValue!: number; // Dynamic risk value (0-100)
   riskLevelsTitle: string = 'Risk Levels';
   stressCurveLabel: string = 'Stress Curve';
-  uniqueAccessLabel: string = 'This XXXX Unique Access'; // Replace XXXX with dynamic value
-  accessCodeLabel: string = 'Access Code';
-  accessCode: string = 'empathy-direction-potato-yankee';
   @ViewChild('qrcodeEl', { static: false }) qrcodeEl!: QRCodeComponent;
   @ViewChild('pdfExportContainer', { static: false }) pdfExportContainer!: ElementRef;
   @ViewChild('qrImage', { static: false }) qrImage!: ElementRef<HTMLImageElement>;
   @ViewChild('gaugeCanvas', { static: false }) gaugeCanvas!: ElementRef<HTMLCanvasElement>;
-  private gauge: any;
-  
+  showbarcode: boolean = false;
+  isSSripa:boolean = false;
+  guidedType: string = 'self-guided'; // Default value
+  guidedTypeLabel: string = 'Self-Guided';
+  answerSummary: any[] = [];
+  assessmentTitle: string = 'Risk Assessment Results';
+  myAngularxQrCode: string = 'https://sripaalink.com'; // QR code content
+  hitResults: any[] = []; // To store the API response
+  errorMessage: string | null = null;
+  riskGaugeMin: number = 0;
+  riskGaugeMax: number = 100;
+  gaugeThresholds: any[] = [];
+  thresholdValues: { [key: string]: { color: string } } = {};
+  criticalalert: boolean = false;
 
-  private updateSubscription!: Subscription; // For dynamic updates
 
-  constructor() { }
+  constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController) { }
 
   ngOnInit() {
-  }
-
-  ngAfterViewInit() {
-    this.calculateRiskValue(); // Initial calculation
-    this.startDynamicUpdates(); // Start dynamic updates (optional, for demo)
-  }
-
-  ngOnDestroy() {
-    if (this.updateSubscription) {
-      this.updateSubscription.unsubscribe(); // Clean up subscription
+    const encodedUser = this.cookieService.get('userdetails');
+    if (encodedUser) {
+      try {
+        this.loggedInUser = JSON.parse(atob(encodedUser));
+      } catch {
+        console.error('Invalid cookie format, logging out...');
+        this.cookieService.delete('userdetails');
+        this.router.navigate(['/login']);
+        return;
+      }
+    } else {
+      this.router.navigate(['/login']);
+      return;
     }
+  
+    const storedGuidedType = sessionStorage.getItem('guidedType');
+    if (storedGuidedType) {
+      this.guidedType = storedGuidedType;
+    }
+  
+    this.updateGuidedTypeLabel();
+    this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
+  
+    const resultStr = sessionStorage.getItem('hitsAssessmentResult');
+  debugger;
+    if (resultStr) {
+      const result = JSON.parse(resultStr);
+      this.riskValue = result.totalScore;
+      this.answerSummary = result.answers;
+      this.criticalalert = result.criticalAlert === 'true';
+    }
+  
+    this.fetchHitResults();
+    this.loaded = true;
+  }
+
+
+
+
+  private updateGuidedTypeLabel() {
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
   }
 
 
@@ -119,21 +151,82 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit, OnDes
       this.hidePdfContainer = true;
     }
   }
-  
-  startDynamicUpdates() {
-    this.updateSubscription = interval(5000).subscribe(() => {
-      this.calculateRiskValue();
+
+  stayLoggedIn() {
+    const now = Date.now().toString();
+    this.cookieService.set('loginTime', now, {
+      path: '/',
+      sameSite: 'Strict',
+      secure: true,
     });
   }
-  
-  calculateRiskValue() {
-    const factor1 = Math.random() * 50;
-    const factor2 = Math.random() * 50;
-    this.riskValue = Math.round((factor1 + factor2) / 2);
-  }
 
-  viewUniqueAccess() {
-    console.log('View Unique Access clicked');
+
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            this.guidedType = 'staff-guided';
+            this.cookieService.delete('username');
+            this.cookieService.delete('loginTime');
+            this.cookieService.delete('userdetails');
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
+  }
+  
+
+  fetchHitResults() {
+    this.apiService.getHitsResultCalculation().subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          debugger;
+          this.hitResults = response.data;
+          // Set min and max for the gauge
+          this.riskGaugeMin = Math.min(...this.hitResults.map((r: any) => r.minvalue));
+          this.riskGaugeMax = Math.max(...this.hitResults.map((r: any) => r.maxvalue));
+
+          // Handle critical alert case
+          if (this.criticalalert) {
+            this.thresholdValues = {
+              [this.riskGaugeMin]: { color: 'red' },
+            };
+          } else {
+            // Map API data to thresholds
+            this.thresholdValues = {};
+            this.hitResults.forEach((result: any) => {
+              // Set threshold at the minvalue of each range
+              this.thresholdValues[result.minvalue] = {
+                color: result.ColorCode.toLowerCase(),
+              };
+            });
+          }
+        } else {
+          this.hitResults = [];
+          this.thresholdValues = {};
+        }
+      },
+      error: (error: any) => {
+        this.errorMessage = error;
+        console.error('Error in subscription:', error);
+      },
+      complete: () => {
+        console.log('Hit results fetch completed');
+      },
+    });
   }
 
 }

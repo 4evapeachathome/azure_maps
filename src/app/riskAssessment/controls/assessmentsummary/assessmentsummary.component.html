@@ -1,4 +1,4 @@
-<div class="common-container risk-assessment-container h-100">
+<div *ngIf="loaded" class="common-container risk-assessment-container h-100">
   <ion-grid class="p-0 h-100">
     <ion-row class="h-100">
       <!-- Left Image Panel -->
@@ -13,7 +13,7 @@
             <ion-row>
               <ion-col size="12" size-sm="12">
                 <div class="user-info">
-                  <ion-text>Hi,  {{ loggedInUser?.username || userName }}</ion-text>
+                  <ion-text>Hi, {{ loggedInUser?.username || "User" }}</ion-text>
                 
                 <!-- <div class="guided-options">
               <ion-label>{{ guidedType }}</ion-label>
@@ -27,7 +27,7 @@
   <ion-icon name="person-circle"></ion-icon>
 </ion-button>
   <div class="dropdown-content">
-  <a >Logout</a>
+  <a (click)="logout()">Logout</a>
 
   </div>
 
@@ -41,13 +41,15 @@
                 <ion-item>
                   <ion-input
                     label="Case Number"     [(ngModel)]="caseNumber" 
-            [placeholder]="caseNumberPlaceholder"
+            placeholder="Case Number"
                     labelPlacement="stacked"
                   ></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col size="12" size-sm="7" class="radio-selected-container">
-                <ion-radio value="staff-guided" labelPlacement="end">Staff-Guided</ion-radio>
+                <ion-radio-group [(ngModel)]="guidedType" [allowEmptySelection]="true">
+                  <ion-radio [value]="guidedType" labelPlacement="end">{{ guidedTypeLabel }}</ion-radio>
+                </ion-radio-group>
               </ion-col>
             </ion-row>
             <ion-row>
@@ -55,34 +57,17 @@
                 <h2>{{ assessmentTitle }}</h2>
               </ion-col>
             </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-text>Total Score: {{riskValue}}</ion-text>
+              </ion-col>
+            </ion-row>
             
 
             <ion-row>
               <ion-col size="12" size-sm="7" class="p-0">
-                    <ion-row>
-                      <ion-col size="12" size-sm="12">
-                      
-    <h4>{{ testResultsTitle }} </h4>
-      <div class="result-header">
-          <span class="result-label">{{ testResultLabel }}</span>
-          <span class="result-value danger">{{ riskValue }}%</span>
-        </div>
  
-
-                      </ion-col>
-                </ion-row> 
-                 <ion-row>
-                      <ion-col size="12" size-sm="12">
-                          <p>{{ recommendationIntro }}</p>
-        <p>{{ recommendationText }}</p>
-                      </ion-col>
-                </ion-row> 
-                <ion-row>
-                      <ion-col size="12" size-sm="12">
-                        <h5>This is XXX's Unique Access Code</h5> 
-                      </ion-col>
-                </ion-row> 
-                <ion-row>
+                <ion-row *ngIf="isSSripa">
                       <ion-col size="12" size-sm="12">
                           <div class="qr-code-wrapper">
           <qrcode #qrcodeEl [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
@@ -91,31 +76,24 @@
         </div>
                       </ion-col>
                 </ion-row> 
-               
-                <ion-row>
-                      <ion-col size="12" size-sm="12">
-                         <h5>{{ accessCodeLabel }}: {{ accessCode }}</h5> 
-                      </ion-col>
-                </ion-row> 
+
               </ion-col>
                <ion-col size="12" size-sm="5" class="p-0">
                      <div class="risk-meter">
       <h4>{{ riskLevelsTitle }}</h4>
       <ngx-gauge
-        [value]="riskValue"
-        [label]="stressCurveLabel"
-        [append]="'%'"
-        [type]="'semi'"      
-        [min]="0"
-        [max]="100"
-        [thick]="30"
-        [thresholds]="[
-          { 'color': 'green', 'value': 33 },
-          { 'color': 'yellow', 'value': 66 },
-          { 'color': 'red', 'value': 100 }
-        ]"
-      ></ngx-gauge>
-       <ion-button (click)="downloadPDF()" color="primary" size="small">Download as PDF</ion-button>
+      [value]="riskValue"
+      [label]="stressCurveLabel"
+      [type]="'semi'"
+      [min]="riskGaugeMin"
+      [max]="riskGaugeMax"
+      [thick]="25"
+      [thresholds]="thresholdValues"
+      [cap]="'round'"
+      [size]="200"
+      [foregroundColor]="'auto'">
+    </ngx-gauge>
+       <ion-button *ngIf="isSSripa" (click)="downloadPDF()" color="primary" size="small">Download as PDF</ion-button>
     </div>
        
               </ion-col>
@@ -126,83 +104,6 @@
           </ion-grid>
         </ion-card>
       </ion-col>
-
-
-
-
-
-
-
-
-
-      <!-- <ion-col size="12" size-sm="6" class="ra-form-container order1">
-        <ion-row>
-<ion-col>
-          <div class="top-bar">
-          <ion-label>Case Number</ion-label>
-          <ion-input 
-            [(ngModel)]="caseNumber" 
-            [placeholder]="caseNumberPlaceholder"></ion-input>
-          <div class="user-info">
-            <div>Hi, {{ loggedInUser?.username || userName }}</div>
-            <div class="guided-options">
-              <ion-label>{{ guidedType }}</ion-label>
-            </div>
-          </div>
-        </div>
-</ion-col>
-        </ion-row>
-<ion-row>
-  <h1 class="assessment-title">{{ assessmentTitle }}</h1>
-
-
-  <div class="test-results">
-    <h2>{{ testResultsTitle }}</h2>
-    <ion-card>
-      <ion-card-content>
-        <div class="result-header">
-          <span class="result-label">{{ testResultLabel }}</span>
-          <span class="result-value danger">{{ riskValue }}%</span>
-        </div>
-        <p>{{ recommendationIntro }}</p>
-        <p>{{ recommendationText }}</p>
-      </ion-card-content>
-    </ion-card>
-  </div>
-</ion-row>
-<ion-row>
-  <ion-col>
-      
-        <div class="qr-code-wrapper">
-          <qrcode #qrcodeEl [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
-          <p class="access-code">{{ accessCodeLabel }}: {{ accessCode }}</p>
-        </div>
-  </ion-col>
-  <ion-col>      
-    <div class="risk-meter">
-      <h3>{{ riskLevelsTitle }}</h3>
-      <ngx-gauge
-        [value]="riskValue"
-        [label]="stressCurveLabel"
-        [append]="'%'"
-        [type]="'semi'"
-        [min]="0"
-        [max]="100"
-        [thick]="10"
-        [thresholds]="[
-          { 'color': 'green', 'value': 33 },
-          { 'color': 'yellow', 'value': 66 },
-          { 'color': 'red', 'value': 100 }
-        ]"
-      ></ngx-gauge>
-    </div>
-        <ion-button (click)="downloadPDF()">Download as PDF</ion-button>
-  </ion-col>
-</ion-row>
-
-
-
-      </ion-col> -->
     </ion-row>
   </ion-grid>
 </div>
@@ -210,12 +111,7 @@
      style="position: absolute; left: -9999px; top: -9999px; width: 800px; background: white; padding: 20px;">
   <h1>{{ assessmentTitle }}</h1>
   <p><strong>Case Number:</strong> {{ caseNumber }}</p>
-  <p><strong>User:</strong> {{ loggedInUser?.username || userName }}</p>
-  <p><strong>{{ testResultsTitle }}</strong></p>
-  <p>{{ testResultLabel }} - {{ riskValue }}%</p>
-  <p>{{ recommendationIntro }}</p>
-  <p>{{ recommendationText }}</p>
-  <p><strong>{{ riskLevelsTitle }}:</strong> {{ stressCurveLabel }} - {{ riskValue }}%</p>
-  <p><strong>{{ accessCodeLabel }}:</strong> {{ accessCode }}</p>
+  <p><strong>User:</strong> {{ loggedInUser?.username || "User" }}</p>
+
   <img #qrImage alt="QR Code Image" style="width: 150px; height: 150px;" />
 </div>

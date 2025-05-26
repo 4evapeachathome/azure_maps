@@ -37,10 +37,10 @@ export class HeaderComponent  implements OnInit {
     const excludedPaths = [
       '/home',
       '',
-      '/loginPage',
+      '/login',
       '/hitsassessment',
       '/riskassessment',
-      '/riskassessmentresult',
+      '/usercreation',
       '/riskassessmentsummary'
     ];
   

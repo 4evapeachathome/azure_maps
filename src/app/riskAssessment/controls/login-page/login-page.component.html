@@ -16,7 +16,7 @@
             <ion-item>
               <ion-input  label="Username"
                 formControlName="username"      labelPlacement="stacked"
-                placeholder="email@domain.com" (ionInput)="onUsernameInput()"
+                placeholder="email@domain.com"
                 type="text" 
                ></ion-input>
             </ion-item>
@@ -42,33 +42,6 @@
             </ion-item>
             <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['incorrectPassword']" class="text-red-500 text-sm mb-4">
               Incorrect password.
-            </div>
-            <ion-item *ngIf="loginForm.get('newPassword')">
-              <ion-input
-                label="New Password"
-                formControlName="newPassword"
-                labelPlacement="stacked"
-                placeholder="Enter New Password"
-                [type]="showNewPassword ? 'text' : 'password'"
-              ></ion-input>
-              <ion-icon
-                slot="end"
-                [name]="showNewPassword ? 'eye-off' : 'eye'"
-                class="password-toggle-icon"
-                (click)="showNewPassword = !showNewPassword"
-              ></ion-icon>
-            </ion-item>
-            
-            <div *ngIf="loginForm.get('newPassword')?.touched">
-              <div *ngIf="loginForm.get('newPassword')?.errors?.['required']" class="text-red-500 text-sm mb-2">
-                New password is required.
-              </div>
-              <div *ngIf="loginForm.get('newPassword')?.errors?.['sameAsOld']" class="text-red-500 text-sm mb-2">
-                New password cannot be the same as old password.
-              </div>
-              <div *ngIf="loginForm.get('newPassword')?.errors?.['pattern'] || loginForm.get('newPassword')?.errors?.['invalidPattern']" class="text-red-500 text-sm mb-2">
-                Password must be at least 8 characters, include a letter, a number, and a special character (&#64;$!%*#?&).
-              </div>
             </div>
     
             <!-- Forgot Password Link -->
