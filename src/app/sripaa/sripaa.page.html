@@ -8,13 +8,14 @@
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">
-      <ion-col class="ion-text-center">
+      <ion-col class="ion-text-center" style="gap: 16px;">
         <ion-button color="primary" (click)="expandMenu('Legal Rights')"  [routerLink]="['/legalrights']" size="small">Explore the Next Chapter.....</ion-button>
-        </ion-col>
-        <ion-col class="ion-text-center">
-          <ion-button color="primary"  *ngIf="sripaCompRef?.hasAnyAnswer && !sripaCompRef.finalAnswerVisible" 
+        <ion-button color="primary"  *ngIf="sripaCompRef?.hasAnyAnswer && !sripaCompRef.finalAnswerVisible" 
           (click)="onFinalAnswerClick()" size="small">Take me to Results</ion-button>
           </ion-col>
+      
+      
+          
         </ion-row>
   </ion-grid>
   <ion-grid class="footer-container">
