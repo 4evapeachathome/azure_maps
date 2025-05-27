@@ -994,7 +994,7 @@ getUserLogins(): Observable<any[]> {
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
       if (!res.data || res.data.length === 0) return [];
-      debugger;
+     // debugger;
       const decryptField = (encryptedValue: any): string | null => {
         if (!encryptedValue) return null;
 
@@ -1031,7 +1031,7 @@ getUserLogins(): Observable<any[]> {
 //get user login by id
 getUserLoginById(uid: number | string): Observable<any> {
   const endpoint = `${APIEndpoints.userLogins}/${uid}`;
-debugger;
+//debugger;
   const noCacheHeaders = new HttpHeaders({
     'Cache-Control': 'no-cache',
     'Pragma': 'no-cache',
@@ -1048,7 +1048,7 @@ debugger;
     map((res: any) => {
       const item = res?.data;
       if (!item) return null;
-      debugger;
+     // debugger;
       const decryptField = (encryptedValue: any): string | null => {
         if (!encryptedValue) return null;
 

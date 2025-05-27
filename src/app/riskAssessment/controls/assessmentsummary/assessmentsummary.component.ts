@@ -194,7 +194,7 @@ export class AssessmentsummaryComponent  implements OnInit {
     this.apiService.getHitsResultCalculation().subscribe({
       next: (response: any) => {
         if (response && response.data) {
-          debugger;
+        //  debugger;
           this.hitResults = response.data;
   
           // Extract and store Note and Caution (assumes only one item in hitResults)
@@ -213,7 +213,7 @@ export class AssessmentsummaryComponent  implements OnInit {
   
           // Handle critical alert case
           if (this.criticalalert) {
-            debugger;
+        //    debugger;
             this.thresholdValues = {
               10: { color: 'red' },
               20: { color: 'red' }
