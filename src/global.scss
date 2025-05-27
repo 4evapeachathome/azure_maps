@@ -295,6 +295,9 @@ ion-card {
   border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 }
+ ion-item {   
+    --background:var(--color-white)
+  }
 .form-container {
   background: var(--color-white-smoke);
   padding: 24px;
