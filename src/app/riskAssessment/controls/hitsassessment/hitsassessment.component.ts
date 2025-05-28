@@ -156,7 +156,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
     };
   
     sessionStorage.setItem('hitsAssessmentResult', JSON.stringify(result));
-    debugger;
+    //debugger;
     this.router.navigate(['/riskassessmentsummary']);
   }
 

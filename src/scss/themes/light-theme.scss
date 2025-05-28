@@ -36,7 +36,8 @@
   --color-red                     :   #F60404;
   --risk-login-background         :   #d5c4da;
   --color-link                    :   #8D8989;
-
+  --color-light-purple            :   #f3edf7;
+  --color-light-purple-border     :   #84349d;
   
 }
 
@@ -66,8 +67,10 @@ $color-orange                     :   var(--color-orange);
 $color-red                        :   var(--color-red);
 $risk-login-background            :   var(--risk-login-background);
 $color-link                       :   var(--color-link );
+$color-light-purple                       :   var(--color-light-purple );
+$color-light-purple-border                       :   var(--color-light-purple-border );
 
-
+   
 $colors: () !default;
 $colors: map-merge(
   (
