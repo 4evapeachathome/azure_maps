@@ -701,7 +701,8 @@ ion-card {
         justify-content: space-between;
         display: flex;
         position: absolute;
-        top: 50%;
+       // top: 50%;
+       top: 30px;
         transform: translateY(-50%);
         font-size: 2rem;
         cursor: pointer;
@@ -1228,7 +1229,17 @@ color: var(--color-dark-Gray);
       }
     }
   }
-  
+  .header-pagination{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .pagination{
+      margin-top: inherit;
+    }
+    .nav-arrow{
+margin: 0 8px;
+    }
+  }
   .qz-button-row {
     margin-top: 16px;
     display: flex;

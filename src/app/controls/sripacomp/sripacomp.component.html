@@ -8,8 +8,24 @@
     <ng-container *ngIf="currentIndex < sripa.length && !finalAnswerVisible">
       <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
         <div class="qs-row qs-header">
-          <div class="qs-col">
+          <div class="qs-col header-pagination">
             <strong>Question:</strong>
+             <div class="pagination">
+          <ion-icon 
+            name="chevron-back-outline"
+            class="nav-arrow prev" 
+            (click)="prevSlide()" 
+            [class.disabled]="currentIndex === 0">
+          </ion-icon>
+          
+      
+          <ion-icon 
+            name="chevron-forward-outline"
+            class="nav-arrow next" 
+            (click)="nextSlide()" 
+            [class.disabled]="currentIndex === sripa.length - 1">
+          </ion-icon>
+        </div>
           </div>
         </div>
     
@@ -38,12 +54,12 @@
         </div>
     
         <div class="pagination">
-          <ion-icon 
+          <!-- <ion-icon 
             name="chevron-back-outline"
             class="nav-arrow prev" 
             (click)="prevSlide()" 
             [class.disabled]="currentIndex === 0">
-          </ion-icon>
+          </ion-icon> -->
           
           <span *ngFor="let q of sripa; let idx = index"
             class="dot"
@@ -51,12 +67,12 @@
             (click)="goToSlide(idx)">
           </span>
           
-          <ion-icon 
+          <!-- <ion-icon 
             name="chevron-forward-outline"
             class="nav-arrow next" 
             (click)="nextSlide()" 
             [class.disabled]="currentIndex === sripa.length - 1">
-          </ion-icon>
+          </ion-icon> -->
         </div>
       </div>
     </ng-container>
