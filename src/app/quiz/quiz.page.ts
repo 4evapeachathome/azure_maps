@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-quiz',
@@ -8,9 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class QuizPage implements OnInit {
 
-  constructor() { }
+  constructor(private menuService:MenuService) { }
 
   ngOnInit() {
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
 }

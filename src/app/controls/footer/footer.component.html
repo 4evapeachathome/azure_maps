@@ -9,25 +9,25 @@
       <ion-col size="12" size-sm="10" class="footer-menu">
         <div >
           <ul>
-          <h5> <a routerLink="/home">Home</a></h5>
+          <h5> <a (click)="expandMenu('Home')" routerLink="/home">Home</a></h5>
           </ul>
           <ul>
-            <h5><a (click)="expandMenu()" routerLink="/peaceathome">Peace at Home</a></h5>
-            <li><a (click)="expandMenu()" routerLink="/healthyrelationship" routerLinkActive="active">Healthy Relationship</a></li>
+            <h5><a (click)="expandMenu('Peace at Home')" routerLink="/peaceathome">Peace at Home</a></h5>
+            <li><a (click)="expandMenu('Healthy Relationship')" routerLink="/healthyrelationship" routerLinkActive="active">Healthy Relationship</a></li>
             </ul>
             <ul>
-              <h5><a (click)="expandMenu()" routerLink="/nopeaceathome">No Peace at Home</a></h5>
+              <h5><a (click)="expandMenu('No Peace at Home')" routerLink="/nopeaceathome">No Peace at Home</a></h5>
             
-                <li><a (click)="expandMenu()" routerLink="/unhealthyrelationship" routerLinkActive="active" >Unhealthy Relationship</a></li>
-                <li><a (click)="expandMenu()" routerLink="/typesofabuse" routerLinkActive="active">Types of Abuse</a></li>
-                <li><a (click)="expandMenu()" routerLink="/partnerviolence" routerLinkActive="active">Partner Violence</a></li>
+                <li><a (click)="expandMenu('Unhealthy Relationship')" routerLink="/unhealthyrelationship" routerLinkActive="active" >Unhealthy Relationship</a></li>
+                <li><a (click)="expandMenu('Types of Abuse')" routerLink="/typesofabuse" routerLinkActive="active">Types of Abuse</a></li>
+                <li><a (click)="expandMenu('Partner Violence')" routerLink="/partnerviolence" routerLinkActive="active">Partner Violence</a></li>
            
               </ul>
               <ul>
-                <h5><a (click)="expandMenu()" routerLink="/nopeaceathome">Legal Rights</a></h5>
+                <h5><a (click)="expandMenu('Legal Rights')" routerLink="/legalrights">Legal Rights</a></h5>
               
-                  <li><a (click)="expandMenu()" routerLink="/unhealthyrelationship" routerLinkActive="active" >Federal Level Law</a></li>
-                  <li><a (click)="expandMenu()" routerLink="/typesofabuse" routerLinkActive="active">US Law by State</a></li>
+                  <li><a (click)="expandMenu('Federal Level Law')" routerLink="/federallaw" routerLinkActive="active" >Federal Level Law</a></li>
+                  <li><a (click)="expandMenu('US Law by State')" routerLink="/uslawsbystate" routerLinkActive="active">US Law by State</a></li>
              
                 </ul>
               <ul>

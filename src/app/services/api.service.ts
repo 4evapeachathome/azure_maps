@@ -895,32 +895,73 @@ getQuizzes(): Observable<any> {
 
 
 //get sripa api
+// getSripaa(): Observable<any> {
+//   const endpoint = APIEndpoints.sripa;
+//   const options: QueryOptions = {
+//     populate: {
+//       sripa: {
+//         fields: ['question', 'responseyes']
+//       }
+//     }
+//   };
+
+//   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+//     map((res: any) => {
+//       const item = res.data?.[0];
+//       if (!item) return null;
+
+//       return {
+//         id: item.id,
+//         title: item.title,
+//         subheading: item.subheading,
+//         rating: item.rating,
+//         yesanswer: item.yesanswer,
+//         sripa: item.sripa || []  // array of { question, responseyes }
+//       };
+//     }),
+//     catchError(error => {
+//       console.error('Error fetching sripaa data', error);
+//       return throwError(error);
+//     })
+//   );
+// }
+
 getSripaa(): Observable<any> {
-  const endpoint = APIEndpoints.sripa;
+  const endpoint = APIEndpoints.ssripaQuestions; // Update to point to 'api/ssripa-questions'
   const options: QueryOptions = {
+    fields: ['text'],
     populate: {
-      sripa: {
-        fields: ['question', 'responseyes']
+      severity: {
+        fields: ['title']
+      },
+      actions: {
+        fields: ['action']
       }
     }
   };
 
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
-      const item = res.data?.[0];
-      if (!item) return null;
+     // debugger;
+      // Check if response has data
+      if (!res.data || !Array.isArray(res.data)) {
+        return [];
+      }
 
-      return {
+      // Map each question to the desired format
+      return res.data.map((item: any) => ({
         id: item.id,
-        title: item.title,
-        subheading: item.subheading,
-        rating: item.rating,
-        yesanswer: item.yesanswer,
-        sripa: item.sripa || []  // array of { question, responseyes }
-      };
+        text: item.text || '',
+        severity: item.severity?.title || '',
+        actions: item.actions?.map((act: any) => ({
+          description: act.action || ''
+        })) || []
+        
+      }));
+
     }),
     catchError(error => {
-      console.error('Error fetching sripaa data', error);
+      console.error('Error fetching ssripa-questions data', error);
       return throwError(error);
     })
   );

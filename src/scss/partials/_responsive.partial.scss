@@ -6,6 +6,10 @@
   } 
 }
 @media (max-width: 768px) {
+  .container-min-height{
+    height: calc(100% - 35px);
+    display: table;
+  }
   .hb-img{
 
     max-height: 200px !important;
@@ -90,6 +94,7 @@
         display: block;
         z-index: 10000;
         left: 0 !important;
+        top: 0 !important;
       //  transition: margin-left 0.5s;
         .sidebar-header{
           display: none;
@@ -217,6 +222,12 @@ height: auto !important;
   .question-row{
     display: block !important;
   }
+
+  .question-severity {
+    font-size: 11px;
+    color: #888;
+    margin-top: 6px;
+  }
   // .ta-center{
   //   max-width: 100%;
   //   text-align: center;
@@ -246,4 +257,5 @@ text-align: left !important;
  
   justify-content: center !important;
 }
+
   }

@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SripacompComponent } from '../controls/sripacomp/sripacomp.component';
+import { MenuService } from 'src/shared/menu.service';
+
 
 @Component({
   selector: 'app-sripaa',
@@ -9,9 +11,14 @@ import { SripacompComponent } from '../controls/sripacomp/sripacomp.component';
 })
 export class SripaaPage implements OnInit {
   @ViewChild(SripacompComponent) sripaCompRef!: SripacompComponent;
-  constructor() { }
+
+  constructor(private menuService:MenuService) { }
 
   ngOnInit() {
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
   onFinalAnswerClick() {

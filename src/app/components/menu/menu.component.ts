@@ -39,6 +39,8 @@ export class MenuComponent implements OnInit {
   showAdditionalMenus: boolean = false;
   @Input() isMenuOpen: boolean = true;
   public subscription!: Subscription;
+  currentExpandedSection: string | null = null;
+  showUserName:boolean = false;
 
   // Define the titles of menus to hide initially
   private initiallyHiddenMenuTitles = [
@@ -60,12 +62,36 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  signOut(){
+    this.showUserName = false;
+  }
+
+  UserLogin(){
+    this.showUserName = true;
+    this.router.navigate(['/loginPage']);
+  }
+
   ngOnInit() {
     this.loadMenuItems();
-    this.subscription = this.menuService.showAdditionalMenus$.subscribe(show => {
+    this.subscription = this.menuService.showAdditionalMenus$.subscribe(({ show, sectionTitle }) => {
       this.showAdditionalMenus = show;
-      if (show && this.menuItems.some(item => item.title === 'Peace at Home')) {
+    
+      if (show) {
         this.processedMenu = this.buildMenuTree(this.menuItems);
+    
+        if (sectionTitle) {
+          this.expandOnlySection(sectionTitle); // Collapse all and expand the right one
+        }
+      }
+    });
+  }
+
+  expandOnlySection(title: string) {
+    this.currentExpandedSection = title;
+  
+    this.processedMenu.forEach(item => {
+      if (!item.parentMenu && item.children?.length) {
+        item.expanded = item.title === title;
       }
     });
   }
@@ -156,7 +182,7 @@ export class MenuComponent implements OnInit {
 
   toggleItem(item: MenuItem, event: Event) {
     event.stopPropagation();
-
+  
     // Show additional menus when clicking "Peace at Home"
     if (item.title === 'Peace at Home' && !this.showAdditionalMenus) {
       this.showAdditionalMenus = true;
@@ -168,19 +194,29 @@ export class MenuComponent implements OnInit {
       this.processedMenu = this.buildMenuTree(this.menuItems);
       this.collapseAllItems(this.processedMenu);
     }
-
-    // If the item is a root-level item (no parent), collapse all other root items
+    this.menuService.lastExpandedSection = item.title;
+    // Handle root-level items (no parent)
     if (!item.parentMenu && item.children && item.children.length > 0) {
+      // Collapse all other root items and their children
       this.processedMenu.forEach(rootItem => {
         if (rootItem !== item) {
-          rootItem.expanded = false; // Collapse other root items
+          rootItem.expanded = false;
+          if (rootItem.children) {
+            this.collapseAllItems(rootItem.children);
+          }
         }
       });
-      item.expanded = !item.expanded; // Toggle the clicked item
+      // Expand the clicked item if not already expanded
+      if (!item.expanded) {
+        item.expanded = true;
+      }
     } else if (item.children && item.children.length > 0) {
-      item.expanded = !item.expanded; // Toggle non-root items as before
+      // For non-root items with children, toggle only if not expanded
+      if (!item.expanded) {
+        item.expanded = true;
+      }
     }
-
+  
     if (item.link) {
       this.router.navigate([item.link]);
     }
@@ -195,6 +231,20 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  getTooltip(name: string): string | null {
+    if (name === '/quiz') {
+      return 'Quiz for Healthy and Unhealthy Relationship';
+    } else if (name === '/sripaa') {
+      return 'Signs of Self-Recognition in Intimate Partner Abuse';
+    }
+    return null;
+  }
+
+  hasTooltip(title: string): boolean {
+    return title === '/quiz' || title === '/sripaa';
+  }
+
+  
   expandCurrentSection() {
     const expandParents = (items: MenuItem[]) => {
       items.forEach(item => {
