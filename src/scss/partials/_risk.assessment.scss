@@ -17,9 +17,9 @@ border-bottom-left-radius: 8px;
 background: $risk-login-background ;
 height: 100%;
 background-image: url(../../assets/riskAssesment3.svg);
-background-position: bottom center;
+background-position: bottom left;
 background-repeat: no-repeat;
-background-size: 50%;
+background-size: contain;
 //min-height: 530px;
 padding: 0;
 border-top-left-radius: 8px;
@@ -314,6 +314,9 @@ justify-content: end;
       opacity: 1 !important;
     }
   }
+  .hit-assessment-scroll{
+    overflow: auto;
+  }
   .hits-assessment-table {
       width: 100%;
       background: $color-light-purple ;
@@ -332,6 +335,33 @@ justify-content: end;
       }
     }
     tbody{
+      .tbody-first{
+        width: 30%;
+      }
+      .tbody-container{
+
+ .tbc-content{
+   display: flex;
+   gap: 0;
+   margin: 0;
+span, ion-radio{
+  // flex-grow: 1;
+   width: 20%;
+   text-align: center;
+   min-width: 150px;
+}
+ion-radio{
+   &::label{   
+    justify-content: center;
+  }
+}
+ion-radio::label .radio-wrapper {
+  text-align: center;
+  flex-grow: 1;
+}
+ }
+ 
+      }
       tr{
   border-bottom: 1px solid $color-light-purple-border;
 
@@ -341,41 +371,20 @@ justify-content: end;
     text-align: left;
       }
       .row-header{
-        display: flex;
+       
            text-transform: uppercase;
-        span{
-           flex-grow: 1;
-        }
+       //font-size: $font-size-sm;
       }
       .row-container{
         ion-radio-group{
-             display: flex;
+           
              margin-bottom: 0;
-ion-radio{
-   flex-grow: 1;
-  // text-align: center;
-}
+
         }
       }
       
-        .row-container-footer{
-             display: flex;
-        
-span{
-   flex-grow: 1;
-  // text-align: center;
-}
-       
-      }
+     
     }
   }
-  tfoot{
-    .foot-container{
-       display: flex;
-       
-        span{
-           flex-grow: 1;
-        }
-    }
-  }
+
   }
