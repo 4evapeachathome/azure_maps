@@ -267,9 +267,9 @@ collapseAllSections(): void {
 
   getTooltip(name: string): string | null {
     if (name === '/quiz') {
-      return 'Quiz for Healthy and Unhealthy Relationship';
+      return 'HUHA Quiz';
     } else if (name === '/sripaa') {
-      return 'Signs of Self-Recognition in Intimate Partner Abuse';
+      return 'SSRIPA Assessment';
     }
     return null;
   }
