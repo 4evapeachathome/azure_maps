@@ -8,7 +8,7 @@
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">
-      <ion-col class="ion-text-center" style="gap: 16px;">
+      <ion-col size="12" size-sm="12" class="ion-text-center button-gap">
         <ion-button color="primary" (click)="expandMenu('Legal Rights')"  [routerLink]="['/legalrights']" size="small">Explore the Next Chapter.....</ion-button>
         <ion-button color="primary"  *ngIf="sripaCompRef?.hasAnyAnswer && !sripaCompRef.finalAnswerVisible" 
           (click)="onFinalAnswerClick()" size="small">Take me to Results</ion-button>
