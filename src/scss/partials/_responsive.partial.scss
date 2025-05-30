@@ -6,6 +6,18 @@
   } 
 }
 @media (max-width: 768px) {
+  .mobile-container{
+.menu-hidden-bg, .menu-hidden-bg-header{
+  background: yellow;
+  opacity: 0;
+  height: 100%;
+  z-index: 100;
+}
+.menu-hidden-bg-header{
+  position: absolute;
+  width: 100%;
+}
+}
   .container-min-height{
     height: calc(100% - 35px);
     display: table;
