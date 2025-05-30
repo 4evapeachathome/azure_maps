@@ -1418,3 +1418,15 @@ ion-footer {
   display: flex;
   justify-content: end;
 }
+.button-gap{
+  gap: 8px;
+    display: flex;
+    justify-content: center;
+}
+.yesanswer-content{
+  h3{
+       font-size: $font-size-md;
+       font-weight: $font-bold;
+    color: var(--color-deep-Gray);
+  }
+}
