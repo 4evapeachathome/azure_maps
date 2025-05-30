@@ -53,4 +53,11 @@ export const APIEndpoints = {
     quiz :`${environment.apiHost}/api/quizzes`,
     sripa :`${environment.apiHost}/api/sripaas`,
     ssripaQuestions :`${environment.apiHost}/api/ssripa-questions`,
+    
+    //Risk assessment modules
+    userLogins :`${environment.apiHost}/api/user-logins`,
+    forgetPw :`${environment.apiHost}/api/auth/forgot-password`,
+    hitsAssessmentQuestions :`${environment.apiHost}/api/hits-assessment-questions`,
+    scaleOptions :`${environment.apiHost}/api/multiple-answer-options`,
+    hitsresultcalculation :`${environment.apiHost}/api/hit-results`,
   }

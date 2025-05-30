@@ -12,10 +12,12 @@ interface Environment {
 
 export const environment = {
   production: false,
-  apiHost:'http://localhost:1337',
-  //apiHost:'https://cma-strapi-app-heecd3e6bwczakfu.eastus2-01.azurewebsites.net',
+  //apiHost:'http://localhost:1337',
+  apiHost:'https://cma-strapi-app-heecd3e6bwczakfu.eastus2-01.azurewebsites.net',
   secretKey:'0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9',
-  apitoken:'f7a942e7338c44df4b48825265c443aa4b17620e8a08883238db17787cff9d685d3e6f43ce7aa12628d961e2065c0a754e1132c419587b214776198eb74905d98ae5b76e3832e77c52c1081a6e26fd44af14a9a58f9f0e1677bee48b133b2cc47da246dbf2dfd0b4b517ebe6118e93bcf4499c29572f8328ed86bcecf80fafff',
+  
+apitoken:'68666a784e3beac9b4575c987c0e0a24ceebd161262eed970ce99fa7880b1254b3a01edea1bc190ef7fb3e326cb6b1779ebada05170eeb57a1675e8e2012ae39b51f8b5adb25d210e84b9c124ae99c78617395955f60e237a011c56dcd4c13f1761247c0e43f5ae83ec67df482b192c25e1012d96181370a30f46c07cfda05e5',
+ // apitoken:'44d70090c411f259173515737d6723456c4505aad1d1cd3351e92dbd50791450a821801fa457ff1ebe2b67c1c2026131d1b0b9cb063f083c576254a88aef807ecf14c0e15bb2db0b15126ff99822a6cf43e94904787d0b0eb79119b030229d2c899ae31ca0e497ed945cb6cf2b5047be85064470a434f47fb4b0059a183dac09',
   logging: {
     enabled: true,
     storageType: 'local',

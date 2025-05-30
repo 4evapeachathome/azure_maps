@@ -1,5 +1,10 @@
+import { LoginPagePageModule } from './riskAssessment/login-page/login-page.module';
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { RiskAssessmentGuard } from './guards/risk-assessment.guard';
+import { LoginGuard } from './guards/login-assessment.gaurd';
+import { UserCreationAuthGuard } from './guards/usercreation-auth.guard';
 
 const routes: Routes = [
   { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomePageModule) },
@@ -7,6 +12,7 @@ const routes: Routes = [
   { path: 'healthyrelationship', loadChildren: () => import('./healthyrelationship/healthyrelationship.module').then(m => m.HealthyrelationshipPageModule) },
   { path: 'nopeaceathome', loadChildren: () => import('./nopeaceathome/nopeaceathome.module').then(m => m.NopeaceathomePageModule) },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
+  //{ path: '**', redirectTo: 'home', pathMatch: 'full' },
   { path: 'contactus', loadChildren: () => import('./contactus/contactus.module').then(m => m.ContactusPageModule) },
   { path: 'supportservice', loadChildren: () => import('./supportservice/supportservice.module').then(m => m.SupportservicePageModule) },
   { path: 'unhealthyrelationship', loadChildren: () => import('./unhealthyrelationship/unhealthyrelationship.module').then(m => m.UnhealthyrelationshipPageModule) },
@@ -23,13 +29,24 @@ const routes: Routes = [
   {
     path: 'legalrights',
     loadChildren: () => import('./legalrightshome/legalrightshome.module').then( m => m.LegalrightshomePageModule)
-  },  {
+  },
+  {
     path: 'sripaa',
     loadChildren: () => import('./sripaa/sripaa.module').then( m => m.SripaaPageModule)
   },
   {
     path: 'quiz',
     loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizPageModule)
+  },
+  //Risk Assessment
+  // { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule),canActivate: [LoginGuard] },  
+  { path: 'riskassessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule),canActivate: [RiskAssessmentGuard] },
+  { path: 'usercreation', loadChildren: () => import('./riskAssessment/user-creation/user-creation.module').then(m => m.AssessmentResultPageModule),canActivate: [UserCreationAuthGuard] },
+  { path: 'riskassessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule),canActivate: [RiskAssessmentGuard] },
+  {
+    path: 'hitsassessment',
+    loadChildren: () => import('./riskAssessment/hits-assessment-page/hits-assessment-page.module').then( m => m.HitsAssessmentPagePageModule)
   }
 
 

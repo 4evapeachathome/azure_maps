@@ -1,0 +1,116 @@
+<div class="common-container risk-assessment-container h-100">
+  <ion-grid  class="p-0 h-100">
+
+    <!-- First Row: Single Component -->
+    <ion-row class="h-100">
+      <ion-col size="12" size-sm="6" class="ra-banner order2">
+        <div class="risk-login-banner"></div>
+      </ion-col>
+      <ion-col size="12" size-sm="6" class="ra-form-container order1 ">
+        <h1>Risk Assesment</h1>
+        <h3>Please Log in</h3>
+        <ion-card class="form-container">
+        
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Username Field -->
+            <ion-item>
+              <ion-input  label="Username"
+                formControlName="username"      labelPlacement="stacked"
+                placeholder="email@domain.com"
+                type="text" 
+               ></ion-input>
+            </ion-item>
+            <div *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.errors?.['userNotFound']">
+              Username not found.
+            </div>
+    
+            <!-- Password Field -->
+            <ion-item>
+              <ion-input
+                label="Password"
+                formControlName="password"
+                labelPlacement="stacked"
+                placeholder="Enter Password"
+                [type]="showPassword ? 'text' : 'password'"
+              ></ion-input>
+              <ion-icon
+                slot="end"
+                [name]="showPassword ? 'eye-off' : 'eye'"
+                class="password-toggle-icon"
+                (click)="showPassword = !showPassword"
+              ></ion-icon>
+            </ion-item>
+            <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['incorrectPassword']" class="text-red-500 text-sm mb-4">
+              Incorrect password.
+            </div>
+    
+            <!-- Forgot Password Link -->
+            <div class="ra-login-buttons">
+              <a href="#" (click)="onForgotPassword($event)">Forgot password?</a>
+               <!-- Submit Button -->
+            <ion-button color="primary" [disabled]="loginForm.invalid" type="submit" expand="block">
+              Submit
+            </ion-button>
+            </div>
+    
+           
+          </form>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- <div class="flex h-full">
+ 
+    <div class="hidden md:flex w-1/2 bg-purple-100 flex-col justify-center items-center">
+   
+      <div class="w-3/4 h-3/4 bg-purple-200 rounded-full"></div>
+      <div class="w-1/2 h-1/2 bg-purple-200 rounded-full -mt-20 ml-20"></div>
+     
+      <div class="w-3/4 h-3/4 bg-gray-100 rounded-lg -mt-40 flex justify-center items-center">
+        <p class="text-gray-500">Illustration Placeholder</p>
+      </div>
+    </div>
+
+  
+    <div class="w-full md:w-1/2 flex flex-col justify-center items-center p-8">
+      <h1 class="text-2xl font-bold text-purple-700 mb-4">RISK ASSESSMENT</h1>
+      <p class="text-gray-600 mb-6">Please Log in</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full max-w-sm">
+     
+        <ion-item class="mb-4">
+          <ion-input 
+            formControlName="username" 
+            placeholder="Username" 
+            type="text" 
+            class="border rounded-lg"></ion-input>
+        </ion-item>
+        <div *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.errors?.['userNotFound']" class="text-red-500 text-sm mb-4">
+          Username not found.
+        </div>
+
+      
+        <ion-item class="mb-4">
+          <ion-input 
+            formControlName="password" 
+            placeholder="Password" 
+            type="password" 
+            class="border rounded-lg"></ion-input>
+        </ion-item>
+        <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['incorrectPassword']" class="text-red-500 text-sm mb-4">
+          Incorrect password.
+        </div>
+
+       
+        <div class="flex justify-end mb-4">
+          <a href="#" class="text-purple-600 text-sm">Forgot password?</a>
+        </div>
+
+     
+        <ion-button type="submit" expand="block" class="bg-purple-600 text-white rounded-lg">
+          Enter
+        </ion-button>
+      </form>
+    </div>
+  </div> -->
+</div>

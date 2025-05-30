@@ -1,6 +1,6 @@
 import { Injectable, Query } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from 'src/environments/environment';
 import { APIEndpoints } from 'src/shared/endpoints';
@@ -137,9 +137,14 @@ export class ApiService {
     return this.http.patch(`${environment.apiHost}/${endpoint}`, body, { headers: this.createHeaders(token) });
   }
 
-  getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string): Observable<any> {
+  getWithQuery(endpoint: string, options: QueryOptions = {}, token?: string,extraHeaders?: HttpHeaders): Observable<any> {
     const params = this.buildQueryParams(options);
     let headers = this.createHeaders(token);
+    if (extraHeaders) {
+      extraHeaders.keys().forEach(key => {
+        headers = headers.set(key, extraHeaders.get(key)!);
+      });
+    }
   
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
@@ -537,6 +542,9 @@ getAllSupportServices(endpoint: string): Observable<any> {
     })
   );
 }
+
+
+
 
 //Get support service filter options
 
@@ -963,6 +971,205 @@ getSripaa(): Observable<any> {
     catchError(error => {
       console.error('Error fetching ssripa-questions data', error);
       return throwError(error);
+    })
+  );
+}
+
+
+
+//Risk Assessment Module
+getUserLogins(): Observable<any[]> {
+  const endpoint = APIEndpoints.userLogins;
+  const options: QueryOptions = {
+    populate: {
+      assessment_type: {
+        fields: ['name', 'description']
+      },
+      support_service: {
+        fields: ['OrgName']
+      }
+    }
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      if (!res.data || res.data.length === 0) return [];
+     // debugger;
+      const decryptField = (encryptedValue: any): string | null => {
+        if (!encryptedValue) return null;
+
+        try {
+          const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
+          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+          return decrypted || encryptedValue;
+        } catch (error) {
+          console.warn('Decryption failed for:', encryptedValue, error);
+          return encryptedValue;
+        }
+      };
+
+      return res.data.map((item: any) => ({
+        id: item?.id ?? null,
+        username: item?.Username ? decryptField(item.Username) : '',
+        temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
+        orgName: item?.support_service?.OrgName ?? 'N/A',
+        assessment_type: item?.assessment_type ?? [],
+        createdAt: item?.createdAt ?? '',
+        IsPasswordChanged: item?.IsPasswordChanged ?? false,
+        updatedAt: item?.updatedAt ?? '',
+        password: item?.password ? decryptField(item.password) : '',
+        isSendInvite: item?.sendInvite ?? false,
+      }));
+    }),
+    catchError((error) => {
+      console.error('Error fetching/decrypting user logins:', error);
+      return throwError(() => new Error('Failed to load user logins.'));
+    })
+  );
+}
+
+//get user login by id
+getUserLoginById(uid: number | string): Observable<any> {
+  const endpoint = `${APIEndpoints.userLogins}/${uid}`;
+//debugger;
+  const noCacheHeaders = new HttpHeaders({
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+
+  return this.getWithQuery(endpoint, {
+    fields: [
+      'Username',
+      'password',
+      'IsPasswordChanged',
+      'sendInvite',
+      'temp_password']}, environment.apitoken, noCacheHeaders).pipe(
+    map((res: any) => {
+      const item = res?.data;
+      if (!item) return null;
+     // debugger;
+      const decryptField = (encryptedValue: any): string | null => {
+        if (!encryptedValue) return null;
+
+        try {
+          const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
+          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+          return decrypted || encryptedValue;
+        } catch (error) {
+          console.warn('Decryption failed for:', encryptedValue, error);
+          return encryptedValue;
+        }
+      };
+
+      return {
+        id: item?.id ?? null,
+        username: item?.Username ? decryptField(item.Username) : '',
+        temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
+        IsPasswordChanged: item?.IsPasswordChanged ?? false,
+        password: item?.password ? decryptField(item.password) : '',
+        isSendInvite: item?.sendInvite ?? false,
+      };
+    }),
+    catchError((error) => {
+      console.error('Error fetching user login by ID:', error);
+      return throwError(() => new Error('Failed to load user login.'));
+    })
+  );
+}
+
+
+updateUserLogin(userId: string | number, payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/user-logins/${userId}`;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+
+  // Strapi requires the payload inside a `data` key
+  return this.http.put(endpoint, { data: payload }, { headers });
+}
+
+
+//Hits assessment
+getHitsAssessmentQuestions(): Observable<any> {
+  // Define the two endpoints
+  const endpoint1 = APIEndpoints.hitsAssessmentQuestions; // Existing endpoint for questions
+  const endpoint2 = APIEndpoints.scaleOptions; // New endpoint for answer options
+
+  // Define query options for the first endpoint (questions)
+  const options1: QueryOptions = {
+    fields: ['question_text', 'weight_critical_alert'],
+    populate: {
+      multiple_answer_option: {
+        fields: ['label', 'score']
+      }
+    }
+  };
+
+  // Define query options for the second endpoint (answer options)
+  const options2: QueryOptions = {
+    fields: ['label', 'score']
+  };
+
+  // Make the two API calls in parallel using forkJoin
+  return forkJoin([
+    this.getWithQuery(endpoint1, options1, environment.apitoken), // First API call (questions)
+    this.getWithQuery(endpoint2, options2, environment.apitoken)  // Second API call (answer options)
+  ]).pipe(
+    map(([res1, res2]: [any, any]) => {
+      // Process the first API response (questions)
+      const questions = !res1.data || !Array.isArray(res1.data)
+        ? []
+        : res1.data.map((item: any) => ({
+            id: item.id,
+            documentId: item.documentId,
+            question_text: item.question_text || '',
+            weight_critical_alert: item.weight_critical_alert || false,
+            multiple_answer_option: (item.multiple_answer_option || []).map((opt: any) => ({
+              id: opt.id,
+              documentId: opt.documentId,
+              label: opt.label || '',
+              score: opt.score ?? null
+            }))
+          }));
+
+      // Process the second API response (answer options)
+      const answerOptions = !res2.data || !Array.isArray(res2.data)
+        ? []
+        : res2.data.map((item: any) => ({
+            id: item.id,
+            documentId: item.documentId,
+            label: item.label || '',
+            score: item.score ?? null
+          }));
+
+      // Combine the results into a single object
+      return {
+        questions,
+        answerOptions
+      };
+    }),
+    catchError(error => {
+      console.error('Error fetching data from one or more endpoints', error);
+      return throwError(error);
+    })
+  );
+}
+
+//getresultfor hits assessment
+getHitsResultCalculation(): Observable<any> {
+  return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
+    populate: {
+      AnswerOption: {
+        fields: ['label', 'minScore', 'maxScore']
+      }
+    }, 
+    fields: ['Note', 'Caution'] 
+  }, environment.apitoken).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching Hits result API:', error);
+      return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
     })
   );
 }

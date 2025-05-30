@@ -79,6 +79,12 @@ ion-card-content {
 ion-button{
   text-transform: inherit;
 }
+ ion-input, ion-searchbar{
+    color: var(--color-dark-Gray);
+    font-size: $font-size-base;
+  }
+
+  
 .search-toolbar {
   .searchbar-input.sc-ion-searchbar-md {
     border: 0;
@@ -132,6 +138,13 @@ ion-checkbox {
 }
 ion-select{
   --highlight-color-valid: var(  --color-primary);
+}
+ion-radio{
+  color: var(--color-deep-Gray);
+  gap: 24px;
+   &::part(label){
+    margin-inline-start: 8px;
+   }
 }
   // ion-select{
   // border: 1px solid var(--color-dark-Gray);

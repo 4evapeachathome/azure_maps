@@ -14,6 +14,7 @@
   --color-secondary               :   #A0A0A0;
   --color-deep-Gray               :   #202020;
   --color-white-smoke             :   #F5F5F5;
+  --color-light-smoke             :   #FAFAFA;
   --color-dark-Gray               :   #4D4D4D;
   --icon-dark-Gray                :   #5F6368;
   --icon-tint-Gray                :   #7C7C7C;
@@ -33,8 +34,10 @@
   --color-yellow                  :   #F69204;
   --color-orange                  :   #F65B04;
   --color-red                     :   #F60404;
-  
-
+  --risk-login-background         :   #d5c4da;
+  --color-link                    :   #8D8989;
+  --color-light-purple            :   #f3edf7;
+  --color-light-purple-border     :   #84349d;
   
 }
 
@@ -42,6 +45,7 @@ $color-primary                    :   var(--color-primary);
 $color-secondary                  :   var(--color-secondary);
 $color-deep-Gray                  :   var(--color-deep-Gray);
 $color-white-smoke                :   var(--color-white-smoke);
+$color-light-smoke                :   var(--color-light-smoke);
 $color-dark-Gray                  :   var(--color-dark-Gray);
 $icon-dark-Gray                   :   var(--icon-dark-Gray);
 $icon-tint-Gray                   :   var(--icon-tint-Gray);
@@ -61,8 +65,12 @@ $color-map-state-selected         :   var(--color-map-state-selected);
 $color-yellow                     :   var(--color-yellow);
 $color-orange                     :   var(--color-orange);
 $color-red                        :   var(--color-red);
+$risk-login-background            :   var(--risk-login-background);
+$color-link                       :   var(--color-link );
+$color-light-purple                       :   var(--color-light-purple );
+$color-light-purple-border                       :   var(--color-light-purple-border );
 
-
+   
 $colors: () !default;
 $colors: map-merge(
   (
@@ -70,6 +78,7 @@ $colors: map-merge(
     "color-secondary":     $color-secondary,
     "color-deep-Gray":     $color-deep-Gray ,
     "color-white-smoke":     $color-white-smoke,
+     "color-light-smoke":     $color-light-smoke,
     "color-dark-Gray":     $color-dark-Gray,
     "icon-dark-Gray":     $icon-dark-Gray ,
     "icon-tint-Gray":     $icon-tint-Gray  ,
@@ -83,7 +92,7 @@ $colors: map-merge(
     "color-primary-contrast":     $color-primary-contrast,
     "color-error":     $color-error,
     "color-white":     $color-white,
-   
+      "color-link":     $color-link,   
     
   ),
   $colors

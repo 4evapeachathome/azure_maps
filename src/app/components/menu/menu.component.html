@@ -4,28 +4,6 @@
       <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item, level: 0 }"></ng-container>
     </ng-container>
   </ion-list>
-  <!-- <div class="signinout-container">
-    <div class="signin-container">
-      <ion-button *ngIf="!showUserName" color="primary" fill="outline" size="small" (click)="UserLogin()" class="signin-button">Sign In</ion-button>
-    
-        <div *ngIf="showUserName" class="username-container">
-          Hi, <ion-text class="username">Username</ion-text>
-          <ion-button fill="clear" size="small" class="signout-button" (click)="signOut()">Sign Out</ion-button>
-      
-       
-     
-  
-      </div>
-    </div>
-    
-    <ion-list lines="none" *ngIf="showUserName"> 
-      <ion-item button detail="false"            >
-    <ion-icon slot="start" class="menu-icon" src="/assets/riskAssesmentIcon.svg"></ion-icon>
-    <ion-label>Risk Assessment</ion-label>
-
-  </ion-item>
-  </ion-list>
-  </div> -->
 </div>
 
 <ng-template #menuItemTemplate let-item let-level="level">

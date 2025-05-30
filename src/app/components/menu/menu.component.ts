@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, Input, CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -52,13 +52,18 @@ export class MenuComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private zone: NgZone
   ) {
+    
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       this.selectedId = this.router.url;
       this.expandCurrentSection();
+    });
+    this.zone.run(() => {
+      setTimeout(() => this.expandCurrentSection(), 0);
     });
   }
 
@@ -68,24 +73,36 @@ export class MenuComponent implements OnInit {
 
   UserLogin(){
     this.showUserName = true;
-    this.router.navigate(['/loginPage']);
+    this.router.navigate(['/login']);
   }
 
-  ngOnInit() {
-    this.loadMenuItems();
-    this.subscription = this.menuService.showAdditionalMenus$.subscribe(({ show, sectionTitle }) => {
-      this.showAdditionalMenus = show;
-    
-      if (show) {
-        this.processedMenu = this.buildMenuTree(this.menuItems);
-    
-        if (sectionTitle) {
-          this.expandOnlySection(sectionTitle); // Collapse all and expand the right one
-        }
+  ngOnInit(): void {
+  this.loadMenuItems();
+
+  this.subscription = this.menuService.showAdditionalMenus$.subscribe(({ show, sectionTitle }) => {
+    this.showAdditionalMenus = show;
+
+    if (show) {
+      // First process the menu tree
+      this.processedMenu = this.buildMenuTree(this.menuItems);
+
+      // Collapse all sections initially
+      this.collapseAllSections();
+
+      // Then expand only the target section (if provided)
+      if (sectionTitle) {
+        this.expandOnlySection(sectionTitle);
       }
-    });
-  }
+    } else {
+      // If not showing, make sure all sections are collapsed
+      this.collapseAllSections();
+    }
+  });
+}
 
+collapseAllSections(): void {
+  this.processedMenu.forEach(item => item.expanded = false);
+}
   expandOnlySection(title: string) {
     this.currentExpandedSection = title;
   
@@ -108,6 +125,8 @@ export class MenuComponent implements OnInit {
           this.menuItems = response;
           this.processedMenu = this.buildMenuTree(this.menuItems);
           this.menuService.setMenuItems(this.menuItems);
+          this.selectedId = this.router.url;
+         this.expandCurrentSection();
         } else {
           console.error('Invalid response format:', response);
         }
@@ -172,12 +191,20 @@ export class MenuComponent implements OnInit {
       return a.order === null ? 1 : -1; // Null orders come last
     });
 
-    return sortedRootItems.filter(item => {
-      if (this.initiallyHiddenMenuTitles.includes(item.title)) {
-        return this.showAdditionalMenus;
+    const filteredItems = sortedRootItems.filter(item => {
+      if (
+        this.initiallyHiddenMenuTitles.includes(item.title) &&
+        !this.menuService.hasAppLoadedOnce
+      ) {
+        return false; // Hide on first load only
       }
       return true;
     });
+  
+    // After building for the first time, mark as loaded
+    this.menuService.hasAppLoadedOnce = true;
+  
+    return filteredItems;
   }
 
   toggleItem(item: MenuItem, event: Event) {
@@ -187,31 +214,38 @@ export class MenuComponent implements OnInit {
     if (item.title === 'Peace at Home' && !this.showAdditionalMenus) {
       this.showAdditionalMenus = true;
       this.processedMenu = this.buildMenuTree(this.menuItems);
-    }
-    // Collapse additional menus when clicking "Home"
-    else if (item.title === 'Home' && this.showAdditionalMenus) {
+    } 
+    // Always reset additional menus when clicking Home
+    else if (item.title === 'Home') {
       this.showAdditionalMenus = false;
       this.processedMenu = this.buildMenuTree(this.menuItems);
       this.collapseAllItems(this.processedMenu);
-    }
-    this.menuService.lastExpandedSection = item.title;
-    // Handle root-level items (no parent)
-    if (!item.parentMenu && item.children && item.children.length > 0) {
-      // Collapse all other root items and their children
-      this.processedMenu.forEach(rootItem => {
-        if (rootItem !== item) {
-          rootItem.expanded = false;
-          if (rootItem.children) {
-            this.collapseAllItems(rootItem.children);
+    } 
+    else {
+      // For any other main menu click, collapse all other root menus
+      if (!item.parentMenu) {
+        this.showAdditionalMenus = false; // reset additional menus on other main menus
+        this.processedMenu.forEach(rootItem => {
+          if (rootItem !== item) {
+            rootItem.expanded = false;
+            if (rootItem.children) {
+              this.collapseAllItems(rootItem.children);
+            }
           }
-        }
-      });
-      // Expand the clicked item if not already expanded
+        });
+      }
+    }
+  
+    this.menuService.lastExpandedSection = item.title;
+  
+    // Expand clicked root-level menu if it has children
+    if (!item.parentMenu && item.children && item.children.length > 0) {
       if (!item.expanded) {
         item.expanded = true;
       }
-    } else if (item.children && item.children.length > 0) {
-      // For non-root items with children, toggle only if not expanded
+    } 
+    // Expand non-root items with children if not already expanded
+    else if (item.children && item.children.length > 0) {
       if (!item.expanded) {
         item.expanded = true;
       }
@@ -233,9 +267,9 @@ export class MenuComponent implements OnInit {
 
   getTooltip(name: string): string | null {
     if (name === '/quiz') {
-      return 'Quiz for Healthy and Unhealthy Relationship';
+      return 'HUHA Quiz';
     } else if (name === '/sripaa') {
-      return 'Signs of Self-Recognition in Intimate Partner Abuse';
+      return 'SSRIPA Assessment';
     }
     return null;
   }
