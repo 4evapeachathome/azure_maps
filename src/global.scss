@@ -295,6 +295,9 @@ ion-card {
   border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 }
+ ion-item {   
+    --background:var(--color-white)
+  }
 .form-container {
   background: var(--color-white-smoke);
   padding: 24px;
@@ -698,7 +701,8 @@ ion-card {
         justify-content: space-between;
         display: flex;
         position: absolute;
-        top: 50%;
+       // top: 50%;
+       top: 30px;
         transform: translateY(-50%);
         font-size: 2rem;
         cursor: pointer;
@@ -1008,18 +1012,7 @@ width: 100%;
     }
   }
 }
-.mobile-container{
-.menu-hidden-bg, .menu-hidden-bg-header{
-  background: yellow;
-  opacity: 0;
-  height: 100%;
-  z-index: 100;
-}
-.menu-hidden-bg-header{
-  position: absolute;
-  width: 100%;
-}
-}
+
 .header-cont-container{
   position: relative;
  
@@ -1225,7 +1218,17 @@ color: var(--color-dark-Gray);
       }
     }
   }
-  
+  .header-pagination{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .pagination{
+      margin-top: inherit;
+    }
+    .nav-arrow{
+margin: 0 8px;
+    }
+  }
   .qz-button-row {
     margin-top: 16px;
     display: flex;
@@ -1349,10 +1352,69 @@ color: var(--color-dark-Gray);
   opacity: 1;
   display: block;
 }
+
 .cmh-container{
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 100%;
+  overflow: hidden;
+    overflow-y: auto;
+}
+ion-footer {
+  background-color: $color-dark-Gray;
+  --color: $color-Gray64;
+  font-size: $font-size-md;
+ // margin-top: 16px;
+  box-shadow: none;
+  a {
+    cursor: pointer; 
+    &.active { 
+      text-decoration: underline; 
+      color: $color-Gray64; 
+    }
+  }
+
+ 
+
+  ion-text {
+    color: $color-Gray64;
+    font-size: $font-size-md;
+  }
+  h5 {
+    font-size: $font-size-base;
+    color: $color-Gray64;
+    margin: 0;
+    padding: 0;
+    font-weight: $font-regular;
+    a {
+      color: $color-Gray64;
+      font-size: $font-size-md;
+      text-decoration: none;
+    }
+  }
+  ul {
+    padding: 0;
+    margin: 0;
+    color: $color-Gray64;
+    font-size: $font-size-md;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 50px;
+    li {
+      padding: 4px 0;
+      margin-left: 26px;
+      cursor: pointer;
+      a {
+        color: $color-Gray64;
+        font-size: $font-size-md;
+        text-decoration: none;
+      }
+    }
+  }
+}
+.footer-menu{
+  display: flex;
+  justify-content: end;
 }

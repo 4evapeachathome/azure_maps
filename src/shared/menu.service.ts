@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+   //Hits Assessment
+   interface HitsAssessmentData {
+    questions: any[];
+    answerOptions: any[];
+  }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +19,6 @@ export class MenuService {
 
   filterOptions$ = this.filterOptionsSubject.asObservable();
   organizations$ = this.organizationsSubject.asObservable();
-
 
   private showAdditionalMenusSource = new BehaviorSubject<{ show: boolean, sectionTitle: string | null }>({
     show: false,
@@ -34,7 +39,7 @@ export class MenuService {
 
 toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
   // Prevent re-emitting the same section
-  debugger;
+  //debugger;
   if (this.lastExpandedSection === sectionTitle && show) {
     return;
   }
@@ -59,6 +64,27 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
 
   setOrganizations(orgs: any[]) {
     this.organizationsSubject.next(orgs);
-  }
+  } 
+
+  //Menu inital load
+
+    get hasAppLoadedOnce(): boolean {
+      return sessionStorage.getItem('appLoadedOnce') === 'true';
+    }
+  
+    set hasAppLoadedOnce(value: boolean) {
+      sessionStorage.setItem('appLoadedOnce', value ? 'true' : 'false');
+    }
+
+    
+    private hitsAssessmentData: HitsAssessmentData | null = null;
+    
+    setHitsAssessment(data: HitsAssessmentData) {
+      this.hitsAssessmentData = data;
+    }
+    
+    getHitsAssessment(): HitsAssessmentData | null {
+      return this.hitsAssessmentData;
+    }
 
 }
