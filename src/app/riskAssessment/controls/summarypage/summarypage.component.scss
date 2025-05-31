@@ -1,0 +1,99 @@
+.summary-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      ion-text {
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .risk-meter-section {
+    text-align: center;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      margin-bottom: 30px;
+      color: #333;
+      font-size: 1.8rem;
+    }
+
+    .risk-info {
+      margin-top: 30px;
+      
+      .score-text {
+        font-size: 1.4rem;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+
+      .risk-level {
+        font-size: 1.2rem;
+
+        span {
+          font-weight: 600;
+          
+          &.green {
+            color: #4CAF50;
+          }
+          
+          &.orange {
+            color: #FFA500;
+          }
+          
+          &.red {
+            color: #FF0000;
+          }
+        }
+      }
+    }
+  }
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+
+    a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #f1f1f1;
+      }
+    }
+  }
+
+  &:hover .dropdown-content {
+    display: block;
+  }
+}
