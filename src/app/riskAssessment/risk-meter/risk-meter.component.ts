@@ -12,15 +12,15 @@ import { CustomGaugeComponent } from '../controls/custom-gauge/custom-gauge.comp
 })
 export class RiskMeterComponent implements OnInit, OnChanges {
   @Input() score: number = 0;
-  @Input() greenRange: number = 5;
-  @Input() orangeRange: number = 10;
+  @Input() min: number = 0;
+  @Input() max: number = 15;
+  @Input() ranges: Array<{ min: number; max: number; color: string; label: string }> = [
+    { min: 0, max: 5, color: '#4CAF50', label: 'Low Risk' },
+    { min: 5, max: 10, color: '#FFA500', label: 'Medium Risk' },
+    { min: 10, max: 15, color: '#FF0000', label: 'High Risk' }
+  ];
 
-  // Risk score value and thresholds
   value = 0;
-  min = 0;
-  max = 15;
-  greenThreshold = 5;
-  orangeThreshold = 10;
 
   constructor() { }
 

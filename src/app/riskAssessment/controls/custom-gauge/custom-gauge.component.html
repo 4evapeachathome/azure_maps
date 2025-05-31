@@ -1,18 +1,17 @@
 <div class="gauge-container">
   <div class="gauge">
     <!-- Background arc -->
-    <svg class="gauge-bg" viewBox="0 0 100 50">
+    <svg class="gauge-bg" viewBox="0 0 100 100">
       <path d="M10,50 A40,40 0 1,1 90,50" fill="none" stroke="#f0f0f0" stroke-width="8"/>
     </svg>
     
     <!-- Colored segments -->
-    <svg class="gauge-segments" viewBox="0 0 100 50">
-      <!-- Green segment (0-5) -->
-      <path d="M10,50 A40,40 0 0,1 30,13.4" fill="none" stroke="#4CAF50" stroke-width="8"/>
-      <!-- Orange segment (5-10) -->
-      <path d="M30,13.4 A40,40 0 0,1 70,13.4" fill="none" stroke="#FFA500" stroke-width="8"/>
-      <!-- Red segment (10-15) -->
-      <path d="M70,13.4 A40,40 0 0,1 90,50" fill="none" stroke="#FF0000" stroke-width="8"/>
+    <svg class="gauge-segments" viewBox="0 0 100 100">
+      <path *ngFor="let segment of segments"
+            [attr.d]="segment.path"
+            fill="none"
+            [attr.stroke]="segment.color"
+            stroke-width="8"/>
     </svg>
     
     <!-- Pointer -->
@@ -29,10 +28,19 @@
     
     <!-- Value markers -->
     <div class="markers">
-      <span class="marker start">0</span>
-      <span class="marker green">5</span>
-      <span class="marker orange">10</span>
-      <span class="marker end">15</span>
+      <span *ngFor="let marker of markers"
+            class="marker"
+            [style.color]="marker.color">
+        {{ marker.value }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div *ngFor="let range of ranges" class="legend-item">
+      <span class="color-box" [style.background-color]="range.color"></span>
+      <span class="label">{{ range.label || range.min + '-' + range.max }}</span>
     </div>
   </div>
 </div>
