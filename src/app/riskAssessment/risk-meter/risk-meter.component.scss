@@ -1,12 +1,14 @@
 .risk-meter-container {
   text-align: center;
-  padding: 20px;
-  max-width: 400px;
+  padding: 30px;
+  max-width: 500px;
   margin: 0 auto;
 
   .title {
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #333;
     margin-bottom: 20px;
   }
 
