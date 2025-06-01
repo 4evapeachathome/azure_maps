@@ -64,22 +64,18 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
     // Add markers for all range boundaries
     sortedRanges.forEach(range => {
       this.markers.push({ value: range.min, color: range.color });
-      if (range === sortedRanges[sortedRanges.length - 1]) {
+      if (range === this.ranges[this.ranges.length - 1]) {
         this.markers.push({ value: range.max, color: range.color });
       }
     });
 
-    // Calculate SVG paths for each segment
-    sortedRanges.forEach((range, index) => {
-      const rangeSize = range.max - range.min;
-      const totalSize = this.max - this.min;
-      const angleSize = (rangeSize / totalSize) * totalAngle;
+    this.ranges.forEach(range => {
+      const segmentStartPercentage = (range.min - this.min) / (this.max - this.min);
+      const segmentEndPercentage = (range.max - this.min) / (this.max - this.min);
+      const segmentStartAngle = -90 + (segmentStartPercentage * 180);
+      const segmentEndAngle = -90 + (segmentEndPercentage * 180);
       
-      const segmentStartAngle = startAngle + ((range.min - this.min) / totalSize) * totalAngle;
-      const segmentEndAngle = segmentStartAngle + angleSize;
-
-      // Calculate SVG arc path
-      const path = this.describeArc(50, 50, 40, segmentStartAngle, segmentEndAngle);
+      const path = this.describeArc(100, 100, 80, segmentStartAngle, segmentEndAngle);
       
       this.segments.push({
         path,
@@ -89,7 +85,7 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
   }
 
   private updateGauge() {
-    // Calculate rotation (-90 to 90 degrees)
+    // Calculate rotation (-90 to 90 degrees for proper arc movement)
     const percentage = (this.value - this.min) / (this.max - this.min);
     const degrees = -90 + (percentage * 180);
     this.rotation = `${degrees}deg`;

@@ -1,27 +1,36 @@
 <div class="gauge-container">
   <div class="gauge">
     <!-- Background arc -->
-    <svg class="gauge-bg" viewBox="0 0 100 100">
-      <path d="M10,50 A40,40 0 1,1 90,50" fill="none" stroke="#f0f0f0" stroke-width="8"/>
+    <svg class="gauge-bg" viewBox="0 0 200 120">
+      <path
+        d="M20,100 A80,80 0 0,1 180,100"
+        fill="none"
+        stroke="#ddd"
+        stroke-width="8"/>
     </svg>
-    
+
     <!-- Colored segments -->
-    <svg class="gauge-segments" viewBox="0 0 100 100">
-      <path *ngFor="let segment of segments"
+    <svg class="gauge-segments" viewBox="0 0 200 120">
+      <ng-container *ngFor="let segment of segments">
+        <path
             [attr.d]="segment.path"
-            fill="none"
             [attr.stroke]="segment.color"
+            fill="none"
             stroke-width="8"/>
+      </ng-container>
     </svg>
-    
+
+    <!-- Score Display -->
+    <div class="score-display">
+      <div class="value">{{value | number:'1.0-0'}}</div>
+    </div>
+
     <!-- Pointer -->
     <div class="pointer">
-      <svg class="needle" viewBox="0 0 100 20" width="100" height="20" [style.transform]="'rotate(' + rotation + ')'">
-        <!-- Circular base -->
-        <circle cx="10" cy="10" r="8" [attr.fill]="gaugeColor"/>
-        <!-- Needle stem -->
-        <path [attr.fill]="gaugeColor" d="M10,2 L95,10 L10,18 Z"/>
-      </svg>
+      <div class="needle" [style.transform]="'rotate(' + rotation + ')'">
+        <div class="needle-base" [style.background-color]="gaugeColor"></div>
+        <div class="needle-stem" [style.background-color]="gaugeColor"></div>
+      </div>
     </div>
     
     <!-- Value markers -->

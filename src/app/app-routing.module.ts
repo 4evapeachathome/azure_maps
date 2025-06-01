@@ -43,7 +43,7 @@ const routes: Routes = [
   { path: 'login', loadChildren: () => import('./riskAssessment/login-page/login-page.module').then(m => m.LoginPagePageModule),canActivate: [LoginGuard] },  
   { path: 'riskassessment', loadChildren: () => import('./riskAssessment/assessment-page/assessment-page.module').then(m => m.AssessmentPagePageModule),canActivate: [RiskAssessmentGuard] },
   { path: 'usercreation', loadChildren: () => import('./riskAssessment/user-creation/user-creation.module').then(m => m.AssessmentResultPageModule),canActivate: [UserCreationAuthGuard] },
-  { path: 'riskassessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule),canActivate: [RiskAssessmentGuard] },
+  { path: 'riskassessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule) /* ,canActivate: [RiskAssessmentGuard] */ },
   {
     path: 'hitsassessment',
     loadChildren: () => import('./riskAssessment/hits-assessment-page/hits-assessment-page.module').then( m => m.HitsAssessmentPagePageModule)

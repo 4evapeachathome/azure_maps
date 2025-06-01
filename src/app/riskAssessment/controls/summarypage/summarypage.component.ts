@@ -15,7 +15,7 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class SummarypageComponent implements OnInit {
   loggedInUser: any = null;
-  riskScore: number = 8;
+  riskScore: number = 12;
   loaded: boolean = false;
 
   constructor(
