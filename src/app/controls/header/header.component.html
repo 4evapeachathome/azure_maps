@@ -15,8 +15,8 @@
               </label> -->
          
             <!-- <ion-img src="../../../assets/icon/logo.svg" class="logo"></ion-img> -->
-             <ion-img src="../../../assets/icon/logoNew1.png" class="logoNew" *ngIf="!showExitButton"></ion-img>
-            <ion-img src="../../../assets/icon/logoNew2.png" class="logoNew" *ngIf="showExitButton"></ion-img>
+             <a  [routerLink]="['/home']"><ion-img src="../../../assets/icon/logoNew1.png" class="logoNew" *ngIf="!showExitButton"></ion-img></a>
+           <a  [routerLink]="['/home']"> <ion-img src="../../../assets/icon/logoNew2.png" class="logoNew" *ngIf="showExitButton"></ion-img></a>
    
         </ion-col>
           <ion-col class="ion-text-end" *ngIf="showExitButton" style="padding-bottom: 0;padding-top: 3px;">
