@@ -26,9 +26,9 @@
           <app-risk-meter 
             [score]="riskScore"
             [ranges]="[
-              { min: 0, max: 5, color: '#4CAF50', label: 'Low Risk' },
-              { min: 5, max: 10, color: '#FFA500', label: 'Medium Risk' },
-              { min: 10, max: 15, color: '#FF0000', label: 'High Risk' }
+              { min: 0, max: 5, color: '#4CAF50', label: '' },
+              { min: 5, max: 10, color: '#FFA500', label: '' },
+              { min: 10, max: 15, color: '#FF0000', label: '' }
             ]">
           </app-risk-meter>
           
@@ -41,7 +41,7 @@
                 'orange': riskScore > 5 && riskScore <= 10,
                 'red': riskScore > 10
               }">
-                {{ riskScore <= 5 ? 'Low Risk' : (riskScore <= 10 ? 'Medium Risk' : 'High Risk') }}
+                {{ riskScore <= 5 ? 'Low ' : (riskScore <= 10 ? 'Medium Risk' : 'High Risk') }}
               </span>
             </p>
           </div>
