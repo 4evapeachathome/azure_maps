@@ -85,8 +85,9 @@
               </ion-col>
                <ion-col size="12" size-sm="5" class="p-0">
                      <div class="risk-meter">
-      <h4>{{ riskLevelsTitle }}</h4>
-      <ngx-gauge
+      <!-- <h4>{{ riskLevelsTitle }}</h4> -->
+        <app-summarypage></app-summarypage>
+      <!-- <ngx-gauge
       [value]="riskValue"
       [label]="stressCurveLabel"
       [type]="'semi'"
@@ -97,7 +98,7 @@
       [cap]="'round'"
       [size]="200"
       [foregroundColor]="'auto'">
-    </ngx-gauge>
+    </ngx-gauge> -->
        <ion-button *ngIf="isSSripa" (click)="downloadPDF()" color="primary" size="small">Download as PDF</ion-button>
     </div>
        

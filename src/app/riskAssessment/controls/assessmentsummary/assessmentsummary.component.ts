@@ -10,6 +10,7 @@ import { NgxGaugeModule } from 'ngx-gauge';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
+import { SummarypageComponent } from "../summarypage/summarypage.component";
 
 
 @Component({
@@ -17,7 +18,7 @@ import { ApiService } from 'src/app/services/api.service';
   templateUrl: './assessmentsummary.component.html',
   styleUrls: ['./assessmentsummary.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule]
+  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
 })
 export class AssessmentsummaryComponent  implements OnInit {
   hidePdfContainer = true;

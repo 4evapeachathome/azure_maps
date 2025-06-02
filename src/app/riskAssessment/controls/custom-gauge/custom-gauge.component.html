@@ -6,7 +6,7 @@
         d="M20,100 A80,80 0 0,1 180,100"
         fill="none"
         stroke="#ddd"
-        stroke-width="8"/>
+        stroke-width="24"/>
     </svg>
 
     <!-- Colored segments -->
@@ -16,12 +16,12 @@
             [attr.d]="segment.path"
             [attr.stroke]="segment.color"
             fill="none"
-            stroke-width="8"/>
+            stroke-width="24"/>
       </ng-container>
     </svg>
 
     <!-- Score Display -->
-    <div class="score-display">
+    <div class="score-display"  style="display: none;">
       <div class="value">{{value | number:'1.0-0'}}</div>
     </div>
 
@@ -34,7 +34,7 @@
     </div>
     
     <!-- Value markers -->
-    <div class="markers">
+    <div class="markers" style="display: none;">
       <span *ngFor="let marker of markers"
             class="marker"
             [style.color]="marker.color">
@@ -44,7 +44,7 @@
   </div>
 
   <!-- Legend -->
-  <div class="legend">
+  <div class="legend" style="display: none;">
     <div *ngFor="let range of ranges" class="legend-item">
       <span class="color-box" [style.background-color]="range.color"></span>
       <span class="label">{{ range.label || range.min + '-' + range.max }}</span>

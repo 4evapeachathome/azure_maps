@@ -11,15 +11,15 @@ $desktop: 1024px;
   padding: 0;
   box-sizing: border-box;
   margin: 0 auto;
-  min-height: 200px;
+  min-height: 120px;
 
-  @media (max-width: #{$mobile}) {
-    min-height: 180px;
-  }
+  // @media (max-width: #{$mobile}) {
+  //   min-height: 180px;
+  // }
 
-  @media (min-width: #{$mobile + 1}) and (max-width: #{$tablet}) {
-    min-height: 200px;
-  }
+  // @media (min-width: #{$mobile + 1}) and (max-width: #{$tablet}) {
+  //   min-height: 200px;
+  // }
 }
 
 .gauge {
@@ -29,20 +29,20 @@ $desktop: 1024px;
   margin: 0 auto;
   max-width: 95%;
 
-  @media (max-width: #{$mobile}) {
-    width: 260px;
-    height: 130px;
-  }
+  // @media (max-width: #{$mobile}) {
+  //   width: 260px;
+  //   height: 130px;
+  // }
 
-  @media (min-width: #{$mobile + 1}) and (max-width: #{$tablet}) {
-    width: 280px;
-    height: 140px;
-  }
+  // @media (min-width: #{$mobile + 1}) and (max-width: #{$tablet}) {
+  //   width: 280px;
+  //   height: 140px;
+  // }
 
-  @media (min-width: #{$tablet + 1}) and (max-width: #{$desktop}) {
-    width: 300px;
-    height: 150px;
-  }
+  // @media (min-width: #{$tablet + 1}) and (max-width: #{$desktop}) {
+  //   width: 300px;
+  //   height: 150px;
+  // }
 }
 
 .gauge-bg, .gauge-segments {
@@ -53,16 +53,16 @@ $desktop: 1024px;
   height: 100%;
   z-index: 1;
 
-  path {
-    @media (max-width: #{$mobile}) {
-      stroke-width: 8;
-    }
-  }
+  // path {
+  //   @media (max-width: #{$mobile}) {
+  //     stroke-width: 8;
+  //   }
+  // }
 }
 
 .pointer {
   position: absolute;
-  bottom: 0;
+  bottom: 30px;
   left: 50%;
   width: 0;
   height: 0;
@@ -80,18 +80,18 @@ $desktop: 1024px;
 
   .needle-base {
     position: absolute;
-    bottom: -4px;
-    left: -4px;
-    width: 8px;
-    height: 8px;
+    bottom: -8px;
+    left: -8px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
   }
 
   .needle-stem {
     position: absolute;
     bottom: 0;
-    left: -2px;
-    width: 4px;
+    left: -4px;
+    width: 8px;
     height: 60px;
     background-color: currentColor;
     transform-origin: 50% 100%;
