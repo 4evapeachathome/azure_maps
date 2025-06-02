@@ -20,7 +20,7 @@
                 type="text" 
                ></ion-input>
             </ion-item>
-            <div *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.errors?.['userNotFound']">
+            <div *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.errors?.['userNotFound']" class="text-red-500">
               Username not found.
             </div>
     
@@ -40,7 +40,7 @@
                 (click)="showPassword = !showPassword"
               ></ion-icon>
             </ion-item>
-            <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['incorrectPassword']" class="text-red-500 text-sm mb-4">
+            <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['incorrectPassword']" class="text-red-500">
               Incorrect password.
             </div>
     

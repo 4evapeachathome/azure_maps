@@ -96,6 +96,7 @@ export class LoginPageComponent  implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
+
     const { username, password } = this.loginForm.value;
     const user = this.userLogins.find(u => u.username?.toLowerCase() === username.trim()?.toLowerCase());
   
@@ -104,7 +105,7 @@ export class LoginPageComponent  implements OnInit {
       return;
     }
   
-    if (user.password !==  password) {
+    if (user.password !== password) {
       this.loginForm.get('password')?.setErrors({ incorrectPassword: true });
       return;
     }
@@ -113,7 +114,7 @@ export class LoginPageComponent  implements OnInit {
         IsPasswordChanged: true,
       };
   
-      this.apiService.updateUserLogin(user.documentId, updatePayload).subscribe({
+      this.apiService.updateUserLogin(user.id, updatePayload).subscribe({
         next: async () => {
           await this.handleSuccessfulLogin(username, user);
           await presentToast(this.toastController, 'Successfully Logged In!', 2500, 'top');
