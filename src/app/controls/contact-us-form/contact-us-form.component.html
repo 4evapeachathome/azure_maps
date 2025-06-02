@@ -39,8 +39,8 @@
          
             </ion-item>
             <ion-text color="danger" *ngIf="name.invalid && (name.dirty || name.touched)" class="validation-error">
-              <p *ngIf="name.errors?.['required']">Name is required.</p>
-              <p *ngIf="name.errors?.['minlength']">Name must be at least 3 characters long.</p>
+              <p *ngIf="name.errors?.['required']" class="text-red-500">Name is required.</p>
+              <p *ngIf="name.errors?.['minlength']" class="text-red-500">Name must be at least 3 characters long.</p>
             </ion-text>
           
             <ion-item>
@@ -58,8 +58,8 @@
               </ion-input>
             </ion-item>
             <ion-text color="danger" *ngIf="email.invalid && (email.dirty || email.touched)" class="validation-error">
-              <p *ngIf="email.errors?.['required']">Email is required.</p>
-              <p *ngIf="email.errors?.['pattern']">Please enter a valid email address.</p>
+              <p *ngIf="email.errors?.['required']" class="text-red-500">Email is required.</p>
+              <p *ngIf="email.errors?.['pattern']" class="text-red-500">Please enter a valid email address.</p>
             </ion-text>
           
             <ion-item>
@@ -76,8 +76,8 @@
               </ion-textarea>
             </ion-item>
             <ion-text color="danger" *ngIf="feedback.invalid && (feedback.dirty || feedback.touched)" class="validation-error">
-              <p *ngIf="feedback.errors?.['required']">Feedback is required.</p>
-              <p *ngIf="feedback.errors?.['minlength']">Feedback must be at least 3 characters long.</p>
+              <p *ngIf="feedback.errors?.['required']" class="text-red-500">Feedback is required.</p>
+              <p *ngIf="feedback.errors?.['minlength']" class="text-red-500">Feedback must be at least 3 characters long.</p>
             </ion-text>
             <!-- Captcha -->
             <div class="captcha-container">
