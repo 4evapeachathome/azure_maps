@@ -994,7 +994,6 @@ getUserLogins(): Observable<any[]> {
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
       if (!res.data || res.data.length === 0) return [];
-     // debugger;
       const decryptField = (encryptedValue: any): string | null => {
         if (!encryptedValue) return null;
 
@@ -1007,7 +1006,6 @@ getUserLogins(): Observable<any[]> {
           return encryptedValue;
         }
       };
-
       return res.data.map((item: any) => ({
         id: item?.id ?? null,
         username: item?.Username ? decryptField(item.Username) : '',
@@ -1019,6 +1017,7 @@ getUserLogins(): Observable<any[]> {
         updatedAt: item?.updatedAt ?? '',
         password: item?.password ? decryptField(item.password) : '',
         isSendInvite: item?.sendInvite ?? false,
+        documentId: item?.documentId ?? null
       }));
     }),
     catchError((error) => {
@@ -1028,68 +1027,62 @@ getUserLogins(): Observable<any[]> {
   );
 }
 
-//get user login by id
-getUserLoginById(uid: number | string): Observable<any> {
-  const endpoint = `${APIEndpoints.userLogins}/${uid}`;
-//debugger;
-  const noCacheHeaders = new HttpHeaders({
-    'Cache-Control': 'no-cache',
-    'Pragma': 'no-cache',
-    'Expires': '0'
-  });
+//get user login by email
+getUserLoginByEmailId(email: string): Observable<any> {
+    const encodedEmail = encodeURIComponent(email);
+    const endpoint = `${environment.apiHost}/api/user-logins/email/${encodedEmail}`;
 
-  return this.getWithQuery(endpoint, {
-    fields: [
-      'Username',
-      'password',
-      'IsPasswordChanged',
-      'sendInvite',
-      'temp_password']}, environment.apitoken, noCacheHeaders).pipe(
-    map((res: any) => {
-      const item = res?.data;
-      if (!item) return null;
-     // debugger;
-      const decryptField = (encryptedValue: any): string | null => {
-        if (!encryptedValue) return null;
+    const headers = new HttpHeaders({
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Authorization': `Bearer ${environment.apitoken}`,
+    });
 
-        try {
-          const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
-          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-          return decrypted || encryptedValue;
-        } catch (error) {
-          console.warn('Decryption failed for:', encryptedValue, error);
-          return encryptedValue;
-        }
-      };
+    return this.http.get(endpoint, { headers }).pipe(
+      map((item: any) => {
+        if (!item) return null;
 
-      return {
-        id: item?.id ?? null,
-        username: item?.Username ? decryptField(item.Username) : '',
-        temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
-        IsPasswordChanged: item?.IsPasswordChanged ?? false,
-        password: item?.password ? decryptField(item.password) : '',
-        isSendInvite: item?.sendInvite ?? false,
-      };
-    }),
-    catchError((error) => {
-      console.error('Error fetching user login by ID:', error);
-      return throwError(() => new Error('Failed to load user login.'));
-    })
-  );
-}
+        const decryptField = (encryptedValue: any): string | null => {
+          if (!encryptedValue) return null;
 
+          try {
+            const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
+            const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+            return decrypted || encryptedValue;
+          } catch (error) {
+            console.warn('Decryption failed for:', encryptedValue, error);
+            return encryptedValue;
+          }
+        };
 
-updateUserLogin(userId: string | number, payload: any): Observable<any> {
-  const endpoint = `${environment.apiHost}/api/user-logins/${userId}`;
-  const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${environment.apitoken}`
-  });
+        return {
+          id: item.id ?? null,
+          username: item.Username ? decryptField(item.Username) : '',
+          temp_password: item.temp_password ? decryptField(item.temp_password) : '',
+          IsPasswordChanged: item.IsPasswordChanged ?? false,
+          password: item.password ? decryptField(item.password) : '',
+          isSendInvite: item.sendInvite ?? false,
+          documentId : item.documentId ?? null,
+        };
+      }),
+      catchError((error) => {
+        console.error('Error fetching user login by email:', error);
+        return throwError(() => new Error('Failed to load user login.'));
+      })
+    );
+  }
+
+updateUserLogin(documentId: string | number, payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/user-logins/update/${documentId}`;
+  const token = environment.apitoken;
+  let headers = new HttpHeaders();
+  headers = headers.set('Content-Type', 'application/json');
+  headers = headers.set('Authorization', `Bearer ${token}`);
 
   // Strapi requires the payload inside a `data` key
   return this.http.put(endpoint, { data: payload }, { headers });
 }
-
 
 //Hits assessment
 getHitsAssessmentQuestions(): Observable<any> {

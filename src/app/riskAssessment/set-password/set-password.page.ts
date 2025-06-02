@@ -3,11 +3,11 @@ import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-user-creation',
-  templateUrl: './user-creation.page.html',
-  styleUrls: ['./user-creation.page.scss'],
+  templateUrl: './set-password.page.html',
+  styleUrls: ['./set-password.page.scss'],
   standalone: false,
 })
-export class UserCreationPage implements OnInit,AfterViewInit {
+export class SetPasswordPage implements OnInit,AfterViewInit {
   loading: HTMLIonLoadingElement | null = null;
   reloadLoginData: boolean = false;
 

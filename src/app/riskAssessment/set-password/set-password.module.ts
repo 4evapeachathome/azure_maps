@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { AssessmentResultPageRoutingModule } from './user-creation-routing.module';
+import { AssessmentResultPageRoutingModule } from './set-password-routing.module';
 
-import { UserCreationPage } from './user-creation.page';
+import { SetPasswordPage } from './set-password.page';
 import { RiskassessmentFooterComponent } from "../controls/riskassessment-footer/riskassessment-footer.component";
-import { UserCreationComponent } from "../controls/usercreation/usercreation.component";
+import { SetPasswordComponent } from "../controls/setpassword/setpassword.component";
 
 @NgModule({
   imports: [
@@ -17,8 +17,8 @@ import { UserCreationComponent } from "../controls/usercreation/usercreation.com
     IonicModule,
     AssessmentResultPageRoutingModule,
     RiskassessmentFooterComponent,
-    UserCreationComponent
+    SetPasswordComponent
 ],
-  declarations: [UserCreationPage]
+  declarations: [SetPasswordPage]
 })
 export class AssessmentResultPageModule {}
