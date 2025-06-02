@@ -8,7 +8,8 @@ import { ApiService } from 'src/app/services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast, Utility } from 'src/shared/utility';
-
+import { __await } from 'tslib';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'login-page',
   templateUrl: './login-page.component.html',
@@ -95,7 +96,6 @@ export class LoginPageComponent  implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
-
     const { username, password } = this.loginForm.value;
     const user = this.userLogins.find(u => u.username?.toLowerCase() === username.trim()?.toLowerCase());
   
@@ -104,7 +104,7 @@ export class LoginPageComponent  implements OnInit {
       return;
     }
   
-    if (user.password !== password) {
+    if (user.password !==  password) {
       this.loginForm.get('password')?.setErrors({ incorrectPassword: true });
       return;
     }
@@ -113,7 +113,7 @@ export class LoginPageComponent  implements OnInit {
         IsPasswordChanged: true,
       };
   
-      this.apiService.updateUserLogin(user.id, updatePayload).subscribe({
+      this.apiService.updateUserLogin(user.documentId, updatePayload).subscribe({
         next: async () => {
           await this.handleSuccessfulLogin(username, user);
           await presentToast(this.toastController, 'Successfully Logged In!', 2500, 'top');
