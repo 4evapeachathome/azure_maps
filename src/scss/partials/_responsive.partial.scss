@@ -5,7 +5,7 @@
     }
   } 
 }
-@media (max-width: 768px) {
+@media (max-width: 991px)  {
   .mobile-container{
 .menu-hidden-bg, .menu-hidden-bg-header{
   background: yellow;
@@ -19,6 +19,7 @@
 }
 }
   .container-min-height{
+    width: 100%;
     height: calc(100% - 35px);
     display: table;
   }
