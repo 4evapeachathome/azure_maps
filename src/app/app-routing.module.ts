@@ -47,6 +47,14 @@ const routes: Routes = [
   {
     path: 'hitsassessment',
     loadChildren: () => import('./riskAssessment/hits-assessment-page/hits-assessment-page.module').then( m => m.HitsAssessmentPagePageModule)
+  },
+  {
+    path: 'ratsassessment',
+    loadChildren: () => import ('../app/riskAssessment/rat-assessment-page/risk-assessment/risk-assessment.module').then(m => m.RiskAssessmentModule)
+  },
+  {
+    path: 'daAssessment',
+    loadChildren: () => import ('../app/riskAssessment/da-assessment-page/da-assessment/da-assessment.module').then(m => m.DaAssessmentModule)
   }
 
 

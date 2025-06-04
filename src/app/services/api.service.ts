@@ -1079,15 +1079,24 @@ getUserLoginById(uid: number | string): Observable<any> {
 }
 
 
-updateUserLogin(userId: string | number, payload: any): Observable<any> {
-  const endpoint = `${environment.apiHost}/api/user-logins/${userId}`;
+updateUserLogin(payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/user-logins/update-password`;
   const headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${environment.apitoken}`
   });
-
   // Strapi requires the payload inside a `data` key
-  return this.http.put(endpoint, { data: payload }, { headers });
+  return this.http.post(endpoint, payload , { headers });
+}
+
+forgetPassword(payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/user-logins/forgot-password`;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  // Strapi requires the payload inside a `data` key
+  return this.http.post(endpoint, payload , { headers });
 }
 
 
@@ -1170,6 +1179,73 @@ getHitsResultCalculation(): Observable<any> {
     catchError((error: any) => {
       console.error('Error fetching Hits result API:', error);
       return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+    })
+  );
+}
+
+//Rats assessment
+getRatsAssessmentQuestions(): Observable<any> {
+  // Define the two endpoints
+  const endpoint1 = APIEndpoints.ratsAssessmentQuestions; // Existing endpoint for questions
+  const endpoint2 = APIEndpoints.ratScaleOptions; // New endpoint for answer options
+
+  // Define query options for the first endpoint (questions)
+  const options1: QueryOptions = {
+    fields: [], //'question_text', 'multiple_options_for_rat' or weight_critical_alert
+    populate: {
+      multiple_options_for_rat: {
+        fields: ['Label', 'score'] //'Label', 'score'
+      }
+    }
+  };
+
+  // Define query options for the second endpoint (answer options)
+  const options2: QueryOptions = {
+    fields: ['Label', 'score'] // 'Label', 'score'
+  };
+
+  console.log('endpoint1>>>>>>', endpoint1);
+  // Make the two API calls in parallel using forkJoin
+  return forkJoin([
+    this.getWithQuery(endpoint1, options1, environment.apitoken), // First API call (questions)
+    this.getWithQuery(endpoint2, options2, environment.apitoken)  // Second API call (answer options)
+  ]).pipe(
+    map(([res1, res2]: [any, any]) => {
+      // Process the first API response (questions)
+      const questions = !res1.data || !Array.isArray(res1.data)
+        ? []
+        : res1.data.map((item: any) => ({
+            id: item.id,
+            documentId: item.documentId,
+            question_text: item.question_text || '',
+            // weight_critical_alert: item.weight_critical_alert || false,
+            multiple_options_for_rat: (item.multiple_options_for_rat || []).map((opt: any) => ({
+              id: opt.id,
+              documentId: opt.documentId,
+              label: opt.label || '',
+              score: opt.score ?? null
+            }))
+          }));
+
+      // Process the second API response (answer options)
+      const answerOptions = !res2.data || !Array.isArray(res2.data)
+        ? []
+        : res2.data.map((item: any) => ({
+            id: item.id,
+            documentId: item.documentId,
+            label: item.label || '',
+            score: item.score ?? null
+          }));
+
+      // Combine the results into a single object
+      return {
+        questions,
+        answerOptions
+      };
+    }),
+    catchError(error => {
+      console.error('Error fetching data from one or more endpoints', error);
+      return throwError(error);
     })
   );
 }

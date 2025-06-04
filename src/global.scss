@@ -168,7 +168,9 @@ ion-card {
 .ham-menu{
   position: relative;
 }
-
+.link-content{
+  display: contents;
+}
 .menu-content {
   box-shadow: none !important;
   background: var(--color-container);

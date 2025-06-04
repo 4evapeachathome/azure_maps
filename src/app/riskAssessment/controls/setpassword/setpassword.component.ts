@@ -25,7 +25,7 @@ export class SetPasswordComponent implements OnInit {
     private fb: FormBuilder,
     private apiService: ApiService,
     private router: Router,
-     private route: ActivatedRoute,
+    private route: ActivatedRoute,
     private toastController: ToastController
   ) {
     this.userForm = this.fb.group(
@@ -48,17 +48,24 @@ export class SetPasswordComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userForm.reset();
-    this.getUserLogins();
-    this.flowType = this.route.snapshot.queryParamMap.get('flow'); 
+    this.resetFormAndFetchUsers();
+    this.flowType = this.route.snapshot.queryParamMap.get('flow');
   }
 
-   ngOnChanges(changes: SimpleChanges) {
-      if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true) {
-        this.userForm.reset();
-        this.getUserLogins()  // Call your API or logic
-      }
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true) {
+      this.resetFormAndFetchUsers();
     }
+  }
+
+  private resetFormAndFetchUsers() {
+    this.userForm.reset();
+    this.getUserLogins();
+  }
+
+  private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+    await presentToast(this.toastController, message, duration, position);
+  }
 
   getUserLogins() {
     this.apiService.getUserLogins().subscribe({
@@ -67,6 +74,7 @@ export class SetPasswordComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Failed to fetch user logins', error);
+        this.showToast('Failed to fetch user logins.', 3000, 'top');
       },
     });
   }
@@ -78,44 +86,32 @@ export class SetPasswordComponent implements OnInit {
   }
 
   async onSubmit() {
-    
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
+      await this.showToast('Please fill all required fields correctly.', 3000, 'top');
       return;
     }
-if(this.flowType== 'onboarding' || this.flowType == 'forgetpassword') {
+
+    if (this.flowType === 'onboarding' || this.flowType === 'forgetpassword') {
+      await this.handlePasswordUpdate();
+    }
+  }
+  private async handlePasswordUpdate() {
     const { username, password, newPassword } = this.userForm.value;
-    const user = this.userLogins.find(
-      (u) => u.username?.toLowerCase() === username.trim()?.toLowerCase()
-    );
-
-    if (!user) {
-      this.userForm.get('username')?.setErrors({ userNotFound: true });
-      return;
-    }
-
-    if (user.temp_password !== password) {
-      this.userForm.get('password')?.setErrors({ incorrectPassword: true });
-      return;
-    }
-
-    // Proceed to update password
     const updatePayload = {
+      Username: username,
       password: newPassword,
-      sendInvite: true,
+      temp_password: password
     };
-
-    this.apiService.updateUserLogin(user.id, updatePayload).subscribe({
-      next: async () => {
-        await presentToast(this.toastController, 'Password updated successfully!', 2500, 'top');
+    this.apiService.updateUserLogin(updatePayload).subscribe({
+      next: async (res: any) => {
+        await this.showToast(res?.message, 2500, 'top');
         this.router.navigate(['/login']);
         this.userForm.reset();
       },
       error: async (err: any) => {
-        console.error('Failed to update user login', err);
-        await presentToast(this.toastController, 'Failed to update password. Please try again.', 3000, 'top');
+        await this.showToast(err.error.error.message, 3000, 'top');
       },
     });
   }
-}
 }

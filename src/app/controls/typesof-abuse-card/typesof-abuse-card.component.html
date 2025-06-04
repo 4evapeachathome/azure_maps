@@ -1,7 +1,7 @@
 <ion-grid class="healthy-unhealthy-container p-0 width-100"   *ngIf="physicalAbuse" 
 [ngClass]="{'reverse-image': imagePosition === 'right'}">
   <ion-row>
-    <ion-col size="12" size-md="6" class="p-0 con-container-center order1">
+    <ion-col size="12" size-sm="12" size-lg="6" class="p-0 con-container-center order1">
       <ion-card >
         <ion-card-content>
     <ion-text class="content-heading" *ngIf="physicalAbuse.titleContent.length > 0">
@@ -56,7 +56,7 @@
         </ion-card-content>
 </ion-card>
     </ion-col>
-    <ion-col size="12" size-md="6" class="p-0 img-container">
+    <ion-col size="12" size-sm="12" size-lg="6" class="p-0 img-container">
       <ion-img class="lc-image"
         [src]="physicalAbuse.webImage?.fullUrl || 'assets/images/physical-abuse.png'" 
         alt="Physical Abuse"
