@@ -51,23 +51,23 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     // Update the label based on the retrieved guidedType
     this.updateGuidedTypeLabel();
 
-    const cachedHits = this.menuService.getHitsAssessment();
+    const cachedHits = this.menuService.getRatsAssessment();
     if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
-      this.setupHitsQuestions(cachedHits.questions, cachedHits.answerOptions);
+      this.setupRatsQuestions(cachedHits.questions, cachedHits.answerOptions);
     } else {
       // Load from API if cache is empty
-      this.apiService.getHitsAssessmentQuestions().subscribe({
+      this.apiService.getRatsAssessmentQuestions().subscribe({
         next: (hitsData: any) => {
           const { questions, answerOptions } = hitsData;
 
-          // Sort the multiple_answer_option for each question (if still needed)
+          // Sort the multiple_options_for_rat for each question (if still needed)
           questions.forEach((q: any) => {
-            q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
+            q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);
           });
 
           // Store both questions and answerOptions in the service
           this.menuService.setHitsAssessment({ questions, answerOptions });
-          this.setupHitsQuestions(questions, answerOptions);
+          this.setupRatsQuestions(questions, answerOptions);
         },
         error: (err: any) => {
           console.error('Failed to load HITS data from API:', err);
@@ -80,10 +80,10 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
   }
 
-  setupHitsQuestions(questions: any[], answerOptions: any[]) {
+  setupRatsQuestions(questions: any[], answerOptions: any[]) {
     const scaleSet = new Set<string>();
     answerOptions.forEach((opt: any) => {
-      scaleSet.add(`${opt.score}. ${opt.label}`);
+      scaleSet.add(`${opt.score}. ${opt.Label}`);
     });
   
     this.scaleOptions = [...scaleSet];
@@ -95,11 +95,11 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       weight_critical_alert: q.weight_critical_alert,
       options: answerOptions.map((opt: any) => ({
         score: opt.score,
-        label: opt.label
+        Label: opt.Label
       })),
-      criticalOptions: (q.multiple_answer_option || []).map((opt: any) => ({
+      criticalOptions: (q.multiple_options_for_rat || []).map((opt: any) => ({
         score: opt.score,
-        label: opt.label
+        label: opt.Label
       }))
     }));
   
@@ -129,7 +129,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       // Check for critical alert condition
       if (!criticalAlert && question.weight_critical_alert && question.selected) {
         const matchFound = question.criticalOptions.some((opt: any) =>
-          opt.score === question.selected.score || opt.label === question.selected.label
+          opt.score === question.selected.score || opt.Label === question.selected.Label
         );
   
         if (matchFound) {

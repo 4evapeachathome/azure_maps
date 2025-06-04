@@ -60,4 +60,7 @@ export const APIEndpoints = {
     hitsAssessmentQuestions :`${environment.apiHost}/api/hits-assessment-questions`,
     scaleOptions :`${environment.apiHost}/api/multiple-answer-options`,
     hitsresultcalculation :`${environment.apiHost}/api/hit-results`,
+
+    ratsAssessmentQuestions :`${environment.apiHost}/api/rat-assessment-questions`,
+    ratScaleOptions :`${environment.apiHost}/api/multiple-options-for-rats`,
   }

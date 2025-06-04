@@ -7,6 +7,11 @@ import { BehaviorSubject } from 'rxjs';
     answerOptions: any[];
   }
 
+   interface RatsAssessmentData {
+    questions: any[];
+    answerOptions: any[];
+  }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,6 +24,8 @@ export class MenuService {
 
   filterOptions$ = this.filterOptionsSubject.asObservable();
   organizations$ = this.organizationsSubject.asObservable();
+
+  private ratsAssessmentData: RatsAssessmentData | null = null;
 
   private showAdditionalMenusSource = new BehaviorSubject<{ show: boolean, sectionTitle: string | null }>({
     show: false,
@@ -85,6 +92,14 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
     
     getHitsAssessment(): HitsAssessmentData | null {
       return this.hitsAssessmentData;
+    }
+
+    setRatsAssessment(data: RatsAssessmentData) {
+      this.ratsAssessmentData = data;
+    }
+    
+    getRatsAssessment(): RatsAssessmentData | null {
+      return this.ratsAssessmentData;
     }
 
 }

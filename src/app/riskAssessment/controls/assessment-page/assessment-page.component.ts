@@ -183,22 +183,22 @@ export class AssessmentPageComponent  implements OnInit {
 
 
   navigateWithRatsCache(targetRoute: string) {
-    const cached = this.menuService.getHitsAssessment();
+    const cached = this.menuService.getRatsAssessment();
     if (cached) {
       this.router.navigate([targetRoute]);
     } else {
-      this.apiService.getHitsAssessmentQuestions().subscribe({
+      this.apiService.getRatsAssessmentQuestions().subscribe({
         next: (res: any) => {
           const { questions, answerOptions } = res;
-
+          console.log('getRatsAssessmentQuestions res>>>>>', res);
           // Sort the multiple_answer_option for each question (if still needed)
-          questions.forEach((q: any) => {
-            q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
-          });
+          // questions.forEach((q: any) => {
+          //   q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
+          // });
       
-          // Store both questions and answerOptions in the service
-          this.menuService.setHitsAssessment({ questions, answerOptions });
-          this.router.navigate([targetRoute]);
+          // // Store both questions and answerOptions in the service
+          // this.menuService.setHitsAssessment({ questions, answerOptions });
+          // this.router.navigate([targetRoute]);
         },
         error: (err) => {
           console.error('Failed to load HITS data:', err);
