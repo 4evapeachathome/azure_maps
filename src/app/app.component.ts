@@ -122,7 +122,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
   private hasHandledReload = false;
-  private riskRoutes = ['riskassessment', 'usercreation', 'riskassessmentsummary','login','hitsassessment'];
+  private riskRoutes = ['riskassessment', 'usercreation', 'riskassessmentsummary','login','hitsassessment', 'ratsassessment', 'daAssessment'];
 
   constructor(
     private sessionActivityService: SessionActivityService,
@@ -230,7 +230,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
 
     this.router.events.subscribe(() => {
       const currentPath = this.location.path();
-      const stillValid = ['/riskassessment', '/hitsassessment', '/riskassessmentsummary']
+      const stillValid = ['/riskassessment', '/hitsassessment', '/riskassessmentsummary', '/ratsassessment', '/daAssessment']
         .some(route => currentPath.startsWith(route));
     
       if (!stillValid && this.sessionAlert) {
@@ -254,7 +254,9 @@ private shouldShowSessionAlert(): boolean {
   const validRoutes = [
     '/riskassessment',
     '/hitsassessment',
-    '/riskassessmentsummary'
+    '/riskassessmentsummary',
+    '/ratsassessment',
+    '/daAssessment'
   ];
 
   return this.isUserLoggedIn() && validRoutes.some(route => currentPath.startsWith(route));

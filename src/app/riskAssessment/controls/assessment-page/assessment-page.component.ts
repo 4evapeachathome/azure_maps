@@ -35,6 +35,14 @@ export class AssessmentPageComponent  implements OnInit {
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
+        console.log('this.loggedInUser@@@@@@', this.loggedInUser);
+        // let obj = {
+        //         "id": 2,
+        //         "documentId": "fb19slqtj667jlt58ipssahn",
+        //         "name": "RATS",
+        //         "description": "Rats assessment"
+        //       };
+        // this.loggedInUser?.assessment_type.push(obj);
         this.assessmentTypes = this.loggedInUser?.assessment_type || [];
         this.selectedAssessment = null;
         this.loaded = true;
@@ -96,8 +104,9 @@ export class AssessmentPageComponent  implements OnInit {
   goToTest() {
     if (this.selectedAssessment) {
       const assessmentName = this.selectedAssessment?.toLowerCase().trim();
-  
+      console.log('assessmentName>>>>>>>>', assessmentName);
       switch (assessmentName) {
+        case 'hits':
         case 'hits assessment':
           this.navigateWithHitsCache('/hitsassessment');
           break;
@@ -116,6 +125,10 @@ export class AssessmentPageComponent  implements OnInit {
         case 'signs of self-recognition in intimate partner abuse (ssripa)':
           this.router.navigate(['/ssripa'], { state: { assessmentType: this.selectedAssessment } });
           sessionStorage.setItem('isSSripa', 'true');
+          break;
+        case 'rats':
+        case 'rats assessment':
+          this.navigateWithRatsCache('/ratsassessment');
           break;
         default:
           console.warn('No matching route found for selected assessment.');
@@ -166,6 +179,32 @@ export class AssessmentPageComponent  implements OnInit {
     });
   
     await alert.present();
+  }
+
+
+  navigateWithRatsCache(targetRoute: string) {
+    const cached = this.menuService.getRatsAssessment();
+    if (cached) {
+      this.router.navigate([targetRoute]);
+    } else {
+      this.apiService.getRatsAssessmentQuestions().subscribe({
+        next: (res: any) => {
+          const { questions, answerOptions } = res;
+          console.log('getRatsAssessmentQuestions res>>>>>', res);
+          // Sort the multiple_answer_option for each question (if still needed)
+          // questions.forEach((q: any) => {
+          //   q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
+          // });
+      
+          // // Store both questions and answerOptions in the service
+          // this.menuService.setHitsAssessment({ questions, answerOptions });
+          // this.router.navigate([targetRoute]);
+        },
+        error: (err) => {
+          console.error('Failed to load HITS data:', err);
+        }
+      });
+    }
   }
 
 }

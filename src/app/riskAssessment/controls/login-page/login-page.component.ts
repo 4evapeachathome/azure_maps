@@ -118,6 +118,8 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
     const encodedUsername = btoa(username);
     const encodedUser = btoa(JSON.stringify(user));
     const loginTimestamp = Date.now().toString();
+    console.log('encodedUser!!!!', JSON.parse(atob(encodedUser)));
+    console.log('encodedUsername!!!!!', (atob(encodedUsername)));
   
     this.cookieService.set('userdetails', encodedUser, {
       path: '/',
