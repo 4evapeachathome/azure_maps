@@ -5,8 +5,6 @@ import { Router, RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
-import { APIEndpoints } from 'src/shared/endpoints';
-import { MenuService } from 'src/shared/menu.service';
 import { presentToast, Utility } from 'src/shared/utility';
 import { __await } from 'tslib';
 import { firstValueFrom } from 'rxjs';
@@ -50,6 +48,9 @@ export class LoginPageComponent  implements OnInit {
       this.getUserLogins()  // Call your API or logic
     }
   }
+private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+    await presentToast(this.toastController, message, duration, position);
+  }
 
   getUserLogins() {
     this.apiService.getUserLogins().subscribe({
@@ -64,33 +65,27 @@ export class LoginPageComponent  implements OnInit {
   }
 
 
-
   onForgotPassword(event: Event) {
     event.preventDefault(); // prevent link behavior
     const rawUsername = this.loginForm.get('username')?.value || '';
     const username = rawUsername.trim().toLowerCase();
-    if (!username) {
-      alert('Please enter your username first.');
-      return;
-    }
-    fetch(APIEndpoints.forgetPw, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username })
-    })
-      .then(res => res.json())
-      .then(data => {
-        alert(data.message || 'Reset email sent, please check your inbox.');
-        this.loginForm.patchValue({ password: '' });
-        this.loginForm.get('password')?.setErrors(null);
-      })
-      .catch(() => {
-        alert('Failed to send reset email');
-        this.loginForm.patchValue({ password: '' });
-        this.loginForm.get('password')?.setErrors(null);
-      });
-  }
 
+    const updatePayload = {
+      Username: username
+    };
+    this.apiService.forgetPassword(updatePayload).subscribe({
+      next: async (res: any) => {
+        await this.showToast(res.message || 'Reset email sent, please check your inbox.', 3000, 'top');
+        this.loginForm.patchValue({ password: '' });
+        this.loginForm.get('password')?.setErrors(null);
+      },
+      error: async (err: any) => {
+        await this.showToast(err.error.error.message, 3000, 'top');
+        this.loginForm.patchValue({ password: '' });
+        this.loginForm.get('password')?.setErrors(null);
+      },
+    });
+  }
   async onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -109,25 +104,16 @@ export class LoginPageComponent  implements OnInit {
       this.loginForm.get('password')?.setErrors({ incorrectPassword: true });
       return;
     }
+      await this.handleSuccessfulLogin(username, user);
 
-      const updatePayload = {
-        IsPasswordChanged: true,
-      };
-  
-      this.apiService.updateUserLogin(user.id, updatePayload).subscribe({
-        next: async () => {
-          await this.handleSuccessfulLogin(username, user);
-          await presentToast(this.toastController, 'Successfully Logged In!', 2500, 'top');
-          this.router.navigate(['/riskassessment']);
-          this.loginForm.reset();
-        },
-        error: async err => {
-          console.error('Failed to update user login', err);
-          await presentToast(this.toastController, 'Failed to login. Please try again.', 3000, 'top');
-        }
-      });
+  try {
+    await this.router.navigate(['/riskassessment']);
+    await presentToast(this.toastController, 'Login successful!', 3000, 'top');
+  } catch (err) {
+    await presentToast(this.toastController, 'Navigation failed', 3000, 'top');
+    console.error('Navigation error:', err);
   }
-  
+}
   private async handleSuccessfulLogin(username: string, user: any) {
     const encodedUsername = btoa(username);
     const encodedUser = btoa(JSON.stringify(user));

@@ -1079,15 +1079,24 @@ getUserLoginById(uid: number | string): Observable<any> {
 }
 
 
-updateUserLogin(userId: string | number, payload: any): Observable<any> {
-  const endpoint = `${environment.apiHost}/api/user-logins/${userId}`;
+updateUserLogin(payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/user-logins/update-password`;
   const headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${environment.apitoken}`
   });
-
   // Strapi requires the payload inside a `data` key
-  return this.http.put(endpoint, { data: payload }, { headers });
+  return this.http.post(endpoint, payload , { headers });
+}
+
+forgetPassword(payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/user-logins/forgot-password`;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  // Strapi requires the payload inside a `data` key
+  return this.http.post(endpoint, payload , { headers });
 }
 
 

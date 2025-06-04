@@ -148,6 +148,7 @@ export class SupportserviceComponent  implements OnInit{
     this.initializeGoogleMapsServices();   
     this.loadFilterSupportSeviceData();
     this.setupSearchDebounce();
+    this.getCurrentPosition();
   }
 
   ngAfterViewInit() {
