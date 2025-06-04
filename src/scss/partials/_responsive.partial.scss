@@ -5,6 +5,14 @@
     }
   } 
 }
+@media (max-width: 767px)  {
+  .ass-description{
+  min-height: 250px !important;
+ }
+ .risk-assessment-container .ra-banner {
+       min-height: inherit !important;
+    }
+}
 @media (max-width: 991px)  {
   .mobile-container{
 .menu-hidden-bg, .menu-hidden-bg-header{
@@ -286,9 +294,7 @@ text-align: left !important;
         margin-bottom: 8px !important;
 
   }
-   .ass-description{
-  min-height: 250px !important;
- }
+  
 //  .risk-login-banner-small {
 //     background-image: url(riskAssesment1.svg) !important;
 //  }

@@ -7,7 +7,7 @@
       </ion-col>
 
       <!-- Right Form Panel -->
-      <ion-col size="12" size-sm="12" size-lg="6"class="ra-form-container order1">
+      <ion-col size="12" size-sm="12" size-lg="6" class="ra-form-container order1">
         <ion-card class="form-container rafc-container">
           <ion-grid class="d-flex-h-100">
             <ion-row>
@@ -35,7 +35,7 @@
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col size="12" size-sm="5" size-md="5" size-lg="5">
+              <ion-col size="12" size-sm="12" size-lg="5">
                 <ion-item>
                   <ion-input
                     label="Case Number"
@@ -45,7 +45,7 @@
                   ></ion-input>
                 </ion-item>
               </ion-col>
-              <ion-col *ngIf="selectedAssessment" size="12" size-sm="7" size-md="6" size-lg="7" class="radio-selected-container">
+              <ion-col *ngIf="selectedAssessment" size="12" size-sm="12" size-lg="7" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType" [allowEmptySelection]="true">
                   <ion-radio [value]="guidedType" labelPlacement="end" mode="md">{{ guidedTypeLabel }}</ion-radio>
                 </ion-radio-group>
