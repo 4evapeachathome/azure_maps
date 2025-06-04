@@ -327,7 +327,7 @@ justify-content: end;
   .hit-assessment-scroll{
     overflow: auto;
   }
-  .hits-assessment-table {
+  .assessment-table-container {
       width: 100%;
       background: $color-light-purple ;
           margin-bottom: 24px;
@@ -345,21 +345,14 @@ justify-content: end;
       }
     }
     tbody{
-      .tbody-first{
-        width: 30%;
-      }
+     
       .tbody-container{
 
  .tbc-content{
    display: flex;
    gap: 0;
    margin: 0;
-span, ion-radio{
-  // flex-grow: 1;
-   width: 20%;
-   text-align: center;
-   min-width: 150px;
-}
+
 ion-radio{
    &::label{   
     justify-content: center;
@@ -398,6 +391,59 @@ ion-radio::label .radio-wrapper {
   }
 
   }
+  .hits-assessment-table{
+      tbody{
+      .tbody-first{
+        width: 30%;
+      }
+      .tbody-container{
+
+ .tbc-content{
+  
+span, ion-radio{
+
+   width: 20%;
+   text-align: center;
+   min-width: 150px;
+}
+
+
+ }
+ 
+      }
+    
+  }
+  }
+    .da-assessment-table{
+        thead{
+          tr{
+            th{
+              text-align: left;
+            }
+          }
+        }
+      tbody{
+      .tbody-first{
+        width: 80%;
+      }
+      .tbody-container{
+
+ .tbc-content{
+  
+span, ion-radio{
+
+   //width: 20%;
+   text-align: center;
+   width: 50px;
+}
+
+
+ }
+ 
+      }
+    
+  }
+  }
   .score {
     color: $color-primary;
     font-size: $font-size-xlll;
@@ -405,4 +451,12 @@ ion-radio::label .radio-wrapper {
   }
   .assessment-summary-text{
     margin-bottom: 16px;
+  }
+  .sub-questions{
+        background: var(--color-white-smoke);
+    th{
+      padding-left: 50px;
+      color: var(--color-dark-Gray) !important;
+      font-weight: normal;
+    }
   }
