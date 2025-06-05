@@ -12,12 +12,12 @@ import { LoadingController } from '@ionic/angular';
 })
 export class SripaaPage implements OnInit,AfterViewInit {
   @ViewChild(SripacompComponent) sripaCompRef!: SripacompComponent;
-
+  @ViewChild('resultsRef') resultsRef!: any;
+  @ViewChild('actionPlanRef') actionPlanRef!: any;
   loading: HTMLIonLoadingElement | null = null;
 
   hidewhenshowingresults: boolean = false;
-  hidewhenactionplanvisible: boolean = false;
-
+  selectedTab: 'results' | 'actionplan' = 'results';
   // These will be passed to the results component
   quizTitle: string = '';
   sripa: any[] = [];
@@ -36,24 +36,20 @@ export class SripaaPage implements OnInit,AfterViewInit {
       this.sripa = parsed.sripa || [];
       this.selectedOptions = parsed.selectedOptions || [];
   
-      // Determine which view to show
+      // Show result+actionplan tab view by default if session data exists
       if (parsed.view === 'results') {
         this.hidewhenshowingresults = true;
-        this.hidewhenactionplanvisible = false;
-      } else if (parsed.view === 'actionplan') {
-        this.hidewhenactionplanvisible = true;
-        this.hidewhenshowingresults = false;
+        this.selectedTab = 'results'; 
       } else {
         this.hidewhenshowingresults = false;
-        this.hidewhenactionplanvisible = false;
       }
     } else {
       this.hidewhenshowingresults = false;
-      this.hidewhenactionplanvisible = false;
     }
   
     await this.showLoader();
   }
+  
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {
@@ -113,22 +109,17 @@ export class SripaaPage implements OnInit,AfterViewInit {
     }
   
     this.hidewhenshowingresults = true;
-    this.hidewhenactionplanvisible = false;
+    this.selectedTab = 'results'; // Default selected tab
   }
+
   
-  // This shows the action plan and hides others
-  showActionPlan() {
-    this.hidewhenactionplanvisible = true;
-    this.hidewhenshowingresults = false;
-  
-    sessionStorage.setItem(
-      'ssripa_result',
-      JSON.stringify({
-        quizTitle: this.quizTitle,
-        sripa: this.sripa,
-        selectedOptions: this.selectedOptions,
-        view: 'actionplan'
-      })
-    );
+
+  exportCurrentTabAsPDF() {
+    if (this.selectedTab === 'results' && this.resultsRef?.exportAsPDF) {
+      this.resultsRef.exportAsPDF();
+    } else if (this.selectedTab === 'actionplan' && this.actionPlanRef?.exportAsPDF) {
+      this.actionPlanRef.exportAsPDF();
+    }
   }
+
 }

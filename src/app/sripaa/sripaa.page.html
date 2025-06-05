@@ -2,31 +2,44 @@
   <div class="cmh-container">
     <ion-grid class="p-b-0 sm-cont-margin container-min-height">
       <!-- Show Quiz Component -->
-      <ion-row class="comp-space" *ngIf="!hidewhenshowingresults && !hidewhenactionplanvisible">
+      <ion-row class="comp-space" *ngIf="!hidewhenshowingresults">
         <ion-col>
           <pathome-sripacomp></pathome-sripacomp>
         </ion-col>
       </ion-row>
       
-      <!-- Show Result Component -->
-      <ion-row class="comp-space" *ngIf="hidewhenshowingresults && !hidewhenactionplanvisible">
-        <ion-col>
-          <pathome-ssriparesults
-            [quizTitle]="quizTitle"
-            [sripa]="sripa"
-            [selectedOptions]="selectedOptions">
-          </pathome-ssriparesults>
-        </ion-col>
-      </ion-row>
+      <ion-row class="comp-space" *ngIf="hidewhenshowingresults">
+        <ion-col size="12">
+          <ion-segment [(ngModel)]="selectedTab" class="web-tab-toggle">
+            <ion-segment-button value="results">Results</ion-segment-button>
+            <ion-segment-button value="actionplan">Action Plan</ion-segment-button>
+          </ion-segment>
       
-      <!-- Show Action Plan Component -->
-      <ion-row class="comp-space" *ngIf="hidewhenactionplanvisible">
-        <ion-col>
-          <pathome-ssripaactionplan
-            [quizTitle]="quizTitle"
-            [sripa]="sripa"
-            [selectedOptions]="selectedOptions">
-          </pathome-ssripaactionplan>
+          <div class="web-tab-container">
+            <div [ngClass]="{ 'blurred': selectedTab !== 'results' }" class="tab-pane">
+              <pathome-ssriparesults
+              #resultsRef
+              [quizTitle]="quizTitle"
+              [sripa]="sripa"
+              [selectedOptions]="selectedOptions">
+            </pathome-ssriparesults>
+            </div>
+            <div [ngClass]="{ 'blurred': selectedTab !== 'actionplan' }" class="tab-pane">
+              <pathome-ssripaactionplan
+              #actionPlanRef
+              [quizTitle]="quizTitle"
+              [sripa]="sripa"
+              [selectedOptions]="selectedOptions">
+            </pathome-ssripaactionplan>
+            </div>
+          </div>
+          
+          <!-- Export Button placed outside -->
+          <div class="ion-text-center export-button-container">
+            <ion-button color="tertiary" (click)="exportCurrentTabAsPDF()">
+              Export PDF
+            </ion-button>
+          </div>
         </ion-col>
       </ion-row>
 
@@ -44,13 +57,6 @@
 
           <ion-button color="primary" size="small" (click)="showResults()" *ngIf="sripaCompRef?.showresults">
             Show results
-          </ion-button>
-          <ion-button
-            color="primary"
-            size="small"
-            (click)="showActionPlan()"
-            *ngIf="hidewhenshowingresults && !hidewhenactionplanvisible">
-                  View Action Plan
           </ion-button>
         </ion-col>
       </ion-row>

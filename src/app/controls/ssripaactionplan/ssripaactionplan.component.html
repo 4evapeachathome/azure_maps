@@ -4,16 +4,6 @@
   </ion-card-header>
 
   <ion-card-content>
-    <ion-row>
-      <ion-col>
-        <div class="qr-section ta-center">
-          <qrcode [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
-        </div>
-      </ion-col>
-      <ion-col>
-        <ion-button (click)="pdfExport()">Export as PDF</ion-button>
-      </ion-col>
-    </ion-row>
     <div *ngFor="let item of actionItems" class="action-item">
       <div class="qs-row">
         <strong>{{ item.text }}</strong>
