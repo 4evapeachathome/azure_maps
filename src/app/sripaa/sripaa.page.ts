@@ -2,6 +2,8 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { SripacompComponent } from '../controls/sripacomp/sripacomp.component';
 import { MenuService } from 'src/shared/menu.service';
 import { LoadingController } from '@ionic/angular';
+import { SsripaactionplanComponent } from '../controls/ssripaactionplan/ssripaactionplan.component';
+import { SsriparesultsComponent } from '../controls/ssriparesults/ssriparesults.component';
 
 
 @Component({
@@ -12,8 +14,8 @@ import { LoadingController } from '@ionic/angular';
 })
 export class SripaaPage implements OnInit,AfterViewInit {
   @ViewChild(SripacompComponent) sripaCompRef!: SripacompComponent;
-  @ViewChild('resultsRef') resultsRef!: any;
-  @ViewChild('actionPlanRef') actionPlanRef!: any;
+  @ViewChild('resultsRef') resultsRef!: SsriparesultsComponent;
+  @ViewChild('actionPlanRef') actionPlanRef!: SsripaactionplanComponent;
   loading: HTMLIonLoadingElement | null = null;
 
   hidewhenshowingresults: boolean = false;
@@ -115,11 +117,13 @@ export class SripaaPage implements OnInit,AfterViewInit {
   
 
   exportCurrentTabAsPDF() {
-    if (this.selectedTab === 'results' && this.resultsRef?.exportAsPDF) {
-      this.resultsRef.exportAsPDF();
-    } else if (this.selectedTab === 'actionplan' && this.actionPlanRef?.exportAsPDF) {
-      this.actionPlanRef.exportAsPDF();
-    }
+    setTimeout(() => {
+      if (this.selectedTab === 'results') {
+        this.resultsRef?.exportToPDF();
+      } else if (this.selectedTab === 'actionplan') {
+        this.actionPlanRef?.exportAsPDF();
+      }
+    }, 100);
   }
 
 }

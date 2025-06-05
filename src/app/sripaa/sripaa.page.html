@@ -10,35 +10,36 @@
       
       <ion-row class="comp-space" *ngIf="hidewhenshowingresults">
         <ion-col size="12">
-            <div class="ion-text-center export-button-container">
+          <div class="ion-text-center export-button-container">
             <ion-button color="tertiary" (click)="exportCurrentTabAsPDF()">
               Export PDF
             </ion-button>
           </div>
+      
           <ion-segment [(ngModel)]="selectedTab" class="web-tab-toggle">
             <ion-segment-button value="results">Results</ion-segment-button>
             <ion-segment-button value="actionplan">Action Plan</ion-segment-button>
           </ion-segment>
       
           <div class="web-tab-container">
-            <div [ngClass]="{ 'blurred': selectedTab !== 'results' }" class="tab-pane">
+            <div [ngClass]="{ 'sripaa-summary-display': selectedTab !== 'results' }" class="tab-pane">
               <pathome-ssriparesults
-              #resultsRef
-              [quizTitle]="quizTitle"
-              [sripa]="sripa"
-              [selectedOptions]="selectedOptions">
-            </pathome-ssriparesults>
+                #resultsRef
+                [quizTitle]="quizTitle"
+                [sripa]="sripa"
+                [selectedOptions]="selectedOptions">
+              </pathome-ssriparesults>
             </div>
-            <div [ngClass]="{ 'blurred': selectedTab !== 'actionplan' }" class="tab-pane">
+      
+            <div [ngClass]="{ 'sripaa-summary-display': selectedTab !== 'actionplan' }" class="tab-pane">
               <pathome-ssripaactionplan
-              #actionPlanRef
-              [quizTitle]="quizTitle"
-              [sripa]="sripa"
-              [selectedOptions]="selectedOptions">
-            </pathome-ssripaactionplan>
+                #actionPlanRef
+                [quizTitle]="quizTitle"
+                [sripa]="sripa"
+                [selectedOptions]="selectedOptions">
+              </pathome-ssripaactionplan>
             </div>
           </div>
-        
         </ion-col>
       </ion-row>
 

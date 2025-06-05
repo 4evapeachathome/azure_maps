@@ -9,7 +9,7 @@
         <div class="thank-you">Thank you for completing the assessment.</div>
 
         <div class="qr-section ta-center">
-          <qrcode [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+          <qrcode #qrCodeElement [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
         </div>
       </ion-col>
     </ion-row>
@@ -31,30 +31,13 @@
             </td>
             <td> <ion-radio-group [value]="selectedOptions[i]" >
             <ion-radio disabled value="yes"></ion-radio><br />
-            <!-- <ion-radio disabled value="no"></ion-radio> -->
           </ion-radio-group></td>
            <td> <ion-radio-group [value]="selectedOptions[i]" >
-            <!-- <ion-radio disabled value="yes"></ion-radio><br /> -->
             <ion-radio disabled value="no"></ion-radio>
           </ion-radio-group></td>
           </tr>
         </tbody>
       </table>
-      <!-- <div class="qs-row question-row">
-        <div class="qs-col">
-          <strong>{{ q.text }}</strong>
-          <div class="question-severity">Rating: {{ q.severity }}</div>
-        </div>
-      </div> -->
-
-      <!-- <div class="qs-row qz-button-row">
-        <div class="qs-col ta-center">
-          <ion-radio-group [value]="selectedOptions[i]" >
-            <ion-radio disabled value="yes">Yes</ion-radio><br />
-            <ion-radio disabled value="no">No</ion-radio>
-          </ion-radio-group>
-        </div>
-      </div> -->
 
       <hr />
     </div>
