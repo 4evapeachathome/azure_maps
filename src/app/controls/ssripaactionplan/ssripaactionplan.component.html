@@ -1,0 +1,30 @@
+<ion-card class="common-container action-plan-container">
+  <ion-card-header>
+    <ion-card-title>{{quizTitle}}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-row>
+      <ion-col>
+        <div class="qr-section ta-center">
+          <qrcode [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+        </div>
+      </ion-col>
+      <ion-col>
+        <ion-button (click)="pdfExport()">Export as PDF</ion-button>
+      </ion-col>
+    </ion-row>
+    <div *ngFor="let item of actionItems" class="action-item">
+      <div class="qs-row">
+        <strong>{{ item.text }}</strong>
+        <div>Severity: {{ item.severity }}</div>
+        <ul>
+          <li *ngFor="let action of item.actions">
+            <div [innerHTML]="renderRichText(action.description)"></div>
+          </li>
+        </ul>
+      </div>
+      <hr />
+    </div>
+  </ion-card-content>
+</ion-card>

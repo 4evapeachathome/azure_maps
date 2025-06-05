@@ -1,29 +1,68 @@
-
 <ion-content [fullscreen]="true">
   <div class="cmh-container">
-  <ion-grid class="p-b-0 sm-cont-margin container-min-height">
-    <ion-row class="comp-space">
-      <ion-col>
-        <pathome-sripacomp></pathome-sripacomp>
-      </ion-col>
-    </ion-row>
-    <ion-row class="comp-space">
-      <ion-col size="12" size-sm="12" class="ion-text-center button-gap">
-        <ion-button color="primary" (click)="expandMenu('Legal Rights')"  [routerLink]="['/legalrights']" size="small">Explore the Next Chapter.....</ion-button>
-        <ion-button color="primary"  *ngIf="sripaCompRef?.hasAnyAnswer && !sripaCompRef.finalAnswerVisible" 
-          (click)="onFinalAnswerClick()" size="small">Take me to Results</ion-button>
-          </ion-col>
-      
-      
-          
-        </ion-row>
-  </ion-grid>
-  <ion-grid class="footer-container">
-    <ion-row>
-      <ion-col class="p-0">
-        <pathome-footer></pathome-footer>
+    <ion-grid class="p-b-0 sm-cont-margin container-min-height">
+      <!-- Show Quiz Component -->
+      <ion-row class="comp-space" *ngIf="!hidewhenshowingresults && !hidewhenactionplanvisible">
+        <ion-col>
+          <pathome-sripacomp></pathome-sripacomp>
         </ion-col>
-        </ion-row>
-  </ion-grid>
-</div>
+      </ion-row>
+      
+      <!-- Show Result Component -->
+      <ion-row class="comp-space" *ngIf="hidewhenshowingresults && !hidewhenactionplanvisible">
+        <ion-col>
+          <pathome-ssriparesults
+            [quizTitle]="quizTitle"
+            [sripa]="sripa"
+            [selectedOptions]="selectedOptions">
+          </pathome-ssriparesults>
+        </ion-col>
+      </ion-row>
+      
+      <!-- Show Action Plan Component -->
+      <ion-row class="comp-space" *ngIf="hidewhenactionplanvisible">
+        <ion-col>
+          <pathome-ssripaactionplan
+            [quizTitle]="quizTitle"
+            [sripa]="sripa"
+            [selectedOptions]="selectedOptions">
+          </pathome-ssripaactionplan>
+        </ion-col>
+      </ion-row>
+
+      <!-- Action Buttons -->
+      <ion-row class="comp-space">
+        <ion-col size="12" size-sm="12" class="ion-text-center button-gap">
+          <ion-button
+            color="primary"
+            (click)="expandMenu('Legal Rights')"
+            [routerLink]="['/legalrights']"
+            size="small"
+          >
+            Explore the Next Chapter.....
+          </ion-button>
+
+          <ion-button color="primary" size="small" (click)="showResults()" *ngIf="sripaCompRef?.showresults">
+            Show results
+          </ion-button>
+          <ion-button
+            color="primary"
+            size="small"
+            (click)="showActionPlan()"
+            *ngIf="hidewhenshowingresults && !hidewhenactionplanvisible">
+                  View Action Plan
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Footer -->
+    <ion-grid class="footer-container">
+      <ion-row>
+        <ion-col class="p-0">
+          <pathome-footer></pathome-footer>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

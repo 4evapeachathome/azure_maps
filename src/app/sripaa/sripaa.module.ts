@@ -9,6 +9,8 @@ import { SripaaPageRoutingModule } from './sripaa-routing.module';
 import { SripaaPage } from './sripaa.page';
 import { FooterComponent } from "../controls/footer/footer.component";
 import { SripacompComponent } from "../controls/sripacomp/sripacomp.component";
+import { SsriparesultsComponent } from '../controls/ssriparesults/ssriparesults.component';
+import { SsripaactionplanComponent } from '../controls/ssripaactionplan/ssripaactionplan.component';
 
 @NgModule({
   imports: [
@@ -17,7 +19,9 @@ import { SripacompComponent } from "../controls/sripacomp/sripacomp.component";
     IonicModule,
     SripaaPageRoutingModule,
     FooterComponent,
-    SripacompComponent
+    SripacompComponent,
+    SsriparesultsComponent,
+    SsripaactionplanComponent
 ],
   declarations: [SripaaPage]
 })

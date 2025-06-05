@@ -32,9 +32,8 @@ rating = '';
 currentIndex = 0;
 showAnswers: boolean[] = [];
 selectedOptions: string[] = [];
-hasAnyAnswer = false;
 finalAnswerHtml: string = '';
-finalAnswerVisible = false;
+showresults: boolean = false;
 
 constructor(private apiService: ApiService) {}
 
@@ -56,10 +55,7 @@ loadQuiz(): void {
   });
 }
 
-setFinalAnswer(answerText: string) {
-  this.finalAnswerHtml = this.renderRichTextFromText(answerText);
-  this.finalAnswerVisible = true;
-}
+
 
 renderRichTextFromText(text: string): string {
   if (!text) return '';
@@ -69,7 +65,7 @@ renderRichTextFromText(text: string): string {
 
 selectOption(index: number, option: 'yes' | 'no'): void {
   this.selectedOptions[index] = option;
-  this.hasAnyAnswer = this.selectedOptions.some(opt => opt !== null);
+  this.showresults = this.selectedOptions.some(opt => opt !== null);
 }
 
 prevSlide(): void {

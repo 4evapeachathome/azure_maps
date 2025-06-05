@@ -1,0 +1,45 @@
+<ion-card class="common-container quiz-container">
+  <ion-card-header>
+    <ion-card-title>{{ quizTitle }}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-row>
+      <ion-col>
+        <div class="thank-you">Thank you for completing the assessment.</div>
+
+        <div class="qr-section ta-center">
+          <qrcode [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+        </div>
+      </ion-col>
+      <ion-col>
+        <ion-button (click)="pdfExport()">Export as PDF</ion-button>
+      </ion-col>
+    </ion-row>
+
+
+    <div *ngFor="let q of sripa; let i = index" class="question-summary">
+      <div class="qs-row question-row">
+        <div class="qs-col">
+          <strong>{{ q.text }}</strong>
+          <div class="question-severity">Rating: {{ q.severity }}</div>
+        </div>
+      </div>
+
+      <div class="qs-row qz-button-row">
+        <div class="qs-col ta-center">
+          <ion-radio-group [value]="selectedOptions[i]" >
+            <ion-radio disabled value="yes">Yes</ion-radio><br />
+            <ion-radio disabled value="no">No</ion-radio>
+          </ion-radio-group>
+        </div>
+      </div>
+
+      <hr />
+    </div>
+
+    <div *ngIf="highSeverityTriggered" class="warning">
+      <strong>Take action immediately; talk to your service providers for assistance.</strong>
+    </div>
+  </ion-card-content>
+</ion-card>
