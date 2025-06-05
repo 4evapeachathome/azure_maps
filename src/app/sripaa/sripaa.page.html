@@ -10,6 +10,11 @@
       
       <ion-row class="comp-space" *ngIf="hidewhenshowingresults">
         <ion-col size="12">
+            <div class="ion-text-center export-button-container">
+            <ion-button color="tertiary" (click)="exportCurrentTabAsPDF()">
+              Export PDF
+            </ion-button>
+          </div>
           <ion-segment [(ngModel)]="selectedTab" class="web-tab-toggle">
             <ion-segment-button value="results">Results</ion-segment-button>
             <ion-segment-button value="actionplan">Action Plan</ion-segment-button>
@@ -33,13 +38,7 @@
             </pathome-ssripaactionplan>
             </div>
           </div>
-          
-          <!-- Export Button placed outside -->
-          <div class="ion-text-center export-button-container">
-            <ion-button color="tertiary" (click)="exportCurrentTabAsPDF()">
-              Export PDF
-            </ion-button>
-          </div>
+        
         </ion-col>
       </ion-row>
 
