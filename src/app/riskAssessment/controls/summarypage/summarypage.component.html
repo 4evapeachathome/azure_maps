@@ -1,0 +1,32 @@
+<div *ngIf="loaded" class="summary-container">
+  <ion-grid>  
+    <ion-row>
+      <ion-col size="12">
+        <div class="risk-meter-section">
+          <app-risk-meter 
+            [score]="riskScore"
+            [ranges]="[
+              { min: 0, max: 5, color: '#4CAF50', label: '' },
+              { min: 5, max: 10, color: '#FFA500', label: '' },
+              { min: 10, max: 15, color: '#FF0000', label: '' }
+            ]">
+          </app-risk-meter>
+          
+          <div class="risk-info">
+            <p class="score-text">Your Risk Score:<span > {{ riskScore }}</span></p>
+            <p class="risk-level">
+              Risk Level: 
+              <span [ngClass]="{
+                'green': riskScore <= 5,
+                'orange': riskScore > 5 && riskScore <= 10,
+                'red': riskScore > 10
+              }">
+                {{ riskScore <= 5 ? 'Low ' : (riskScore <= 10 ? 'Medium Risk' : 'High Risk') }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>

@@ -1,0 +1,26 @@
+<div class="risk-meter-container">
+  <h2 class="title">RISK LEVELS</h2>
+  <div class="gauge-wrapper">
+    <app-custom-gauge
+      [value]="value" marker="false"
+      [min]="min" legend="false"
+      [max]="max"
+      [ranges]="ranges">
+    </app-custom-gauge>
+  </div>
+  
+  <div class="legend">
+    <div class="legend-item">
+      <span class="color-box green"></span>
+      <span class="label">Low Risk (0-5)</span>
+    </div>
+    <div class="legend-item">
+      <span class="color-box orange"></span>
+      <span class="label">Medium Risk (5-10)</span>
+    </div>
+    <div class="legend-item">
+      <span class="color-box red"></span>
+      <span class="label">High Risk (10-15)</span>
+    </div>
+  </div>
+</div>

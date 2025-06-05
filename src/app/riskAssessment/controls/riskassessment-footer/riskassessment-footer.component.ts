@@ -7,8 +7,8 @@ import { IonGrid, IonFooter } from "@ionic/angular/standalone";
   selector: 'app-riskassessment-footer',
   templateUrl: './riskassessment-footer.component.html',
   styleUrls: ['./riskassessment-footer.component.scss'],
-   standalone: true,
-          imports: [CommonModule, IonicModule]
+  standalone: true,
+  imports: [CommonModule, IonicModule]
 })
 export class RiskassessmentFooterComponent  implements OnInit {
 
