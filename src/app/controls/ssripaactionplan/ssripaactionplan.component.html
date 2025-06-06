@@ -7,13 +7,6 @@
     <div *ngFor="let item of actionItems" class="action-item">
       <div class="qs-row">
         <strong>{{ item.text }}</strong>
-        <div class="severity">Severity: {{ item.severity }}</div>
-
-        <!-- Radio button group display -->
-        <ion-radio-group value="yes" disabled>
-          <ion-radio value="yes" labelPlacement="end">Yes</ion-radio>
-        </ion-radio-group>
-
           <div *ngFor="let action of item.actions">
             <div [innerHTML]="renderRichText(action.description)"></div>
           </div>

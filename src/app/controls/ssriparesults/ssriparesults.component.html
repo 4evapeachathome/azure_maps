@@ -7,10 +7,12 @@
     <ion-row>
       <ion-col>
         <div class="thank-you">Thank you for completing the assessment.</div>
-
+      </ion-col>
+      <ion-col>      
         <div class="qr-section ta-center">
           <qrcode #qrCodeElement [qrdata]="myAngularxQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
         </div>
+        <ion-text>{{myAngularxQrCode}}</ion-text>
       </ion-col>
     </ion-row>
 
@@ -27,7 +29,6 @@
         <tbody>
           <tr *ngFor="let q of sripa; let i = index" class="question-summary">
             <td>{{ q.text }}
-               <div class="question-severity">Rating: {{ q.severity }}</div>
             </td>
             <td> <ion-radio-group [value]="selectedOptions[i]" >
             <ion-radio disabled value="yes"></ion-radio><br />

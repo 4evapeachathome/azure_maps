@@ -92,23 +92,19 @@ export class SsripaactionplanComponent  implements OnInit {
         <thead>
           <tr>
             <th style="border: 1px solid #ccc; padding: 8px;">Question</th>
-            <th style="border: 1px solid #ccc; padding: 8px;">Severity</th>
-            <th style="border: 1px solid #ccc; padding: 8px;">Answer</th>
             <th style="border: 1px solid #ccc; padding: 8px;">Actions</th>
           </tr>
         </thead>
         <tbody>
           ${this.actionItems.map(item => `
           <tr>
-            <td style="border: 1px solid #ccc; padding: 8px;">${item.text}</td>
-            <td style="border: 1px solid #ccc; padding: 8px;">${item.severity}</td>
-            <td style="border: 1px solid #ccc; padding: 8px;">Yes</td>
+            <td style="border: 1px solid #ccc; padding: 8px; vertical-align: top;">${item.text}</td>
             <td style="border: 1px solid #ccc; padding: 8px;">
-            ${item.actions.map((action: any) => {
-            const html = this.renderRichText(action.description);
-            return `<div>${html}</div>`;
-            }).join('')}
-          </td>
+              ${item.actions.map((action: any) => {
+                const html = this.renderRichText(action.description);
+                return `<div>${html}</div>`;
+              }).join('')}
+            </td>
           </tr>
         `).join('')}
         </tbody>
@@ -129,7 +125,7 @@ export class SsripaactionplanComponent  implements OnInit {
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       pdf.addImage(img, 'PNG', 0, 0, pdfWidth, pdfHeight);
   
-      pdf.save('action-plan.pdf');
+      pdf.save('SRRIPA Action Plan.pdf');
       document.body.removeChild(container);
     } catch (error) {
       console.error('PDF export failed:', error);
@@ -137,9 +133,5 @@ export class SsripaactionplanComponent  implements OnInit {
     }
   }
   
-  stripHtml(html: string): string {
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-    return temp.textContent || temp.innerText || '';
-  }
+
 }

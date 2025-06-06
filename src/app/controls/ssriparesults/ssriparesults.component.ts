@@ -82,7 +82,6 @@ export class SsriparesultsComponent  implements OnInit {
             <tr>
               <td style="border: 1px solid #ccc; padding: 8px;">
                 ${q.text}
-                <div>Rating: ${q.severity}</div>
               </td>
               <td style="text-align: center; border: 1px solid #ccc; padding: 8px;">
                 ${this.selectedOptions[i] === 'yes' ? '✔' : ''}
@@ -119,7 +118,7 @@ export class SsriparesultsComponent  implements OnInit {
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
   
       pdf.addImage(img, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('ssripa-results.pdf');
+      pdf.save('SRRIPA Result.pdf');
   
       // Clean up
       document.body.removeChild(container);
