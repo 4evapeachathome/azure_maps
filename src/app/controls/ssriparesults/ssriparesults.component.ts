@@ -17,7 +17,7 @@ export class SsriparesultsComponent  implements OnInit {
   @Input() quizTitle: string = '';
   @Input() sripa: any[] = [];
   @Input() selectedOptions: string[] = [];
-  myAngularxQrCode: string = 'https://http://localhost:8100/login'; // QR code content
+  @Input() myAngularxQrCode: string = 'https://http://localhost:8100/login'; // QR code content
   @ViewChild('resultContent', { static: false }) resultContent!: ElementRef;
   @ViewChild('qrCodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
 

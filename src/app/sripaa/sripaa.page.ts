@@ -4,6 +4,8 @@ import { MenuService } from 'src/shared/menu.service';
 import { LoadingController } from '@ionic/angular';
 import { SsripaactionplanComponent } from '../controls/ssripaactionplan/ssripaactionplan.component';
 import { SsriparesultsComponent } from '../controls/ssriparesults/ssriparesults.component';
+import { firstValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -16,6 +18,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
   @ViewChild(SripacompComponent) sripaCompRef!: SripacompComponent;
   @ViewChild('resultsRef') resultsRef!: SsriparesultsComponent;
   @ViewChild('actionPlanRef') actionPlanRef!: SsripaactionplanComponent;
+  resultUrl = '';
   loading: HTMLIonLoadingElement | null = null;
 
   hidewhenshowingresults: boolean = false;
@@ -93,25 +96,45 @@ export class SripaaPage implements OnInit,AfterViewInit {
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
-  showResults() {
+  async showResults() {
     if (this.sripaCompRef) {
-      this.quizTitle = this.sripaCompRef.quizTitle;
-      this.sripa = this.sripaCompRef.sripa;
-      this.selectedOptions = this.sripaCompRef.selectedOptions;
+      try {
+        // Wait for API submission and response from the child
+        const response = await firstValueFrom(this.sripaCompRef.submitAssessmentResponse());
+        debugger;
+        console.log('SSRIPA response received:', response);
   
-      sessionStorage.setItem(
-        'ssripa_result',
-        JSON.stringify({
-          quizTitle: this.quizTitle,
-          sripa: this.sripa,
-          selectedOptions: this.selectedOptions,
-          view: 'results'
-        })
-      );
+        // Pull data from the child after submission
+        this.quizTitle = this.sripaCompRef.quizTitle;
+        this.sripa = this.sripaCompRef.sripa;
+        this.selectedOptions = this.sripaCompRef.selectedOptions;
+  
+        if(response){
+          this.resultUrl = `${environment.UIurl}/viewresult/?code=${response?.data?.AssessmentGuid || 'unknown'}`;
+          console.log('Generated Result URL:', this.resultUrl);  
+        }
+        // Optionally build a result URL or use the response data
+
+        // Store in sessionStorage (for navigation/reuse)
+        sessionStorage.setItem(
+          'ssripa_result',
+          JSON.stringify({
+            quizTitle: this.quizTitle,
+            sripa: this.sripa,
+            selectedOptions: this.selectedOptions,
+            view: 'results',
+            resultUrl: this.resultUrl
+          })
+        );
+  
+        // Toggle UI to show results tab
+        this.hidewhenshowingresults = true;
+        this.selectedTab = 'results';
+      } catch (error) {
+        console.error('Failed to load results from child component:', error);
+        // Optionally show toast message to user
+      }
     }
-  
-    this.hidewhenshowingresults = true;
-    this.selectedTab = 'results'; // Default selected tab
   }
 
   
