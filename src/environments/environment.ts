@@ -13,7 +13,6 @@ interface Environment {
 export const environment = {
   production: false,
   apiHost:'http://localhost:1337',
-  UIurl:'http://localhost:8100',
   //apiHost:'https://cma-strapi-app-heecd3e6bwczakfu.eastus2-01.azurewebsites.net',
   secretKey:'0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9',
   
