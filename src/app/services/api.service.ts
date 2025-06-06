@@ -579,6 +579,35 @@ getServiceFilterOptions(): Observable<any> {
   );
 }
 
+//Get state distance
+getSupportServiceDistances(): Observable<{ [key: string]: number }> {
+  const endpoint = APIEndpoints.supportServiceDistances; 
+  const options: QueryOptions = {
+    fields: ['Abbreviation', 'Miles']
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      if (res.data && Array.isArray(res.data)) {
+        const distances: { [key: string]: number } = {};
+        res.data.forEach((item: any) => {
+          const abbreviation = item.attributes?.Abbreviation;
+          const miles = parseInt(item.attributes?.Miles, 10); // Convert string to number
+          if (abbreviation && !isNaN(miles)) {
+            distances[abbreviation] = miles;
+          }
+        });
+        return distances; // Return key-value object (e.g., { "AL": 50, "AK": 50, ... })
+      } else {
+        return {}; // Return empty object if no data or structure is incorrect
+      }
+    }),
+    catchError(error => {
+      console.error('Error fetching support service distances:', error);
+      return throwError(error);
+    })
+  );
+}
 
 
 getStateLaws(): Observable<StateLaw[]> {

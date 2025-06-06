@@ -11,6 +11,7 @@ export const APIEndpoints = {
     peaceathome: `${environment.apiHost}/api/peaceathome`,
     nopeacepartnerviolence: `${environment.apiHost}/api/no-peace-home-contents`,
     servicefilteroptions: `${environment.apiHost}/api/service-filteroptions`,
+    supportServiceDistances: `${environment.apiHost}/api/support-service-distances`,
     sliderapi: `${environment.apiHost}/api/home-sliders`,
     healthyrelationslider: `${environment.apiHost}/api/healthy-relationship-sliders`,
     healtyrelationTitleContent: `${environment.apiHost}/api/healthy-relationship`,
