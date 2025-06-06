@@ -64,6 +64,13 @@ export class SsriparesultsComponent  implements OnInit {
       qrImg.style.display = 'block';
       qrImg.style.margin = '20px auto';
       container.appendChild(qrImg);
+
+      const link = document.createElement('div');
+    link.innerText = this.myAngularxQrCode || ''; // Replace `resultLink` with your actual variable
+    link.style.textAlign = 'center';
+    link.style.marginBottom = '20px';
+    link.style.wordBreak = 'break-word';
+    container.appendChild(link);
   
       // Table
       const table = document.createElement('table');

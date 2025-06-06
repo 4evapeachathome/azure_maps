@@ -177,13 +177,13 @@ export class ApiService {
 
   getMenuItems(): Observable<any> {
     return this.getWithQuery(APIEndpoints.menu, {
-      fields: ['title', 'link', 'documentId','order'],
+      fields: ['title', 'link', 'documentId','order','tooltip'],
       populate: {
         icon: {
           fields: ['url']
         },
         parentMenu: {
-          fields: ['title', 'link', 'documentId','order'],
+          fields: ['title', 'link', 'documentId','order','tooltip'],
           populate: {
             icon: {
               fields: ['url']
