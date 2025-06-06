@@ -40,6 +40,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
       this.quizTitle = parsed.quizTitle || '';
       this.sripa = parsed.sripa || [];
       this.selectedOptions = parsed.selectedOptions || [];
+      this.resultUrl = parsed.resultUrl || '';
   
       // Show result+actionplan tab view by default if session data exists
       if (parsed.view === 'results') {
@@ -101,8 +102,6 @@ export class SripaaPage implements OnInit,AfterViewInit {
       try {
         // Wait for API submission and response from the child
         const response = await firstValueFrom(this.sripaCompRef.submitAssessmentResponse());
-        debugger;
-        console.log('SSRIPA response received:', response);
   
         // Pull data from the child after submission
         this.quizTitle = this.sripaCompRef.quizTitle;
@@ -111,7 +110,6 @@ export class SripaaPage implements OnInit,AfterViewInit {
   
         if(response){
           this.resultUrl = `${environment.UIurl}/viewresult/?code=${response?.data?.AssessmentGuid || 'unknown'}`;
-          console.log('Generated Result URL:', this.resultUrl);  
         }
         // Optionally build a result URL or use the response data
 
