@@ -109,7 +109,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
         this.selectedOptions = this.sripaCompRef.selectedOptions;
   
         if(response){
-          this.resultUrl = `${environment.UIurl}/viewresult/?code=${response?.data?.AssessmentGuid || 'unknown'}`;
+          this.resultUrl = `code=${response?.data?.AssessmentGuid || 'unknown'}`;
         }
         // Optionally build a result URL or use the response data
 
