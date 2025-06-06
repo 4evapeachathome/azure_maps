@@ -1,16 +1,17 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 
-//Email Regex
+// Email Regex
 export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-//Email Regex Validation
+// Email Regex Validation
 export function validateEmail(email: string): boolean {
   return emailPattern.test(email);
 }
 
-// Password Class
+// Utility class
 export class Utility {
+  // New Password Validator
   static newPasswordValidator(getOldPassword: () => string | null): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const newPassword = control.value;
@@ -31,11 +32,41 @@ export class Utility {
       return null;
     };
   }
+
+  // GUID generator with custom prefix
+  static generateGUID(type: string): string {
+    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+
+    switch (type.toLowerCase()) {
+      case 'rat':
+        return `RAT-${uuid}`;
+      case 'hits':
+        return `HITS-${uuid}`;
+      case 'da':
+        return `DA-${uuid}`;
+      case 'dai':
+        return `DAI-${uuid}`;
+      case 'cts':
+        return `CTS-${uuid}`;
+      case 'ssripa':
+        return `SSRIPA-${uuid}`;
+      default:
+        return `GEN-${uuid}`; // fallback generic prefix
+    }
+  }
 }
 
-
 // Utility function to present a toast message
-export async function presentToast(toastController: ToastController, message: string, duration: number = 2000, position: 'top' | 'bottom' | 'middle' = 'bottom') {
+export async function presentToast(
+  toastController: ToastController,
+  message: string,
+  duration: number = 2000,
+  position: 'top' | 'bottom' | 'middle' = 'bottom'
+) {
   const toast = await toastController.create({
     message,
     duration,

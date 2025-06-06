@@ -474,8 +474,8 @@ onSearchClear() {
     this.searchSubject.next(event.target.value);
   }
 
-
-  center: google.maps.LatLngLiteral = { lat: 39.7783, lng: -119.4179 };
+  center!: google.maps.LatLngLiteral;
+  //center: google.maps.LatLngLiteral = { lat: 39.7783, lng: -119.4179 };  for testing purpose
   zoom = 4.2;
   filteredLocations: any[] | undefined ;
   filterSearchTerm: string = '';
@@ -491,12 +491,12 @@ onSearchClear() {
       this.longitude = coordinates.coords.longitude;
       this.geolocationEnabled = true;
       this.locationcard = true;
-      // this.center = { lat: this.latitude, lng: this.longitude };
+      this.center = { lat: this.latitude, lng: this.longitude };
   
-      await this.reverseGeocodeForState({ lat: 37.3387, lng: -121.8853 });
+      await this.reverseGeocodeForState({ lat: this.latitude, lng: this.longitude });
   
-      this.updateSearchedLocationMarker({ lat: 37.3387, lng: -121.8853 });
-      this.filterNearbySupportCenters(37.3387,-121.8853);
+      this.updateSearchedLocationMarker({ lat: this.latitude, lng: this.longitude });
+      this.filterNearbySupportCenters(this.latitude,this.longitude);
 
     } catch (error: any) { // Explicitly type the error
       if (error.code === error.PERMISSION_DENIED) {
