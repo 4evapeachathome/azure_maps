@@ -197,12 +197,20 @@
           (click)="prevSlide()"
           [class.disabled]="currentIndex === 0">
         </ion-icon> -->
+         <!-- <ion-button color="primary" size="small"   (click)="prevSlide()">
+             Previous
+            </ion-button> -->
+        <div class="dots-container">
         <span
           *ngFor="let q of questions; let idx = index"
           class="dot"
           [class.active]="currentIndex === idx"
           (click)="goToSlide(idx)"
         ></span>
+      </div>
+        <!-- <ion-button color="primary" size="small"   (click)="nextSlide()">
+             Next
+            </ion-button> -->
         <!-- <ion-icon 
         name="chevron-forward-outline"
           class="nav-arrow next" 
