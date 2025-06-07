@@ -92,7 +92,7 @@ export class SetPasswordComponent implements OnInit {
       return;
     }
 
-    if (this.flowType === 'onboarding' || this.flowType === 'forgetpassword') {
+    if (this.flowType === 'onboarding' || this.flowType === 'forgotpassword') {
       await this.handlePasswordUpdate();
     }
   }

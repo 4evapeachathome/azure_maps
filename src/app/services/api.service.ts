@@ -1250,7 +1250,21 @@ getRatsAssessmentQuestions(): Observable<any> {
   );
 }
 
-
+//getresultfor DA assessment
+getHitsDAAssessmentQuestoins(): Observable<any> {
+  return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
+    populate: {
+      DAChild: {
+        fields: ['questionText', 'questionOrder', 'weightageScore']
+      }
+    }, 
+  }, environment.apitoken).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching Hits result API:', error);
+      return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+    })
+  );
+}
 
 
 }
