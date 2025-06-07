@@ -313,6 +313,16 @@ async presentSessionAlert() {
       });
       this.sharedDataService.setOrganizations(this.organizations);
     });
+
+    this.apiService.getSupportServiceDistances().subscribe({
+      next: (distances) => {
+        this.sharedDataService.setStateDistances(distances); // Updated to use menuService
+      },
+      error: (error) => {
+        console.error('Failed to fetch support service distances:', error);
+        this.sharedDataService.setStateDistances({}); // Fallback to empty object
+      }
+    });
    
   }
 

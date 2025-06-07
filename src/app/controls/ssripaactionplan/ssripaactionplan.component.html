@@ -1,0 +1,15 @@
+<ion-card class="quiz-container">
+ 
+
+  <ion-card-content>
+    <div *ngFor="let item of actionItems" class="action-item">
+      <div class="qs-row">
+        <strong>{{ item.text }}</strong>
+          <div *ngFor="let action of item.actions">
+            <div [innerHTML]="renderRichText(action.description)"></div>
+          </div>
+      </div>
+      <hr />
+    </div>
+  </ion-card-content>
+</ion-card>

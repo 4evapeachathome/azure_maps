@@ -5,12 +5,12 @@
   </ion-card-header>
 
   <ion-card-content>
-    <ng-container *ngIf="currentIndex < sripa.length && !finalAnswerVisible">
+    <ng-container *ngIf="currentIndex < sripa.length">
       <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
         <div class="qs-row qs-header">
           <div class="qs-col header-pagination">
             <strong>Question:</strong>
-             <div class="pagination">
+             <!-- <div class="pagination">
           <ion-icon 
             name="chevron-back-outline"
             class="nav-arrow prev" 
@@ -25,14 +25,13 @@
             (click)="nextSlide()" 
             [class.disabled]="currentIndex === sripa.length - 1">
           </ion-icon>
-        </div>
+        </div> -->
           </div>
         </div>
     
         <div class="qs-row question-row">
           <div class="qs-col">
             <div><strong>{{ q.text }}</strong></div>
-            <div class="question-severity">Rating: {{ q.severity }}</div>
           </div>
         </div>
         <div class="qs-row qz-button-row">
@@ -54,35 +53,29 @@
         </div>
     
         <div class="pagination">
-          <!-- <ion-icon 
+          <ion-icon 
             name="chevron-back-outline"
             class="nav-arrow prev" 
             (click)="prevSlide()" 
             [class.disabled]="currentIndex === 0">
-          </ion-icon> -->
-          
+          </ion-icon>
+       
+               <div class="dots-container">
           <span *ngFor="let q of sripa; let idx = index"
             class="dot"
             [class.active]="currentIndex === idx"
             (click)="goToSlide(idx)">
           </span>
-          
-          <!-- <ion-icon 
+          </div>
+        
+          <ion-icon 
             name="chevron-forward-outline"
             class="nav-arrow next" 
             (click)="nextSlide()" 
             [class.disabled]="currentIndex === sripa.length - 1">
-          </ion-icon> -->
+          </ion-icon>
         </div>
       </div>
     </ng-container>
-    <!-- <div class="yesanswer-content" *ngIf="currentIndex === sripa.length">
-      <div [innerHTML]="renderRichText(yesanswer)"></div>
-    </div> -->
-    <div *ngIf="finalAnswerVisible" class="yesanswer-content">
-      <h3>Final Answer</h3>
-      <div [innerHTML]="finalAnswerHtml"></div>
-    </div>
-
   </ion-card-content>
 </ion-card>

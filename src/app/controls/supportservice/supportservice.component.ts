@@ -260,15 +260,16 @@ setupSearchDebounce() {
   }
 
   private detectStateFromResult(result: google.maps.GeocoderResult) {
-    const stateComponent = result.address_components.find(comp => 
+    const stateComponent = result.address_components.find(comp =>
       comp.types.includes('administrative_area_level_1')
     );
-    
+  
     if (stateComponent) {
       const stateName = stateComponent.long_name;
       const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
       this.currentState = stateName;
-      this.searchRadius = STATE_NAME_TO_DISTANCE[stateAbbr as keyof typeof STATE_NAME_TO_DISTANCE] || DEFAULT_DISTANCE;
+      const distances = this.sharedDataService.getStateDistancesValue(); // Use MenuService
+      this.searchRadius = distances[stateAbbr] || DEFAULT_DISTANCE;
     } else {
       this.currentState = '';
       this.searchRadius = DEFAULT_DISTANCE;
@@ -474,8 +475,8 @@ onSearchClear() {
     this.searchSubject.next(event.target.value);
   }
 
-
-  center: google.maps.LatLngLiteral = { lat: 39.7783, lng: -119.4179 };
+  center!: google.maps.LatLngLiteral;
+  //center: google.maps.LatLngLiteral = { lat: 39.7783, lng: -119.4179 };  for testing purpose
   zoom = 4.2;
   filteredLocations: any[] | undefined ;
   filterSearchTerm: string = '';
@@ -491,12 +492,12 @@ onSearchClear() {
       this.longitude = coordinates.coords.longitude;
       this.geolocationEnabled = true;
       this.locationcard = true;
-      // this.center = { lat: this.latitude, lng: this.longitude };
+      this.center = { lat: this.latitude, lng: this.longitude };
   
-      await this.reverseGeocodeForState({ lat: 37.3387, lng: -121.8853 });
+      await this.reverseGeocodeForState({ lat: this.latitude, lng: this.longitude });
   
-      this.updateSearchedLocationMarker({ lat: 37.3387, lng: -121.8853 });
-      this.filterNearbySupportCenters(37.3387,-121.8853);
+      this.updateSearchedLocationMarker({ lat: this.latitude, lng: this.longitude });
+      this.filterNearbySupportCenters(this.latitude,this.longitude);
 
     } catch (error: any) { // Explicitly type the error
       if (error.code === error.PERMISSION_DENIED) {
@@ -521,24 +522,16 @@ onSearchClear() {
           else reject(status);
         });
       });
+  
       if (results && results.length > 0) {
-        const stateComponent = results[0].address_components.find((comp:any) => 
-          comp.types.includes('administrative_area_level_1')
-        );
-        
-        if (stateComponent) {
-          const stateName = stateComponent.long_name;
-          const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
-          this.currentState = stateName;
-          this.searchRadius = STATE_NAME_TO_DISTANCE[stateAbbr as keyof typeof STATE_NAME_TO_DISTANCE] || DEFAULT_DISTANCE;
-        }
+        this.detectStateFromResult(results[0]); // Reuse detectStateFromResult to set currentState and searchRadius
       }
     } catch (error) {
       console.error('Reverse geocoding error:', error);
       this.currentState = '';
       this.searchRadius = DEFAULT_DISTANCE;
     }
-}
+  }
 
   handleLocationPermissionDenied() {
   this.geolocationEnabled = false;
@@ -561,7 +554,7 @@ onSearchClear() {
   }
 
   calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const R = 6371; // Radius of the Earth in km
+    const R = 3963.1; // Radius of the Earth in miles
     const dLat = this.degreesToRadians(lat2 - lat1);
     const dLon = this.degreesToRadians(lon2 - lon1);
     const a =
@@ -569,7 +562,7 @@ onSearchClear() {
       Math.cos(this.degreesToRadians(lat1)) * Math.cos(this.degreesToRadians(lat2)) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
+    return R * c; // Distance in miles
   }
 
   // Convert degrees to radians

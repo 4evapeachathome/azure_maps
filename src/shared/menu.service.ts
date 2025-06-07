@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
    //Hits Assessment
    interface HitsAssessmentData {
@@ -24,6 +24,11 @@ export class MenuService {
 
   filterOptions$ = this.filterOptionsSubject.asObservable();
   organizations$ = this.organizationsSubject.asObservable();
+
+  private stateDistancesSubject = new BehaviorSubject<{ [key: string]: number }>({});
+ stateDistances$ = this.stateDistancesSubject.asObservable();
+
+  
 
   private ratsAssessmentData: RatsAssessmentData | null = null;
 
@@ -100,6 +105,19 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
     
     getRatsAssessment(): RatsAssessmentData | null {
       return this.ratsAssessmentData;
+    }
+
+    setStateDistances(distances: { [key: string]: number }) {
+      this.stateDistancesSubject.next(distances);
+    }
+    
+    getStateDistances(): Observable<{ [key: string]: number }> {
+      return this.stateDistancesSubject.asObservable();
+    }
+    
+    // Optional: Synchronous access to the current value
+    getStateDistancesValue(): { [key: string]: number } {
+      return this.stateDistancesSubject.getValue();
     }
 
 }

@@ -105,7 +105,7 @@
           
           <div class="qs-row qs-header">
             <div class="qs-col header-pagination">Scenario:
-      <div class="pagination">
+      <!-- <div class="pagination">
         <ion-icon 
         name="chevron-back-outline"
           class="nav-arrow prev" 
@@ -119,7 +119,7 @@
           (click)="nextSlide()"
           [class.disabled]="currentIndex === questions.length - 1">
         </ion-icon>
-      </div>
+      </div> -->
               
             </div>
             </div>
@@ -191,24 +191,28 @@
     
 
       <div class="pagination">
-        <!-- <ion-icon 
+        <ion-icon 
         name="chevron-back-outline"
           class="nav-arrow prev" 
           (click)="prevSlide()"
           [class.disabled]="currentIndex === 0">
-        </ion-icon> -->
+        </ion-icon>
+        
+        <div class="dots-container">
         <span
           *ngFor="let q of questions; let idx = index"
           class="dot"
           [class.active]="currentIndex === idx"
           (click)="goToSlide(idx)"
         ></span>
-        <!-- <ion-icon 
+      </div>
+    
+        <ion-icon 
         name="chevron-forward-outline"
           class="nav-arrow next" 
           (click)="nextSlide()"
           [class.disabled]="currentIndex === questions.length - 1">
-        </ion-icon> -->
+        </ion-icon>
       </div>
 
     </div>

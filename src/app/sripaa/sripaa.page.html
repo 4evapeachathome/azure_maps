@@ -1,29 +1,91 @@
-
 <ion-content [fullscreen]="true">
   <div class="cmh-container">
-  <ion-grid class="p-b-0 sm-cont-margin container-min-height">
-    <ion-row class="comp-space">
-      <ion-col>
-        <pathome-sripacomp></pathome-sripacomp>
-      </ion-col>
-    </ion-row>
-    <ion-row class="comp-space">
-      <ion-col size="12" size-sm="12" class="ion-text-center button-gap">
-        <ion-button color="primary" (click)="expandMenu('Legal Rights')"  [routerLink]="['/legalrights']" size="small">Explore the Next Chapter.....</ion-button>
-        <ion-button color="primary"  *ngIf="sripaCompRef?.hasAnyAnswer && !sripaCompRef.finalAnswerVisible" 
-          (click)="onFinalAnswerClick()" size="small">Take me to Results</ion-button>
-          </ion-col>
-      
-      
-          
-        </ion-row>
-  </ion-grid>
-  <ion-grid class="footer-container">
-    <ion-row>
-      <ion-col class="p-0">
-        <pathome-footer></pathome-footer>
+    <ion-grid class="p-b-0 sm-cont-margin container-min-height">
+      <!-- Show Quiz Component -->
+      <ion-row class="comp-space" *ngIf="!hidewhenshowingresults">
+        <ion-col>
+          <pathome-sripacomp></pathome-sripacomp>
         </ion-col>
-        </ion-row>
-  </ion-grid>
-</div>
+      </ion-row>
+      
+      <ion-row class="comp-space" *ngIf="hidewhenshowingresults">
+         <ion-col size="12">
+          <ion-card class="common-container quiz-container">
+             <ion-card-header>
+    <ion-card-title>{{ quizTitle }}</ion-card-title>
+  </ion-card-header>
+             <ion-row class="segment-border">
+        <ion-col  size="12" size-sm="12" size-lg="6"style="padding: 0;">
+          
+         <ion-segment [(ngModel)]="selectedTab" class="web-tab-toggle" mode="md">
+            <ion-segment-button value="results">Results</ion-segment-button>
+            <ion-segment-button value="actionplan">Action Plan</ion-segment-button>
+          </ion-segment>
+        
+        </ion-col>
+        <ion-col  size="12" size-sm="12" size-lg="6" class="export-button-container">
+       
+            <ion-button color="primary" size="small" (click)="exportCurrentTabAsPDF()">
+              Export PDF
+            </ion-button>
+               </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <div class="web-tab-container">
+            <div [ngClass]="{ 'sripaa-summary-display': selectedTab !== 'results' }" >
+              <pathome-ssriparesults
+                #resultsRef
+                [quizTitle]="quizTitle"
+                [myAngularxQrCode]="resultUrl"
+                [sripa]="sripa"
+                [selectedOptions]="selectedOptions">
+              </pathome-ssriparesults>
+            </div>
+      
+            <div [ngClass]="{ 'sripaa-summary-display': selectedTab !== 'actionplan' }">
+              <pathome-ssripaactionplan
+                #actionPlanRef
+                [quizTitle]="quizTitle"
+                [sripa]="sripa"
+                [selectedOptions]="selectedOptions">
+              </pathome-ssripaactionplan>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+      </ion-card>
+         </ion-col>
+       
+        
+      </ion-row>
+
+      <!-- Action Buttons -->
+      <ion-row class="comp-space">
+        <ion-col size="12" size-sm="12" class="ion-text-center button-gap">
+          <ion-button
+            color="primary"
+            (click)="expandMenu('Legal Rights')"
+            [routerLink]="['/legalrights']"
+            size="small"
+          >
+            Explore the Next Chapter.....
+          </ion-button>
+
+          <ion-button color="primary" size="small" (click)="showResults()" *ngIf="sripaCompRef?.showresults">
+            Show results
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Footer -->
+    <ion-grid class="footer-container">
+      <ion-row>
+        <ion-col class="p-0">
+          <pathome-footer></pathome-footer>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

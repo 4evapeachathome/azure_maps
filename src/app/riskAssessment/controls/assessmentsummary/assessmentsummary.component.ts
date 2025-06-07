@@ -10,6 +10,7 @@ import { NgxGaugeModule } from 'ngx-gauge';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
+import { SummarypageComponent } from "../summarypage/summarypage.component";
 
 
 @Component({
@@ -17,7 +18,7 @@ import { ApiService } from 'src/app/services/api.service';
   templateUrl: './assessmentsummary.component.html',
   styleUrls: ['./assessmentsummary.component.scss'],
   standalone: true,
-          imports: [CommonModule, IonicModule, FormsModule,QRCodeComponent,NgxGaugeModule],
+  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
 })
 export class AssessmentsummaryComponent  implements OnInit {
   hidePdfContainer = true;
@@ -52,20 +53,20 @@ export class AssessmentsummaryComponent  implements OnInit {
   constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController) { }
 
   ngOnInit() {
-    const encodedUser = this.cookieService.get('userdetails');
-    if (encodedUser) {
-      try {
-        this.loggedInUser = JSON.parse(atob(encodedUser));
-      } catch {
-        console.error('Invalid cookie format, logging out...');
-        this.cookieService.delete('userdetails');
-        this.router.navigate(['/login']);
-        return;
-      }
-    } else {
-      this.router.navigate(['/login']);
-      return;
-    }
+    // const encodedUser = this.cookieService.get('userdetails');
+    // if (encodedUser) {
+    //   try {
+    //     this.loggedInUser = JSON.parse(atob(encodedUser));
+    //   } catch {
+    //     console.error('Invalid cookie format, logging out...');
+    //     this.cookieService.delete('userdetails');
+    //     this.router.navigate(['/login']);
+    //     return;
+    //   }
+    // } else {
+    //   this.router.navigate(['/login']);
+    //   return;
+    // }
   
     const storedGuidedType = sessionStorage.getItem('guidedType');
     if (storedGuidedType) {

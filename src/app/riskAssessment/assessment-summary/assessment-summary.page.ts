@@ -9,6 +9,7 @@ import { LoadingController } from '@ionic/angular';
 })
 export class AssessmentSummaryPage implements OnInit,AfterViewInit{
   loading: HTMLIonLoadingElement | null = null;
+  riskScore: number = 7; // Example score, should be updated with actual risk assessment score
 
   constructor(private loadingController: LoadingController) { }
 

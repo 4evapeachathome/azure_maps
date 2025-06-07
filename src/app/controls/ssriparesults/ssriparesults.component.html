@@ -1,0 +1,62 @@
+<ion-card class="quiz-container">
+  <ion-card-content>
+    <ion-row>
+      <ion-col>
+        <strong>Thank you for completing the assessment.</strong>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <div class="qr-section">
+          <qrcode
+            #qrCodeElement
+            [qrdata]="myAngularxQrCode"
+            [width]="100"
+            [errorCorrectionLevel]="'M'"
+          ></qrcode>
+        </div>
+        <ion-text>{{ myAngularxQrCode }}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <div class="table-main-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th class="thr-width-auto">Yes</th>
+                <th class="thr-width-auto">No</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let q of sripa; let i = index"
+                class="question-summary"
+              >
+                <td>{{ q.text }}</td>
+                <td class="thr-width-auto">
+                  <ion-radio-group [value]="selectedOptions[i]">
+                    <ion-radio disabled value="yes" mode="md"></ion-radio><br />
+                  </ion-radio-group>
+                </td>
+                <td class="thr-width-auto">
+                  <ion-radio-group [value]="selectedOptions[i]">
+                    <ion-radio disabled value="no" mode="md"></ion-radio>
+                  </ion-radio-group>
+                </td>
+              </tr>
+            </tbody>
+          </table>     
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <div *ngIf="highSeverityTriggered" style="color: red;" class="warning">
+          <strong class="warning">Take action immediately. Talk to your service providers for assistance.</strong>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-card-content>
+</ion-card>
