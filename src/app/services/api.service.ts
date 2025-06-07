@@ -177,13 +177,13 @@ export class ApiService {
 
   getMenuItems(): Observable<any> {
     return this.getWithQuery(APIEndpoints.menu, {
-      fields: ['title', 'link', 'documentId','order'],
+      fields: ['title', 'link', 'documentId','order','tooltip'],
       populate: {
         icon: {
           fields: ['url']
         },
         parentMenu: {
-          fields: ['title', 'link', 'documentId','order'],
+          fields: ['title', 'link', 'documentId','order','tooltip'],
           populate: {
             icon: {
               fields: ['url']
@@ -579,6 +579,35 @@ getServiceFilterOptions(): Observable<any> {
   );
 }
 
+//Get state distance
+getSupportServiceDistances(): Observable<{ [key: string]: number }> {
+  const endpoint = APIEndpoints.supportServiceDistances; 
+  const options: QueryOptions = {
+    fields: ['Abbreviation', 'Miles']
+  };
+
+  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+    map((res: any) => {
+      if (res.data && Array.isArray(res.data)) {
+        const distances: { [key: string]: number } = {};
+        res.data.forEach((item: any) => {
+          const abbreviation = item.attributes?.Abbreviation;
+          const miles = parseInt(item.attributes?.Miles, 10); // Convert string to number
+          if (abbreviation && !isNaN(miles)) {
+            distances[abbreviation] = miles;
+          }
+        });
+        return distances; // Return key-value object (e.g., { "AL": 50, "AK": 50, ... })
+      } else {
+        return {}; // Return empty object if no data or structure is incorrect
+      }
+    }),
+    catchError(error => {
+      console.error('Error fetching support service distances:', error);
+      return throwError(error);
+    })
+  );
+}
 
 
 getStateLaws(): Observable<StateLaw[]> {
@@ -976,6 +1005,16 @@ getSripaa(): Observable<any> {
 }
 
 
+postSsripaAssessmentResponse(payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/ssripa-assessment-responses`;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  // Strapi requires the payload inside a `data` key
+  return this.http.post(endpoint, payload , { headers });
+}
+
 
 //Risk Assessment Module
 getUserLogins(): Observable<any[]> {
@@ -1250,7 +1289,21 @@ getRatsAssessmentQuestions(): Observable<any> {
   );
 }
 
-
+//getresultfor DA assessment
+getHitsDAAssessmentQuestoins(): Observable<any> {
+  return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
+    populate: {
+      DAChild: {
+        fields: ['questionText', 'questionOrder', 'weightageScore']
+      }
+    }, 
+  }, environment.apitoken).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching Hits result API:', error);
+      return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+    })
+  );
+}
 
 
 }

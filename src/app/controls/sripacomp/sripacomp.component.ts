@@ -4,6 +4,8 @@ import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { FormsModule } from '@angular/forms';
+import { Utility } from 'src/shared/utility';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -32,9 +34,8 @@ rating = '';
 currentIndex = 0;
 showAnswers: boolean[] = [];
 selectedOptions: string[] = [];
-hasAnyAnswer = false;
 finalAnswerHtml: string = '';
-finalAnswerVisible = false;
+showresults: boolean = false;
 
 constructor(private apiService: ApiService) {}
 
@@ -56,10 +57,7 @@ loadQuiz(): void {
   });
 }
 
-setFinalAnswer(answerText: string) {
-  this.finalAnswerHtml = this.renderRichTextFromText(answerText);
-  this.finalAnswerVisible = true;
-}
+
 
 renderRichTextFromText(text: string): string {
   if (!text) return '';
@@ -69,7 +67,7 @@ renderRichTextFromText(text: string): string {
 
 selectOption(index: number, option: 'yes' | 'no'): void {
   this.selectedOptions[index] = option;
-  this.hasAnyAnswer = this.selectedOptions.some(opt => opt !== null);
+  this.showresults = this.selectedOptions.some(opt => opt !== null);
 }
 
 prevSlide(): void {
@@ -123,6 +121,34 @@ renderText(child: any): string {
     text = `<a href="${text}" target="_blank">${text}</a>`;
   }
   return text;
+}
+
+submitAssessmentResponse(): Observable<any> {
+  const respondedQuestions = this.sripa
+    .map((q, index) => {
+      const selected = this.selectedOptions[index];
+      if (selected) {
+        return {
+          question: q.text,
+          selectedOption: selected,
+          actionPlan: selected === 'yes' ? q.actions[0]?.description || null : null
+        };
+      }
+      return null;
+    })
+    .filter(q => q !== null);
+
+  const payload = {
+    data: {
+      response: respondedQuestions,
+      AssessmentGuid: Utility.generateGUID('ssripa'),
+      support_service: null,
+      IsAssessmentfromEducationModule: true
+    }
+  };
+
+  // ✅ Return the Observable instead of subscribing
+  return this.apiService.postSsripaAssessmentResponse(payload);
 }
 
 

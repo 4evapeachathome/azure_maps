@@ -2,6 +2,10 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { SripacompComponent } from '../controls/sripacomp/sripacomp.component';
 import { MenuService } from 'src/shared/menu.service';
 import { LoadingController } from '@ionic/angular';
+import { SsripaactionplanComponent } from '../controls/ssripaactionplan/ssripaactionplan.component';
+import { SsriparesultsComponent } from '../controls/ssriparesults/ssriparesults.component';
+import { firstValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -12,14 +16,46 @@ import { LoadingController } from '@ionic/angular';
 })
 export class SripaaPage implements OnInit,AfterViewInit {
   @ViewChild(SripacompComponent) sripaCompRef!: SripacompComponent;
+  @ViewChild('resultsRef') resultsRef!: SsriparesultsComponent;
+  @ViewChild('actionPlanRef') actionPlanRef!: SsripaactionplanComponent;
+  resultUrl = '';
   loading: HTMLIonLoadingElement | null = null;
 
-  constructor(private menuService:MenuService,private loadingController: LoadingController) { }
+  hidewhenshowingresults: boolean = false;
+  selectedTab: 'results' | 'actionplan' = 'results';
+  // These will be passed to the results component
+  quizTitle: string = '';
+  sripa: any[] = [];
+  selectedOptions: string[] = [];
+
+  constructor(
+    private menuService: MenuService,
+    private loadingController: LoadingController
+  ) {}
 
   async ngOnInit() {
-    // Only show loader if not pre-rendered
+    const saved = sessionStorage.getItem('ssripa_result');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      this.quizTitle = parsed.quizTitle || '';
+      this.sripa = parsed.sripa || [];
+      this.selectedOptions = parsed.selectedOptions || [];
+      this.resultUrl = parsed.resultUrl || '';
+  
+      // Show result+actionplan tab view by default if session data exists
+      if (parsed.view === 'results') {
+        this.hidewhenshowingresults = true;
+        this.selectedTab = 'results'; 
+      } else {
+        this.hidewhenshowingresults = false;
+      }
+    } else {
+      this.hidewhenshowingresults = false;
+    }
+  
     await this.showLoader();
   }
+  
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {
@@ -41,7 +77,6 @@ export class SripaaPage implements OnInit,AfterViewInit {
     });
     await this.loading.present();
 
-    // Force dismiss after 10 seconds just in case
     setTimeout(() => {
       this.hideLoader();
     }, 5000);
@@ -62,25 +97,54 @@ export class SripaaPage implements OnInit,AfterViewInit {
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
-  onFinalAnswerClick() {
-    if (this.sripaCompRef?.hasAnyAnswer) {
-      const mockApiResponse = {
-        answer: `I'm really sorry to hear that you're going through such a difficult time right now. It's incredibly brave of you to reach out and talk about this. It's clear from your questions that you're dealing with serious issues in your relationship, specifically involving physical harm and feelings of threat from your partner, both of which are of high severity. 
+  async showResults() {
+    if (this.sripaCompRef) {
+      try {
+        // Wait for API submission and response from the child
+        const response = await firstValueFrom(this.sripaCompRef.submitAssessmentResponse());
   
-  In instances of physical harm, your safety is the utmost priority. Please consider reaching out to emergency services immediately if you're in immediate danger - you can call 911 or a dedicated hotline, like the National Domestic Violence Hotline at 1-800-799-SAFE (7233). They can provide immediate assistance and guide you through this difficult time. 
+        // Pull data from the child after submission
+        this.quizTitle = this.sripaCompRef.quizTitle;
+        this.sripa = this.sripaCompRef.sripa;
+        this.selectedOptions = this.sripaCompRef.selectedOptions;
   
-  Creating a personalized safety plan is also crucial. This includes planning for emergency escape options and considering the possibility of staying at a safe location if needed. It's also advisable to seek legal assistance for obtaining a Restraining Order to ensure your safety in the longer term.
+        if(response){
+          this.resultUrl = `code=${response?.data?.AssessmentGuid || 'unknown'}`;
+        }
+        // Optionally build a result URL or use the response data
+
+        // Store in sessionStorage (for navigation/reuse)
+        sessionStorage.setItem(
+          'ssripa_result',
+          JSON.stringify({
+            quizTitle: this.quizTitle,
+            sripa: this.sripa,
+            selectedOptions: this.selectedOptions,
+            view: 'results',
+            resultUrl: this.resultUrl
+          })
+        );
   
-  Your feelings of being threatened also indicate a need for protective measures. If you feel comfortable, seek legal advice and consider reaching out to law enforcement. They can guide you through obtaining a Restraining Order and understanding court procedures, which can offer some additional security.
-  
-  In both situations, it's extremely important to keep a private journal where you can record any instances of physical harm or threats. This can serve as crucial evidence if legal action is needed.
-  
-  Please remember, you're not alone in this. Reach out to trusted friends, family, or professional counselors who can provide emotional support and practical advice. And don't underestimate the value of self-care during this time, as it's important to maintain your physical and emotional well-being.
-  
-  I want to emphasize again that what you're experiencing is not your fault, and you have every right to feel safe and secure. Please don't hesitate to reach out for help, whether to loved ones or professional services. You're showing immense strength by addressing these issues, and there are resources and people ready to support you through this.`
-      };
-  
-      this.sripaCompRef.setFinalAnswer(mockApiResponse.answer);
+        // Toggle UI to show results tab
+        this.hidewhenshowingresults = true;
+        this.selectedTab = 'results';
+      } catch (error) {
+        console.error('Failed to load results from child component:', error);
+        // Optionally show toast message to user
+      }
     }
   }
+
+  
+
+  exportCurrentTabAsPDF() {
+    setTimeout(() => {
+      if (this.selectedTab === 'results') {
+        this.resultsRef?.exportToPDF();
+      } else if (this.selectedTab === 'actionplan') {
+        this.actionPlanRef?.exportAsPDF();
+      }
+    }, 100);
+  }
+
 }

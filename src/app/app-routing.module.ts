@@ -53,7 +53,7 @@ const routes: Routes = [
     loadChildren: () => import ('../app/riskAssessment/rat-assessment-page/risk-assessment/risk-assessment.module').then(m => m.RiskAssessmentModule)
   },
   {
-    path: 'daAssessment',
+    path: 'dangerassessment',
     loadChildren: () => import ('../app/riskAssessment/da-assessment-page/da-assessment/da-assessment.module').then(m => m.DaAssessmentModule)
   }
 

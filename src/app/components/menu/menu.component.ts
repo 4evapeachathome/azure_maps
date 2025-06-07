@@ -265,18 +265,22 @@ collapseAllSections(): void {
     });
   }
 
-  getTooltip(name: string): string | null {
-    if (name === '/quiz') {
-      return 'Quiz for Healthy and Unhealthy Relationship';
-    } else if (name === '/sripaa') {
-      return 'Signs of Self-Recognition in Intimate Partner Abuse';
+  getTooltip(item: any): string {    
+    // Then check if the item has a specific tooltip
+    if (item.tooltip && item.tooltip.trim() !== '') {
+      return item.tooltip;
     }
-    return null;
+    
+    // Fall back to the item title
+    return item.title || '';
   }
 
+  
   hasTooltip(title: string): boolean {
-    return title === '/quiz' || title === '/sripaa';
+    // All items have tooltips now, so this can be removed or return true
+    return true;
   }
+
 
   
   expandCurrentSection() {

@@ -11,6 +11,7 @@ export const APIEndpoints = {
     peaceathome: `${environment.apiHost}/api/peaceathome`,
     nopeacepartnerviolence: `${environment.apiHost}/api/no-peace-home-contents`,
     servicefilteroptions: `${environment.apiHost}/api/service-filteroptions`,
+    supportServiceDistances: `${environment.apiHost}/api/support-service-distances`,
     sliderapi: `${environment.apiHost}/api/home-sliders`,
     healthyrelationslider: `${environment.apiHost}/api/healthy-relationship-sliders`,
     healtyrelationTitleContent: `${environment.apiHost}/api/healthy-relationship`,
@@ -63,4 +64,5 @@ export const APIEndpoints = {
 
     ratsAssessmentQuestions :`${environment.apiHost}/api/rat-assessment-questions`,
     ratScaleOptions :`${environment.apiHost}/api/multiple-options-for-rats`,
+    DAAssesmentQuestions :`${environment.apiHost}/api/da-assessment-questions`,
   }
