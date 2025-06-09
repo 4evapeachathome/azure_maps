@@ -1061,6 +1061,7 @@ getUserLogins(): Observable<any[]> {
         username: item?.Username ? decryptField(item.Username) : '',
         temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
         orgName: item?.support_service?.OrgName ?? 'N/A',
+        documentId: item?.support_service?.documentId ?? 'N/A',
         assessment_type: item?.assessment_type ?? [],
         createdAt: item?.createdAt ?? '',
         IsPasswordChanged: item?.IsPasswordChanged ?? false,
