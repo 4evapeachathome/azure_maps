@@ -56,7 +56,9 @@ export class AssessmentPageComponent  implements OnInit {
     }
   }
 
-  onGuidedTypeChange() {
+  onGuidedTypeChange(event:any) {
+    debugger;
+    sessionStorage.setItem('guidedType', this.guidedType);
     this.updateGuidedTypeLabel();
   }
 
@@ -105,7 +107,7 @@ export class AssessmentPageComponent  implements OnInit {
   private updateGuidedTypeLabel() {
     // Update the label based on the selected guidedType
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
-    sessionStorage.setItem('guidedType', this.guidedType);
+    
   }
 
   goToTest() {
@@ -123,8 +125,8 @@ export class AssessmentPageComponent  implements OnInit {
         case 'danger assessment for immigrants':
           this.router.navigate(['/danger-assessment-immigrants'], { state: { assessmentType: this.selectedAssessment } });
           break;
-        case 'the danger assessment (da)':
-          this.router.navigate(['/danger-assessment'], { state: { assessmentType: this.selectedAssessment } });
+        case 'da':
+          this.router.navigate(['/dangerassessment'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'relationship assessment tool originally called web scale':
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });

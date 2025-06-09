@@ -1015,6 +1015,15 @@ postSsripaAssessmentResponse(payload: any): Observable<any> {
   return this.http.post(endpoint, payload , { headers });
 }
 
+postHitsAssessmentResponse(payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/hits-assessment-responses`;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  // Strapi requires the payload inside a `data` key
+  return this.http.post(endpoint, payload , { headers });
+}
 
 //Risk Assessment Module
 getUserLogins(): Observable<any[]> {
@@ -1051,7 +1060,7 @@ getUserLogins(): Observable<any[]> {
         username: item?.Username ? decryptField(item.Username) : '',
         temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
         orgName: item?.support_service?.OrgName ?? 'N/A',
-        documentId: item?.support_service?.documentId ?? '',
+        documentId: item?.support_service?.documentId ?? 'N/A',
         assessment_type: item?.assessment_type ?? [],
         createdAt: item?.createdAt ?? '',
         IsPasswordChanged: item?.IsPasswordChanged ?? false,
@@ -1328,6 +1337,21 @@ getRatsAssessmentQuestions(): Observable<any> {
       })
     );
   }
+//getresultfor DA assessment
+getHitsDAAssessmentQuestoins(): Observable<any> {
+  return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
+    populate: {
+      DAChild: {
+        fields: ['questionText', 'questionOrder', 'weightageScore']
+      }
+    }, 
+  }, environment.apitoken).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching Hits result API:', error);
+      return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+    })
+  );
+}
 
 
 }

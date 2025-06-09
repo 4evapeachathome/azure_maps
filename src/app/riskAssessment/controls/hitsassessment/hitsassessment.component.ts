@@ -6,6 +6,7 @@ import { AlertController, IonicModule } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { MenuService } from 'src/shared/menu.service';
+import { Utility } from 'src/shared/utility';
 
 @Component({
   selector: 'app-hitsassessment',
@@ -36,6 +37,7 @@ export class HitsassessmentComponent  implements OnInit {
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
+        debugger;
       } catch {
         console.error('Invalid cookie format, logging out...');
         this.cookieService.delete('userdetails');
@@ -47,7 +49,7 @@ export class HitsassessmentComponent  implements OnInit {
       return;
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
-    
+    debugger;
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -118,46 +120,62 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
 
   submit() {
     let totalScore = 0;
-    const answerSummary: { questionId: number; questionText: string; selectedScore: number | null }[] = [];
+    const answerSummary: { questionText: string; selectedAnswer: string | null }[] = [];
     let criticalAlert = false;
   
-    // Single loop to calculate totalScore, build answerSummary, and check for critical alert
     for (const question of this.hitsQuestions) {
-      // Handle selected score for totalScore and answerSummary
-      const selectedScore = question.selected ? question.selected.score : null;
+      const selected = question.selected;
+      const selectedScore = selected ? selected.score : null;
+      const selectedAnswer = selected ? selected.label : null;
+  
       if (selectedScore !== null) {
         totalScore += selectedScore;
       }
   
-      // Add to answerSummary
+      // ✅ Push only questionText and selectedAnswer
       answerSummary.push({
-        questionId: question.id,
         questionText: question.text,
-        selectedScore: selectedScore
+        selectedAnswer: selectedAnswer
       });
   
-      // Check for critical alert condition
-      if (!criticalAlert && question.weight_critical_alert && question.selected) {
+      if (!criticalAlert && question.weight_critical_alert && selected) {
         const matchFound = question.criticalOptions.some((opt: any) =>
-          opt.score === question.selected.score || opt.label === question.selected.label
+          opt.score === selected.score || opt.label === selected.label
         );
-  
         if (matchFound) {
           criticalAlert = true;
-          // No break needed since we'll exit after this loop iteration if needed
         }
       }
     }
   
-    const result = {
+    const payload = {
+      data: {
+        AssessmentGuid: Utility.generateGUID('hits'),
+        response: answerSummary,  
+        Score: totalScore,
+        CaseNumber: this.caseNumber,          
+        support_service: null    
+      }
+    };
+  
+    // Store locally for summary display
+    sessionStorage.setItem('hitsAssessmentResult', JSON.stringify({
       totalScore,
       summary: answerSummary,
       criticalAlert
-    };
+    }));
   
-    sessionStorage.setItem('hitsAssessmentResult', JSON.stringify(result));
-    //debugger;
-    this.router.navigate(['/riskassessmentsummary']);
+    // 🔄 API call
+    this.apiService.postHitsAssessmentResponse(payload).subscribe({
+      next: (res) => {
+        debugger;
+        console.log('Assessment saved:', res);
+        this.router.navigate(['/riskassessmentsummary']);
+      },
+      error: (err) => {
+        console.error('Failed to save assessment', err);
+      }
+    });
   }
 
   goBack() {

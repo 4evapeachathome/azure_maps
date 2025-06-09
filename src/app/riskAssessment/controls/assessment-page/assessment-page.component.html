@@ -61,7 +61,7 @@
               <ion-col size="12" size-sm="12">
               <div class="asses-radio" *ngIf="!selectedAssessment">
                    <ion-text>This Assessment will be:</ion-text>
-                   <ion-radio-group [(ngModel)]="guidedType" (ngModelChange)="onGuidedTypeChange()">
+                   <ion-radio-group [(ngModel)]="guidedType" (ngModelChange)="onGuidedTypeChange($event)" [allowEmptySelection]="true">
                     <ion-radio value="self-guided" labelPlacement="end" mode="md">Self-Guided</ion-radio>
                     <ion-radio value="staff-guided" labelPlacement="end" mode="md">Staff-Guided</ion-radio>
                   </ion-radio-group>

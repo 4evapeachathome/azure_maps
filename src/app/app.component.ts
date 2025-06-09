@@ -122,7 +122,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
   private hasHandledReload = false;
-  private riskRoutes = ['riskassessment', 'usercreation', 'riskassessmentsummary','login','hitsassessment', 'webassessment', 'daAssessment', 'viewresult'];
+  private riskRoutes = ['riskassessment', 'setpassword', 'riskassessmentsummary','login','hitsassessment', 'ratsassessment', 'daAssessment','ssripariskassessment', 'webassessment', 'viewresult'];
 
   constructor(
     private sessionActivityService: SessionActivityService,
@@ -230,7 +230,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
 
     this.router.events.subscribe(() => {
       const currentPath = this.location.path();
-      const stillValid = ['/riskassessment', '/hitsassessment', '/riskassessmentsummary', '/webassessment', '/daAssessment']
+      const stillValid = ['/riskassessment', '/hitsassessment','/ssripariskassessment' ,'/riskassessmentsummary', '/webassessment', '/daAssessment']
         .some(route => currentPath.startsWith(route));
     
       if (!stillValid && this.sessionAlert) {
@@ -256,6 +256,7 @@ private shouldShowSessionAlert(): boolean {
     '/hitsassessment',
     '/riskassessmentsummary',
     '/webassessment',
+    '/ssripariskassessment',
     '/daAssessment'
   ];
 

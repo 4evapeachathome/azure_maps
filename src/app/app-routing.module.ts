@@ -47,20 +47,24 @@ const routes: Routes = [
   { path: 'riskassessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule),canActivate: [RiskAssessmentGuard] },
   {
     path: 'hitsassessment',
-    loadChildren: () => import('./riskAssessment/hits-assessment-page/hits-assessment-page.module').then( m => m.HitsAssessmentPagePageModule)
+    loadChildren: () => import('./riskAssessment/hits-assessment-page/hits-assessment-page.module').then( m => m.HitsAssessmentPagePageModule),canActivate: [RiskAssessmentGuard]
   },
   {
     path: 'webassessment',
     loadChildren: () => import ('../app/riskAssessment/rat-assessment-page/risk-assessment/risk-assessment.module').then(m => m.RiskAssessmentModule)
   },
   {
-    path: 'daAssessment',
+    path: 'dangerassessment',
     loadChildren: () => import ('../app/riskAssessment/da-assessment-page/da-assessment/da-assessment.module').then(m => m.DaAssessmentModule)
   },
   {
     path: 'viewresult',
     loadChildren: () => import ('../app/riskAssessment/view-result-page/view-result-page/view-result-page.module').then(m => m.ViewResultPageModule),
     canActivate: [viewResultGuard]
+  },
+  {
+    path: 'ssripariskassessment',
+    loadChildren: () => import('./sripaa/sripaa.module').then(m => m.SripaaPageModule),canActivate: [RiskAssessmentGuard]
   }
 
 
