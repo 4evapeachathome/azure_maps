@@ -100,7 +100,7 @@
               </ion-col>          
               <ion-col size="12" size-sm="12" size-lg="5" class="p-0" *ngIf="isHitsAssessment">
                 <div class="risk-meter" *ngIf="guidedType ==='staff-guided'">
-                  <app-summarypage [range]="rangevalue" [riskScore]="riskValue"></app-summarypage>
+                  <app-summarypage [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
                   <ion-button  (click)="downloadPDF()" color="primary" size="small">Download as
                     PDF</ion-button>
                 </div>

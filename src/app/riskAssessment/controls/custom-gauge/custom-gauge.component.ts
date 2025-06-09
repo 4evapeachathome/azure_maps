@@ -35,6 +35,7 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
   gaugeColor: string = '#FFFF00';
   segments: GaugeSegment[] = [];
   markers: { value: number; color: string }[] = [];
+  @Input() forceRedNeedle: boolean = false;
 
   constructor() {}
 
@@ -49,8 +50,8 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
       this.normaliseRanges();
       this.calculateSegments();
     }
-
-    if (changes['value'] || changes['min'] || changes['max'] || changes['ranges']) {
+  
+    if (changes['value'] || changes['min'] || changes['max'] || changes['ranges'] || changes['forceRedNeedle']) {
       this.updateGauge();
     }
   }
@@ -122,14 +123,27 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
       this.gaugeColor = '#ccc';
       return;
     }
-
-    const pct = (this.value - this.min) / (this.max - this.min);
+  
+    let adjustedValue = this.value; // Use an adjusted value for rotation
+    const orangeRange = this.normalisedRanges.find(r => r.min === 8 && r.max === 10); // Identify orange range
+    const redRange = this.normalisedRanges.find(r => r.min === 11 && r.max === 20); // Identify red range
+  
+    // If forceRedNeedle is true and value is in the orange range (8-10), adjust the position to the red range
+    if (this.forceRedNeedle && orangeRange && this.value >= orangeRange.min && this.value <= orangeRange.max) {
+      adjustedValue = redRange?.min || 11; // Move needle to the start of the red range (11)
+      this.gaugeColor = '#FF0000'; // Ensure needle is red
+    } else {
+      // Otherwise, use the actual value for rotation
+      const hit = this.normalisedRanges.find(r => this.value >= r.min && this.value <= r.max);
+      this.gaugeColor = hit?.color ?? this.normalisedRanges[0].color;
+    }
+  
+    // Calculate rotation based on the adjusted value
+    const pct = (adjustedValue - this.min) / (this.max - this.min);
     this.rotation = `${-90 + pct * 180}deg`;
-
-    const hit = this.normalisedRanges.find(r => this.value >= r.min && this.value <= r.max);
-    this.gaugeColor = hit?.color ?? this.normalisedRanges[0].color;
   }
 
+  
   private polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
     const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
     return {

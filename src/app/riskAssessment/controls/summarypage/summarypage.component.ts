@@ -22,7 +22,7 @@ export class SummarypageComponent implements OnInit {
     { min: 5, max: 10, color: 'orange', label: 'Medium Risk' },
     { min: 10, max: 15, color: 'red', label: 'High Risk' }
   ];
-  @Input() isRiskHigh: boolean = false;
+  @Input() isRiskRed: boolean = false;
 
   rClassMap: { [key: string]: string } = {
     yellow: 'yellow',
@@ -42,8 +42,19 @@ export class SummarypageComponent implements OnInit {
   
 
   getRiskCategory(score: number): { color: string; label: string } | null {
-    if (!this.range) return null; 
+    if (!this.range) return null;
+  
     const matched = this.range.find(r => score >= r.min && score <= r.max);
+  
+    // If forceHighRiskLabel is true, return a category with "High risk" label
+    if (this.isRiskRed) {
+      const highRiskRange = this.range.find(r => r.label.toLowerCase() === 'high risk');
+      return {
+        color: matched?.color ? this.rClassMap[matched.color.toLowerCase()] || '' : '',
+        label: highRiskRange?.label || 'High risk' // Use the "High risk" label
+      };
+    }
+  
     return matched ? { color: this.rClassMap[matched.color.toLowerCase()] || '', label: matched.label } : null;
   }
 

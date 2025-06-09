@@ -71,29 +71,44 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <!-- Table Header -->
                     <tr>
                       <th class="tbody-first"></th>
-                       <th class="tbody-container row-header"> <div class="tbc-content"><span *ngFor="let scale of scaleOptions">{{ scale }}</span></div></th>
-                       
+                      <th class="tbody-container row-header">
+                        <div class="tbc-content">
+                          <span *ngFor="let scale of scaleOptions" class="scale-option">{{ scale }}</span>
+                        </div>
+                      </th>
                     </tr>
-                     <tr *ngFor="let question of hitsQuestions">
-                      <th>{{ question.text }}</th>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content" [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked" [value]="option" *ngFor="let option of question.options"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
                   
-                       </td>
-                       
+                    <!-- Table Rows for Questions -->
+                    <tr *ngFor="let question of hitsQuestions">
+                      <th>{{ question.text }}</th>
+                      <td class="tbody-container row-container">
+                        <ion-radio-group class="tbc-content" [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>
+                          <ion-radio
+                            mode="md"
+                            slot="start"
+                            alignment="center"
+                            justify="center"
+                            labelPlacement="stacked"
+                            [value]="option"
+                            *ngFor="let option of question.options"
+                            class="radio-option">
+                          </ion-radio>
+                        </ion-radio-group>
+                      </td>
                     </tr>
-                     <tr style="display: none;">
-      <th></th>
-      <th class="tbody-container row-container-footer"><div class="tbc-content"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></th>
-    </tr>
+                  
+                    <!-- Footer (hidden) -->
+                    <tr style="display: none;">
+                      <th></th>
+                      <th class="tbody-container row-container-footer">
+                        <div class="tbc-content">
+                          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                        </div>
+                      </th>
+                    </tr>
                   </tbody>
            
                 </table>

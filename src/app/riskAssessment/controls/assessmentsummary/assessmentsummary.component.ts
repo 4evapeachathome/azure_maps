@@ -51,7 +51,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   selectedAssessment: string | null = null; // To store the selected assessment type
   rangevalue:any;
   showSummary = false; /// enable when to show summary
-
   isRatAssessment = false;
   ratAssessmentResult: any;
   ratQrCodeValue: string = '';
@@ -185,11 +184,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
             color: option.color,
             label: option.label
           }));
-
-          // Handle critical alert case
-          if (this.criticalalert) {
-
-          }
         } else {
           this.hitResults = [];
           this.thresholdValues = {};

@@ -19,7 +19,7 @@ export class RiskMeterComponent implements OnInit, OnChanges {
     { "min": 5, "max": 10, "color": "#FFA500", "label": "Medium Risk" },
     { "min": 10, "max": 15, "color": "#FF0000", "label": "High Risk" }
   ]
-
+  @Input() isRiskHigh: boolean = false;
   value = 0;
 
   constructor() { }

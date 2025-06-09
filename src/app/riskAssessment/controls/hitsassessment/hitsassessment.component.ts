@@ -88,19 +88,19 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
 
 
   setupHitsQuestions(questions: any[], answerOptions: any[]) {
-    const scaleSet = new Set<string>();
-    answerOptions.forEach((opt: any) => {
-      scaleSet.add(`${opt.score}. ${opt.label}`);
-    });
-  debugger;
-    this.scaleOptions = [...scaleSet];
+    // Sort answer options by score to ensure correct order
+    const sortedOptions = answerOptions.sort((a, b) => a.score - b.score);
   
+    // Map the sorted options to the scale format (e.g., "1. NEVER", "2. RARELY", etc.)
+    this.scaleOptions = sortedOptions.map(opt => `${opt.score}. ${opt.label}`);
+  
+    // Map questions to the hitsQuestions format
     this.hitsQuestions = questions.map((q: any) => ({
       id: q.id,
       text: q.question_text,
       selected: null,
       weight_critical_alert: q.weight_critical_alert,
-      options: answerOptions.map((opt: any) => ({
+      options: sortedOptions.map((opt: any) => ({
         score: opt.score,
         label: opt.label
       })),
