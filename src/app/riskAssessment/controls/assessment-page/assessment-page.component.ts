@@ -56,7 +56,9 @@ export class AssessmentPageComponent  implements OnInit {
     }
   }
 
-  onGuidedTypeChange() {
+  onGuidedTypeChange(event:any) {
+    debugger;
+    sessionStorage.setItem('guidedType', this.guidedType);
     this.updateGuidedTypeLabel();
   }
 
@@ -98,7 +100,7 @@ export class AssessmentPageComponent  implements OnInit {
   private updateGuidedTypeLabel() {
     // Update the label based on the selected guidedType
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
-    sessionStorage.setItem('guidedType', this.guidedType);
+    
   }
 
   goToTest() {

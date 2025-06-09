@@ -1015,6 +1015,15 @@ postSsripaAssessmentResponse(payload: any): Observable<any> {
   return this.http.post(endpoint, payload , { headers });
 }
 
+postHitsAssessmentResponse(payload: any): Observable<any> {
+  const endpoint = `${environment.apiHost}/api/hits-assessment-responses`;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  // Strapi requires the payload inside a `data` key
+  return this.http.post(endpoint, payload , { headers });
+}
 
 //Risk Assessment Module
 getUserLogins(): Observable<any[]> {
@@ -1025,7 +1034,7 @@ getUserLogins(): Observable<any[]> {
         fields: ['name', 'description']
       },
       support_service: {
-        fields: ['OrgName']
+        fields: ['OrgName','documentId']
       }
     }
   };
