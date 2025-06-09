@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
+import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
    //Hits Assessment
@@ -16,6 +19,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class MenuService {
+
+  constructor(
+    private alertController: AlertController,
+    private cookieService: CookieService,
+    private router: Router
+  ) {}
+  
   private menuItemsSource = new BehaviorSubject<any[]>([]);
   menuItems$ = this.menuItemsSource.asObservable();
 
@@ -119,5 +129,38 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
     getStateDistancesValue(): { [key: string]: number } {
       return this.stateDistancesSubject.getValue();
     }
+
+    
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            // this.guidedType = 'staff-guided';
+            this.cookieService.delete('username');
+            this.cookieService.delete('loginTime');
+            this.cookieService.delete('userdetails');
+            sessionStorage.removeItem('selectedAssessment');
+            sessionStorage.removeItem('ratsAssessmentResult');
+            sessionStorage.removeItem('hitsAssessmentResult');
+            sessionStorage.removeItem('guidedType');
+            sessionStorage.removeItem('isSSripa');
+            sessionStorage.removeItem('isRatAssessment');
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
+  }
 
 }

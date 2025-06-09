@@ -4,6 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { RiskAssessmentGuard } from './guards/risk-assessment.guard';
 import { LoginGuard } from './guards/login-assessment.gaurd';
+import { viewResultGuard } from './guards/view-result.guard';
 //import { UserCreationAuthGuard } from './guards/setpassoword-auth.guard';
 
 const routes: Routes = [
@@ -49,12 +50,17 @@ const routes: Routes = [
     loadChildren: () => import('./riskAssessment/hits-assessment-page/hits-assessment-page.module').then( m => m.HitsAssessmentPagePageModule)
   },
   {
-    path: 'ratsassessment',
+    path: 'webassessment',
     loadChildren: () => import ('../app/riskAssessment/rat-assessment-page/risk-assessment/risk-assessment.module').then(m => m.RiskAssessmentModule)
   },
   {
     path: 'daAssessment',
     loadChildren: () => import ('../app/riskAssessment/da-assessment-page/da-assessment/da-assessment.module').then(m => m.DaAssessmentModule)
+  },
+  {
+    path: 'viewresult',
+    loadChildren: () => import ('../app/riskAssessment/view-result-page/view-result-page/view-result-page.module').then(m => m.ViewResultPageModule),
+    canActivate: [viewResultGuard]
   }
 
 

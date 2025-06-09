@@ -8,7 +8,7 @@ import { QRCodeComponent  } from 'angularx-qrcode';
 import domtoimage from 'dom-to-image-more';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { CookieService } from 'ngx-cookie-service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { SummarypageComponent } from "../summarypage/summarypage.component";
 
@@ -20,7 +20,7 @@ import { SummarypageComponent } from "../summarypage/summarypage.component";
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
 })
-export class AssessmentsummaryComponent  implements OnInit {
+export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   hidePdfContainer = true;
   caseNumber: string='';
   loggedInUser:any = null;
@@ -50,23 +50,32 @@ export class AssessmentsummaryComponent  implements OnInit {
   caution!: string;
   selectedAssessment: string | null = null; // To store the selected assessment type
 
-  constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController) { }
+  showSummary = false; /// enable when to show summary
+
+  isRatAssessment = false;
+  ratAssessmentResult: any;
+  ratQrCodeValue: string = '';
+
+  isHitAssessment = false;
+
+
+  constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
-    // const encodedUser = this.cookieService.get('userdetails');
-    // if (encodedUser) {
-    //   try {
-    //     this.loggedInUser = JSON.parse(atob(encodedUser));
-    //   } catch {
-    //     console.error('Invalid cookie format, logging out...');
-    //     this.cookieService.delete('userdetails');
-    //     this.router.navigate(['/login']);
-    //     return;
-    //   }
-    // } else {
-    //   this.router.navigate(['/login']);
-    //   return;
-    // }
+    const encodedUser = this.cookieService.get('userdetails');
+    if (encodedUser) {
+      try {
+        this.loggedInUser = JSON.parse(atob(encodedUser));
+      } catch {
+        console.error('Invalid cookie format, logging out...');
+        this.cookieService.delete('userdetails');
+        this.router.navigate(['/login']);
+        return;
+      }
+    } else {
+      this.router.navigate(['/login']);
+      return;
+    }
   
     const storedGuidedType = sessionStorage.getItem('guidedType');
     if (storedGuidedType) {
@@ -74,21 +83,38 @@ export class AssessmentsummaryComponent  implements OnInit {
     }
   
     this.updateGuidedTypeLabel();
+
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
-    this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-    const resultStr = sessionStorage.getItem('hitsAssessmentResult');
+        
+    let code = this.activatedRoute.snapshot.queryParamMap.get('code');
+    if(code) {
+      this.checkSelectedAssessment(code);
+    } else {
+      this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
+    }
+
+    const resultStr = this.checkAssessmentType();
+
     if (resultStr) {
       const result = JSON.parse(resultStr);
       this.riskValue = result.totalScore;
       this.answerSummary = result.summary;
       this.criticalalert = result.criticalAlert === 'true' || result.criticalAlert === true;
     }
-  
-    this.fetchHitResults();
     this.loaded = true;
+    this.caseNumber = sessionStorage.getItem('caseNumber') || '';
+    
   }
 
-
+  ngAfterViewInit(): void {
+    let ratResult = sessionStorage.getItem('ratsAssessmentResult');
+    if(ratResult) {
+      this.ratAssessmentResult = JSON.parse(ratResult || '')
+      if(this.ratAssessmentResult) {
+        this.ratQrCodeValue = `${window.location.origin}/viewresult?code=${this.ratAssessmentResult?.asssessmentNumber}`
+      }
+    }
+  }
 
 
   private updateGuidedTypeLabel() {
@@ -251,6 +277,50 @@ export class AssessmentsummaryComponent  implements OnInit {
       case 'orange': return 'orange';
       case 'red': return 'red';
       default: return 'gray';
+    }
+  }
+
+  fetchRatResults() {
+    this.apiService.getRatsResultCalculation().subscribe({
+      next: (response: any) => {
+
+      },
+      error: (error: any) => {
+        this.errorMessage = error;
+        console.error('Error in subscription:', error);
+      }
+    })
+  }
+
+  checkAssessmentType() {
+    if(this.selectedAssessment?.toLowerCase() == 'web') {
+      this.isRatAssessment = true;
+      this.fetchRatResults();
+      return sessionStorage.getItem('ratsAssessmentResult');
+    } else if(this.selectedAssessment?.toLowerCase() == 'hits' || this.selectedAssessment?.toLowerCase() == 'hit'){
+      this.isHitAssessment = true;
+      this.fetchHitResults();
+      return sessionStorage.getItem('hitsAssessmentResult');
+    } else {
+      return null;
+    }
+  }
+
+  checkSelectedAssessment(code: string) {
+    if (code && code.toLowerCase().includes('web-')) {
+      this.selectedAssessment = 'web';
+    } else if(code && code.toLowerCase().includes('hit-')) {
+      this.selectedAssessment = 'hit';
+    } else if(code && code.toLowerCase().includes('da-')) {
+      this.selectedAssessment = 'da';
+    } else if(code && code.toLowerCase().includes('dai-')) {
+      this.selectedAssessment = 'dai';
+    } else if(code && code.toLowerCase().includes('cts-')) {
+      this.selectedAssessment = 'cts';
+    } else if(code && code.toLowerCase().includes('ssripa-')) {
+      this.selectedAssessment = 'ssripa';
+    } else {
+      this.selectedAssessment = '';
     }
   }
 

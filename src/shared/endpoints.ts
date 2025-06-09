@@ -64,4 +64,9 @@ export const APIEndpoints = {
 
     ratsAssessmentQuestions :`${environment.apiHost}/api/rat-assessment-questions`,
     ratScaleOptions :`${environment.apiHost}/api/multiple-options-for-rats`,
+
+    ratResultCalculation :`${environment.apiHost}/api/rat-results`,
+    saveRatAssessment: `${environment.apiHost}/api/rat-assessment-response-summaries`,
+
+    ratResult :`${environment.apiHost}/api/rat-assessment-response-summaries`,
   }
