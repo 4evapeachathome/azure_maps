@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { RiskAssessmentGuard } from './guards/risk-assessment.guard';
 import { LoginGuard } from './guards/login-assessment.gaurd';
 import { viewResultGuard } from './guards/view-result.guard';
+import { UserGuideRedirectComponent } from './user-guide-redirect/user-guide-redirect.component';
 //import { UserCreationAuthGuard } from './guards/setpassoword-auth.guard';
 
 const routes: Routes = [
@@ -65,7 +66,12 @@ const routes: Routes = [
   {
     path: 'ssripariskassessment',
     loadChildren: () => import('./sripaa/sripaa.module').then(m => m.SripaaPageModule),canActivate: [RiskAssessmentGuard]
-  }
+  },
+  {
+  path: 'user-guide',
+  component: UserGuideRedirectComponent
+}
+
 
 
 
