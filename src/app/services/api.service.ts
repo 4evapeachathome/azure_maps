@@ -1034,7 +1034,7 @@ getUserLogins(): Observable<any[]> {
         fields: ['name', 'description']
       },
       support_service: {
-        fields: ['OrgName','documentId']
+        fields: ['OrgName', 'documentId', 'asssessmentNumber']
       }
     }
   };
@@ -1054,7 +1054,6 @@ getUserLogins(): Observable<any[]> {
           return encryptedValue;
         }
       };
-
       return res.data.map((item: any) => ({
         id: item?.id ?? null,
         username: item?.Username ? decryptField(item.Username) : '',
@@ -1067,6 +1066,7 @@ getUserLogins(): Observable<any[]> {
         updatedAt: item?.updatedAt ?? '',
         password: item?.password ? decryptField(item.password) : '',
         isSendInvite: item?.sendInvite ?? false,
+        asssessmentNumber: item.asssessmentNumber ?? ''
       }));
     }),
     catchError((error) => {
@@ -1270,18 +1270,19 @@ getRatsAssessmentQuestions(): Observable<any> {
             multiple_options_for_rat: (item.multiple_options_for_rat || []).map((opt: any) => ({
               id: opt.id,
               documentId: opt.documentId,
-              label: opt.label || '',
+              Label: opt.Label || '',
               score: opt.score ?? null
             }))
           }));
 
       // Process the second API response (answer options)
+
       const answerOptions = !res2.data || !Array.isArray(res2.data)
         ? []
         : res2.data.map((item: any) => ({
             id: item.id,
             documentId: item.documentId,
-            label: item.label || '',
+            Label: item.Label || '',
             score: item.score ?? null
           }));
 
@@ -1298,6 +1299,43 @@ getRatsAssessmentQuestions(): Observable<any> {
   );
 }
 
+  getRatsResultCalculation(): Observable<any> {
+    return this.getWithQuery(APIEndpoints.ratResultCalculation, {
+      fields: ['Note', 'Caution']
+    }, environment.apitoken).pipe(
+      catchError((error: any) => {
+        console.error('Error fetching Hits result API:', error);
+        return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+      })
+    );
+  }
+
+  saveRatAssessment(assessmentSummary: any, support_service: string, asssessmentNumber: string, assessmentScore: number, caseNumber: string) {
+    const endpoint = APIEndpoints.saveRatAssessment;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${environment.apitoken}`
+    });
+    // Strapi requires the payload inside a `data` key
+    // return this.http.post(endpoint, payload , { headers });
+    return this.http.post(`${endpoint}`, { data: {assessmentSummary, support_service, asssessmentNumber, assessmentScore, caseNumber} }, { headers });
+  }
+
+  getRatsResult(): Observable<any> {
+    return this.getWithQuery(APIEndpoints.ratResult, {
+      populate: {
+        support_service: {
+          fields: ['OrgName'] // , 'documentId'
+        }
+      },
+      fields: ['asssessmentNumber','assessmentScore']
+    }, environment.apitoken).pipe(
+      catchError((error: any) => {
+        console.error('Error fetching Hits result API:', error);
+        return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+      })
+    );
+  }
 //getresultfor DA assessment
 getHitsDAAssessmentQuestoins(): Observable<any> {
   return this.getWithQuery(APIEndpoints.hitsresultcalculation, {

@@ -64,6 +64,13 @@ export class AssessmentPageComponent  implements OnInit {
 
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
+    let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
+      if(type.name == this.selectedAssessment) {
+        return type;
+      }
+    });
+    console.log('selectedAssessmentId>>>>>>>', selectedAssessmentId);
+    sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
     console.log('Selected assessment:', this.selectedAssessment);
   }
 
@@ -106,7 +113,7 @@ export class AssessmentPageComponent  implements OnInit {
   goToTest() {
     if (this.selectedAssessment) {
       const assessmentName = this.selectedAssessment?.toLowerCase().trim();
-      console.log('assessmentName>>>>>>>>', assessmentName);
+      sessionStorage.setItem('caseNumber', this.caseNumber);
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':
@@ -128,9 +135,9 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/ssripa'], { state: { assessmentType: this.selectedAssessment } });
           sessionStorage.setItem('isSSripa', 'true');
           break;
-        case 'rats':
-        case 'rats assessment':
-          this.navigateWithRatsCache('/ratsassessment');
+        case 'web':
+        case 'web assessment':
+          this.navigateWithRatsCache('/webassessment');
           break;
         default:
           console.warn('No matching route found for selected assessment.');
@@ -194,13 +201,13 @@ export class AssessmentPageComponent  implements OnInit {
           const { questions, answerOptions } = res;
           console.log('getRatsAssessmentQuestions res>>>>>', res);
           // Sort the multiple_answer_option for each question (if still needed)
-          // questions.forEach((q: any) => {
-          //   q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
-          // });
+          questions.forEach((q: any) => {
+            q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);
+          });
       
-          // // Store both questions and answerOptions in the service
-          // this.menuService.setHitsAssessment({ questions, answerOptions });
-          // this.router.navigate([targetRoute]);
+          // Store both questions and answerOptions in the service
+          this.menuService.setRatsAssessment({ questions, answerOptions });
+          this.router.navigate([targetRoute]);
         },
         error: (err) => {
           console.error('Failed to load HITS data:', err);

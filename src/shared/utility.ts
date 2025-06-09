@@ -42,8 +42,8 @@ export class Utility {
     });
 
     switch (type.toLowerCase()) {
-      case 'rat':
-        return `RAT-${uuid}`;
+      case 'web':
+        return `WEB-${uuid}`;
       case 'hits':
         return `HITS-${uuid}`;
       case 'da':

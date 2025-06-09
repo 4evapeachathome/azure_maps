@@ -107,7 +107,13 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
       await this.handleSuccessfulLogin(username, user);
 
   try {
-    await this.router.navigate(['/riskassessment']);
+    let url = sessionStorage.getItem('redirectUrl');
+    if(sessionStorage.getItem('redirectUrl') && url?.includes('code')) {
+      this.router.navigateByUrl(url || '');
+      sessionStorage.removeItem('redirectUrl');
+    } else {
+      await this.router.navigate(['/riskassessment']);
+    }
     await presentToast(this.toastController, 'Login successful!', 3000, 'top');
   } catch (err) {
     await presentToast(this.toastController, 'Navigation failed', 3000, 'top');
@@ -115,11 +121,11 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
   }
 }
   private async handleSuccessfulLogin(username: string, user: any) {
-    const encodedUsername = btoa(username);
-    const encodedUser = btoa(JSON.stringify(user));
+    // Safely encode Unicode strings for btoa
+    const toBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
+    const encodedUsername = toBase64(username);
+    const encodedUser = toBase64(JSON.stringify(user));
     const loginTimestamp = Date.now().toString();
-    console.log('encodedUser!!!!', JSON.parse(atob(encodedUser)));
-    console.log('encodedUsername!!!!!', (atob(encodedUsername)));
   
     this.cookieService.set('userdetails', encodedUser, {
       path: '/',

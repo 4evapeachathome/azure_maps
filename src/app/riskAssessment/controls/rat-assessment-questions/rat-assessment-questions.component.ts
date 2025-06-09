@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { getConstant } from 'src/shared/constants';
 import { MenuService } from 'src/shared/menu.service';
+import { presentToast, Utility } from 'src/shared/utility';
 
 @Component({
   selector: 'app-rat-assessment-questions',
@@ -15,7 +17,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   loggedInUser: any = null;
   caseNumber: string = '';
   loaded: boolean = false;
-  hitsQuestions: any[] = [];
+  ratsQuestions: any[] = [];
   scaleOptions: string[] = [];
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
@@ -25,7 +27,8 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       private apiService: ApiService,
       private menuService: MenuService,
       private cookieService: CookieService,
-      private alertController: AlertController) { }
+      private alertController: AlertController,
+      private toastController: ToastController) { }
 
   ngOnInit() {
     const encodedUser = this.cookieService.get('userdetails');
@@ -51,9 +54,10 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     // Update the label based on the retrieved guidedType
     this.updateGuidedTypeLabel();
 
-    const cachedHits = this.menuService.getRatsAssessment();
-    if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
-      this.setupRatsQuestions(cachedHits.questions, cachedHits.answerOptions);
+    const cachedRats = this.menuService.getRatsAssessment();
+    console.log('cachedRats.answerOptions!!!!!!!!!', cachedRats);
+    if (cachedRats && cachedRats.questions && cachedRats.questions.length > 0) {
+      this.setupRatsQuestions(cachedRats.questions, cachedRats.answerOptions);
     } else {
       // Load from API if cache is empty
       this.apiService.getRatsAssessmentQuestions().subscribe({
@@ -66,13 +70,16 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
           });
 
           // Store both questions and answerOptions in the service
-          this.menuService.setHitsAssessment({ questions, answerOptions });
+          this.menuService.setRatsAssessment({ questions, answerOptions });
           this.setupRatsQuestions(questions, answerOptions);
         },
         error: (err: any) => {
           console.error('Failed to load HITS data from API:', err);
         }
       });
+    }
+    if(sessionStorage.getItem('caseNumber')) {
+      this.caseNumber = sessionStorage.getItem('caseNumber') || '';
     }
   }
 
@@ -88,7 +95,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   
     this.scaleOptions = [...scaleSet];
   
-    this.hitsQuestions = questions.map((q: any) => ({
+    this.ratsQuestions = questions.map((q: any) => ({
       id: q.id,
       text: q.question_text,
       selected: null,
@@ -108,22 +115,23 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
 
   submit() {
     let totalScore = 0;
-    const answerSummary: { questionId: number; questionText: string; selectedScore: number | null }[] = [];
+    // const answerSummary: { questionId: number; questionText: string; selectedScore: number | null; answer: string, question: string }[] = [];
+        const answerSummary: { question: string, answer: boolean }[] = [];
     let criticalAlert = false;
   
+    console.log('this.ratsQuestions>>>', this.ratsQuestions);
     // Single loop to calculate totalScore, build answerSummary, and check for critical alert
-    for (const question of this.hitsQuestions) {
+    for (const question of this.ratsQuestions) {
       // Handle selected score for totalScore and answerSummary
       const selectedScore = question.selected ? question.selected.score : null;
       if (selectedScore !== null) {
-        totalScore += selectedScore;
+        totalScore += Number(selectedScore);
       }
-  
-      // Add to answerSummary
+
+      // response: resJson, // JSON.stringify(resJson),
       answerSummary.push({
-        questionId: question.id,
-        questionText: question.text,
-        selectedScore: selectedScore
+        answer: question?.selected?.Label, // true
+        question: question.text,
       });
   
       // Check for critical alert condition
@@ -138,20 +146,44 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
         }
       }
     }
-  
+
+    let selectedAssessmentId = sessionStorage.getItem('selectedAssessmentId')
+    
     const result = {
-      totalScore,
-      summary: answerSummary,
-      criticalAlert
+      // totalScore,
+      response : answerSummary,
+      // criticalAlert,
+      support_service: this.loggedInUser.documentId,
+      asssessmentNumber: Utility.generateGUID('web'),
+      assessmentScore: totalScore,
+      caseNumber:  this.caseNumber || ''
     };
-  
-    sessionStorage.setItem('hitsAssessmentResult', JSON.stringify(result));
-    //debugger;
-    this.router.navigate(['/riskassessmentsummary']);
+
+
+    this.apiService.saveRatAssessment(
+      result.response,
+      result.support_service,
+      result.asssessmentNumber,
+      result.assessmentScore,
+      result.caseNumber
+    ).subscribe({
+      next: (res: any) => {
+        if (res?.data) {
+          sessionStorage.setItem('ratsAssessmentResult', JSON.stringify(result));
+          const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
+          presentToast(this.toastController, successMessage);
+          this.router.navigate(['/riskassessmentsummary']);
+        }
+      },
+      error: (error: any) => {
+        const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
+        presentToast(this.toastController, errorMessage);
+      }
+    });
   }
 
   isAllQuestionsAnswered(): boolean {
-    return this.hitsQuestions.every(q => q.selected !== null && q.selected !== undefined);
+    return this.ratsQuestions.every(q => q.selected !== null && q.selected !== undefined);
   }
 
   goBack() {
