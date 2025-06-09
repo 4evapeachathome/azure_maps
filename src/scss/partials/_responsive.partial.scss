@@ -70,9 +70,18 @@
   }
       .container-banner {
           ion-card-content {
-            .cb-header {
-              font-size: $font-size-xlll  !important;
-          }         
+          //   .cb-header {
+          //     font-size: $font-size-xlll  !important;
+          // }   
+          .cb-headeing-1 {
+       font-size: $font-size-xlll  !important;
+    }
+     .cb-headeing-2 {
+       font-size: $font-size-xll  !important;
+    }
+     .cb-headeing-3 {
+       font-size: $font-size-xl !important;
+    }      
 
         }
       }
