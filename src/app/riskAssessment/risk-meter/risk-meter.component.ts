@@ -15,10 +15,10 @@ export class RiskMeterComponent implements OnInit, OnChanges {
   @Input() min: number = 0;
   @Input() max: number = 15;
   @Input() ranges: Array<{ min: number; max: number; color: string; label: string }> = [
-    { min: 0, max: 5, color: '#4CAF50', label: 'Risk' },
-    { min: 5, max: 10, color: '#FFA500', label: 'Medium Risk' },
-    { min: 10, max: 15, color: '#FF0000', label: 'High Risk' }
-  ];
+    { "min": 0, "max": 5, "color": "#4CAF50", "label": "Low Risk" },
+    { "min": 5, "max": 10, "color": "#FFA500", "label": "Medium Risk" },
+    { "min": 10, "max": 15, "color": "#FF0000", "label": "High Risk" }
+  ]
 
   value = 0;
 

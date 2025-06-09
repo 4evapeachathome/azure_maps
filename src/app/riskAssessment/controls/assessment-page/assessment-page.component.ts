@@ -64,6 +64,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
+    debugger;
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
       if(type.name == this.selectedAssessment) {
         return type;
@@ -82,6 +83,7 @@ export class AssessmentPageComponent  implements OnInit {
   navigateWithHitsCache(targetRoute: string) {
     const cached = this.menuService.getHitsAssessment();
     if (cached) {
+      sessionStorage.setItem('isHits', 'true');
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getHitsAssessmentQuestions().subscribe({
@@ -95,6 +97,7 @@ export class AssessmentPageComponent  implements OnInit {
       
           // Store both questions and answerOptions in the service
           this.menuService.setHitsAssessment({ questions, answerOptions });
+          sessionStorage.setItem('isHits', 'true');
           this.router.navigate([targetRoute]);
         },
         error: (err) => {
@@ -117,6 +120,7 @@ export class AssessmentPageComponent  implements OnInit {
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':
+
           this.navigateWithHitsCache('/hitsassessment');
           break;
         case 'conflict tactic scale 2':

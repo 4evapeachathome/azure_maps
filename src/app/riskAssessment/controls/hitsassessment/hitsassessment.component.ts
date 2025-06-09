@@ -92,7 +92,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
     answerOptions.forEach((opt: any) => {
       scaleSet.add(`${opt.score}. ${opt.label}`);
     });
-  
+  debugger;
     this.scaleOptions = [...scaleSet];
   
     this.hitsQuestions = questions.map((q: any) => ({
@@ -158,16 +158,18 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
     };
   
     // Store locally for summary display
-    sessionStorage.setItem('hitsAssessmentResult', JSON.stringify({
-      totalScore,
-      summary: answerSummary,
-      criticalAlert
-    }));
+   
   
     // 🔄 API call
     this.apiService.postHitsAssessmentResponse(payload).subscribe({
       next: (res) => {
         debugger;
+        sessionStorage.setItem('hitsAssessmentResult', JSON.stringify({
+          totalScore,
+          summary: answerSummary,
+          criticalAlert,
+          hitsurl:`${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
+        }));
         console.log('Assessment saved:', res);
         this.router.navigate(['/riskassessmentsummary']);
       },

@@ -46,7 +46,7 @@
                 </ion-item>
               </ion-col>
               <ion-col *ngIf="selectedAssessment" size="12" size-sm="12" size-lg="7" class="radio-selected-container">
-                <ion-radio-group [(ngModel)]="guidedType" [allowEmptySelection]="true">
+                <ion-radio-group [(ngModel)]="guidedType">
                   <ion-radio [value]="guidedType" labelPlacement="end" mode="md">{{ guidedTypeLabel }}</ion-radio>
                 </ion-radio-group>
               </ion-col>
