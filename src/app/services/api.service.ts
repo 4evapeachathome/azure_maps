@@ -1045,7 +1045,6 @@ getUserLogins(): Observable<any[]> {
      // debugger;
       const decryptField = (encryptedValue: any): string | null => {
         if (!encryptedValue) return null;
-
         try {
           const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
           const decrypted = bytes.toString(CryptoJS.enc.Utf8);

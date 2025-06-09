@@ -37,16 +37,7 @@
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col size="12" size-sm="12" size-lg="5">
-                <ion-item>
-                  <ion-input
-                    label="Case Number"     [(ngModel)]="caseNumber" 
-            placeholder="Case Number"
-                    labelPlacement="stacked"
-                  ></ion-input>
-                </ion-item>
-              </ion-col>
-              <ion-col size="12" size-sm="12" size-lg="7" class="radio-selected-container">
+              <ion-col size="12" size-sm="12" size-lg="12" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType" [allowEmptySelection]="true">
                   <ion-radio [value]="guidedType" labelPlacement="end" mode="md">{{ guidedTypeLabel }}</ion-radio>
                 </ion-radio-group>

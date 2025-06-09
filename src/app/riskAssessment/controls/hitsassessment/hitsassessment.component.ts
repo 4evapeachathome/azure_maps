@@ -37,7 +37,6 @@ export class HitsassessmentComponent  implements OnInit {
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
-        debugger;
       } catch {
         console.error('Invalid cookie format, logging out...');
         this.cookieService.delete('userdetails');
@@ -154,7 +153,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
         response: answerSummary,  
         Score: totalScore,
         CaseNumber: this.caseNumber,          
-        support_service: null    
+        support_service: this.loggedInUser?.documentId 
       }
     };
   
