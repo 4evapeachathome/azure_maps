@@ -1321,20 +1321,27 @@ getRatsAssessmentQuestions(): Observable<any> {
     return this.http.post(`${endpoint}`, { data: {assessmentSummary, support_service, asssessmentNumber, assessmentScore, caseNumber} }, { headers });
   }
 
-  getRatsResult(): Observable<any> {
-    return this.getWithQuery(APIEndpoints.ratResult, {
-      populate: {
-        support_service: {
-          fields: ['OrgName'] // , 'documentId'
+  getRatsResult(code: any): Observable<any> {
+    return this.http.get(APIEndpoints.ratResult + code, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${environment.apitoken}`
+      })
+    }).pipe(
+      map((res: any) => {
+        if (res.data) {
+          const result = res.data;
+          console.log('result@@@@', result);
+          return result;
+        } else {
+          return null; // No results found
         }
-      },
-      fields: ['asssessmentNumber','assessmentScore']
-    }, environment.apitoken).pipe(
-      catchError((error: any) => {
-        console.error('Error fetching Hits result API:', error);
-        return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+      }),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => new Error(error?.error?.message || 'An error occurred while fetching result. Please try again later.'));
       })
     );
+
   }
 //getresultfor DA assessment
 getHitsDAAssessmentQuestoins(): Observable<any> {

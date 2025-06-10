@@ -73,6 +73,15 @@
                   <div>Your score is: <span class="score">{{ item.assessmentScore }}</span></div>
                   <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">Status: {{item.assessmentScore >= 20 ?
                     'Positive' : 'Negative'}}</div>
+                  <div class="summary">Summary:</div>
+                  <div *ngFor="let data of item.assessmentSummary" class="question-answer">
+                    <div class="question">
+                      <span>{{data?.question}}</span>
+                    </div>
+                    <div class="answer">{{'- ' + data?.answer}}</div>
+                  </div>
+
+
                 </ion-text>
               </ion-col>
             </ion-row>
