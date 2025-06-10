@@ -57,64 +57,39 @@
             <ion-row>
               <ion-col>
                 <ion-card class="common-container quiz-container">
-  <ion-card-header>
-    <ion-card-title>{{ quizTitle }}</ion-card-title>
-  </ion-card-header>
-
-  <ion-card-content>
-    <ng-container *ngIf="currentIndex < sripa.length">
-      <div class="quiz-slide" *ngFor="let q of sripa; let i = index" [hidden]="i !== currentIndex">
-        <div class="qs-row qs-header">
-          <div class="qs-col header-pagination">
-            <strong>Question:</strong>
-          </div>
-        </div>
-    
-        <div class="qs-row question-row">
-          <div class="qs-col">
-            <div><strong>{{ q.text }}</strong></div>
-          </div>
-        </div>
-        <div class="qs-row qz-button-row">
-          <div class="qs-col ta-center">
-            <ion-radio-group class="qz-btn-radio">
-              <ion-radio value="healthy"     (click)="selectOption(i, 'yes')"
-              [class.selected]="selectedOptions[i] === 'yes'">Yes</ion-radio><br />
-              <ion-radio value="unhealthy"   (click)="selectOption(i, 'no')"
-              [class.selected]="selectedOptions[i] === 'no'">No</ion-radio><br />                
-            </ion-radio-group>
-
-          </div>
-        </div>
-    
-    
-        <div class="pagination">
-          <ion-icon 
-            name="chevron-back-outline"
-            class="nav-arrow prev" 
-            (click)="prevSlide()" 
-            [class.disabled]="currentIndex === 0">
-          </ion-icon>
-       
-               <div class="dots-container">
-          <span *ngFor="let q of sripa; let idx = index"
-            class="dot"
-            [class.active]="currentIndex === idx"
-            (click)="goToSlide(idx)">
-          </span>
-          </div>
-        
-          <ion-icon 
-            name="chevron-forward-outline"
-            class="nav-arrow next" 
-            (click)="nextSlide()" 
-            [class.disabled]="currentIndex === sripa.length - 1">
-          </ion-icon>
-        </div>
-      </div>
-    </ng-container>
-  </ion-card-content>
-</ion-card>
+                  <ion-card-header>
+                    <ion-card-title>{{ quizTitle }}</ion-card-title>
+                  </ion-card-header>
+                
+                  <ion-card-content>
+                    <div class="table-main-container">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Question</th>
+                            <th class="thr-width-auto">Yes</th>
+                            <th class="thr-width-auto">No</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let q of sripa; let i = index" class="question-summary">
+                            <td>{{ q.text }}</td>
+                            <td class="thr-width-auto">
+                              <ion-radio-group [value]="selectedOptions[i]" (ionChange)="selectOption(i, $event.detail.value)">
+                                <ion-radio value="yes" mode="md"></ion-radio>
+                              </ion-radio-group>
+                            </td>
+                            <td class="thr-width-auto">
+                              <ion-radio-group [value]="selectedOptions[i]" (ionChange)="selectOption(i, $event.detail.value)">
+                                <ion-radio value="no" mode="md"></ion-radio>
+                              </ion-radio-group>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </ion-card-content>
+                </ion-card>
               </ion-col>
             </ion-row>
             
