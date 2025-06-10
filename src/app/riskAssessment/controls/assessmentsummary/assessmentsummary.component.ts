@@ -36,7 +36,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
   answerSummary: any[] = [];
-  assessmentTitle: string = 'Risk Assessment Results';
+  assessmentTitle: string = 'Risk Assessment Result';
   QrcodeUrl: string = ''; // QR code content
   hitResults: any[] = []; // To store the API response
   errorMessage: string | null = null;
