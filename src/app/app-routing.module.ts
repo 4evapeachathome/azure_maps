@@ -64,8 +64,9 @@ const routes: Routes = [
   },
   {
     path: 'ssripariskassessment',
-    loadChildren: () => import('./sripaa/sripaa.module').then(m => m.SripaaPageModule),canActivate: [RiskAssessmentGuard]
+    loadChildren: () => import('./riskAssessment/risk-assessment-ssripa/risk-assessment-ssripa.module').then( m => m.RiskAssessmentSSripaPageModule),canActivate: [RiskAssessmentGuard]
   },
+
   
 
 ];

@@ -111,6 +111,25 @@ export class AssessmentPageComponent  implements OnInit {
     
   }
 
+  navigateWithSsripaCache(targetRoute: string) {
+    const cached = this.menuService.getSsripaDataValue(); // Synchronous access
+    if (cached) {
+      sessionStorage.setItem('isSSripa', 'true');
+      this.router.navigate([targetRoute]);
+    } else {
+      this.apiService.getSripaa().subscribe({
+        next: (quiz: any) => {
+          this.menuService.setSsripaData(quiz || []); // Update BehaviorSubject
+          sessionStorage.setItem('isSSripa', 'true');
+          this.router.navigate([targetRoute]);
+        },
+        error: (err) => {
+          console.error('Failed to load SSRIPA data:', err);
+        }
+      });
+    }
+  }
+
   goToTest() {
     if (this.selectedAssessment) {
       sessionStorage.setItem('guidedType', this.guidedType);
@@ -135,8 +154,7 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'signs of self-recognition in intimate partner abuse (ssripa)':
-          this.router.navigate(['/ssripa'], { state: { assessmentType: this.selectedAssessment } });
-          sessionStorage.setItem('isSSripa', 'true');
+          this.navigateWithSsripaCache('/ssripariskassessment');
           break;
         case 'web':
         case 'web assessment':

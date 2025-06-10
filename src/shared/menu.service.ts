@@ -41,6 +41,7 @@ export class MenuService {
   
 
   private ratsAssessmentData: RatsAssessmentData | null = null;
+  private ssripaDataSubject = new BehaviorSubject<any[] | null>(null);
 
   private showAdditionalMenusSource = new BehaviorSubject<{ show: boolean, sectionTitle: string | null }>({
     show: false,
@@ -108,6 +109,24 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
     getHitsAssessment(): HitsAssessmentData | null {
       return this.hitsAssessmentData;
     }
+
+    //Ssripa Assessment
+    setSsripaData(data: any[]) {
+      this.ssripaDataSubject.next(data); // Emit new data
+    }
+  
+    getSsripaData(): Observable<any[] | null> {
+      return this.ssripaDataSubject.asObservable(); // Return as Observable
+    }
+  
+    getSsripaDataValue(): any[] | null {
+      return this.ssripaDataSubject.getValue(); // Get current value synchronously
+    }
+  
+    clearSsripaData() {
+      this.ssripaDataSubject.next(null); // Clear data
+    }
+
 
     setRatsAssessment(data: RatsAssessmentData) {
       this.ratsAssessmentData = data;
