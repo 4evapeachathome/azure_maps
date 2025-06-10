@@ -36,6 +36,7 @@ showAnswers: boolean[] = [];
 selectedOptions: string[] = [];
 finalAnswerHtml: string = '';
 showresults: boolean = false;
+hasYesAnswer: boolean = false; // Track if any 'yes' answer is selected
 
 constructor(private apiService: ApiService) {}
 
@@ -68,6 +69,7 @@ renderRichTextFromText(text: string): string {
 selectOption(index: number, option: 'yes' | 'no'): void {
   this.selectedOptions[index] = option;
   this.showresults = this.selectedOptions.some(opt => opt !== null);
+  this.hasYesAnswer = this.selectedOptions.some(opt => opt === 'yes');
 }
 
 prevSlide(): void {
@@ -143,6 +145,7 @@ submitAssessmentResponse(): Observable<any> {
       response: respondedQuestions,
       AssessmentGuid: Utility.generateGUID('ssripa'),
       support_service: null,
+      CaseNumber: null, // Replace with actual case number if available
       IsAssessmentfromEducationModule: true
     }
   };
