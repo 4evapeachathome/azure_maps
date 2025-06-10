@@ -82,6 +82,7 @@ export class AssessmentPageComponent  implements OnInit {
     const cached = this.menuService.getHitsAssessment();
     if (cached) {
       sessionStorage.setItem('isHits', 'true');
+      sessionStorage.removeItem('isSSripa');
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getHitsAssessmentQuestions().subscribe({
@@ -96,6 +97,7 @@ export class AssessmentPageComponent  implements OnInit {
           // Store both questions and answerOptions in the service
           this.menuService.setHitsAssessment({ questions, answerOptions });
           sessionStorage.setItem('isHits', 'true');
+          sessionStorage.removeItem('isSSripa');
           this.router.navigate([targetRoute]);
         },
         error: (err) => {
@@ -115,12 +117,14 @@ export class AssessmentPageComponent  implements OnInit {
     const cached = this.menuService.getSsripaDataValue(); // Synchronous access
     if (cached) {
       sessionStorage.setItem('isSSripa', 'true');
+      sessionStorage.removeItem('isHits');
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getSripaa().subscribe({
         next: (quiz: any) => {
           this.menuService.setSsripaData(quiz || []); // Update BehaviorSubject
           sessionStorage.setItem('isSSripa', 'true');
+          sessionStorage.removeItem('isHits');
           this.router.navigate([targetRoute]);
         },
         error: (err) => {

@@ -135,7 +135,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
           handler: () => {
             // Proceed with the original logic if OK is clicked
             let totalScore = 0;
-            const answerSummary: { questionText: string; selectedAnswer: string | null }[] = [];
+            const answerSummary: { question: string; answer: string | null }[] = [];
             let criticalAlert = false;
   
             for (const question of this.hitsQuestions) {
@@ -148,8 +148,8 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
               }
   
               answerSummary.push({
-                questionText: question.text,
-                selectedAnswer: selectedAnswer
+                question: question.text,
+                answer: selectedAnswer
               });
   
               if (!criticalAlert && question.weight_critical_alert && selected) {

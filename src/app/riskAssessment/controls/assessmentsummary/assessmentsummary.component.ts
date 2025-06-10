@@ -37,7 +37,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   guidedTypeLabel: string = 'Self-Guided';
   answerSummary: any[] = [];
   assessmentTitle: string = 'Risk Assessment Results';
-  hitsQrcodeUrl: string = ''; // QR code content
+  QrcodeUrl: string = ''; // QR code content
   hitResults: any[] = []; // To store the API response
   errorMessage: string | null = null;
   isHitsAssessment: boolean = false;
@@ -54,7 +54,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   isRatAssessment = false;
   ratAssessmentResult: any;
   ratQrCodeValue: string = '';
-
+  responseJson: any;
   isHitAssessment = false;
 
 
@@ -86,15 +86,27 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
+
+    if(this.isSSripa) {
+      const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
+      if (resultStr) {
+        const result = JSON.parse(resultStr);
+        debugger;
+        this.responseJson= result.summary;
+        this.QrcodeUrl= result.ssripasurl;
+      }
+    }
    
     if(this.isHitsAssessment) {
       const resultStr = sessionStorage.getItem('hitsAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
+        debugger;
+        this.responseJson= result.summary;
         this.riskValue = result.totalScore;
         this.answerSummary = result.summary;
         this.criticalalert = result.criticalAlert === 'true' || result.criticalAlert === true;
-        this.hitsQrcodeUrl= result.hitsurl;
+        this.QrcodeUrl= result.hitsurl;
       }
       this.fetchHitResults();
     }

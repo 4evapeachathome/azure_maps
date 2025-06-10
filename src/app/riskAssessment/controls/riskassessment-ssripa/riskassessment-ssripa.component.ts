@@ -126,7 +126,7 @@ showresults: boolean = false;
                 if (selected) {
                   return {
                     question: q.text,
-                    selectedOption: selected,
+                    answer: selected,
                   };
                 }
                 return null;
@@ -146,7 +146,11 @@ showresults: boolean = false;
             // Subscribe to the Observable and log the response
             this.apiService.postSsripaAssessmentResponse(payload).subscribe({
               next: (response) => {
-                console.log('Assessment response submitted successfully:', response);
+                sessionStorage.setItem('ssripaAssessmentResult', JSON.stringify({
+                  summary: respondedQuestions,
+                  ssripasurl: `${window.location.origin}/viewresult?code=${response.data.AssessmentGuid}`,
+                }));
+                this.router.navigate(['/riskassessmentsummary']);
               },
               error: (err) => {
                 console.error('Failed to submit assessment response:', err);
