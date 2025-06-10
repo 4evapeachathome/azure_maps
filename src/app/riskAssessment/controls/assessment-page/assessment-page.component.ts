@@ -152,7 +152,10 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/danger-assessment-immigrants'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'da':
-          this.router.navigate(['/dangerassessment'], { state: { assessmentType: this.selectedAssessment } });
+          sessionStorage.removeItem('isSSripa');
+          sessionStorage.removeItem('isHits');
+          sessionStorage.setItem('isDaAssessment', 'true');
+          this.router.navigate(['/dangerassessment']);
           break;
         case 'relationship assessment tool originally called web scale':
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });

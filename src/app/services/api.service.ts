@@ -1016,7 +1016,7 @@ postSsripaAssessmentResponse(payload: any): Observable<any> {
 }
 
 postHitsAssessmentResponse(payload: any): Observable<any> {
-  const endpoint = `${environment.apiHost}/api/hits-assessment-responses`;
+  const endpoint = APIEndpoints.saveHitsAssessment;
   const headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${environment.apitoken}`
@@ -1336,14 +1336,29 @@ getRatsAssessmentQuestions(): Observable<any> {
       })
     );
   }
-//getresultfor DA assessment
-getHitsDAAssessmentQuestoins(): Observable<any> {
-  return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
-    populate: {
-      DAChild: {
-        fields: ['questionText', 'questionOrder', 'weightageScore']
-      }
-    }, 
+
+  // DA assessment
+  getDAAssessmentQuestions(): Observable<any> {
+    return this.getWithQuery(APIEndpoints.daAssessmentQuestions, {
+      populate: {
+        DAChild: {
+          fields: ['questionText', 'weightageScore', 'questionOrder']
+        }
+      },
+      fields: ['questionText', 'score', 'weightage_score', 'questionOrder']
+    }, environment.apitoken).pipe(
+      catchError((error: any) => {
+        console.error('Error fetching DA Assessment Questions API:', error);
+        return throwError(() => new Error('An error occurred while fetching DA Assessment Questions API. Please try again later.'));
+      })
+    );
+  }
+
+
+
+getDAresultcalculation(): Observable<any> {
+  return this.getWithQuery(APIEndpoints.daAssessmentResult, {
+    fields: ['color', 'min', 'max','label']
   }, environment.apitoken).pipe(
     catchError((error: any) => {
       console.error('Error fetching Hits result API:', error);
@@ -1352,5 +1367,14 @@ getHitsDAAssessmentQuestoins(): Observable<any> {
   );
 }
 
+saveDaAssessmentResponse(payload: any): Observable<any> {
+  const endpoint = APIEndpoints.daAssessmentResponse;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  // Strapi requires the payload inside a `data` key
+  return this.http.post(endpoint, payload , { headers });
+}
 
 }
