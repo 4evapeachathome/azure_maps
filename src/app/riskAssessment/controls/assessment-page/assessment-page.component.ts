@@ -57,13 +57,12 @@ export class AssessmentPageComponent  implements OnInit {
   }
 
   onGuidedTypeChange(event:any) {
-    debugger;
-    sessionStorage.setItem('guidedType', this.guidedType);
     this.updateGuidedTypeLabel();
   }
 
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
+    debugger;
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
       if(type.name == this.selectedAssessment) {
         return type;
@@ -82,6 +81,8 @@ export class AssessmentPageComponent  implements OnInit {
   navigateWithHitsCache(targetRoute: string) {
     const cached = this.menuService.getHitsAssessment();
     if (cached) {
+      sessionStorage.setItem('isHits', 'true');
+      sessionStorage.removeItem('isSSripa');
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getHitsAssessmentQuestions().subscribe({
@@ -95,6 +96,8 @@ export class AssessmentPageComponent  implements OnInit {
       
           // Store both questions and answerOptions in the service
           this.menuService.setHitsAssessment({ questions, answerOptions });
+          sessionStorage.setItem('isHits', 'true');
+          sessionStorage.removeItem('isSSripa');
           this.router.navigate([targetRoute]);
         },
         error: (err) => {
@@ -110,13 +113,36 @@ export class AssessmentPageComponent  implements OnInit {
     
   }
 
+  navigateWithSsripaCache(targetRoute: string) {
+    const cached = this.menuService.getSsripaDataValue(); // Synchronous access
+    if (cached) {
+      sessionStorage.setItem('isSSripa', 'true');
+      sessionStorage.removeItem('isHits');
+      this.router.navigate([targetRoute]);
+    } else {
+      this.apiService.getSripaa().subscribe({
+        next: (quiz: any) => {
+          this.menuService.setSsripaData(quiz || []); // Update BehaviorSubject
+          sessionStorage.setItem('isSSripa', 'true');
+          sessionStorage.removeItem('isHits');
+          this.router.navigate([targetRoute]);
+        },
+        error: (err) => {
+          console.error('Failed to load SSRIPA data:', err);
+        }
+      });
+    }
+  }
+
   goToTest() {
     if (this.selectedAssessment) {
+      sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.selectedAssessment?.toLowerCase().trim();
       sessionStorage.setItem('caseNumber', this.caseNumber);
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':
+
           this.navigateWithHitsCache('/hitsassessment');
           break;
         case 'conflict tactic scale 2':
@@ -132,8 +158,7 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'signs of self-recognition in intimate partner abuse (ssripa)':
-          this.router.navigate(['/ssripa'], { state: { assessmentType: this.selectedAssessment } });
-          sessionStorage.setItem('isSSripa', 'true');
+          this.navigateWithSsripaCache('/ssripariskassessment');
           break;
         case 'web':
         case 'web assessment':

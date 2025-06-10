@@ -188,6 +188,15 @@ ion-card {
       color: var(--color-deep-Gray);
       line-height: normal;
     }
+    .cb-headeing-1 {
+      font-size: $font-size-head-xll;
+    }
+     .cb-headeing-2 {
+      font-size: $font-size-head-xl;
+    }
+     .cb-headeing-3 {
+      font-size: $font-size-head-md;
+    }
     .cb-header-highlight {
       color: $color-primary;
     }
@@ -1338,7 +1347,9 @@ ion-item {
   opacity: 1;
   display: block;
 }
-
+.support-map-height{
+  height: calc(100% - 35px);
+}
 .cmh-container {
   position: absolute;
   top: 0;
@@ -1347,6 +1358,9 @@ ion-item {
   height: 100%;
   overflow: hidden;
   overflow-y: auto;
+  .cmh-height{
+    height: 100%;
+  }
 }
 ion-footer {
   background-color: $color-dark-Gray;

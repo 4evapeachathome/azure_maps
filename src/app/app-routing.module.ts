@@ -51,11 +51,11 @@ const routes: Routes = [
   },
   {
     path: 'webassessment',
-    loadChildren: () => import ('../app/riskAssessment/rat-assessment-page/risk-assessment/risk-assessment.module').then(m => m.RiskAssessmentModule)
+    loadChildren: () => import ('../app/riskAssessment/rat-assessment-page/risk-assessment/risk-assessment.module').then(m => m.RiskAssessmentModule),canActivate: [RiskAssessmentGuard]
   },
   {
     path: 'dangerassessment',
-    loadChildren: () => import ('../app/riskAssessment/da-assessment-page/da-assessment/da-assessment.module').then(m => m.DaAssessmentModule)
+    loadChildren: () => import ('../app/riskAssessment/da-assessment-page/da-assessment/da-assessment.module').then(m => m.DaAssessmentModule),canActivate: [RiskAssessmentGuard]
   },
   {
     path: 'viewresult',
@@ -64,10 +64,10 @@ const routes: Routes = [
   },
   {
     path: 'ssripariskassessment',
-    loadChildren: () => import('./sripaa/sripaa.module').then(m => m.SripaaPageModule),canActivate: [RiskAssessmentGuard]
-  }
+    loadChildren: () => import('./riskAssessment/risk-assessment-ssripa/risk-assessment-ssripa.module').then( m => m.RiskAssessmentSSripaPageModule),canActivate: [RiskAssessmentGuard]
+  },
 
-
+  
 
 ];
 

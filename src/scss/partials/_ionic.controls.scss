@@ -19,6 +19,9 @@
   --ion-color-tint: var(--color-secondary) !important;
   --border-radius: 8px;
 }
+.ion-color-medium {
+    --border-radius: 8px;
+}
 .icon-button{
   --box-shadow: none;
   --ion-color-base: var(--color-white) !important;
@@ -78,6 +81,7 @@ ion-card-content {
 }
 ion-button{
   text-transform: inherit;
+
 }
  ion-input, ion-searchbar{
     color: var(--color-dark-Gray);

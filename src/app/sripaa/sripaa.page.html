@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true">
   <div class="cmh-container">
-    <ion-grid class="p-b-0 sm-cont-margin container-min-height">
+    <ion-grid class="p-b-0 sm-cont-margin container-min-height cmh-height">
       <!-- Show Quiz Component -->
       <ion-row class="comp-space" *ngIf="!hidewhenshowingresults">
         <ion-col>
@@ -19,7 +19,7 @@
           
          <ion-segment [(ngModel)]="selectedTab" class="web-tab-toggle" mode="md">
             <ion-segment-button value="results">Results</ion-segment-button>
-            <ion-segment-button value="actionplan">Action Plan</ion-segment-button>
+            <ion-segment-button value="actionplan" [disabled]="!sripaCompRef?.hasYesAnswer">Action Plan</ion-segment-button>
           </ion-segment>
         
         </ion-col>
@@ -73,7 +73,7 @@
           </ion-button>
 
           <ion-button color="primary" size="small" (click)="showResults()" *ngIf="sripaCompRef?.showresults">
-            Show results
+            Submit
           </ion-button>
         </ion-col>
       </ion-row>

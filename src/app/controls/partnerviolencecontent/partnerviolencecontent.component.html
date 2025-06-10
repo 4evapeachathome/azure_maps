@@ -8,7 +8,7 @@
     <!-- <h2 class="happyhome-title"> -->
       <ng-container *ngFor="let item of titleContent[0]?.children">
         <ng-container [ngSwitch]="item.type">
-          <ion-text class="cb-header" *ngSwitchCase="'text'" [ngClass]="{'cb-header-highlight': item.bold}">
+          <ion-text class="cb-header cb-headeing-1" *ngSwitchCase="'text'" [ngClass]="{'cb-header-highlight': item.bold}">
             <strong *ngIf="item.bold">{{ item.text }}</strong>
             <span *ngIf="!item.bold">{{ item.text }}</span>
           </ion-text>

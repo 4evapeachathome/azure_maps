@@ -9,7 +9,7 @@
          <ion-col>
           <ng-container *ngFor="let item of bannerTitle.multilinerichtextbox[0]?.children">
             <ng-container [ngSwitch]="item.type">
-              <ion-text class="cb-header" *ngSwitchCase="'text'" [ngClass]="{'cb-header-highlight': item.bold}">
+              <ion-text class="cb-header cb-headeing-1" *ngSwitchCase="'text'" [ngClass]="{'cb-header-highlight': item.bold}">
                 <strong *ngIf="item.bold">{{ item.text }}</strong>
                 <span *ngIf="!item.bold">{{ item.text }}</span>
               </ion-text>

@@ -1219,7 +1219,7 @@ getHitsResultCalculation(): Observable<any> {
   return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
     populate: {
       AnswerOption: {
-        fields: ['label', 'minScore', 'maxScore']
+        fields: ['color', 'min', 'max','label']
       }
     }, 
     fields: ['Note', 'Caution'] 

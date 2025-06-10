@@ -26,8 +26,7 @@ export class MenuService {
     private router: Router
   ) {}
   
-  private menuItemsSource = new BehaviorSubject<any[]>([]);
-  menuItems$ = this.menuItemsSource.asObservable();
+  private readonly storageKey = 'menuItems';
 
   private filterOptionsSubject = new BehaviorSubject<any[]>([]);
   private organizationsSubject = new BehaviorSubject<any[]>([]);
@@ -41,6 +40,7 @@ export class MenuService {
   
 
   private ratsAssessmentData: RatsAssessmentData | null = null;
+  private ssripaDataSubject = new BehaviorSubject<any[] | null>(null);
 
   private showAdditionalMenusSource = new BehaviorSubject<{ show: boolean, sectionTitle: string | null }>({
     show: false,
@@ -71,14 +71,29 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
   this.showAdditionalMenusSource.next({ show, sectionTitle });
 }
 
-  setMenuItems(items: any[]) {
-    this.menuItemsSource.next(items);
+setMenuItems(menuItems: any[]): void {
+  try {
+    sessionStorage.setItem(this.storageKey, JSON.stringify(menuItems));
+  } catch (e) {
+    console.error('Error saving menu items to sessionStorage', e);
   }
+}
 
-  getMenuItems() {
-    return this.menuItemsSource.value;
+// Get menu items from sessionStorage
+getMenuItems(): any[] {
+  try {
+    const menuItemsStr = sessionStorage.getItem(this.storageKey);
+    return menuItemsStr ? JSON.parse(menuItemsStr) : [];
+  } catch (e) {
+    console.error('Error reading menu items from sessionStorage', e);
+    return [];
   }
+}
 
+// Clear menu items from sessionStorage
+clearMenuItems(): void {
+  sessionStorage.removeItem(this.storageKey);
+}
 
   setFilterOptions(options: any[]) {
     this.filterOptionsSubject.next(options);
@@ -108,6 +123,24 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
     getHitsAssessment(): HitsAssessmentData | null {
       return this.hitsAssessmentData;
     }
+
+    //Ssripa Assessment
+    setSsripaData(data: any[]) {
+      this.ssripaDataSubject.next(data); // Emit new data
+    }
+  
+    getSsripaData(): Observable<any[] | null> {
+      return this.ssripaDataSubject.asObservable(); // Return as Observable
+    }
+  
+    getSsripaDataValue(): any[] | null {
+      return this.ssripaDataSubject.getValue(); // Get current value synchronously
+    }
+  
+    clearSsripaData() {
+      this.ssripaDataSubject.next(null); // Clear data
+    }
+
 
     setRatsAssessment(data: RatsAssessmentData) {
       this.ratsAssessmentData = data;

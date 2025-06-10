@@ -46,7 +46,7 @@ export class HomePage implements OnInit,AfterViewInit {
     // Force dismiss after 10 seconds just in case
     setTimeout(() => {
       this.hideLoader();
-    }, 8000);
+    }, 6500);
   }
 
   async hideLoader() {

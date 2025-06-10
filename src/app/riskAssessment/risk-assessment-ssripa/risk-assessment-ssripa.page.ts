@@ -1,29 +1,20 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { UsaMapComponent } from '../usa-map/usa-map.component';
+import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-legalrights',
-  templateUrl: './legalrights.page.html',
-  styleUrls: ['./legalrights.page.scss'],
+  selector: 'app-risk-assessment-ssripa',
+  templateUrl: './risk-assessment-ssripa.page.html',
+  styleUrls: ['./risk-assessment-ssripa.page.scss'],
   standalone: false
 })
-export class LegalrightsPage implements OnInit,AfterViewInit {
-  selectedState: any = null;
-  isStateSelected: boolean = false;
-  loading: HTMLIonLoadingElement | null = null;
-  @ViewChild(UsaMapComponent) usaMapComponent!: UsaMapComponent;
+export class RiskAssessmentSSripaPage implements OnInit {
+ loading: HTMLIonLoadingElement | null = null;
 
- 
   constructor(private loadingController: LoadingController) { }
 
   async ngOnInit() {
     // Only show loader if not pre-rendered
     await this.showLoader();
-  }
-
-  onStateSelected(state: { id: string; name: string; path: string }) {
-    this.isStateSelected = !!state; // Set to true if a state is selected (state is not null/undefined)
   }
 
   async ngAfterViewInit() {
@@ -62,12 +53,4 @@ export class LegalrightsPage implements OnInit,AfterViewInit {
       this.loading = null;
     }
   }
-
-  ionViewWillLeave() {
-    if (this.usaMapComponent) {
-      this.usaMapComponent.resetState();
-    }
-  }
-
-
 }
