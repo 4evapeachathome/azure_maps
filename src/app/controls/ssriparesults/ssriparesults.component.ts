@@ -17,9 +17,10 @@ export class SsriparesultsComponent  implements OnInit {
   @Input() quizTitle: string = '';
   @Input() sripa: any[] = [];
   @Input() selectedOptions: string[] = [];
-  @Input() myAngularxQrCode: string = 'https://http://localhost:8100/login'; // QR code content
+  @Input() myAngularxQrCode: string = ''; // QR code content
   @ViewChild('resultContent', { static: false }) resultContent!: ElementRef;
   @ViewChild('qrCodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
+  qrcodeUrl: string = '';
 
   highSeverityTriggered = false;
 
@@ -137,6 +138,7 @@ export class SsriparesultsComponent  implements OnInit {
   }
 
   checkHighSeverity(): void {
+    this.qrcodeUrl =`${window.location.origin}/viewresult?${this.myAngularxQrCode}`
     this.highSeverityTriggered = this.sripa.some((q, idx) =>
       this.selectedOptions[idx] === 'yes' && q.severity?.toLowerCase() === 'high'
     );

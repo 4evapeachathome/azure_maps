@@ -117,66 +117,83 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
     return this.hitsQuestions.every(q => q.selected !== null && q.selected !== undefined);
   }
 
-  submit() {
-    let totalScore = 0;
-    const answerSummary: { questionText: string; selectedAnswer: string | null }[] = [];
-    let criticalAlert = false;
+  async submit() {
+    // Create the alert using AlertController
+    const alert = await this.alertController.create({
+      header: 'Confirm Submission',
+      message: 'Are you sure you want to submit the assessment?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Submission canceled');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            // Proceed with the original logic if OK is clicked
+            let totalScore = 0;
+            const answerSummary: { questionText: string; selectedAnswer: string | null }[] = [];
+            let criticalAlert = false;
   
-    for (const question of this.hitsQuestions) {
-      const selected = question.selected;
-      const selectedScore = selected ? selected.score : null;
-      const selectedAnswer = selected ? selected.label : null;
+            for (const question of this.hitsQuestions) {
+              const selected = question.selected;
+              const selectedScore = selected ? selected.score : null;
+              const selectedAnswer = selected ? selected.label : null;
   
-      if (selectedScore !== null) {
-        totalScore += selectedScore;
-      }
+              if (selectedScore !== null) {
+                totalScore += selectedScore;
+              }
   
-      // ✅ Push only questionText and selectedAnswer
-      answerSummary.push({
-        questionText: question.text,
-        selectedAnswer: selectedAnswer
-      });
+              answerSummary.push({
+                questionText: question.text,
+                selectedAnswer: selectedAnswer
+              });
   
-      if (!criticalAlert && question.weight_critical_alert && selected) {
-        const matchFound = question.criticalOptions.some((opt: any) =>
-          opt.score === selected.score || opt.label === selected.label
-        );
-        if (matchFound) {
-          criticalAlert = true;
+              if (!criticalAlert && question.weight_critical_alert && selected) {
+                const matchFound = question.criticalOptions.some((opt: any) =>
+                  opt.score === selected.score || opt.label === selected.label
+                );
+                if (matchFound) {
+                  criticalAlert = true;
+                }
+              }
+            }
+  
+            const payload = {
+              data: {
+                AssessmentGuid: Utility.generateGUID('hits'),
+                response: answerSummary,
+                Score: totalScore,
+                CaseNumber: this.caseNumber,
+                support_service: this.loggedInUser?.documentId
+              }
+            };
+  
+            this.apiService.postHitsAssessmentResponse(payload).subscribe({
+              next: (res) => {
+                sessionStorage.setItem('hitsAssessmentResult', JSON.stringify({
+                  totalScore,
+                  summary: answerSummary,
+                  criticalAlert,
+                  hitsurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
+                }));
+                console.log('Assessment saved:', res);
+                this.router.navigate(['/riskassessmentsummary']);
+              },
+              error: (err) => {
+                console.error('Failed to save assessment', err);
+              }
+            });
+          }
         }
-      }
-    }
-  
-    const payload = {
-      data: {
-        AssessmentGuid: Utility.generateGUID('hits'),
-        response: answerSummary,  
-        Score: totalScore,
-        CaseNumber: this.caseNumber,          
-        support_service: this.loggedInUser?.documentId 
-      }
-    };
-  
-    // Store locally for summary display
-   
-  
-    // 🔄 API call
-    this.apiService.postHitsAssessmentResponse(payload).subscribe({
-      next: (res) => {
-        debugger;
-        sessionStorage.setItem('hitsAssessmentResult', JSON.stringify({
-          totalScore,
-          summary: answerSummary,
-          criticalAlert,
-          hitsurl:`${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
-        }));
-        console.log('Assessment saved:', res);
-        this.router.navigate(['/riskassessmentsummary']);
-      },
-      error: (err) => {
-        console.error('Failed to save assessment', err);
-      }
+      ]
     });
+  
+    // Present the alert
+    await alert.present();
   }
 
   goBack() {

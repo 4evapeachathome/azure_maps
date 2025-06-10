@@ -57,8 +57,6 @@ export class AssessmentPageComponent  implements OnInit {
   }
 
   onGuidedTypeChange(event:any) {
-    debugger;
-    sessionStorage.setItem('guidedType', this.guidedType);
     this.updateGuidedTypeLabel();
   }
 
@@ -115,6 +113,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   goToTest() {
     if (this.selectedAssessment) {
+      sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.selectedAssessment?.toLowerCase().trim();
       sessionStorage.setItem('caseNumber', this.caseNumber);
       switch (assessmentName) {
