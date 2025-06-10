@@ -26,8 +26,7 @@ export class MenuService {
     private router: Router
   ) {}
   
-  private menuItemsSource = new BehaviorSubject<any[]>([]);
-  menuItems$ = this.menuItemsSource.asObservable();
+  private readonly storageKey = 'menuItems';
 
   private filterOptionsSubject = new BehaviorSubject<any[]>([]);
   private organizationsSubject = new BehaviorSubject<any[]>([]);
@@ -72,14 +71,29 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
   this.showAdditionalMenusSource.next({ show, sectionTitle });
 }
 
-  setMenuItems(items: any[]) {
-    this.menuItemsSource.next(items);
+setMenuItems(menuItems: any[]): void {
+  try {
+    sessionStorage.setItem(this.storageKey, JSON.stringify(menuItems));
+  } catch (e) {
+    console.error('Error saving menu items to sessionStorage', e);
   }
+}
 
-  getMenuItems() {
-    return this.menuItemsSource.value;
+// Get menu items from sessionStorage
+getMenuItems(): any[] {
+  try {
+    const menuItemsStr = sessionStorage.getItem(this.storageKey);
+    return menuItemsStr ? JSON.parse(menuItemsStr) : [];
+  } catch (e) {
+    console.error('Error reading menu items from sessionStorage', e);
+    return [];
   }
+}
 
+// Clear menu items from sessionStorage
+clearMenuItems(): void {
+  sessionStorage.removeItem(this.storageKey);
+}
 
   setFilterOptions(options: any[]) {
     this.filterOptionsSubject.next(options);
