@@ -29,7 +29,7 @@
   .container-min-height{
     width: 100%;
     height: calc(100% - 35px);
-    display: table;
+   // display: table;
   }
   .hb-img{
 
@@ -308,3 +308,8 @@ text-align: left !important;
 //     background-image: url(riskAssesment1.svg) !important;
 //  }
   }
+@media (min-width: 1900px)  {
+  .contact-max-height{
+    height: 100%;
+  }
+}
