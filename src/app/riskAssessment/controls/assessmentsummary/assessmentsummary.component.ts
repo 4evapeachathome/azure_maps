@@ -183,6 +183,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       title.innerText = this.selectedAssessment || 'N/A';
       title.style.textAlign = 'center';
       title.style.marginBottom = '16px';
+      title.style.fontWeight = 'bold';
       container.appendChild(title);
 
       // 3. Add user info
