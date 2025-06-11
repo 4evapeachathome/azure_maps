@@ -10,3 +10,34 @@
 .question-answer {
     margin: 20px 0;
 }
+
+.faq-table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures borders don't double up */
+    margin: 16px 0;
+    border: 1px solid #ddd; /* Outer border for the entire table */
+  
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #ddd; /* Border for each cell */
+    }
+  
+    th {
+      background-color: #f4f5f8;
+      font-weight: bold;
+    }
+  
+    /* Optional: Remove the bottom border for the last row if you don't want it */
+    tr:last-child td {
+      border-bottom: 1px solid #ddd;
+    }
+  }
+
+  .guided-label {
+     pointer-events: none;
+  }
+  
+  .case-number {
+    color: #000;
+  }

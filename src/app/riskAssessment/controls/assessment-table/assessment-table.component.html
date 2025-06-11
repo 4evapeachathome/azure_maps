@@ -1,0 +1,38 @@
+<!-- <ion-row class="assessment-summary-text" *ngIf="isRatAssessment">
+  <ion-col>
+    <ion-text *ngFor="let item of ratAssessmentResultList">
+      Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
+
+
+      <ion-row>
+        <ion-col size="12" size-sm="12">
+          <div class="" *ngIf="ratQrCodeValue !== ''">
+            <qrcode #qrcodeEl [qrdata]="ratQrCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <div>Your score is: <span class="score">{{ item.assessmentScore }}</span></div>
+      <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">Status: {{item.assessmentScore >= 20 ?
+        'Positive' : 'Negative'}}</div>
+      <div class="summary">Summary:</div>
+    </ion-text>
+  </ion-col>
+</ion-row> -->
+
+<ion-row>
+  <table class="faq-table">
+    <thead>
+      <tr>
+        <th scope="col">Question</th>
+        <th scope="col">Answer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of responseJson">
+        <td>{{ item.question }}</td>
+        <td>{{ item.answer }}</td>
+      </tr>
+    </tbody>
+  </table>
+</ion-row>

@@ -40,6 +40,7 @@ export class ViewResultComponent  implements OnInit {
   isHitAssessment = false;
   ratAssessmentResultList: any = [];
   assessmentNumber: string = '';
+  responseJson: any;
 
   constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute,
         private menuService: MenuService,
@@ -61,12 +62,12 @@ export class ViewResultComponent  implements OnInit {
       return;
     }
   
-    const storedGuidedType = sessionStorage.getItem('guidedType');
-    if (storedGuidedType) {
-      this.guidedType = storedGuidedType;
-    }
+    // const storedGuidedType = sessionStorage.getItem('guidedType');
+    // if (storedGuidedType) {
+    //   this.guidedType = storedGuidedType;
+    // }
   
-    this.updateGuidedTypeLabel();
+    // this.updateGuidedTypeLabel();
 
     // this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
         
@@ -81,7 +82,7 @@ export class ViewResultComponent  implements OnInit {
 
   async logout() {
     this.menuService.logout().then(() => {
-      this.guidedType = 'staff-guided';
+      // this.guidedType = 'staff-guided';
     }).catch(error => {
       this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
     });
@@ -89,20 +90,6 @@ export class ViewResultComponent  implements OnInit {
 
   private updateGuidedTypeLabel() {
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
-  }
-
-  checkAssessmentType() {
-    if(this.selectedAssessment?.toLowerCase() == 'web') {
-      this.isRatAssessment = true;
-      this.fetchRatResults(this.assessmentNumber);
-      return sessionStorage.getItem('ratsAssessmentResult');
-    } else if(this.selectedAssessment?.toLowerCase() == 'hits' || this.selectedAssessment?.toLowerCase() == 'hit'){
-      this.isHitAssessment = true;
-      // this.fetchHitResults();
-      return sessionStorage.getItem('hitsAssessmentResult');
-    } else {
-      return null;
-    }
   }
 
   checkSelectedAssessment(code: string) {
@@ -131,6 +118,10 @@ export class ViewResultComponent  implements OnInit {
         if (response) {
           console.log('response!!!!!', response);
           this.ratAssessmentResultList.push(response);
+          this.responseJson = response.assessmentSummary;
+          this.guidedType = response.guidedType;
+          this.updateGuidedTypeLabel();
+          this.caseNumber = response?.caseNumber;
           this.showToast(response?.message || 'Assessment result fetch successfully.', 3000, 'top');
         }
       },

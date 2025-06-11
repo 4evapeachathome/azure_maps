@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AlertController, IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { interval, Subscription } from 'rxjs';
 import html2pdf from 'html2pdf.js'; 
 import { QRCodeComponent  } from 'angularx-qrcode';
@@ -10,6 +10,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { SummarypageComponent } from "../summarypage/summarypage.component";
+import { AssessmentTableComponent } from '../assessment-table/assessment-table.component';
+import { presentToast } from 'src/shared/utility';
 
 
 @Component({
@@ -17,7 +19,7 @@ import { SummarypageComponent } from "../summarypage/summarypage.component";
   templateUrl: './assessmentsummary.component.html',
   styleUrls: ['./assessmentsummary.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
+  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent, AssessmentTableComponent]
 })
 export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   hidePdfContainer = true;
@@ -56,9 +58,10 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   ratQrCodeValue: string = '';
   responseJson: any;
   isHitAssessment = false;
+  assessmentNumber: string = '';
 
 
-  constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute) { }
+  constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController) { }
 
   ngOnInit() {
     const encodedUser = this.cookieService.get('userdetails');
@@ -86,12 +89,13 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
+    console.log('this.selectedAssessment =', this.selectedAssessment);
 
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
-        debugger;
+        // debugger;
         this.responseJson= result.summary;
         this.QrcodeUrl= result.ssripasurl;
       }
@@ -114,6 +118,16 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.loaded = true;
     this.caseNumber = sessionStorage.getItem('caseNumber') || '';
     
+    if(this.activatedRoute.snapshot.queryParamMap.get('code')) {
+      this.assessmentNumber = this.activatedRoute.snapshot.queryParamMap.get('code') || '';
+    } else {
+      let ratResult = sessionStorage.getItem('ratsAssessmentResult');
+      if(ratResult) {
+        this.ratAssessmentResult = JSON.parse(ratResult || '');
+        this.assessmentNumber = this.ratAssessmentResult.asssessmentNumber;
+      }
+    }
+    this.checkSelectedAssessment(this.assessmentNumber);
   }
 
   ngAfterViewInit(): void {
@@ -212,4 +226,39 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       },
     });
   }
+
+  
+  checkSelectedAssessment(code: string) {
+    if (code && code.toLowerCase().includes('web-')) {
+      this.fetchWebResults(code);
+    } else if(code && code.toLowerCase().includes('hit-')) {
+    } else if(code && code.toLowerCase().includes('da-')) {
+    } else if(code && code.toLowerCase().includes('dai-')) {
+    } else if(code && code.toLowerCase().includes('cts-')) {
+    } else if(code && code.toLowerCase().includes('ssripa-')) {
+    } else {
+      this.selectedAssessment = '';
+    }
+  }
+
+  fetchWebResults(code: string) {
+    this.apiService.getRatsResult(code).subscribe({
+      next: (response: any) => {
+        if (response) {
+          console.log('response!!!!!', response);
+          this.responseJson = response.assessmentSummary;
+          this.showToast(response?.message || 'Assessment summary fetch successfully.', 3000, 'top');
+        }
+      },
+      error: (error: any) => {
+        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
+        this.showToast(errorMsg, 3000, 'top');
+      }
+    })
+  }
+
+  private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+    await presentToast(this.toastController, message, duration, position);
+  }
+
 }

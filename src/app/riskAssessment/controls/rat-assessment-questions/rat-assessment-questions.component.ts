@@ -146,8 +146,6 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
         }
       }
     }
-
-    let selectedAssessmentId = sessionStorage.getItem('selectedAssessmentId')
     
     const result = {
       // totalScore,
@@ -156,7 +154,8 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       support_service: this.loggedInUser.documentId,
       asssessmentNumber: Utility.generateGUID('web'),
       assessmentScore: totalScore,
-      caseNumber:  this.caseNumber || ''
+      caseNumber:  this.caseNumber || '',
+      guidedType: this.guidedType
     };
 
 
@@ -165,7 +164,8 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       result.support_service,
       result.asssessmentNumber,
       result.assessmentScore,
-      result.caseNumber
+      result.caseNumber,
+      result.guidedType
     ).subscribe({
       next: (res: any) => {
         if (res?.data) {
@@ -192,28 +192,15 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   }
 
   async logout() {
-    const alert = await this.alertController.create({
-      header: 'Confirm Logout',
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary'
-        },
-        {
-          text: 'Logout',
-          handler: () => {
-            this.cookieService.delete('username');
-            this.cookieService.delete('loginTime');
-            this.cookieService.delete('userdetails');
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
+    this.menuService.logout().then(() => {
+      // this.guidedType = 'staff-guided';
+    }).catch(error => {
+      this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
     });
-  
-    await alert.present();
+  }
+
+  private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+    await presentToast(this.toastController, message, duration, position);
   }
 
 }

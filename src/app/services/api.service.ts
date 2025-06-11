@@ -1310,7 +1310,7 @@ getRatsAssessmentQuestions(): Observable<any> {
     );
   }
 
-  saveRatAssessment(assessmentSummary: any, support_service: string, asssessmentNumber: string, assessmentScore: number, caseNumber: string) {
+  saveRatAssessment(assessmentSummary: any, support_service: string, asssessmentNumber: string, assessmentScore: number, caseNumber: string, guidedType: string) {
     const endpoint = APIEndpoints.saveRatAssessment;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -1318,7 +1318,7 @@ getRatsAssessmentQuestions(): Observable<any> {
     });
     // Strapi requires the payload inside a `data` key
     // return this.http.post(endpoint, payload , { headers });
-    return this.http.post(`${endpoint}`, { data: {assessmentSummary, support_service, asssessmentNumber, assessmentScore, caseNumber} }, { headers });
+    return this.http.post(`${endpoint}`, { data: {assessmentSummary, support_service, asssessmentNumber, assessmentScore, caseNumber, guidedType} }, { headers });
   }
 
   getRatsResult(code: any): Observable<any> {
@@ -1331,7 +1331,6 @@ getRatsAssessmentQuestions(): Observable<any> {
       map((res: any) => {
         if (res.data) {
           const result = res.data;
-          console.log('result@@@@', result);
           return result;
         } else {
           return null; // No results found

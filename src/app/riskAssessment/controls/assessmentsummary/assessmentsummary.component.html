@@ -38,10 +38,7 @@
             </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="5">
-                <ion-item>
-                  <ion-input label="Case Number" [(ngModel)]="caseNumber" placeholder="Case Number"
-                    labelPlacement="stacked" disabled="true"></ion-input>
-                </ion-item>
+                <strong class="case-number">Case Number: {{" " + caseNumber}}</strong>
               </ion-col>
               <ion-col size="12" size-sm="12" size-lg="7" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType" >
@@ -67,7 +64,7 @@
               </ion-col>
             </ion-row>
 
-            <ion-row class="assessment-summary-text" *ngIf="isRatAssessment">
+            <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == 'web'">
               <ion-col>
                 <ion-text>
                   Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
@@ -132,6 +129,8 @@
                   </tr>
                 </tbody>
               </table>
+
+              <!-- <app-assessment-table [selectedAssessment]="this.selectedAssessment"></app-assessment-table> -->
             </ion-row>
 
 

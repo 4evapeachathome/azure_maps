@@ -62,7 +62,6 @@ export class AssessmentPageComponent  implements OnInit {
 
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
-    debugger;
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
       if(type.name == this.selectedAssessment) {
         return type;
