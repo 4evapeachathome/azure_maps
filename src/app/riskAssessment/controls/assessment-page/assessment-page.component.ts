@@ -80,8 +80,8 @@ export class AssessmentPageComponent  implements OnInit {
   navigateWithHitsCache(targetRoute: string) {
     const cached = this.menuService.getHitsAssessment();
     if (cached) {
-      sessionStorage.setItem('isHits', 'true');
       sessionStorage.removeItem('isSSripa');
+      sessionStorage.setItem('isHits', 'true');      
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getHitsAssessmentQuestions().subscribe({
@@ -95,8 +95,8 @@ export class AssessmentPageComponent  implements OnInit {
       
           // Store both questions and answerOptions in the service
           this.menuService.setHitsAssessment({ questions, answerOptions });
-          sessionStorage.setItem('isHits', 'true');
           sessionStorage.removeItem('isSSripa');
+          sessionStorage.setItem('isHits', 'true');
           this.router.navigate([targetRoute]);
         },
         error: (err) => {
@@ -115,15 +115,15 @@ export class AssessmentPageComponent  implements OnInit {
   navigateWithSsripaCache(targetRoute: string) {
     const cached = this.menuService.getSsripaDataValue(); // Synchronous access
     if (cached) {
-      sessionStorage.setItem('isSSripa', 'true');
       sessionStorage.removeItem('isHits');
+      sessionStorage.setItem('isSSripa', 'true');
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getSripaa().subscribe({
         next: (quiz: any) => {
-          this.menuService.setSsripaData(quiz || []); // Update BehaviorSubject
+          this.menuService.setSsripaData(quiz || []); 
+          sessionStorage.removeItem('isHits');// Update BehaviorSubject
           sessionStorage.setItem('isSSripa', 'true');
-          sessionStorage.removeItem('isHits');
           this.router.navigate([targetRoute]);
         },
         error: (err) => {
@@ -151,7 +151,11 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/danger-assessment-immigrants'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'da':
-          this.router.navigate(['/dangerassessment'], { state: { assessmentType: this.selectedAssessment } });
+        case 'the danger assessment (da)':
+          sessionStorage.removeItem('isSSripa');
+          sessionStorage.removeItem('isHits');
+          sessionStorage.setItem('isDaAssessment', 'true');
+          this.router.navigate(['/dangerassessment']);
           break;
         case 'relationship assessment tool originally called web scale':
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });

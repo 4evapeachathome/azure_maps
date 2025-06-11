@@ -57,6 +57,9 @@ export class SripaaPage implements OnInit,AfterViewInit {
     await this.showLoader();
   }
   
+  retakeAssessment(){
+    this.hidewhenshowingresults= false;
+  }
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {

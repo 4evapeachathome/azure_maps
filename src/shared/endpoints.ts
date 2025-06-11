@@ -61,6 +61,8 @@ export const APIEndpoints = {
     hitsAssessmentQuestions :`${environment.apiHost}/api/hits-assessment-questions`,
     scaleOptions :`${environment.apiHost}/api/multiple-answer-options`,
     hitsresultcalculation :`${environment.apiHost}/api/hit-results`,
+    saveHitsAssessment :`${environment.apiHost}/api/hits-assessment-responses`,
+    
 
     ratsAssessmentQuestions :`${environment.apiHost}/api/rat-assessment-questions`,
     ratScaleOptions :`${environment.apiHost}/api/multiple-options-for-rats`,
@@ -70,4 +72,7 @@ export const APIEndpoints = {
 
     ratResult :`${environment.apiHost}/api/rat-assessment-response-summaries/by-assessment-number?asssessmentNumber=`,
     DAAssesmentQuestions :`${environment.apiHost}/api/da-assessment-questions`,
+    daAssessmentQuestions :`${environment.apiHost}/api/da-assessment-questions`,
+    daAssessmentResult :`${environment.apiHost}/api/da-score-levels`,
+    daAssessmentResponse :`${environment.apiHost}/api/da-assessment-responses`
   }

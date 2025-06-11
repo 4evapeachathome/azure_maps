@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
@@ -25,6 +25,7 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
   @Input() value: number = 0;
   @Input() min: number = 0;
   @Input() max: number = 20;
+  @ViewChild('gaugeContainer', { static: true }) gaugeContainerRef!: ElementRef;
   @Input() ranges: GaugeRange[] = [
     { min: 1, max: 7, color: 'Yellow', label: 'Low risk' },
     { min: 8, max: 10, color: 'Orange', label: 'Medium risk' },
@@ -54,6 +55,10 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
     if (changes['value'] || changes['min'] || changes['max'] || changes['ranges'] || changes['forceRedNeedle']) {
       this.updateGauge();
     }
+  }
+
+  public getCanvasElement(): HTMLCanvasElement | null {
+    return this.gaugeContainerRef?.nativeElement?.querySelector('canvas') || null;
   }
 
   public mapColor(color: string): string {
@@ -143,7 +148,7 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
     this.rotation = `${-90 + pct * 180}deg`;
   }
 
-  
+
   private polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
     const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
     return {

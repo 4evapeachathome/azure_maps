@@ -97,19 +97,19 @@
               <ion-col size="12" size-sm="12" size-lg="7" class="p-0">            
                 <ion-row *ngIf="isSSripa || isHitsAssessment">
                   <ion-col size="12" size-sm="12">
+                    <ion-text>Here is you QRcode:</ion-text>
                     <div class="qr-code-wrapper">
-                      <qrcode #qrcodeEl [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+                      <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
                     </div>
                   </ion-col>
                 </ion-row>            
               </ion-col>          
               <ion-col size="12" size-sm="12" size-lg="5" class="p-0">
                 <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && isHitsAssessment">
-                  <app-summarypage [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
+                  <app-summarypage #riskMeterRef [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
                 </ion-row>
                 <ion-row>
-                  <ion-button  (click)="downloadPDF()" color="primary" size="small">Download as
-                    PDF</ion-button>
+                  <ion-button  (click)="downloadPDF()" color="primary" size="small">Export PDF</ion-button>
                 </ion-row>           
               </ion-col>
             </ion-row>

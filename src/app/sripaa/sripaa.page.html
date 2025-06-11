@@ -75,6 +75,10 @@
           <ion-button color="primary" size="small" (click)="showResults()" *ngIf="sripaCompRef?.showresults">
             Submit
           </ion-button>
+
+          <ion-button color="primary" size="small" (click)="retakeAssessment()" *ngIf="hidewhenshowingresults">
+            Retake Assessment
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
