@@ -186,47 +186,56 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       title.style.fontWeight = 'bold';
       container.appendChild(title);
 
-      // 3. Add user info
+      // 4. Create row for result info and QR code
+      const mainRow = document.createElement('div');
+      mainRow.style.display = 'flex';
+      mainRow.style.justifyContent = 'space-between';  // Space between left and right sections
+      mainRow.style.alignItems = 'flex-start';
+      mainRow.style.margin = '20px 0';
+      
+      // Left section: Case Number and Result Info
+      const leftSection = document.createElement('div');
+      leftSection.style.display = 'flex';
+      leftSection.style.flexDirection = 'column';
+      leftSection.style.gap = '10px';
+      
+      // Add user info (Case Number)
       const userInfo = document.createElement('div');
       userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || '<>'}</p>`;
-      container.appendChild(userInfo);
-
-      // 4. Create row for result info and QR code
-      const resultRow = document.createElement('div');
-      resultRow.style.display = 'flex';
-      resultRow.style.justifyContent = 'center';
-      resultRow.style.alignItems = 'flex-start';
-      resultRow.style.gap = '30px';
-      resultRow.style.margin = '20px 0';
-
-      // 5. Add result info
-      const resultInfo = document.createElement('span');
+      leftSection.appendChild(userInfo);
+      
+      // Add result info
+      const resultInfo = document.createElement('div');  // Changed to div for consistency
       resultInfo.style.display = 'inline-block';
+      resultInfo.style.minWidth = '300px';  // Ensure enough space for text
+      resultInfo.style.whiteSpace = 'normal';
       if (sessionStorage.getItem('isHits') === 'true') {
-        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
+        resultInfo.innerHTML = `<p style="white-space: nowrap;">Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
       } else if (sessionStorage.getItem('isSSripa') === 'true') {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
       }
-      resultRow.appendChild(resultInfo);
-
-      // 6. Add QR code to result row
+      leftSection.appendChild(resultInfo);
+      
+      mainRow.appendChild(leftSection);
+      
+      // Right section: QR Code
       const qrCanvas = this.qrCodeElement?.qrcElement?.nativeElement.querySelector('canvas');
       if (qrCanvas) {
         const qrSpan = document.createElement('span');
         qrSpan.style.display = 'inline-block';
         qrSpan.style.textAlign = 'center';
-
+      
         const qrLabel = document.createElement('p');
         qrLabel.innerText = 'Here is your QR Code.';
         qrLabel.style.marginBottom = '10px';
         qrSpan.appendChild(qrLabel);
-
+      
         const qrImg = document.createElement('img');
         qrImg.src = qrCanvas.toDataURL('image/png');
         qrImg.style.width = '128px';
         qrImg.style.height = '128px';
         qrSpan.appendChild(qrImg);
-
+      
         const fixedUrl = this.QrcodeUrl.replace(/\\/g, '/');
         const urlObj = new URL(fixedUrl);
         const code = new URLSearchParams(urlObj.search).get('code');
@@ -234,10 +243,11 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         codeInfo.innerText = `Code: ${code}`;
         codeInfo.style.marginTop = '10px';
         qrSpan.appendChild(codeInfo);
-
-        resultRow.appendChild(qrSpan);
+      
+        mainRow.appendChild(qrSpan);
       }
-      container.appendChild(resultRow);
+      
+      container.appendChild(mainRow);
 
       // 7. Create row for score info (without QR code)
       const scoreRow = document.createElement('div');
@@ -252,7 +262,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       scoreInfo.style.display = 'inline-block';
       if (sessionStorage.getItem('isHits') === 'true') {
         scoreInfo.innerHTML = `
-          ${this.riskValue ? `<p><strong>Here is your score:</strong> <span>${this.riskValue}</span></p>` : ''}
+          ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
           ${this.guidedType === 'staff-guided' ? 
             `<p><strong>Note:</strong> ${this.note || ''}</p>
              <p><strong>Caution:</strong> ${this.caution || ''}</p>` : ''}
@@ -270,21 +280,23 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
           margin-top: 20px;
         `;
         table.innerHTML = `
-          <thead>
-            <tr>
-              <th style="border: 1px solid #ccc; padding: 8px;">Question</th>
-              <th style="border: 1px solid #ccc; padding: 8px;">Answer</th>
+        <thead>
+          <tr>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">S.No</th>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">Question</th>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 250px; box-sizing: border-box;">Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${this.responseJson.map((item:any, index:any) => `
+            <tr style="page-break-inside: avoid;">
+              <td style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">${index + 1}</td>
+              <td style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">${item.question}</td>
+              <td style="border: 1px solid #ccc; padding: 8px; width: 250px; text-align: center; box-sizing: border-box;">${item.answer}</td>
             </tr>
-          </thead>
-          <tbody>
-            ${this.responseJson.map((item:any) => `
-              <tr style="page-break-inside: avoid;">
-                <td style="border: 1px solid #ccc; padding: 8px;">${item.question}</td>
-                <td style="border: 1px solid #ccc; padding: 8px;">${item.answer}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        `;
+          `).join('')}
+        </tbody>
+      `;
         containerElement.appendChild(table);
         document.body.appendChild(containerElement);
 
