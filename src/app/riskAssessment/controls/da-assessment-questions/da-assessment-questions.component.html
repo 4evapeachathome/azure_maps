@@ -25,7 +25,7 @@
   <ion-icon name="person-circle"></ion-icon>
 </ion-button>
   <div class="dropdown-content">
-  <a >Logout</a>
+  <a (click)="logout()">Logout</a>
 
   </div>
                   </div>
@@ -97,30 +97,22 @@
                       <tr>
                         <th>{{ (currentPageIndex * questionsPerPage) + i + 1 }}. {{ question.questionText }}</th>
                         <td class="tbody-container row-container">
-                          <ion-radio-group value="center" class="tbc-content">
-                            <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                          </ion-radio-group>
-                        </td>
-                        <td class="tbody-container row-container">
-                          <ion-radio-group value="center" class="tbc-content">
-                            <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
+                          <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question, $event)">
+                            <ion-radio value="Yes" labelPlacement="end">Yes</ion-radio>
+                            <ion-radio value="No" labelPlacement="end">No</ion-radio>
                           </ion-radio-group>
                         </td>
                       </tr>
-                  
+                    
                       <tr *ngFor="let sub of question.DAChild; let j = index" class="sub-questions">
                         <th>
                           {{ currentPageIndex * questionsPerPage + i + 1 }}{{ getCharFromCode(97 + j) }}.
                           {{ sub.questionText }}
                         </th>
                         <td class="tbody-container row-container">
-                          <ion-radio-group value="center" class="tbc-content">
-                            <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                          </ion-radio-group>
-                        </td>
-                        <td class="tbody-container row-container">
-                          <ion-radio-group value="center" class="tbc-content">
-                            <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
+                          <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub, $event)">
+                            <ion-radio value="Yes" labelPlacement="end">Yes</ion-radio>
+                            <ion-radio value="No" labelPlacement="end">No</ion-radio>
                           </ion-radio-group>
                         </td>
                       </tr>
@@ -162,7 +154,7 @@
                   <ion-button fill="outline" color="medium"
                     >Back</ion-button
                   >
-                  <ion-button color="primary" 
+                  <ion-button color="primary" (click)="submitDangerAssessment()"
                     >Submit</ion-button
                   >
                 </div>

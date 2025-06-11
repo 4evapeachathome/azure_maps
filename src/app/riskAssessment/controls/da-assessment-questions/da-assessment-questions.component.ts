@@ -4,6 +4,7 @@ import { AlertController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { MenuService } from 'src/shared/menu.service';
+import { Utility } from 'src/shared/utility';
 
 @Component({
   selector: 'app-da-assessment-questions',
@@ -62,13 +63,13 @@ constructor(
     debugger;
 
 if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
-  this.daAssessment = cachedHits.data;
+  this.daAssessment = this.initializeAssessmentData(cachedHits.data);
     } else {
       // Load from API if cache is empty
       this.apiService.getDAAssessmentQuestions().subscribe({
         next: (res: any) => {
           if(res && res.data && res.data.length > 0) {
-            this.daAssessment = res.data;            
+            this.daAssessment = this.initializeAssessmentData(res.data);       
             this.menuService.setDangerAssessment(res);
           }
         },
@@ -78,6 +79,17 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
       });
     }
     
+  }
+
+  initializeAssessmentData(data: any[]) {
+    return data.map(q => ({
+      ...q,
+      selected: null,  // Initialize main question selection
+      DAChild: q.DAChild ? q.DAChild.map((sub:any) => ({ 
+        ...sub, 
+        selected: null // Initialize sub-question selection
+      })) : []
+    }));
   }
 
    private updateGuidedTypeLabel() {
@@ -117,5 +129,156 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
     }
   }
 
+  goBack() {
+    this.router.navigate(['/riskassessment']);
+    this.caseNumber = '';
+  }
+
+  stayLoggedIn() {
+    const now = Date.now().toString();
+    this.cookieService.set('loginTime', now, {
+      path: '/',
+      sameSite: 'Strict',
+      secure: true,
+    });
+  }
+
+
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            this.cookieService.delete('username');
+            this.cookieService.delete('loginTime');
+            this.cookieService.delete('userdetails');
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
+  }
+
+ async submitDangerAssessment(){
+    const alert = await this.alertController.create({
+      header: 'Confirm Submission',
+      message: 'Are you sure you want to submit the assessment?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Submission canceled');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            let totalScore = 0;
+            const answerSummary: { question: string; answer: string | null }[] = [];
+            let criticalAlert = false;
+
+            // Process main questions
+            for (const question of this.daAssessment) {
+              const selected = question.selected;
+              const isYes = selected && selected.label === 'Yes';
+              const selectedAnswer = selected ? selected.label : null;
+
+              answerSummary.push({
+                question: question.questionText,
+                answer: selectedAnswer
+              });
+
+              // Calculate score based on weightage_score if available, otherwise default to score or 1
+              if (isYes) {
+                const weight = question.weightage_score !== null ? question.weightage_score : question.score;
+                totalScore += weight || 1;
+              }
+
+              // Process sub-questions (like 3a)
+              if (question.DAChild && question.DAChild.length > 0) {
+                for (const subQuestion of question.DAChild) {
+                  const subSelected = subQuestion.selected;
+                  const isSubYes = subSelected && subSelected.label === 'Yes';
+
+                  answerSummary.push({
+                    question: `${question.questionOrder}${String.fromCharCode(97 + question.DAChild.indexOf(subQuestion))}. ${subQuestion.questionText}`,
+                    answer: subSelected ? subSelected.label : null
+                  });
+
+                  if (isSubYes && subQuestion.weightageScore) {
+                    totalScore += subQuestion.weightageScore;
+                  }
+                }
+              }
+            }
+
+            let levelOfDanger: string;
+            if (totalScore < 8) {
+              levelOfDanger = 'Variable';
+            } else if (totalScore >= 8 && totalScore <= 13) {
+              levelOfDanger = 'Increased';
+            } else if (totalScore >= 14 && totalScore <= 17) {
+              levelOfDanger = 'Severe';
+            } else if (totalScore >= 18) {
+              levelOfDanger = 'Extreme';
+            } else {
+              levelOfDanger = 'Unknown'; 
+            }
+
+            const payload = {
+              data: {
+                AssessmentGuid: Utility.generateGUID('da'),
+                response: answerSummary,
+                Score: totalScore,
+                CaseNumber: this.caseNumber,
+                support_service: this.loggedInUser?.documentId,
+                Levelofdanger: levelOfDanger ,
+              }
+            };
+
+            this.apiService.saveDaAssessmentResponse(payload).subscribe({
+              next: (res) => {
+                debugger;
+                sessionStorage.setItem('daAssessmentResult', JSON.stringify({
+                  totalScore,
+                  summary: answerSummary,
+                  Levelofdanger: levelOfDanger,
+                  daurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
+                }));
+                console.log('Assessment saved:', res);
+                this.router.navigate(['/riskassessmentsummary']);
+              },
+              error: (err) => {
+                console.error('Failed to save assessment', err);
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+
+  onAnswerChange(question: any, event: any) {
+    // If clicking the already selected option, deselect it
+    if (question.selected === event.detail.value) {
+      question.selected = null;
+    } else {
+      question.selected = event.detail.value;
+    }
+  }
 
 }
