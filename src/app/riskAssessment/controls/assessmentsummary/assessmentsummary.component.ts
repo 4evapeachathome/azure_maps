@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { interval, Subscription } from 'rxjs';
@@ -60,7 +60,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   hasFetchedData: boolean = false; // Track if logins have been fetched
 
 
-  constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute) { }
+  constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     if (!this.hasFetchedData) {
@@ -164,6 +164,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
   async downloadPDF() {
     try {
+      // 1. Create the container for PDF content
       const container = document.createElement('div');
       container.style.cssText = `
         position: absolute;
@@ -176,17 +177,20 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         background: white;
         box-sizing: border-box;
       `;
-  
+
+      // 2. Add title
       const title = document.createElement('h5');
       title.innerText = `Assessment: ${this.selectedAssessment || 'N/A'}`;
       title.style.textAlign = 'center';
       title.style.marginBottom = '16px';
       container.appendChild(title);
-  
+
+      // 3. Add user info
       const userInfo = document.createElement('div');
       userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || 'N/A'}</p>`;
       container.appendChild(userInfo);
-  
+
+      // 4. Add result info
       const resultInfo = document.createElement('div');
       if (sessionStorage.getItem('isHits') === 'true') {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>
@@ -199,31 +203,33 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
           <p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
       }
       container.appendChild(resultInfo);
-  
+
+      // 5. Create row for QR code and gauge
       const rowDiv = document.createElement('div');
       rowDiv.style.display = 'flex';
       rowDiv.style.justifyContent = 'center';
       rowDiv.style.alignItems = 'flex-start';
       rowDiv.style.gap = '30px';
       rowDiv.style.margin = '20px 0';
-  
+
+      // 6. Add QR code
       const qrCanvas = this.qrCodeElement?.qrcElement?.nativeElement.querySelector('canvas');
       if (qrCanvas) {
         const qrSpan = document.createElement('span');
         qrSpan.style.display = 'inline-block';
         qrSpan.style.textAlign = 'center';
-  
+
         const qrLabel = document.createElement('p');
         qrLabel.innerText = 'Here is your QR Code.';
         qrLabel.style.marginBottom = '10px';
         qrSpan.appendChild(qrLabel);
-  
+
         const qrImg = document.createElement('img');
         qrImg.src = qrCanvas.toDataURL('image/png');
         qrImg.style.width = '128px';
         qrImg.style.height = '128px';
         qrSpan.appendChild(qrImg);
-  
+
         const fixedUrl = this.QrcodeUrl.replace(/\\/g, '/');
         const urlObj = new URL(fixedUrl);
         const code = new URLSearchParams(urlObj.search).get('code');
@@ -231,11 +237,12 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         codeInfo.innerText = `Code: ${code}`;
         codeInfo.style.marginTop = '10px';
         qrSpan.appendChild(codeInfo);
-  
+
         rowDiv.appendChild(qrSpan);
       }
 
-      const generatePDF = async (containerElement: HTMLElement) => { 
+      // 7. Function to generate PDF
+      const generatePDF = async (containerElement: HTMLElement) => {
         const table = document.createElement('table');
         table.style.cssText = `
           width: 100%;
@@ -260,43 +267,53 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         `;
         containerElement.appendChild(table);
         document.body.appendChild(containerElement);
-  
+
         const canvas = await html2canvas(containerElement, {
           scale: 2,
           useCORS: true,
           backgroundColor: '#FFFFFF',
           windowWidth: containerElement.scrollWidth,
-          windowHeight: containerElement.scrollHeight
+          windowHeight: containerElement.scrollHeight,
+          allowTaint: true,
+          logging: true,
+          onclone: (clonedDoc) => {
+            // Ensure all elements are visible in the cloned document
+            clonedDoc.querySelectorAll('[style*="display: none"]').forEach(el => ((el as HTMLElement).style.display = 'block'));
+          }
         });
-  
+
         const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
         const margin = { top: 15, bottom: 20, left: 15, right: 15 };
         const contentWidth = pageWidth - margin.left - margin.right;
         const contentHeight = pageHeight - margin.top - margin.bottom;
-  
+
         const imgWidth = contentWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         const totalPages = Math.ceil(imgHeight / contentHeight);
-  
+
         for (let i = 0; i < totalPages; i++) {
           if (i > 0) pdf.addPage();
-  
+
           const sliceCanvas = document.createElement('canvas');
           sliceCanvas.width = canvas.width;
           sliceCanvas.height = Math.floor((contentHeight * canvas.height) / imgHeight);
           const ctx = sliceCanvas.getContext('2d');
           if (!ctx) throw new Error('Failed to get context for PDF page slice');
-  
+
           ctx.drawImage(
             canvas,
-            0, i * contentHeight * (canvas.height / imgHeight),
-            canvas.width, sliceCanvas.height,
-            0, 0,
-            canvas.width, sliceCanvas.height
+            0,
+            i * contentHeight * (canvas.height / imgHeight),
+            canvas.width,
+            sliceCanvas.height,
+            0,
+            0,
+            canvas.width,
+            sliceCanvas.height
           );
-  
+
           pdf.addImage({
             imageData: sliceCanvas.toDataURL('image/png'),
             format: 'PNG',
@@ -305,69 +322,73 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
             width: imgWidth,
             height: (sliceCanvas.height * imgWidth) / canvas.width
           });
-  
-          // Page number
+
           if (totalPages > 1) {
             pdf.setFontSize(10);
             pdf.setTextColor(100);
             pdf.text(`Page ${i + 1} of ${totalPages}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
           }
         }
-  
+
         pdf.save(`${this.selectedAssessment || 'Assessment'} Result.pdf`);
       };
-  
-      const riskMeterSVG = this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement?.querySelector('svg');
-      if (riskMeterSVG) {
+
+      // 8. Capture the risk meter (gauge)
+      this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
+      const riskMeterContainer = !this.isSSripa ? this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement : null;
+
+      if (riskMeterContainer) {
+
+        const scoreDisplayContainer = riskMeterContainer.querySelector('.score-display');
+
+        if (scoreDisplayContainer) {
+          scoreDisplayContainer.remove();
+        }
         const meterSpan = document.createElement('span');
         meterSpan.style.display = 'inline-block';
         meterSpan.style.textAlign = 'center';
-      
-        // ✅ Use setTimeout to ensure SVG rendering completes
-        setTimeout(async () => {
-          try {
-            const serializer = new XMLSerializer();
-            const svgString = serializer.serializeToString(riskMeterSVG);
-            const cleanedSvg = svgString.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
-      
-            // ✅ Convert SVG to Blob and then to Image
-            const svgBlob = new Blob([cleanedSvg], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(svgBlob);
-      
-            const img = new Image();
-            img.onload = async () => {
-              URL.revokeObjectURL(url); // Clean up
-              img.style.width = '200px';
-              img.style.height = '128px';
-              meterSpan.appendChild(img);
-              rowDiv.appendChild(meterSpan);
-              container.appendChild(rowDiv);
-      
-              await new Promise(r => setTimeout(r, 100)); // Small delay for DOM update
-              await generatePDF(container);
-            };
-            img.onerror = () => {
-              console.error('Failed to load risk meter SVG image');
-              container.appendChild(rowDiv);
-              generatePDF(container); // Fallback without risk meter
-            };
-            img.src = url;
-          } catch (err) {
-            console.error('Error processing SVG:', err);
-            container.appendChild(rowDiv);
-            await generatePDF(container);
-          }
-        }, 100); // Small delay to ensure SVG is ready
+
+        const meterLabel = document.createElement('p');
+        meterLabel.innerText = 'Risk Meter';
+        meterLabel.style.marginBottom = '10px';
+        meterSpan.appendChild(meterLabel);
+
+        // Clone the gauge container to preserve styles and structure
+        const gaugeClone = riskMeterContainer.cloneNode(true) as HTMLElement;
+
+        // Make sure all hidden elements are visible for capture
+        const hiddenElements = gaugeClone.querySelectorAll('[style*="display: none"]');
+        hiddenElements.forEach((el) => ((el as HTMLElement).style.display = 'block'));
+
+        // Set dimensions for the cloned gauge
+        gaugeClone.style.width = '200px';
+        gaugeClone.style.height = '128px';
+
+        // Append the cloned gauge to the meter span
+        meterSpan.appendChild(gaugeClone);
+        rowDiv.appendChild(meterSpan);
+        container.appendChild(rowDiv);
+
+        // Force Angular to update the view
+        this.cdRef.detectChanges();
+        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for rendering
+
+        // Generate the PDF
+        await generatePDF(container);
+      } else {
+        // Fallback: Generate PDF without the gauge if it's not found
+        console.error('Gauge container not found');
+        container.appendChild(rowDiv);
+        await generatePDF(container);
       }
-  
- 
-  
+
     } catch (err) {
       console.error('Export to PDF failed:', err);
       alert('Failed to export PDF. Please try again.');
     } finally {
+      // Clean up temporary elements
       const elements = document.querySelectorAll('div[style*="left: -9999px"]');
-      elements.forEach(el => el.remove());
+      elements.forEach((el) => (el as HTMLElement).remove());
     }
   }
 
