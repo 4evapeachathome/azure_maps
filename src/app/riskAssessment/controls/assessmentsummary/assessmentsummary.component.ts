@@ -187,13 +187,13 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
       // 3. Add user info
       const userInfo = document.createElement('div');
-      userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || 'N/A'}</p>`;
+      userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || '<>'}</p>`;
       container.appendChild(userInfo);
 
       // 4. Add result info
       const resultInfo = document.createElement('div');
       if (sessionStorage.getItem('isHits') === 'true') {
-        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>
           ${this.riskValue ? `<p><strong>Here is your score:</strong> <span>${this.riskValue}</span></p>` : ''}
           ${this.guidedType === 'staff-guided' ? `
             <p><strong>Note:</strong> ${this.note || ''}</p>
