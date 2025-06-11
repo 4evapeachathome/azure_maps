@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 
 @Component({
@@ -10,13 +11,27 @@ import { LoadingController } from '@ionic/angular';
 export class AssessmentSummaryPage implements OnInit,AfterViewInit{
   loading: HTMLIonLoadingElement | null = null;
   riskScore: number = 7; // Example score, should be updated with actual risk assessment score
-
-  constructor(private loadingController: LoadingController) { }
+  reloadData: boolean = false;
+  constructor(private loadingController: LoadingController,private router:Router) { }
 
   async ngOnInit() {
     // Only show loader if not pre-rendered
+    this.reloadData = true;
+
+    // Subscribe to route changes to toggle reloadFlag
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // Toggle reloadFlag to trigger ngOnChanges in child
+        this.reloadData = false;
+        setTimeout(() => {
+          this.reloadData = true; // Set to true after a tick to ensure change detection
+        }, 0);
+      }
+    });
     await this.showLoader();
   }
+
+
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {

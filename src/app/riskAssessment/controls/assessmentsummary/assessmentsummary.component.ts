@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { interval, Subscription } from 'rxjs';
@@ -20,6 +20,7 @@ import { SummarypageComponent } from "../summarypage/summarypage.component";
   imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
 })
 export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
+  @Input() reloadFlag: boolean = false;
   hidePdfContainer = true;
   caseNumber: string='';
   loggedInUser:any = null;
@@ -56,11 +57,25 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   ratQrCodeValue: string = '';
   responseJson: any;
   isHitAssessment = false;
+  hasFetchedData: boolean = false; // Track if logins have been fetched
 
 
   constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
+    if (!this.hasFetchedData) {
+      this.initializeComponent();
+      this.hasFetchedData = true;
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedData) {
+      this.initializeComponent();
+    }
+  }
+
+  initializeComponent(){
     const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
       try {
@@ -113,10 +128,10 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
     this.loaded = true;
     this.caseNumber = sessionStorage.getItem('caseNumber') || '';
-    
   }
 
   ngAfterViewInit(): void {
+    debugger;
     let ratResult = sessionStorage.getItem('ratsAssessmentResult');
     if(ratResult) {
       this.ratAssessmentResult = JSON.parse(ratResult || '')

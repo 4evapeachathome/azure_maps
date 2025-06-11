@@ -22,6 +22,7 @@ export class LoginPageComponent  implements OnInit {
   showPassword = false;
   showNewPassword = false;
   @Input() reloadFlag: boolean = false;
+  private hasFetchedLogins: boolean = false; // Track if logins have been fetched
 
   constructor(
     private fb: FormBuilder,
@@ -39,15 +40,21 @@ export class LoginPageComponent  implements OnInit {
   ngOnInit() {
     // Fetch user logins on component initialization 
     this.loginForm.reset();
-    this.getUserLogins();
+    if (!this.hasFetchedLogins) {
+      this.getUserLogins();
+      this.hasFetchedLogins = true;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true) {
+    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedLogins) {
       this.loginForm.reset();
-      this.getUserLogins()  // Call your API or logic
+      this.getUserLogins();
+      this.hasFetchedLogins = true;
     }
   }
+
+
 private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
     await presentToast(this.toastController, message, duration, position);
   }
