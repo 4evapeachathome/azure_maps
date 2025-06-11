@@ -1524,3 +1524,12 @@ ion-segment-view {
   vertical-align: bottom;
       align-items: end;
 }
+.case-number{
+  font-weight: $font-bold;
+  span{
+    color: $color-primary;
+  }
+}
+.risk-ssripa{
+  padding: 16px;
+}

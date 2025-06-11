@@ -268,8 +268,8 @@ justify-content: end;
 .qr-code-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-top: 0rem;
+   // align-items: center;
+    margin-top: 8px;
    .qrcode canvas {
       width: 100px !important;
       height: 100px !important;
@@ -345,7 +345,7 @@ justify-content: end;
       }
     }
     tbody{
-     
+     color: var(--color-deep-Gray);
       .tbody-container{
 
  .tbc-content{
@@ -458,5 +458,12 @@ span, ion-radio{
       padding-left: 50px;
       color: var(--color-dark-Gray) !important;
       font-weight: normal;
+    }
+  }
+  .risk-meter-container{
+    .title{
+      font-size: $font-size-md;
+      color: $color-deep-Gray;
+      font-weight: $font-bold ;
     }
   }
