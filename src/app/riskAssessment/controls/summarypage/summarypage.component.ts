@@ -1,10 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { RiskMeterComponent } from '../../risk-meter/risk-meter.component';
-import { Router } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-summarypage',
@@ -16,6 +14,7 @@ import { CookieService } from 'ngx-cookie-service';
 export class SummarypageComponent implements OnInit {
   loggedInUser: any = null;
   @Input() riskScore: number = 12;
+  @ViewChild(RiskMeterComponent) riskMeterComponent!: RiskMeterComponent;
   loaded: boolean = false;
   @Input() range: Array<{ min: number; max: number; color: string; label: string }> = [
     { min: 0, max: 5, color: 'yellow', label: 'Low Risk' },
@@ -31,8 +30,6 @@ export class SummarypageComponent implements OnInit {
   };
 
   constructor(
-    private cookieService: CookieService,
-    private router: Router
   ) { }
 
   ngOnInit() {
@@ -40,6 +37,9 @@ export class SummarypageComponent implements OnInit {
   }
 
   
+  public getCanvasFromGauge(): HTMLCanvasElement | null {
+    return this.riskMeterComponent?.getGaugeCanvas();
+  }
 
   getRiskCategory(score: number): { color: string; label: string } | null {
     if (!this.range) return null;

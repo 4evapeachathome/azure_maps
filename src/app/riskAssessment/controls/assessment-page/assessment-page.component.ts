@@ -152,6 +152,7 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/danger-assessment-immigrants'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'da':
+        case 'the danger assessment (da)':
           sessionStorage.removeItem('isSSripa');
           sessionStorage.removeItem('isHits');
           sessionStorage.setItem('isDaAssessment', 'true');
