@@ -110,7 +110,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
-        debugger;
+        //debugger;
         this.responseJson= result.summary;
         this.QrcodeUrl= result.ssripasurl;
       }
@@ -120,7 +120,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       const resultStr = sessionStorage.getItem('hitsAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
-        debugger;
+        //debugger;
         this.responseJson= result.summary;
         this.riskValue = result.totalScore;
         this.answerSummary = result.summary;
@@ -434,7 +434,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.apiService.getHitsResultCalculation().subscribe({
       next: (response: any) => {
         if (response && response.data) {
-          debugger;
+          //debugger;
           this.hitResults = response.data;
   
           // Extract and store Note and Caution (assumes only one item in hitResults)

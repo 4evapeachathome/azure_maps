@@ -62,7 +62,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
-    debugger;
+    //debugger;
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
       if(type.name == this.selectedAssessment) {
         return type;
@@ -134,6 +134,31 @@ export class AssessmentPageComponent  implements OnInit {
     }
   }
 
+  navigateWithDangerCache(targetRoute: string) {
+    const cached = this.menuService.getDangerAssessment(); // Synchronous access
+    if (cached) {
+      sessionStorage.removeItem('isHits');
+      sessionStorage.removeItem('isSSripa');
+      sessionStorage.setItem('isDanger', 'true');
+      this.router.navigate([targetRoute]);
+    } else {
+      this.apiService.getDAAssessmentQuestions().subscribe({
+        next: (res: any) => {
+          //debugger;
+          this.menuService.setDangerAssessment(res); 
+          sessionStorage.removeItem('isHits');// Update BehaviorSubject
+          sessionStorage.removeItem('isSSripa');
+          sessionStorage.setItem('isDanger', 'true');
+          this.router.navigate([targetRoute]);
+        },
+        error: (err) => {
+          console.error('Failed to load SSRIPA data:', err);
+        }
+      });
+    }
+  }
+
+
   goToTest() {
     if (this.selectedAssessment) {
       sessionStorage.setItem('guidedType', this.guidedType);
@@ -153,10 +178,7 @@ export class AssessmentPageComponent  implements OnInit {
           break;
         case 'da':
         case 'the danger assessment (da)':
-          sessionStorage.removeItem('isSSripa');
-          sessionStorage.removeItem('isHits');
-          sessionStorage.setItem('isDaAssessment', 'true');
-          this.router.navigate(['/dangerassessment']);
+          this.navigateWithDangerCache('/dangerassessment');
           break;
         case 'relationship assessment tool originally called web scale':
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });
