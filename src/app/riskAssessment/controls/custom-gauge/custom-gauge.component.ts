@@ -63,9 +63,9 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
 
   public mapColor(color: string): string {
     const colorMap: { [key: string]: string } = {
-      'Yellow': '#FFFF99',
-      'Orange': '#FFA500',
-      'Red': '#FF0000',
+      'Yellow': '#8CE249',
+      'Orange': '#EDA635',
+      'Red': '#E82D48',
     };
     return colorMap[color] || color;
   }

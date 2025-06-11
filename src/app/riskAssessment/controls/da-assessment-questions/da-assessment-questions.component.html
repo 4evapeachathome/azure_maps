@@ -154,7 +154,7 @@
                   <ion-button fill="outline" color="medium"
                     >Back</ion-button
                   >
-                  <ion-button color="primary" (click)="submitDangerAssessment()"
+                  <ion-button color="primary" (click)="submitDangerAssessment()" [disabled]="!allParentQuestionsAnswered"
                     >Submit</ion-button
                   >
                 </div>

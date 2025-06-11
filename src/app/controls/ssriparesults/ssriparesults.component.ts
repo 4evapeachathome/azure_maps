@@ -75,33 +75,29 @@ export class SsriparesultsComponent  implements OnInit {
   
       // Table
       const table = document.createElement('table');
-      table.style.width = '100%';
-      table.style.borderCollapse = 'collapse';
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th style="border: 1px solid #ccc; padding: 8px;">Question</th>
-            <th style="border: 1px solid #ccc; padding: 8px;">Yes</th>
-            <th style="border: 1px solid #ccc; padding: 8px;">No</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${this.sripa.map((q, i) => `
-            <tr>
-              <td style="border: 1px solid #ccc; padding: 8px;">
-                ${q.text}
-              </td>
-              <td style="text-align: center; border: 1px solid #ccc; padding: 8px;">
-                ${this.selectedOptions[i] === 'yes' ? '✔' : ''}
-              </td>
-              <td style="text-align: center; border: 1px solid #ccc; padding: 8px;">
-                ${this.selectedOptions[i] === 'no' ? '✔' : ''}
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      `;
-      container.appendChild(table);
+table.style.width = '100%';
+table.style.borderCollapse = 'collapse';
+table.innerHTML = `
+  <thead>
+    <tr>
+      <th style="border: 1px solid #ccc; padding: 8px;">Question</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Answer</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${this.sripa.map((q, i) => `
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;">
+          ${q.text}
+        </td>
+        <td style="text-align: center; border: 1px solid #ccc; padding: 8px;">
+          ${(this.selectedOptions[i] || '')}
+        </td>
+      </tr>
+    `).join('')}
+  </tbody>
+`;
+container.appendChild(table);
   
       // Warning message
       if (this.highSeverityTriggered) {

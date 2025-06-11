@@ -180,7 +180,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
       // 2. Add title
       const title = document.createElement('h5');
-      title.innerText = `Assessment: ${this.selectedAssessment || 'N/A'}`;
+      title.innerText = this.selectedAssessment || 'N/A';
       title.style.textAlign = 'center';
       title.style.marginBottom = '16px';
       container.appendChild(title);
@@ -190,29 +190,25 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || '<>'}</p>`;
       container.appendChild(userInfo);
 
-      // 4. Add result info
-      const resultInfo = document.createElement('div');
+      // 4. Create row for result info and QR code
+      const resultRow = document.createElement('div');
+      resultRow.style.display = 'flex';
+      resultRow.style.justifyContent = 'center';
+      resultRow.style.alignItems = 'flex-start';
+      resultRow.style.gap = '30px';
+      resultRow.style.margin = '20px 0';
+
+      // 5. Add result info
+      const resultInfo = document.createElement('span');
+      resultInfo.style.display = 'inline-block';
       if (sessionStorage.getItem('isHits') === 'true') {
-        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>
-          ${this.riskValue ? `<p><strong>Here is your score:</strong> <span>${this.riskValue}</span></p>` : ''}
-          ${this.guidedType === 'staff-guided' ? `
-            <p><strong>Note:</strong> ${this.note || ''}</p>
-            <p><strong>Caution:</strong> ${this.caution || ''}</p>` : ''}`;
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
       } else if (sessionStorage.getItem('isSSripa') === 'true') {
-        resultInfo.innerHTML = `
-          <p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
       }
-      container.appendChild(resultInfo);
+      resultRow.appendChild(resultInfo);
 
-      // 5. Create row for QR code and gauge
-      const rowDiv = document.createElement('div');
-      rowDiv.style.display = 'flex';
-      rowDiv.style.justifyContent = 'center';
-      rowDiv.style.alignItems = 'flex-start';
-      rowDiv.style.gap = '30px';
-      rowDiv.style.margin = '20px 0';
-
-      // 6. Add QR code
+      // 6. Add QR code to result row
       const qrCanvas = this.qrCodeElement?.qrcElement?.nativeElement.querySelector('canvas');
       if (qrCanvas) {
         const qrSpan = document.createElement('span');
@@ -238,11 +234,34 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         codeInfo.style.marginTop = '10px';
         qrSpan.appendChild(codeInfo);
 
-        rowDiv.appendChild(qrSpan);
+        resultRow.appendChild(qrSpan);
       }
+      container.appendChild(resultRow);
 
-      // 7. Function to generate PDF
-      const generatePDF = async (containerElement: HTMLElement) => {
+      // 7. Create row for score info (without QR code)
+      const scoreRow = document.createElement('div');
+      scoreRow.style.display = 'flex';
+      scoreRow.style.justifyContent = 'center';
+      scoreRow.style.alignItems = 'flex-start';
+      scoreRow.style.gap = '30px';
+      scoreRow.style.margin = '20px 0';
+
+      // 8. Add score info
+      const scoreInfo = document.createElement('span');
+      scoreInfo.style.display = 'inline-block';
+      if (sessionStorage.getItem('isHits') === 'true') {
+        scoreInfo.innerHTML = `
+          ${this.riskValue ? `<p><strong>Here is your score:</strong> <span>${this.riskValue}</span></p>` : ''}
+          ${this.guidedType === 'staff-guided' ? 
+            `<p><strong>Note:</strong> ${this.note || ''}</p>
+             <p><strong>Caution:</strong> ${this.caution || ''}</p>` : ''}
+        `;
+      }
+      scoreRow.appendChild(scoreInfo);
+      container.appendChild(scoreRow);
+
+      // 9. Function to generate PDF
+      const generatePDF = async (containerElement:any) => {
         const table = document.createElement('table');
         table.style.cssText = `
           width: 100%;
@@ -257,7 +276,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
             </tr>
           </thead>
           <tbody>
-            ${this.responseJson.map((item: any) => `
+            ${this.responseJson.map((item:any) => `
               <tr style="page-break-inside: avoid;">
                 <td style="border: 1px solid #ccc; padding: 8px;">${item.question}</td>
                 <td style="border: 1px solid #ccc; padding: 8px;">${item.answer}</td>
@@ -277,7 +296,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
           allowTaint: true,
           logging: true,
           onclone: (clonedDoc) => {
-            // Ensure all elements are visible in the cloned document
             clonedDoc.querySelectorAll('[style*="display: none"]').forEach(el => ((el as HTMLElement).style.display = 'block'));
           }
         });
@@ -333,14 +351,12 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         pdf.save(`${this.selectedAssessment || 'Assessment'} Result.pdf`);
       };
 
-      // 8. Capture the risk meter (gauge)
+      // 10. Capture the risk meter (gauge)
       this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
       const riskMeterContainer = !this.isSSripa ? this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement : null;
 
       if (riskMeterContainer) {
-
         const scoreDisplayContainer = riskMeterContainer.querySelector('.score-display');
-
         if (scoreDisplayContainer) {
           scoreDisplayContainer.remove();
         }
@@ -353,46 +369,28 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         meterLabel.style.marginBottom = '10px';
         meterSpan.appendChild(meterLabel);
 
-        // Clone the gauge container to preserve styles and structure
-        const gaugeClone = riskMeterContainer.cloneNode(true) as HTMLElement;
-
-        // Make sure all hidden elements are visible for capture
+        const gaugeClone = riskMeterContainer.cloneNode(true);
         const hiddenElements = gaugeClone.querySelectorAll('[style*="display: none"]');
-        hiddenElements.forEach((el) => ((el as HTMLElement).style.display = 'block'));
+        hiddenElements.forEach((el:any) => (el.style.display = 'block'));
 
-        // Set dimensions for the cloned gauge
         gaugeClone.style.width = '200px';
         gaugeClone.style.height = '128px';
-
-        // Append the cloned gauge to the meter span
         meterSpan.appendChild(gaugeClone);
-        rowDiv.appendChild(meterSpan);
-        container.appendChild(rowDiv);
+        scoreRow.appendChild(meterSpan);
 
-        // Force Angular to update the view
         this.cdRef.detectChanges();
-        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for rendering
-
-        // Generate the PDF
+        await new Promise(resolve => setTimeout(resolve, 100));
         await generatePDF(container);
       } else {
-        // Fallback: Generate PDF without the gauge if it's not found
         console.error('Gauge container not found');
-        container.appendChild(rowDiv);
         await generatePDF(container);
       }
-
-    } catch (err) {
-      console.error('Export to PDF failed:', err);
-      alert('Failed to export PDF. Please try again.');
-    } finally {
-      // Clean up temporary elements
-      const elements = document.querySelectorAll('div[style*="left: -9999px"]');
-      elements.forEach((el) => (el as HTMLElement).remove());
+    } catch (error) {
+      console.error('Error generating PDF:', error);
     }
-  }
+}
 
-  
+
   stayLoggedIn() {
     const now = Date.now().toString();
     this.cookieService.set('loginTime', now, {

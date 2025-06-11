@@ -92,6 +92,15 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
     }));
   }
 
+
+  get allParentQuestionsAnswered(): boolean {
+    if (!this.daAssessment) return false;
+    
+    return this.daAssessment.every((question:any) => 
+      question.selected !== null && question.selected !== undefined
+    );
+  }
+
    private updateGuidedTypeLabel() {
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
   }
@@ -192,7 +201,9 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
             for (const question of this.daAssessment) {
               const selected = question.selected;
               const isYes = selected && selected.label === 'Yes';
-              const selectedAnswer = selected ? selected.label : null;
+              const selectedAnswer = selected?.label 
+  ? selected.label.charAt(0).toUpperCase() + selected.label.slice(1).toLowerCase() 
+  : '';
 
               answerSummary.push({
                 question: question.questionText,
@@ -210,10 +221,14 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                 for (const subQuestion of question.DAChild) {
                   const subSelected = subQuestion.selected;
                   const isSubYes = subSelected && subSelected.label === 'Yes';
+                  const selectedAnswer = subSelected?.label
+  ? subSelected.label.charAt(0).toUpperCase() + subSelected.label.slice(1).toLowerCase()
+  : '';
+
 
                   answerSummary.push({
                     question: `${question.questionOrder}${String.fromCharCode(97 + question.DAChild.indexOf(subQuestion))}. ${subQuestion.questionText}`,
-                    answer: subSelected ? subSelected.label : null
+                    answer: selectedAnswer
                   });
 
                   if (isSubYes && subQuestion.weightageScore) {
