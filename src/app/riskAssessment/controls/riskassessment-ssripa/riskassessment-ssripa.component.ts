@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
@@ -29,6 +29,7 @@ currentIndex = 0;
 showAnswers: boolean[] = [];
 selectedOptions: string[] = [];
 showresults: boolean = false;
+@Input() sripaGuid: any;
 
   constructor(private router: Router,
       private apiService: ApiService,
@@ -132,7 +133,7 @@ showresults: boolean = false;
             const payload = {
               data: {
                 response: respondedQuestions,
-                AssessmentGuid: Utility.generateGUID('ssripa'),
+                AssessmentGuid: this.sripaGuid,
                 support_service: this.loggedInUser?.documentId ?? null,
                 CaseNumber: this.caseNumber,
                 IsAssessmentfromEducationModule: false

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
@@ -24,6 +24,7 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   scaleOptions: string[] = [];
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
+  @Input() daGuid:any;
 
 constructor(
     private router: Router,
@@ -253,7 +254,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
 
             const payload = {
               data: {
-                AssessmentGuid: Utility.generateGUID('da'),
+                AssessmentGuid: this.daGuid,
                 response: answerSummary,
                 Score: totalScore,
                 CaseNumber: this.caseNumber,

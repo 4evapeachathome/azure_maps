@@ -6,6 +6,8 @@ import { SsripaactionplanComponent } from '../controls/ssripaactionplan/ssripaac
 import { SsriparesultsComponent } from '../controls/ssriparesults/ssriparesults.component';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApiService } from '../services/api.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 
 @Component({
@@ -20,7 +22,8 @@ export class SripaaPage implements OnInit,AfterViewInit {
   @ViewChild('actionPlanRef') actionPlanRef!: SsripaactionplanComponent;
   resultUrl = '';
   loading: HTMLIonLoadingElement | null = null;
-
+  ssripGuidUrl:string=APIEndpoints.ssripGuidUrl;
+  sripaData:any;
   hidewhenshowingresults: boolean = false;
   selectedTab: 'results' | 'actionplan' = 'results';
   // These will be passed to the results component
@@ -31,7 +34,8 @@ export class SripaaPage implements OnInit,AfterViewInit {
   constructor(
     private menuService: MenuService,
     private loadingController: LoadingController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private apiService: ApiService
   ) {}
 
   async ngOnInit() {
@@ -53,13 +57,34 @@ export class SripaaPage implements OnInit,AfterViewInit {
     } else {
       this.hidewhenshowingresults = false;
     }
-  
+    this.loadSSripaData();
     await this.showLoader();
   }
   
   retakeAssessment(){
     this.hidewhenshowingresults= false;
   }
+
+  loadSSripaData() {
+    try {
+      // Replace with your actual API URL
+      const url = this.ssripGuidUrl;
+      
+      this.apiService.generateGuid(url).subscribe({
+        next: (response) => {
+          debugger;
+          this.sripaData = response?.guid;
+        },
+        error: (err) => {
+          console.error('API Error:', err);
+          // Handle error (show toast, etc.)
+        }
+      });
+    } catch (err) {
+      console.error('Error:', err);
+    }
+  }
+
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {

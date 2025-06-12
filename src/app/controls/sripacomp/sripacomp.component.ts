@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -36,7 +36,8 @@ showAnswers: boolean[] = [];
 selectedOptions: string[] = [];
 finalAnswerHtml: string = '';
 showresults: boolean = false;
-hasYesAnswer: boolean = false; // Track if any 'yes' answer is selected
+hasYesAnswer: boolean = false;
+@Input() ssripaGuid:any; // Track if any 'yes' answer is selected
 
 constructor(private apiService: ApiService) {}
 
@@ -145,7 +146,7 @@ submitAssessmentResponse(): Observable<any> {
   const payload = {
     data: {
       response: respondedQuestions,
-      AssessmentGuid: Utility.generateGUID('ssripa'),
+      AssessmentGuid: this.ssripaGuid,
       support_service: null,
       CaseNumber: null, // Replace with actual case number if available
       IsAssessmentfromEducationModule: true
