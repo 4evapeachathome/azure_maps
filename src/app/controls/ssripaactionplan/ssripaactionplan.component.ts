@@ -88,6 +88,9 @@ export class SsripaactionplanComponent  implements OnInit {
       // Add title
       const title = document.createElement('h2');
       title.innerText = this.quizTitle || 'Action Plan';
+      title.style.textAlign = 'center';
+      title.style.marginBottom = '16px';
+      title.style.fontWeight = 'bold';
       container.appendChild(title);
   
       // Build table

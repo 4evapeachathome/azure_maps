@@ -72,6 +72,7 @@ selectOption(index: number, option: 'yes' | 'no'): void {
   this.selectedOptions[index] = option;
   this.showresults = this.selectedOptions.some(opt => opt !== null);
   this.hasYesAnswer = this.selectedOptions.some(opt => opt === 'yes');
+  sessionStorage.setItem('hasYesAnswer', JSON.stringify(this.hasYesAnswer));
   this.hasYesAnswerChanged.emit(this.hasYesAnswer);
 }
 
