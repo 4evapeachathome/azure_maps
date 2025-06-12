@@ -45,6 +45,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   errorMessage: string | null = null;
   isHitsAssessment: boolean = false;
   riskGaugeMin: number = 0;
+  daResult: any[] = []; //
   riskGaugeMax: number = 100;
   gaugeThresholds: any[] = [];
   thresholdValues: { [key: string]: { color: string } } = {};
@@ -110,7 +111,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-
+debugger;
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
@@ -121,7 +122,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       }
     }
    
-    if(this.selectedAssessment?.toLowerCase() == 'hits' && this.isHitsAssessment) {
+    if(this.isHitsAssessment) {
       const resultStr = sessionStorage.getItem('hitsAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
@@ -146,7 +147,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.QrcodeUrl= result.daurl;
         this.levelofdanger = result.Levelofdanger;
       }
-
+      this.fetchDaResults();
     }
 
     this.loaded = true;
@@ -158,8 +159,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.ratAssessmentResult = JSON.parse(ratResult || '');
         this.assessmentNumber = this.ratAssessmentResult.asssessmentNumber;
       }
-    }
-    this.checkSelectedAssessment(this.assessmentNumber);
+      this.checkSelectedAssessment(this.assessmentNumber);
+    }    
   }
 
   ngAfterViewInit(): void {
@@ -214,62 +215,67 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       title.style.fontWeight = 'bold';
       container.appendChild(title);
 
-      // 4. Create row for result info and QR code
+      // 3. Create row for Case Number, result info, and QR code
       const mainRow = document.createElement('div');
       mainRow.style.display = 'flex';
       mainRow.style.justifyContent = 'space-between';  // Space between left and right sections
       mainRow.style.alignItems = 'flex-start';
       mainRow.style.margin = '20px 0';
-      
+
       // Left section: Case Number and Result Info
       const leftSection = document.createElement('div');
       leftSection.style.display = 'flex';
       leftSection.style.flexDirection = 'column';
       leftSection.style.gap = '10px';
-      
+
       // Add user info (Case Number)
       const userInfo = document.createElement('div');
       userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || '<>'}</p>`;
       leftSection.appendChild(userInfo);
-      
+
       // Add result info
-      const resultInfo = document.createElement('div');  // Changed to div for consistency
+      const resultInfo = document.createElement('div');
       resultInfo.style.display = 'inline-block';
       resultInfo.style.minWidth = '300px';  // Ensure enough space for text
       resultInfo.style.whiteSpace = 'normal';
       if (sessionStorage.getItem('isHits') === 'true') {
         resultInfo.innerHTML = `<p style="white-space: nowrap;">Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
-      } 
-      else if (this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+      } else if (this.selectedAssessment?.toLowerCase() === ASSESSMENT_TYPE.WEB?.toLowerCase()) {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>
           ${this.guidedType === 'staff-guided' ? `
           <p><strong>Status:</strong> ${this.riskValue >= 20 ? 'Positive' : 'Negative'}</p>` : ''}`;
-      } 
-      else if (sessionStorage.getItem('isSSripa') === 'true') {
+      } else if (sessionStorage.getItem('isSSripa') === 'true') {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
+      } else if (sessionStorage.getItem('isDanger') === 'true') {
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
       }
       leftSection.appendChild(resultInfo);
-      
+
       mainRow.appendChild(leftSection);
-      
+
       // Right section: QR Code
+      const rightSection = document.createElement('div');
+      rightSection.style.display = 'flex';
+      rightSection.style.flexDirection = 'column';
+      rightSection.style.alignItems = 'center';  // Center align QR code
+
+      const qrSpan = document.createElement('span');
+      qrSpan.style.display = 'inline-block';
+      qrSpan.style.textAlign = 'center';
+
+      const qrLabel = document.createElement('p');
+      qrLabel.innerText = this.selectedAssessment?.toLowerCase() === ASSESSMENT_TYPE.WEB?.toLowerCase() ? 'Here is the access code for your assessment:' : 'Here is your QR Code.';
+      qrLabel.style.marginBottom = '10px';
+      qrSpan.appendChild(qrLabel);
+
       const qrCanvas = this.qrCodeElement?.qrcElement?.nativeElement.querySelector('canvas');
       if (qrCanvas) {
-        const qrSpan = document.createElement('span');
-        qrSpan.style.display = 'inline-block';
-        qrSpan.style.textAlign = 'center';
-      
-        const qrLabel = document.createElement('p');
-        qrLabel.innerText = this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase() ? 'Here is the access code for your assessment:' : 'Here is your QR Code.';
-        qrLabel.style.marginBottom = '10px';
-        qrSpan.appendChild(qrLabel);
-      
         const qrImg = document.createElement('img');
         qrImg.src = qrCanvas.toDataURL('image/png');
         qrImg.style.width = '128px';
         qrImg.style.height = '128px';
         qrSpan.appendChild(qrImg);
-      
+
         const fixedUrl = this.QrcodeUrl.replace(/\\/g, '/');
         const urlObj = new URL(fixedUrl);
         const code = new URLSearchParams(urlObj.search).get('code');
@@ -277,61 +283,113 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         codeInfo.innerText = `Code: ${code}`;
         codeInfo.style.marginTop = '10px';
         qrSpan.appendChild(codeInfo);
-      
-        mainRow.appendChild(qrSpan);
       }
-      
+
+      rightSection.appendChild(qrSpan);
+      mainRow.appendChild(rightSection);
       container.appendChild(mainRow);
 
-      // 7. Create row for score info (without QR code)
-      const scoreRow = document.createElement('div');
-      scoreRow.style.display = 'flex';
-      scoreRow.style.justifyContent = 'center';
-      scoreRow.style.alignItems = 'flex-start';
-      scoreRow.style.gap = '30px';
-      scoreRow.style.margin = '20px 0';
+      // 4. Create row for score info and risk meter
+      const scoreRiskRow = document.createElement('div');
+      scoreRiskRow.style.display = 'flex';
+      scoreRiskRow.style.justifyContent = 'space-between';
+      scoreRiskRow.style.alignItems = 'flex-start';
+      scoreRiskRow.style.margin = '20px 0';
 
-      // 8. Add score info
+      // Add score info to the new row
       const scoreInfo = document.createElement('span');
       scoreInfo.style.display = 'inline-block';
       if (sessionStorage.getItem('isHits') === 'true') {
         scoreInfo.innerHTML = `
           ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
           ${this.guidedType === 'staff-guided' ? 
-            `<p><strong>Note:</strong> ${this.note || ''}</p>
+            `<p><strong>Note:</strong> ${this.note || ''}.</p>
              <p><strong>Caution:</strong> ${this.caution || ''}</p>` : ''}
         `;
       }
-      scoreRow.appendChild(scoreInfo);
-      container.appendChild(scoreRow);
+      if (sessionStorage.getItem('isDanger') === 'true') {
+        scoreInfo.innerHTML = `
+          ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
+          ${this.guidedType === 'staff-guided' ? 
+            `<p><strong>Level of Danger:</strong> ${this.levelofdanger || ''}</p>` : ''}
+          ${this.guidedType === 'self-guided' ? 
+              `<p><strong>Please talk to your service provider about what the Danger Assessment means in your situation.</p>` : ''}
+        `;
+      }
+      scoreRiskRow.appendChild(scoreInfo);
 
-      // 9. Function to generate PDF
+      // Add risk meter to the new row
+      this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
+      const riskMeterContainer = !this.isSSripa ? this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement : null;
+
+      if (riskMeterContainer && this.selectedAssessment?.toLowerCase() !== ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+        const scoreDisplayContainer = riskMeterContainer.querySelector('.score-display');
+        if (scoreDisplayContainer) {
+          scoreDisplayContainer.remove();
+        }
+        const meterSpan = document.createElement('span');
+        meterSpan.style.display = 'inline-block';
+        meterSpan.style.textAlign = 'center';
+
+        const meterLabel = document.createElement('p');
+        meterLabel.innerText = 'Risk Meter';
+        meterLabel.style.marginBottom = '10px';
+        meterSpan.appendChild(meterLabel);
+
+        const gaugeClone = riskMeterContainer.cloneNode(true);
+        const hiddenElements = gaugeClone.querySelectorAll('[style*="display: none"]');
+        hiddenElements.forEach((el:any) => (el.style.display = 'block'));
+
+        gaugeClone.style.width = '200px';
+        gaugeClone.style.height = '128px';
+        meterSpan.appendChild(gaugeClone);
+
+        scoreRiskRow.appendChild(meterSpan);
+      }
+
+      container.appendChild(scoreRiskRow);
+
+      // 5. Function to generate PDF
       const generatePDF = async (containerElement:any) => {
         const table = document.createElement('table');
-        table.style.cssText = `
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-        `;
-        table.innerHTML = `
-        <thead>
-          <tr>
-            <th style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">S.No</th>
-            <th style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">Question</th>
-            <th style="border: 1px solid #ccc; padding: 8px; width: 250px; box-sizing: border-box;">Answer</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${this.responseJson.map((item:any, index:any) => `
-            <tr style="page-break-inside: avoid;">
-              <td style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">${index + 1}</td>
-              <td style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">${item.question}</td>
-              <td style="border: 1px solid #ccc; padding: 8px; width: 250px; text-align: center; box-sizing: border-box;">${item.answer}</td>
-            </tr>
-          `).join('')}
-        </tbody>
+table.style.cssText = `
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+`;
+table.innerHTML = `
+  <thead>
+    <tr>
+      <th style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">S.No</th>
+      <th style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">Question</th>
+      <th style="border: 1px solid #ccc; padding: 8px; width: 250px; box-sizing: border-box;">Answer</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${this.responseJson.map((item:any, index:any) => {
+      // Parent row
+      let rows = `
+        <tr style="page-break-inside: avoid;">
+          <td style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">${index + 1}</td>
+          <td style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">${item.question}</td>
+          <td style="border: 1px solid #ccc; padding: 8px; width: 250px; text-align: center; box-sizing: border-box; text-transform: capitalize;">${item.answer}</td>
+        </tr>
       `;
-        containerElement.appendChild(table);
+      // Child rows (if DAChild exists and is non-empty)
+      if (item.DAChild && Array.isArray(item.DAChild) && item.DAChild.length > 0) {
+        rows += item.DAChild.map((child:any, childIndex:any) => `
+          <tr style="page-break-inside: avoid;">
+            <td style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box; padding-left: 20px;">${index + 1}${this.getCharFromCode(97 + childIndex)}</td>
+            <td style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">${child.question}</td>
+            <td style="border: 1px solid #ccc; padding: 8px; width: 250px; text-align: center; box-sizing: border-box; text-transform: capitalize;">${child.answer}</td>
+          </tr>
+        `).join('');
+      }
+      return rows;
+    }).join('')}
+  </tbody>
+`;
+containerElement.appendChild(table);
         document.body.appendChild(containerElement);
 
         const canvas = await html2canvas(containerElement, {
@@ -398,46 +456,15 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         pdf.save(`${this.selectedAssessment || 'Assessment'} Result.pdf`);
       };
 
-      // 10. Capture the risk meter (gauge)
-      this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
-      const riskMeterContainer = !this.isSSripa ? this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement : null;
-
-      if (riskMeterContainer && this.selectedAssessment?.toLowerCase() !== ASSESSMENT_TYPE.WEB?.toLowerCase()) {
-
-        const scoreDisplayContainer = riskMeterContainer.querySelector('.score-display');
-        if (scoreDisplayContainer) {
-          scoreDisplayContainer.remove();
-        }
-        const meterSpan = document.createElement('span');
-        meterSpan.style.display = 'inline-block';
-        meterSpan.style.textAlign = 'center';
-
-        const meterLabel = document.createElement('p');
-        meterLabel.innerText = 'Risk Meter';
-        meterLabel.style.marginBottom = '10px';
-        meterSpan.appendChild(meterLabel);
-
-        const gaugeClone = riskMeterContainer.cloneNode(true);
-        const hiddenElements = gaugeClone.querySelectorAll('[style*="display: none"]');
-        hiddenElements.forEach((el:any) => (el.style.display = 'block'));
-
-        gaugeClone.style.width = '200px';
-        gaugeClone.style.height = '128px';
-        meterSpan.appendChild(gaugeClone);
-        scoreRow.appendChild(meterSpan);
-
-        this.cdRef.detectChanges();
-        await new Promise(resolve => setTimeout(resolve, 100));
-        await generatePDF(container);
-      } else {
-        console.error('Gauge container not found');
-        await generatePDF(container);
-      }
+      await generatePDF(container);
     } catch (error) {
       console.error('Error generating PDF:', error);
     }
 }
 
+getCharFromCode(code: number): string {
+  return String.fromCharCode(code);
+}
 
   stayLoggedIn() {
     const now = Date.now().toString();
@@ -475,6 +502,37 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     await alert.present();
   }
   
+  fetchDaResults() {
+    this.apiService.getDAresultcalculation().subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          debugger;
+          this.daResult = response.data;
+  
+  
+          this.rangevalue = this.daResult?.map((option:any) => ({
+            min: option.min,
+            max: option.max,
+            color: option.color,
+            label: option.label
+          }));
+        } else {
+          this.hitResults = [];
+          this.thresholdValues = {};
+          this.note = '';
+          this.caution = '';
+        }
+      },
+      error: (error: any) => {
+        this.errorMessage = error;
+        console.error('Error in subscription:', error);
+      },
+      complete: () => {
+        console.log('Hit results fetch completed');
+      },
+    });
+  }
+
 
   fetchHitResults() {
     this.apiService.getHitsResultCalculation().subscribe({

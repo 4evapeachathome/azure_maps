@@ -25,6 +25,7 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
   @Input() daGuid:any;
+  daQues:any;
 
 constructor(
     private router: Router,
@@ -65,12 +66,14 @@ constructor(
 
 if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   this.daAssessment = this.initializeAssessmentData(cachedHits.data);
+  this.daQues = this.daAssessment;
     } else {
       // Load from API if cache is empty
       this.apiService.getDAAssessmentQuestions().subscribe({
         next: (res: any) => {
           if(res && res.data && res.data.length > 0) {
-            this.daAssessment = this.initializeAssessmentData(res.data);       
+            this.daAssessment = this.initializeAssessmentData(res.data);  
+            this.daQues = this.daAssessment;     
             this.menuService.setDangerAssessment(res);
           }
         },
@@ -179,7 +182,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
     await alert.present();
   }
 
- async submitDangerAssessment(){
+  async submitDangerAssessment() {
     const alert = await this.alertController.create({
       header: 'Confirm Submission',
       message: 'Are you sure you want to submit the assessment?',
@@ -195,50 +198,55 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
           text: 'OK',
           handler: () => {
             let totalScore = 0;
-            const answerSummary: { question: string; answer: string | null }[] = [];
-            let criticalAlert = false;
-
+            const answerSummary: { question: string; answer: string; DAChild: { question: string; answer: string }[] }[] = [];
+  
             // Process main questions
-            for (const question of this.daAssessment) {
+            for (const question of this.daQues) {
               const selected = question.selected;
-              const isYes = selected && selected.label === 'Yes';
-              const selectedAnswer = selected?.label 
-  ? selected.label.charAt(0).toUpperCase() + selected.label.slice(1).toLowerCase() 
-  : '';
-
-              answerSummary.push({
+              const isYes = selected && selected === 'Yes';
+              const selectedAnswer = selected
+                ? selected.charAt(0).toUpperCase() + selected.slice(1).toLowerCase()
+                : '';
+  
+              // Create a question object with nested DAChild
+              const questionEntry = {
                 question: question.questionText,
-                answer: selectedAnswer
-              });
-
-              // Calculate score based on weightage_score if available, otherwise default to score or 1
+                answer: selectedAnswer,
+                DAChild: [] as { question: string; answer: string }[]
+              };
+  
+              // Calculate score for main question
               if (isYes) {
                 const weight = question.weightage_score !== null ? question.weightage_score : question.score;
-                totalScore += weight || 1;
+                totalScore += weight;
               }
-
+  
               // Process sub-questions (like 3a)
               if (question.DAChild && question.DAChild.length > 0) {
                 for (const subQuestion of question.DAChild) {
                   const subSelected = subQuestion.selected;
-                  const isSubYes = subSelected && subSelected.label === 'Yes';
-                  const selectedAnswer = subSelected?.label
-  ? subSelected.label.charAt(0).toUpperCase() + subSelected.label.slice(1).toLowerCase()
-  : '';
-
-
-                  answerSummary.push({
-                    question: `${question.questionOrder}${String.fromCharCode(97 + question.DAChild.indexOf(subQuestion))}. ${subQuestion.questionText}`,
+                  const isSubYes = subSelected && subSelected === 'Yes';
+                  const selectedAnswer = subSelected
+                    ? subSelected.charAt(0).toUpperCase() + subSelected.slice(1).toLowerCase()
+                    : '';
+  
+                  // Add sub-question to DAChild array
+                  questionEntry.DAChild.push({
+                    question: subQuestion.questionText,
                     answer: selectedAnswer
                   });
-
+  
+                  // Calculate score for sub-question
                   if (isSubYes && subQuestion.weightageScore) {
                     totalScore += subQuestion.weightageScore;
                   }
                 }
               }
+  
+              // Add the question entry to answerSummary
+              answerSummary.push(questionEntry);
             }
-
+  
             let levelOfDanger: string;
             if (totalScore < 8) {
               levelOfDanger = 'Variable';
@@ -249,9 +257,9 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
             } else if (totalScore >= 18) {
               levelOfDanger = 'Extreme';
             } else {
-              levelOfDanger = 'Unknown'; 
+              levelOfDanger = 'Unknown';
             }
-
+  
             const payload = {
               data: {
                 AssessmentGuid: this.daGuid,
@@ -259,13 +267,12 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                 Score: totalScore,
                 CaseNumber: this.caseNumber,
                 support_service: this.loggedInUser?.documentId,
-                Levelofdanger: levelOfDanger ,
+                Levelofdanger: levelOfDanger,
               }
             };
-
+  
             this.apiService.saveDaAssessmentResponse(payload).subscribe({
               next: (res) => {
-                debugger;
                 sessionStorage.setItem('daAssessmentResult', JSON.stringify({
                   totalScore,
                   summary: answerSummary,
@@ -283,18 +290,14 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
         }
       ]
     });
-
+  
     await alert.present();
   }
 
 
   onAnswerChange(question: any, event: any) {
-    // If clicking the already selected option, deselect it
-    if (question.selected === event.detail.value) {
-      question.selected = null;
-    } else {
-      question.selected = event.detail.value;
-    }
+    question.selected = event.detail.value;
   }
+  
 
 }

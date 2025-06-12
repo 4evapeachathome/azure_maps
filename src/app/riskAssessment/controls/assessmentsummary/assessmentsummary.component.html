@@ -54,7 +54,7 @@
             <ion-row class="hits-summary-text" *ngIf="isHitsAssessment">
               <ion-col>
                 <ion-text>
-                  Thanks for taking the assessment.<br /><br />
+                  Thanks for taking this assessment.<br /><br />
                   <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
                   <ng-container *ngIf="guidedType ==='staff-guided'">
                     <strong>Note:</strong><br /> {{ note }}<br />
@@ -67,7 +67,7 @@
             <ion-row class="hits-summary-text" *ngIf="isDanger">
               <ion-col>
                 <ion-text>
-                  Thanks for taking the assessment.<br /><br />
+                  Thanks for taking this assessment.<br /><br />
                   <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
                   <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
                     <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
@@ -81,7 +81,7 @@
               </ion-col>
             </ion-row>
 
-            <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase()"></ion-row>
+            <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase()">
               <ion-col>
                 <ion-text>
                   Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
@@ -105,7 +105,7 @@
             <ion-row class="hits-summary-text" *ngIf="isSSripa">
               <ion-col>
                 <ion-text>
-                  Thanks for taking the assessment.<br /><br />
+                  Thanks for taking this assessment.<br /><br />
                 </ion-text>
               </ion-col>
             </ion-row>
@@ -113,7 +113,7 @@
 
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="7" class="p-0">            
-                <ion-row *ngIf="isSSripa || isHitsAssessment">
+                <ion-row *ngIf="isSSripa || isHitsAssessment || isDanger">
                   <ion-col size="12" size-sm="12">
                     <ion-text>Here is you QRcode:</ion-text>
                     <div class="qr-code-wrapper">
@@ -123,7 +123,7 @@
                 </ion-row>            
               </ion-col>          
               <ion-col size="12" size-sm="12" size-lg="5" class="p-0">
-                <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && isHitsAssessment">
+                <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitsAssessment || isDanger)">
                   <app-summarypage #riskMeterRef [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
                 </ion-row>
                        
@@ -143,11 +143,20 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of responseJson; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ item.question }}</td>
-                    <td style="text-transform: capitalize;">{{ item.answer }}</td>
-                  </tr>
+                  <ng-container *ngFor="let item of responseJson; let i = index">
+                    <!-- Parent Row -->
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td>{{ item.question }}</td>
+                      <td style="text-transform: capitalize;">{{ item.answer }}</td>
+                    </tr>
+                    <!-- Child Rows (if DAChild exists and has data) -->
+                    <tr *ngFor="let child of item.DAChild; let j = index">
+                      <td>{{ i + 1 }}{{ getCharFromCode(97 + j) }}</td> <!-- Generates 3a, 3b, etc. -->
+                      <td>{{ child.question }}</td>
+                      <td style="text-transform: capitalize;">{{ child.answer }}</td>
+                    </tr>
+                  </ng-container>
                 </tbody>
               </table>
 
