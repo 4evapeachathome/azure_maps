@@ -24,7 +24,7 @@ import jsPDF from 'jspdf';
 export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   @Input() reloadFlag: boolean = false;
   hidePdfContainer = true;
-  caseNumber: string='';
+  caseNumber: string='<>';
   loggedInUser:any = null;
   loaded: boolean = false;
   riskValue!: number; // Dynamic risk value (0-100)
