@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController, IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { MenuService } from 'src/shared/menu.service';
+import { presentToast } from 'src/shared/utility';
 
 @Component({
   selector: 'assessment-page',
@@ -27,7 +28,8 @@ export class AssessmentPageComponent  implements OnInit {
     private router: Router,
     private cookieService: CookieService,
     private apiService: ApiService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -35,14 +37,6 @@ export class AssessmentPageComponent  implements OnInit {
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
-        console.log('this.loggedInUser@@@@@@', this.loggedInUser);
-        // let obj = {
-        //         "id": 2,
-        //         "documentId": "fb19slqtj667jlt58ipssahn",
-        //         "name": "RATS",
-        //         "description": "Rats assessment"
-        //       };
-        // this.loggedInUser?.assessment_type.push(obj);
         this.assessmentTypes = this.loggedInUser?.assessment_type || [];
         this.selectedAssessment = null;
         this.loaded = true;
@@ -62,15 +56,12 @@ export class AssessmentPageComponent  implements OnInit {
 
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
-    //debugger;
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
       if(type.name == this.selectedAssessment) {
         return type;
       }
     });
-    console.log('selectedAssessmentId>>>>>>>', selectedAssessmentId);
     sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
-    console.log('Selected assessment:', this.selectedAssessment);
   }
 
   getSelectedAssessmentDescription(): string {
@@ -188,6 +179,7 @@ export class AssessmentPageComponent  implements OnInit {
           break;
         case 'web':
         case 'web assessment':
+        case "women's experience with battering":
           this.navigateWithRatsCache('/webassessment');
           break;
         default:
@@ -215,46 +207,36 @@ export class AssessmentPageComponent  implements OnInit {
 
 
   async logout() {
-    const alert = await this.alertController.create({
-      header: 'Confirm Logout',
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary'
-        },
-        {
-          text: 'Logout',
-          handler: () => {
-            this.selectedAssessment = null;
-            this.guidedType = 'staff-guided';
-            this.cookieService.delete('username');
-            this.cookieService.delete('loginTime');
-            this.cookieService.delete('userdetails');
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
+    this.menuService.logout().then(() => {
+      // this.guidedType = 'staff-guided';
+    }).catch(error => {
+      this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
     });
-  
-    await alert.present();
   }
 
 
   navigateWithRatsCache(targetRoute: string) {
     const cached = this.menuService.getRatsAssessment();
     if (cached) {
+      sessionStorage.removeItem('isHits');
+      sessionStorage.removeItem('isSSripa');
+      sessionStorage.removeItem('isDanger');
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getRatsAssessmentQuestions().subscribe({
         next: (res: any) => {
-          const { questions, answerOptions } = res;
-          console.log('getRatsAssessmentQuestions res>>>>>', res);
+          sessionStorage.removeItem('isHits');
+          sessionStorage.removeItem('isSSripa');
+          sessionStorage.removeItem('isDanger');
+
+          let { questions, answerOptions } = res;
           // Sort the multiple_answer_option for each question (if still needed)
           questions.forEach((q: any) => {
             q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);
           });
+          
+          let sortedOptions = answerOptions.sort((a: any, b: any) => a.score - b.score);
+          answerOptions = sortedOptions;
       
           // Store both questions and answerOptions in the service
           this.menuService.setRatsAssessment({ questions, answerOptions });
@@ -265,6 +247,10 @@ export class AssessmentPageComponent  implements OnInit {
         }
       });
     }
+  }
+
+  private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+    await presentToast(this.toastController, message, duration, position);
   }
 
 }

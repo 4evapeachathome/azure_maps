@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AlertController, IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { interval, Subscription } from 'rxjs';
 import html2pdf from 'html2pdf.js'; 
 import { QRCodeComponent  } from 'angularx-qrcode';
@@ -10,8 +10,10 @@ import { CookieService } from 'ngx-cookie-service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { SummarypageComponent } from "../summarypage/summarypage.component";
+import { presentToast } from 'src/shared/utility';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { ASSESSMENT_TYPE } from 'src/shared/constants';
 
 
 @Component({
@@ -54,14 +56,16 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   showSummary = false; /// enable when to show summary
   isRatAssessment = false;
   ratAssessmentResult: any;
-  ratQrCodeValue: string = '';
   responseJson: any;
   isHitAssessment = false;
-  hasFetchedData: boolean = false;
+  assessmentNumber: string = '';
+  hasFetchedData: boolean = false; // Track if logins have been fetched
+  ASSESSMENT_TYPE = ASSESSMENT_TYPE;
+
   levelofdanger:string=''; // Track if logins have been fetched
   isDanger: boolean = false; // Track if logins have been fetched
 
-  constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute) { }
+  constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController) { }
 
   ngOnInit() {
     if (!this.hasFetchedData) {
@@ -117,7 +121,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       }
     }
    
-    if(this.isHitsAssessment) {
+    if(this.selectedAssessment?.toLowerCase() == 'hits' && this.isHitsAssessment) {
       const resultStr = sessionStorage.getItem('hitsAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
@@ -147,14 +151,23 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
     this.loaded = true;
     this.caseNumber = sessionStorage.getItem('caseNumber') || '';
+    
+    if(this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+      let ratResult = sessionStorage.getItem('ratsAssessmentResult');
+      if(ratResult) {
+        this.ratAssessmentResult = JSON.parse(ratResult || '');
+        this.assessmentNumber = this.ratAssessmentResult.asssessmentNumber;
+      }
+    }
+    this.checkSelectedAssessment(this.assessmentNumber);
   }
 
   ngAfterViewInit(): void {
     let ratResult = sessionStorage.getItem('ratsAssessmentResult');
-    if(ratResult) {
+    if(ratResult && this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
       this.ratAssessmentResult = JSON.parse(ratResult || '')
       if(this.ratAssessmentResult) {
-        this.ratQrCodeValue = `${window.location.origin}/viewresult?code=${this.ratAssessmentResult?.asssessmentNumber}`
+        this.QrcodeUrl = `${window.location.origin}/viewresult?code=${this.ratAssessmentResult?.asssessmentNumber}`
       }
     }
     setTimeout(() => {
@@ -226,7 +239,13 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       resultInfo.style.whiteSpace = 'normal';
       if (sessionStorage.getItem('isHits') === 'true') {
         resultInfo.innerHTML = `<p style="white-space: nowrap;">Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
-      } else if (sessionStorage.getItem('isSSripa') === 'true') {
+      } 
+      else if (this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>
+          ${this.guidedType === 'staff-guided' ? `
+          <p><strong>Status:</strong> ${this.riskValue >= 20 ? 'Positive' : 'Negative'}</p>` : ''}`;
+      } 
+      else if (sessionStorage.getItem('isSSripa') === 'true') {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
       }
       leftSection.appendChild(resultInfo);
@@ -241,7 +260,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         qrSpan.style.textAlign = 'center';
       
         const qrLabel = document.createElement('p');
-        qrLabel.innerText = 'Here is your QR Code.';
+        qrLabel.innerText = this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase() ? 'Here is the access code for your assessment:' : 'Here is your QR Code.';
         qrLabel.style.marginBottom = '10px';
         qrSpan.appendChild(qrLabel);
       
@@ -383,7 +402,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
       const riskMeterContainer = !this.isSSripa ? this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement : null;
 
-      if (riskMeterContainer) {
+      if (riskMeterContainer && this.selectedAssessment?.toLowerCase() !== ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+
         const scoreDisplayContainer = riskMeterContainer.querySelector('.score-display');
         if (scoreDisplayContainer) {
           scoreDisplayContainer.remove();
@@ -490,4 +510,38 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       },
     });
   }
+
+  
+  checkSelectedAssessment(code: string) {
+    if (code && code.toLowerCase().includes('web-')) {
+      this.fetchWebResults(code);
+    } else if(code && code.toLowerCase().includes('hit-')) {
+    } else if(code && code.toLowerCase().includes('da-')) {
+    } else if(code && code.toLowerCase().includes('dai-')) {
+    } else if(code && code.toLowerCase().includes('cts-')) {
+    } else if(code && code.toLowerCase().includes('ssripa-')) {
+    } else {
+      this.selectedAssessment = '';
+    }
+  }
+
+  fetchWebResults(code: string) {
+    this.apiService.getRatsResult(code).subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.responseJson = response.assessmentSummary;
+          this.riskValue = response.totalScore;
+        }
+      },
+      error: (error: any) => {
+        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
+        this.showToast(errorMsg, 3000, 'top');
+      }
+    })
+  }
+
+  private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+    await presentToast(this.toastController, message, duration, position);
+  }
+
 }

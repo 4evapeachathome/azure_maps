@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
+import { QRCodeComponent } from 'angularx-qrcode';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { ASSESSMENT_TYPE } from 'src/shared/constants';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast } from 'src/shared/utility';
 
@@ -34,10 +37,14 @@ export class ViewResultComponent  implements OnInit {
 
   isRatAssessment = false;
   ratAssessmentResult: any;
-  ratQrCodeValue: string = '';
+  qCodeValue: string = '';
 
   isHitAssessment = false;
   ratAssessmentResultList: any = [];
+  assessmentNumber: string = '';
+  responseJson: any;
+  ASSESSMENT_TYPE = ASSESSMENT_TYPE;
+  @ViewChild('qrcodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
 
   constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute,
         private menuService: MenuService,
@@ -58,19 +65,12 @@ export class ViewResultComponent  implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-  
-    const storedGuidedType = sessionStorage.getItem('guidedType');
-    if (storedGuidedType) {
-      this.guidedType = storedGuidedType;
-    }
-  
-    this.updateGuidedTypeLabel();
 
     // this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
         
-    let code = this.activatedRoute.snapshot.queryParamMap.get('code');
-    if(code) {
-      this.checkSelectedAssessment(code);
+    this.assessmentNumber = this.activatedRoute.snapshot.queryParamMap.get('code') || '';
+    if(this.assessmentNumber) {
+      this.checkSelectedAssessment(this.assessmentNumber);
     } else {
       this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
     }
@@ -79,7 +79,7 @@ export class ViewResultComponent  implements OnInit {
 
   async logout() {
     this.menuService.logout().then(() => {
-      this.guidedType = 'staff-guided';
+      // this.guidedType = 'staff-guided';
     }).catch(error => {
       this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
     });
@@ -89,25 +89,11 @@ export class ViewResultComponent  implements OnInit {
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
   }
 
-  checkAssessmentType() {
-    if(this.selectedAssessment?.toLowerCase() == 'web') {
-      this.isRatAssessment = true;
-      this.fetchRatResults();
-      return sessionStorage.getItem('ratsAssessmentResult');
-    } else if(this.selectedAssessment?.toLowerCase() == 'hits' || this.selectedAssessment?.toLowerCase() == 'hit'){
-      this.isHitAssessment = true;
-      // this.fetchHitResults();
-      return sessionStorage.getItem('hitsAssessmentResult');
-    } else {
-      return null;
-    }
-  }
-
   checkSelectedAssessment(code: string) {
     if (code && code.toLowerCase().includes('web-')) {
-      this.selectedAssessment = 'web';
+      this.selectedAssessment = this.ASSESSMENT_TYPE.WEB;
       this.isRatAssessment = true;
-      this.fetchRatResults();
+      this.fetchRatResults(code);
     } else if(code && code.toLowerCase().includes('hit-')) {
       this.selectedAssessment = 'hit';
     } else if(code && code.toLowerCase().includes('da-')) {
@@ -123,19 +109,22 @@ export class ViewResultComponent  implements OnInit {
     }
   }
 
-  fetchRatResults() {
-    this.apiService.getRatsResult().subscribe({
+  fetchRatResults(code: string) {
+    this.apiService.getRatsResult(code).subscribe({
       next: (response: any) => {
-        // const resultStr = this.checkAssessmentType();
         if (response) {
-          // const result = JSON.parse(resultStr);
-          this.ratAssessmentResultList.push(response.data[0]);
+          this.ratAssessmentResultList.push(response);
+          this.responseJson = response.assessmentSummary;
+          this.guidedType = response.guidedType;
+          this.updateGuidedTypeLabel();
+          this.caseNumber = response?.caseNumber;
+          this.qCodeValue = response.qrCodeUrl;
           this.showToast(response?.message || 'Assessment result fetch successfully.', 3000, 'top');
         }
       },
       error: (error: any) => {
-        this.errorMessage = error;
-        this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
+        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
+        this.showToast(errorMsg, 3000, 'top');
       }
     })
   }

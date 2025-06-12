@@ -37,3 +37,7 @@ export const getConstant = (category: keyof Constants, key: string) => {
     return undefined;
   }
 };
+
+export const ASSESSMENT_TYPE = {
+  WEB: "Women's Experience with Battering"
+}

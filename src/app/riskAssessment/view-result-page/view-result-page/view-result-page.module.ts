@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { RiskassessmentFooterComponent } from '../../controls/riskassessment-footer/riskassessment-footer.component';
 import { ViewResultPageComponent } from '../view-result-page.component';
 import { ViewResultComponent } from '../../controls/view-result/view-result.component';
+import { AssessmentTableComponent } from '../../controls/assessment-table/assessment-table.component';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 
 @NgModule({
@@ -20,6 +22,8 @@ import { ViewResultComponent } from '../../controls/view-result/view-result.comp
     FormsModule,
     IonicModule,
     RiskassessmentFooterComponent,
+    AssessmentTableComponent,
+    QRCodeComponent
   ]
 })
 export class ViewResultPageModule { }

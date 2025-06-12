@@ -38,15 +38,11 @@
             </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="5">
-                <!-- <ion-item>
-                  <ion-input label="Case Number" [(ngModel)]="caseNumber" placeholder="Case Number"
-                    labelPlacement="stacked" disabled="true"></ion-input>
-                </ion-item> -->
-                <ion-text class="case-number" disabled="true">Case Number : <span>{{ caseNumber || '<>' }}</span></ion-text>
+                <ion-text class="case-number" disabled="true">Case Number : <span>{{' ' + caseNumber || '<>' }}</span></ion-text>
               </ion-col>
               <ion-col size="12" size-sm="12" size-lg="7" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType" >
-                  <ion-radio [value]="guidedType" labelPlacement="end" mode="md">{{ guidedTypeLabel }}</ion-radio>
+                  <ion-radio [value]="guidedType" labelPlacement="end" mode="md" class="guided-label">{{ guidedTypeLabel }}</ion-radio>
                 </ion-radio-group>
               </ion-col>
             </ion-row>
@@ -85,22 +81,23 @@
               </ion-col>
             </ion-row>
 
-            <ion-row class="assessment-summary-text" *ngIf="isRatAssessment">
+            <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase()"></ion-row>
               <ion-col>
                 <ion-text>
                   Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
-                  <strong *ngIf="ratQrCodeValue !== ''"> Here is the access code for your assessment: </strong><br /><br />
+                  <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: </strong>{{riskValue >= 20 ? 'Positive' : 'Negative'}}</div>
+
+                  <strong *ngIf="QrcodeUrl !== ''"> Here is the access code for your assessment: </strong><br /><br />
 
                   <ion-row>
                     <ion-col size="12" size-sm="12">
-                      <div class="" *ngIf="ratQrCodeValue !== ''">
-                        <qrcode #qrcodeEl [qrdata]="ratQrCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
+                      <div class="qr-code-wrapper" *ngIf="QrcodeUrl !== ''">
+                        <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
                       </div>
                     </ion-col>
                   </ion-row>
 
                   <!-- <div >Your score is: <span class="score">{{ riskValue }}</span></div> -->
-                  <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">Status: {{riskValue >= 20 ? 'Positive' : 'Negative'}}</div>
                 </ion-text>
               </ion-col>
             </ion-row>
@@ -131,6 +128,9 @@
                 </ion-row>
                        
               </ion-col>
+              <ion-row>
+                <ion-button  (click)="downloadPDF()" color="primary" size="small">Download as PDF</ion-button>
+              </ion-row>   
             </ion-row>
             <!--Table to handle response for all the assessments-->
             <ion-row>
@@ -150,6 +150,8 @@
                   </tr>
                 </tbody>
               </table>
+
+              <!-- <app-assessment-table [selectedAssessment]="this.selectedAssessment"></app-assessment-table> -->
             </ion-row>
 
 

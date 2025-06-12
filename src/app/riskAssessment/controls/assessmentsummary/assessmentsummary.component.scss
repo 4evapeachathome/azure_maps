@@ -1,5 +1,5 @@
 .rat-score {
-    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .faq-table {
@@ -23,4 +23,17 @@
     tr:last-child td {
       border-bottom: 1px solid #ddd;
     }
+  }
+
+  .case-number {
+    color: #000;
+  }
+
+  .align-center {
+    display: flex;
+    justify-content: center;
+  }
+
+  .guided-label {
+     pointer-events: none;
   }

@@ -12,8 +12,8 @@ interface Environment {
 
 export const environment = {
   production: false,
-  //apiHost:'http://localhost:1337',
-  apiHost:'https://cma-strapi-app-heecd3e6bwczakfu.eastus2-01.azurewebsites.net',
+  apiHost:'http://localhost:1337',
+  // apiHost:'https://cma-strapi-app-heecd3e6bwczakfu.eastus2-01.azurewebsites.net',
   secretKey:'0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9',
   
 apitoken:'2a1ef31ef9be6dcd91a485e2a8d6b44f662c7001473c31b8af50a406131dea2f0f1520c2c522d37ea54161d75d597e620588a862bb907291c91f3ac7817a21df57e20ad5645a943f83ea3876db1670d0734ef46502839275f6a83a5651cda45b6e1a58e4507d1dd16ee1352a534991847acc92a94570c94a4568ce1e9b516e2a',
