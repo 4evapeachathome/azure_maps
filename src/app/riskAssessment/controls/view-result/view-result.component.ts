@@ -113,7 +113,6 @@ export class ViewResultComponent  implements OnInit {
     this.apiService.getRatsResult(code).subscribe({
       next: (response: any) => {
         if (response) {
-          console.log('response!!!!!', response);
           this.ratAssessmentResultList.push(response);
           this.responseJson = response.assessmentSummary;
           this.guidedType = response.guidedType;

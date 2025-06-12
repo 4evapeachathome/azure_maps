@@ -10,7 +10,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { SummarypageComponent } from "../summarypage/summarypage.component";
-import { AssessmentTableComponent } from '../assessment-table/assessment-table.component';
 import { presentToast } from 'src/shared/utility';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -22,7 +21,7 @@ import { ASSESSMENT_TYPE } from 'src/shared/constants';
   templateUrl: './assessmentsummary.component.html',
   styleUrls: ['./assessmentsummary.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent, AssessmentTableComponent]
+  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
 })
 export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   @Input() reloadFlag: boolean = false;
@@ -109,7 +108,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-    console.log('this.selectedAssessment =', this.selectedAssessment);
 
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
@@ -515,7 +513,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.apiService.getRatsResult(code).subscribe({
       next: (response: any) => {
         if (response) {
-          console.log('response!!!!!', response);
           this.responseJson = response.assessmentSummary;
           this.riskValue = response.totalScore;
         }

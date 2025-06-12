@@ -64,18 +64,20 @@
               </ion-col>
             </ion-row>
 
-            <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()">
+            {{selectedAssessment}}
+            ----------<div>{{ASSESSMENT_TYPE.WEB}}</div>
+            <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase()">
               <ion-col>
                 <ion-text>
                   Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
                   <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: </strong>{{riskValue >= 20 ? 'Positive' : 'Negative'}}</div>
 
-                  <strong *ngIf="QrcodeUrl !== ''" class="align-center"> Here is the access code for your assessment: </strong><br /><br />
+                  <strong *ngIf="QrcodeUrl !== ''"> Here is the access code for your assessment: </strong><br /><br />
 
                   <ion-row>
                     <ion-col size="12" size-sm="12">
                       <div class="qr-code-wrapper" *ngIf="QrcodeUrl !== ''">
-                        <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
+                        <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
                       </div>
                     </ion-col>
                   </ion-row>
@@ -111,6 +113,9 @@
                 </ion-row>
                        
               </ion-col>
+              <ion-row>
+                <ion-button  (click)="downloadPDF()" color="primary" size="small">Download as PDF</ion-button>
+              </ion-row>   
             </ion-row>
             <!--Table to handle response for all the assessments-->
             <ion-row>

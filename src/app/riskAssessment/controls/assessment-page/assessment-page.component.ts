@@ -61,9 +61,7 @@ export class AssessmentPageComponent  implements OnInit {
         return type;
       }
     });
-    console.log('selectedAssessmentId>>>>>>>', selectedAssessmentId);
     sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
-    console.log('Selected assessment:', this.selectedAssessment);
   }
 
   getSelectedAssessmentDescription(): string {
@@ -220,12 +218,18 @@ export class AssessmentPageComponent  implements OnInit {
   navigateWithRatsCache(targetRoute: string) {
     const cached = this.menuService.getRatsAssessment();
     if (cached) {
+      sessionStorage.removeItem('isHits');
+      sessionStorage.removeItem('isSSripa');
+      sessionStorage.removeItem('isDanger');
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getRatsAssessmentQuestions().subscribe({
         next: (res: any) => {
+          sessionStorage.removeItem('isHits');
+          sessionStorage.removeItem('isSSripa');
+          sessionStorage.removeItem('isDanger');
+
           let { questions, answerOptions } = res;
-          console.log('getRatsAssessmentQuestions res>>>>>', res);
           // Sort the multiple_answer_option for each question (if still needed)
           questions.forEach((q: any) => {
             q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
@@ -22,6 +22,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
   selectedAssessment: string = ''; 
+  @Input() webGuid:any;
 
   constructor(
       private router: Router,
@@ -58,7 +59,6 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || '';
 
     const cachedRats = this.menuService.getRatsAssessment();
-    console.log('cachedRats.answerOptions!!!!!!!!!', cachedRats);
     if (cachedRats && cachedRats.questions && cachedRats.questions.length > 0) {
       this.setupRatsQuestions(cachedRats.questions, cachedRats.answerOptions);
     } else {
@@ -139,7 +139,6 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
             const answerSummary: { question: string, answer: boolean }[] = [];
             let criticalAlert = false;
 
-            console.log('this.ratsQuestions>>>', this.ratsQuestions);
             // Single loop to calculate totalScore, build answerSummary, and check for critical alert
             for (const question of this.ratsQuestions) {
               // Handle selected score for totalScore and answerSummary
@@ -166,6 +165,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
                 }
               }
             }
+            // let assessmentNumberID = this.webGuid;
             let assessmentNumberID = Utility.generateGUID('web');
             const result = {
               // totalScore,
