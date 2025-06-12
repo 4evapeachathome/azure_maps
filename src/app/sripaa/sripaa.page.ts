@@ -59,11 +59,14 @@ export class SripaaPage implements OnInit,AfterViewInit {
       this.hidewhenshowingresults = false;
     }
     this.loadSSripaData();
+    const storedHasYes = sessionStorage.getItem('hasYesAnswer');
+    this.hasYesAnswer = storedHasYes ? JSON.parse(storedHasYes) : false;
     await this.showLoader();
   }
   
   async retakeAssessment(){
     await this.loadSSripaData();
+    sessionStorage.removeItem('hasYesAnswer');
     this.hidewhenshowingresults= false;
   }
 
