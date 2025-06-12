@@ -181,12 +181,8 @@ clearMenuItems(): void {
             this.cookieService.delete('username');
             this.cookieService.delete('loginTime');
             this.cookieService.delete('userdetails');
-            sessionStorage.removeItem('selectedAssessment');
-            sessionStorage.removeItem('ratsAssessmentResult');
-            sessionStorage.removeItem('hitsAssessmentResult');
-            sessionStorage.removeItem('guidedType');
-            sessionStorage.removeItem('isSSripa');
-            sessionStorage.removeItem('isRatAssessment');
+            sessionStorage.clear();
+            localStorage.clear();
             this.router.navigate(['/login']);
           }
         }

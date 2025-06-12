@@ -1,9 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
+import { QRCodeComponent } from 'angularx-qrcode';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { ASSESSMENT_TYPE } from 'src/shared/constants';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast } from 'src/shared/utility';
 
@@ -35,12 +37,14 @@ export class ViewResultComponent  implements OnInit {
 
   isRatAssessment = false;
   ratAssessmentResult: any;
-  ratQrCodeValue: string = '';
+  qCodeValue: string = '';
 
   isHitAssessment = false;
   ratAssessmentResultList: any = [];
   assessmentNumber: string = '';
   responseJson: any;
+  ASSESSMENT_TYPE = ASSESSMENT_TYPE;
+  @ViewChild('qrcodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
 
   constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute,
         private menuService: MenuService,
@@ -61,13 +65,6 @@ export class ViewResultComponent  implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-  
-    // const storedGuidedType = sessionStorage.getItem('guidedType');
-    // if (storedGuidedType) {
-    //   this.guidedType = storedGuidedType;
-    // }
-  
-    // this.updateGuidedTypeLabel();
 
     // this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
         
@@ -94,7 +91,7 @@ export class ViewResultComponent  implements OnInit {
 
   checkSelectedAssessment(code: string) {
     if (code && code.toLowerCase().includes('web-')) {
-      this.selectedAssessment = 'web';
+      this.selectedAssessment = this.ASSESSMENT_TYPE.WEB;
       this.isRatAssessment = true;
       this.fetchRatResults(code);
     } else if(code && code.toLowerCase().includes('hit-')) {
@@ -122,6 +119,7 @@ export class ViewResultComponent  implements OnInit {
           this.guidedType = response.guidedType;
           this.updateGuidedTypeLabel();
           this.caseNumber = response?.caseNumber;
+          this.qCodeValue = response.qrCodeUrl;
           this.showToast(response?.message || 'Assessment result fetch successfully.', 3000, 'top');
         }
       },

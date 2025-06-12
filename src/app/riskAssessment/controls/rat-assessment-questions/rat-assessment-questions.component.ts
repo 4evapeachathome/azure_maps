@@ -21,6 +21,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   scaleOptions: string[] = [];
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
+  selectedAssessment: string = ''; 
 
   constructor(
       private router: Router,
@@ -54,6 +55,8 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     // Update the label based on the retrieved guidedType
     this.updateGuidedTypeLabel();
 
+    this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || '';
+
     const cachedRats = this.menuService.getRatsAssessment();
     console.log('cachedRats.answerOptions!!!!!!!!!', cachedRats);
     if (cachedRats && cachedRats.questions && cachedRats.questions.length > 0) {
@@ -62,12 +65,15 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       // Load from API if cache is empty
       this.apiService.getRatsAssessmentQuestions().subscribe({
         next: (hitsData: any) => {
-          const { questions, answerOptions } = hitsData;
+          let { questions, answerOptions } = hitsData;
 
           // Sort the multiple_options_for_rat for each question (if still needed)
           questions.forEach((q: any) => {
             q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);
           });
+
+          let sortedOptions = answerOptions.sort((a: any, b: any) => a.score - b.score);
+          answerOptions = sortedOptions;
 
           // Store both questions and answerOptions in the service
           this.menuService.setRatsAssessment({ questions, answerOptions });
@@ -113,73 +119,96 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     this.loaded = true;
   }
 
-  submit() {
-    let totalScore = 0;
-    // const answerSummary: { questionId: number; questionText: string; selectedScore: number | null; answer: string, question: string }[] = [];
-        const answerSummary: { question: string, answer: boolean }[] = [];
-    let criticalAlert = false;
-  
-    console.log('this.ratsQuestions>>>', this.ratsQuestions);
-    // Single loop to calculate totalScore, build answerSummary, and check for critical alert
-    for (const question of this.ratsQuestions) {
-      // Handle selected score for totalScore and answerSummary
-      const selectedScore = question.selected ? question.selected.score : null;
-      if (selectedScore !== null) {
-        totalScore += Number(selectedScore);
-      }
+  async submit() {
+      const alert = await this.alertController.create({
+      header: 'Confirm Submission',
+      message: 'Are you sure you want to submit the assessment?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Submission canceled');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            let totalScore = 0;
+            // const answerSummary: { questionId: number; questionText: string; selectedScore: number | null; answer: string, question: string }[] = [];
+            const answerSummary: { question: string, answer: boolean }[] = [];
+            let criticalAlert = false;
 
-      // response: resJson, // JSON.stringify(resJson),
-      answerSummary.push({
-        answer: question?.selected?.Label, // true
-        question: question.text,
-      });
-  
-      // Check for critical alert condition
-      if (!criticalAlert && question.weight_critical_alert && question.selected) {
-        const matchFound = question.criticalOptions.some((opt: any) =>
-          opt.score === question.selected.score || opt.Label === question.selected.Label
-        );
-  
-        if (matchFound) {
-          criticalAlert = true;
-          // No break needed since we'll exit after this loop iteration if needed
+            console.log('this.ratsQuestions>>>', this.ratsQuestions);
+            // Single loop to calculate totalScore, build answerSummary, and check for critical alert
+            for (const question of this.ratsQuestions) {
+              // Handle selected score for totalScore and answerSummary
+              const selectedScore = question.selected ? question.selected.score : null;
+              if (selectedScore !== null) {
+                totalScore += Number(selectedScore);
+              }
+
+              // response: resJson, // JSON.stringify(resJson),
+              answerSummary.push({
+                answer: question?.selected?.Label, // true
+                question: question.text,
+              });
+
+              // Check for critical alert condition
+              if (!criticalAlert && question.weight_critical_alert && question.selected) {
+                const matchFound = question.criticalOptions.some((opt: any) =>
+                  opt.score === question.selected.score || opt.Label === question.selected.Label
+                );
+
+                if (matchFound) {
+                  criticalAlert = true;
+                  // No break needed since we'll exit after this loop iteration if needed
+                }
+              }
+            }
+            let assessmentNumberID = Utility.generateGUID('web');
+            const result = {
+              // totalScore,
+              response: answerSummary,
+              // criticalAlert,
+              support_service: this.loggedInUser.documentId,
+              asssessmentNumber: assessmentNumberID,
+              assessmentScore: totalScore,
+              caseNumber: this.caseNumber || '',
+              guidedType: this.guidedType,
+              qrCodeUrl: `${window.location.origin}/viewresult?code=${assessmentNumberID}`
+            };
+
+
+            this.apiService.saveRatAssessment(
+              result.response,
+              result.support_service,
+              result.asssessmentNumber,
+              result.assessmentScore,
+              result.caseNumber,
+              result.guidedType,
+              result.qrCodeUrl
+            ).subscribe({
+              next: (res: any) => {
+                if (res?.data) {
+                  sessionStorage.setItem('ratsAssessmentResult', JSON.stringify(result));
+                  const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
+                  presentToast(this.toastController, successMessage);
+                  this.router.navigate(['/riskassessmentsummary']);
+                }
+              },
+              error: (error: any) => {
+                const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
+                presentToast(this.toastController, errorMessage);
+              }
+            });
+          }
         }
-      }
-    }
-    
-    const result = {
-      // totalScore,
-      response : answerSummary,
-      // criticalAlert,
-      support_service: this.loggedInUser.documentId,
-      asssessmentNumber: Utility.generateGUID('web'),
-      assessmentScore: totalScore,
-      caseNumber:  this.caseNumber || '',
-      guidedType: this.guidedType
-    };
-
-
-    this.apiService.saveRatAssessment(
-      result.response,
-      result.support_service,
-      result.asssessmentNumber,
-      result.assessmentScore,
-      result.caseNumber,
-      result.guidedType
-    ).subscribe({
-      next: (res: any) => {
-        if (res?.data) {
-          sessionStorage.setItem('ratsAssessmentResult', JSON.stringify(result));
-          const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
-          presentToast(this.toastController, successMessage);
-          this.router.navigate(['/riskassessmentsummary']);
-        }
-      },
-      error: (error: any) => {
-        const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
-        presentToast(this.toastController, errorMessage);
-      }
+      ]
     });
+
+    // Present the alert
+    alert.present();
   }
 
   isAllQuestionsAnswered(): boolean {
