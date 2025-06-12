@@ -143,11 +143,20 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of responseJson; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ item.question }}</td>
-                    <td style="text-transform: capitalize;">{{ item.answer }}</td>
-                  </tr>
+                  <ng-container *ngFor="let item of responseJson; let i = index">
+                    <!-- Parent Row -->
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td>{{ item.question }}</td>
+                      <td style="text-transform: capitalize;">{{ item.answer }}</td>
+                    </tr>
+                    <!-- Child Rows (if DAChild exists and has data) -->
+                    <tr *ngFor="let child of item.DAChild; let j = index">
+                      <td>{{ i + 1 }}{{ getCharFromCode(97 + j) }}</td> <!-- Generates 3a, 3b, etc. -->
+                      <td>{{ child.question }}</td>
+                      <td style="text-transform: capitalize;">{{ child.answer }}</td>
+                    </tr>
+                  </ng-container>
                 </tbody>
               </table>
 
