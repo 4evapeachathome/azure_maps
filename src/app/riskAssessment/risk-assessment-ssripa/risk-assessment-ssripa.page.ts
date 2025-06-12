@@ -29,7 +29,7 @@ export class RiskAssessmentSSripaPage implements OnInit {
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
           debugger;
-          this.sripaData = response;
+          this.sripaData = response?.guid;
         },
         error: (err) => {
           console.error('API Error:', err);

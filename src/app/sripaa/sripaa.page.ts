@@ -73,7 +73,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
           debugger;
-          this.sripaData = response;
+          this.sripaData = response?.guid;
         },
         error: (err) => {
           console.error('API Error:', err);

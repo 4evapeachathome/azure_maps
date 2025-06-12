@@ -28,7 +28,7 @@ export class DaAssessmentPageComponent  implements OnInit {
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
           debugger;
-          this.daData = response;
+          this.daData = response?.guid;
         },
         error: (err) => {
           console.error('API Error:', err);
