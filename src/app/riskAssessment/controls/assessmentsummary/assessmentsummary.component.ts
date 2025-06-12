@@ -26,7 +26,7 @@ import { ASSESSMENT_TYPE } from 'src/shared/constants';
 export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   @Input() reloadFlag: boolean = false;
   hidePdfContainer = true;
-  caseNumber: string='';
+  caseNumber: string='<>';
   loggedInUser:any = null;
   loaded: boolean = false;
   riskValue!: number; // Dynamic risk value (0-100)
@@ -62,6 +62,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   hasFetchedData: boolean = false; // Track if logins have been fetched
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
 
+  levelofdanger:string=''; // Track if logins have been fetched
+  isDanger: boolean = false; // Track if logins have been fetched
 
   constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController) { }
 
@@ -133,6 +135,20 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       this.fetchHitResults();
     }
 
+    this.isDanger =sessionStorage.getItem('isDanger') === 'true';
+
+    if(this.isDanger) {
+      const resultStr = sessionStorage.getItem('daAssessmentResult');
+      if(resultStr){
+        const result = JSON.parse(resultStr);
+        this.responseJson= result.summary;
+        this.riskValue = result.totalScore;
+        this.QrcodeUrl= result.daurl;
+        this.levelofdanger = result.Levelofdanger;
+      }
+
+    }
+
     this.loaded = true;
     this.caseNumber = sessionStorage.getItem('caseNumber') || '';
     
@@ -160,7 +176,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   }
 
   tryLoadRiskMeterImage() {
-    const canvasEl = this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement?.querySelector('svg.gauge-segments');
+    const canvasEl = this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement;
     if (canvasEl) {
       // do html2canvas or whatever
     } else {

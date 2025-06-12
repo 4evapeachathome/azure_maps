@@ -38,7 +38,7 @@
             </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="5">
-                <strong class="case-number">Case Number: {{" " + caseNumber}}</strong>
+                <ion-text class="case-number" disabled="true">Case Number : <span>{{' ' + caseNumber || '<>' }}</span></ion-text>
               </ion-col>
               <ion-col size="12" size-sm="12" size-lg="7" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType" >
@@ -64,9 +64,24 @@
               </ion-col>
             </ion-row>
 
-            {{selectedAssessment}}
-            ----------<div>{{ASSESSMENT_TYPE.WEB}}</div>
-            <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase()">
+            <ion-row class="hits-summary-text" *ngIf="isDanger">
+              <ion-col>
+                <ion-text>
+                  Thanks for taking the assessment.<br /><br />
+                  <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
+                  <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
+                    <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
+                  </ng-container>
+                  <ng-template #selfGuided>
+                    <strong>
+                      Please talk to your service provider about what the Danger Assessment means in your situation.
+                    </strong><br />
+                  </ng-template>
+                </ion-text>
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase()"></ion-row>
               <ion-col>
                 <ion-text>
                   Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
@@ -122,12 +137,14 @@
               <table class="assessment-table-container hits-assessment-table">
                 <thead>
                   <tr>
+                    <th scope="col" style="text-align: left;">S No.</th>
                     <th scope="col" style="text-align: left;">Question</th>
                     <th scope="col" style="text-align: left;">Answer</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of responseJson">
+                  <tr *ngFor="let item of responseJson; let i = index">
+                    <td>{{ i + 1 }}</td>
                     <td>{{ item.question }}</td>
                     <td style="text-transform: capitalize;">{{ item.answer }}</td>
                   </tr>
