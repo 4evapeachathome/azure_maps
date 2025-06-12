@@ -111,7 +111,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-
+debugger;
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
@@ -159,8 +159,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.ratAssessmentResult = JSON.parse(ratResult || '');
         this.assessmentNumber = this.ratAssessmentResult.asssessmentNumber;
       }
-    }
-    this.checkSelectedAssessment(this.assessmentNumber);
+      this.checkSelectedAssessment(this.assessmentNumber);
+    }    
   }
 
   ngAfterViewInit(): void {
@@ -249,6 +249,9 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       else if (sessionStorage.getItem('isSSripa') === 'true') {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
       }
+      else if (sessionStorage.getItem('isDanger') === 'true') {
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
+      }
       leftSection.appendChild(resultInfo);
       
       mainRow.appendChild(leftSection);
@@ -299,8 +302,17 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         scoreInfo.innerHTML = `
           ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
           ${this.guidedType === 'staff-guided' ? 
-            `<p><strong>Note:</strong> ${this.note || ''}</p>
+            `<p><strong>Note:</strong> ${this.note || ''}.</p>
              <p><strong>Caution:</strong> ${this.caution || ''}</p>` : ''}
+        `;
+      }
+      if (sessionStorage.getItem('isDanger') === 'true') {
+        scoreInfo.innerHTML = `
+          ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
+          ${this.guidedType === 'staff-guided' ? 
+            `<p><strong>Level of Danger:</strong> ${this.levelofdanger || ''}</p>` : ''}
+          ${this.guidedType === 'self-guided' ? 
+              `<p><strong>Please talk to your service provider about what the Danger Assessment means in your situation.</p>` : ''}
         `;
       }
       scoreRow.appendChild(scoreInfo);

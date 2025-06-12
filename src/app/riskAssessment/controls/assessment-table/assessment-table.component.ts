@@ -36,6 +36,7 @@ export class AssessmentTableComponent  implements OnInit {
         this.assessmentNumber = this.ratAssessmentResult.asssessmentNumber;
       }
     }
+    debugger;
     this.checkSelectedAssessment(this.assessmentNumber);
   }
 

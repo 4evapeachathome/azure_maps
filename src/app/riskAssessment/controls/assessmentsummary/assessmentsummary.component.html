@@ -54,7 +54,7 @@
             <ion-row class="hits-summary-text" *ngIf="isHitsAssessment">
               <ion-col>
                 <ion-text>
-                  Thanks for taking the assessment.<br /><br />
+                  Thanks for taking this assessment.<br /><br />
                   <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
                   <ng-container *ngIf="guidedType ==='staff-guided'">
                     <strong>Note:</strong><br /> {{ note }}<br />
@@ -67,7 +67,7 @@
             <ion-row class="hits-summary-text" *ngIf="isDanger">
               <ion-col>
                 <ion-text>
-                  Thanks for taking the assessment.<br /><br />
+                  Thanks for taking this assessment.<br /><br />
                   <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
                   <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
                     <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
@@ -105,7 +105,7 @@
             <ion-row class="hits-summary-text" *ngIf="isSSripa">
               <ion-col>
                 <ion-text>
-                  Thanks for taking the assessment.<br /><br />
+                  Thanks for taking this assessment.<br /><br />
                 </ion-text>
               </ion-col>
             </ion-row>
