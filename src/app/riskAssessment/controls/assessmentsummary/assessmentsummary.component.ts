@@ -45,6 +45,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   errorMessage: string | null = null;
   isHitsAssessment: boolean = false;
   riskGaugeMin: number = 0;
+  daResult: any[] = []; //
   riskGaugeMax: number = 100;
   gaugeThresholds: any[] = [];
   thresholdValues: { [key: string]: { color: string } } = {};
@@ -121,7 +122,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       }
     }
    
-    if(this.selectedAssessment?.toLowerCase() == 'hits' && this.isHitsAssessment) {
+    if(this.isHitsAssessment) {
       const resultStr = sessionStorage.getItem('hitsAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
@@ -146,7 +147,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.QrcodeUrl= result.daurl;
         this.levelofdanger = result.Levelofdanger;
       }
-
+      this.fetchDaResults();
     }
 
     this.loaded = true;
@@ -475,6 +476,37 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     await alert.present();
   }
   
+  fetchDaResults() {
+    this.apiService.getDAresultcalculation().subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          debugger;
+          this.daResult = response.data;
+  
+  
+          this.rangevalue = this.daResult?.map((option:any) => ({
+            min: option.min,
+            max: option.max,
+            color: option.color,
+            label: option.label
+          }));
+        } else {
+          this.hitResults = [];
+          this.thresholdValues = {};
+          this.note = '';
+          this.caution = '';
+        }
+      },
+      error: (error: any) => {
+        this.errorMessage = error;
+        console.error('Error in subscription:', error);
+      },
+      complete: () => {
+        console.log('Hit results fetch completed');
+      },
+    });
+  }
+
 
   fetchHitResults() {
     this.apiService.getHitsResultCalculation().subscribe({
