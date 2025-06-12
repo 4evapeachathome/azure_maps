@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
+import { ApiService } from 'src/app/services/api.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
   selector: 'app-hits-assessment-page',
@@ -9,12 +11,35 @@ import { LoadingController } from '@ionic/angular';
 })
 export class HitsAssessmentPagePage implements OnInit {
   loading: HTMLIonLoadingElement | null = null;
+  hitsData: any;
+  hitsGuidUrl: string = APIEndpoints.hitsGuidUrl; // Replace with your actual API URL
 
-  constructor(private loadingController: LoadingController) { }
+  constructor(private loadingController: LoadingController, private apiService:ApiService) { }
 
   async ngOnInit() {
     // Only show loader if not pre-rendered
+    this.loadHitsData();
     await this.showLoader();
+  }
+
+  loadHitsData() {
+    try {
+      // Replace with your actual API URL
+      const url = this.hitsGuidUrl;
+      
+      this.apiService.generateGuid(url).subscribe({
+        next: (response) => {
+          debugger;
+          this.hitsData = response;
+        },
+        error: (err) => {
+          console.error('API Error:', err);
+          // Handle error (show toast, etc.)
+        }
+      });
+    } catch (err) {
+      console.error('Error:', err);
+    }
   }
 
   async ngAfterViewInit() {

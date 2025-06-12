@@ -1367,7 +1367,7 @@ getDAresultcalculation(): Observable<any> {
   );
 }
 
-generateHitsGuid(url:string): Observable<any> {
+generateGuid(url:string): Observable<any> {
   return this.http.get(url, {
     headers: {
       Authorization: `Bearer ${environment.apitoken}`

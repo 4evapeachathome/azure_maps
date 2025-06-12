@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
@@ -23,6 +23,7 @@ export class HitsassessmentComponent  implements OnInit {
   scaleOptions: string[] = [];
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
+  @Input() hitsGuid:any;
 
   constructor(
     private router: Router,
@@ -164,7 +165,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
   
             const payload = {
               data: {
-                AssessmentGuid: Utility.generateGUID('hits'),
+                AssessmentGuid: this.hitsGuid,
                 response: answerSummary,
                 Score: totalScore,
                 CaseNumber: this.caseNumber,

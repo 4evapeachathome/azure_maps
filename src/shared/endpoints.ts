@@ -54,6 +54,8 @@ export const APIEndpoints = {
     quiz :`${environment.apiHost}/api/quizzes`,
     sripa :`${environment.apiHost}/api/sripaas`,
     ssripaQuestions :`${environment.apiHost}/api/ssripa-questions`,
+    ssripGuidUrl :`${environment.apiHost}/api/generate-ssripa-guid`,
+    
     
     //Risk assessment modules
     userLogins :`${environment.apiHost}/api/user-logins`,
@@ -62,6 +64,7 @@ export const APIEndpoints = {
     scaleOptions :`${environment.apiHost}/api/multiple-answer-options`,
     hitsresultcalculation :`${environment.apiHost}/api/hit-results`,
     saveHitsAssessment :`${environment.apiHost}/api/hits-assessment-responses`,
+    hitsGuidUrl :`${environment.apiHost}/api/generate-hits-guid`,
     
 
     ratsAssessmentQuestions :`${environment.apiHost}/api/rat-assessment-questions`,
@@ -73,5 +76,6 @@ export const APIEndpoints = {
     ratResult :`${environment.apiHost}/api/rat-assessment-response-summaries`,
     daAssessmentQuestions :`${environment.apiHost}/api/da-assessment-questions`,
     daAssessmentResult :`${environment.apiHost}/api/da-score-levels`,
-    daAssessmentResponse :`${environment.apiHost}/api/da-assessment-responses`
+    daAssessmentResponse :`${environment.apiHost}/api/da-assessment-responses`,
+    daGuidUrl :`${environment.apiHost}/api/generate-da-guid`
   }
