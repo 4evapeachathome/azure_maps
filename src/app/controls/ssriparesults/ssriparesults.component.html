@@ -24,19 +24,21 @@
           <table>
             <thead>
               <tr>
+                <th>S No.</th>
                 <th>Question</th>
                 <th class="thr-width-auto">Answer</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let q of sripa; let i = index" class="question-summary">
+                <td>{{ i + 1 }}</td>
                 <td>{{ q.text }}</td>
                 <td class="thr-width-auto">
                   {{ selectedOptions[i] | uppercase }}
                 </td>
               </tr>
             </tbody>
-          </table>    
+          </table>  
         </div>
       </ion-col>
     </ion-row>

@@ -66,6 +66,7 @@
                       <table>
                         <thead>
                           <tr>
+                            <th>S No.</th>
                             <th>Question</th>
                             <th class="thr-width-auto">Yes</th>
                             <th class="thr-width-auto">No</th>
@@ -73,6 +74,7 @@
                         </thead>
                         <tbody>
                           <tr *ngFor="let q of sripa; let i = index" class="question-summary">
+                            <td>{{ i + 1 }}</td>
                             <td>{{ q.text }}</td>
                             <td class="thr-width-auto">
                               <ion-radio-group [value]="selectedOptions[i]" (ionChange)="selectOption(i, $event.detail.value)">
