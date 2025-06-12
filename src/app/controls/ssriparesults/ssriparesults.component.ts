@@ -46,32 +46,61 @@ export class SsriparesultsComponent  implements OnInit {
       container.style.fontFamily = 'Arial';
   
       // Title
-      const title = document.createElement('h2');
-      title.innerText = this.quizTitle;
-      container.appendChild(title);
-  
-      // Thank you message
-      const thanks = document.createElement('p');
-      thanks.innerText = 'Thank you for completing the assessment.';
-      container.appendChild(thanks);
-  
-      // QR Code image
-      const qrCanvas = this.qrCodeElement?.qrcElement?.nativeElement.querySelector('canvas');
-      if (!qrCanvas) throw new Error('QR code rendering failed.');
-      const qrImg = document.createElement('img');
-      qrImg.src = qrCanvas.toDataURL('image/png');
-      qrImg.style.width = '128px';
-      qrImg.style.height = '128px';
-      qrImg.style.display = 'block';
-      qrImg.style.margin = '20px auto';
-      container.appendChild(qrImg);
+      const title = document.createElement('h5');
+    title.innerText = this.quizTitle;
+    title.style.textAlign = 'center';
+    title.style.marginBottom = '16px';
+    title.style.fontWeight = 'bold';
+    container.appendChild(title);
 
-      const link = document.createElement('div');
-    link.innerText = this.myAngularxQrCode || ''; // Replace `resultLink` with your actual variable
-    link.style.textAlign = 'center';
-    link.style.marginBottom = '20px';
+    // 3. Create a flex container for the thank-you message and QR code section
+    const topSection = document.createElement('div');
+    topSection.style.display = 'flex';
+    topSection.style.justifyContent = 'space-between';
+    topSection.style.alignItems = 'center';
+    topSection.style.marginBottom = '20px';
+
+    // Left side: Thank-you message
+    const leftContent = document.createElement('div');
+    leftContent.style.flex = '1';
+
+    const thanks = document.createElement('p');
+    thanks.innerText = 'Thank you for completing the assessment.';
+    thanks.style.marginLeft = '25px'; // Add margin-left to shift the text
+    leftContent.appendChild(thanks);
+
+    // Right side: QR code and text
+    const rightContent = document.createElement('div');
+    rightContent.style.textAlign = 'center';
+    rightContent.style.width = '128px';
+
+    // QR code text (above the QR code)
+    const qrtext = document.createElement('p');
+    qrtext.innerText = 'Here is your QR code';
+    qrtext.style.marginBottom = '10px';
+    rightContent.appendChild(qrtext);
+
+    // QR code image
+    const qrCanvas = this.qrCodeElement?.qrcElement?.nativeElement.querySelector('canvas');
+    if (!qrCanvas) throw new Error('QR code rendering failed.');
+    const qrImg = document.createElement('img');
+    qrImg.src = qrCanvas.toDataURL('image/png');
+    qrImg.style.width = '128px';
+    qrImg.style.height = '128px';
+    qrImg.style.display = 'block';
+    rightContent.appendChild(qrImg);
+
+    // QR code link/text (below the QR code)
+    const link = document.createElement('div');
+    link.innerText = this.myAngularxQrCode || '';
+    link.style.marginTop = '10px';
     link.style.wordBreak = 'break-word';
-    container.appendChild(link);
+    link.style.fontSize = '12px';
+    rightContent.appendChild(link);
+
+    topSection.appendChild(leftContent);
+    topSection.appendChild(rightContent);
+    container.appendChild(topSection);
   
       // Table
       const table = document.createElement('table');
@@ -92,8 +121,11 @@ export class SsriparesultsComponent  implements OnInit {
               <td style="border: 1px solid #ccc; padding: 8px; width: 50px; text-align: center; box-sizing: border-box;">${i + 1}</td>
               <td style="border: 1px solid #ccc; padding: 8px; width: 500px; box-sizing: border-box;">${q.text}</td>
               <td style="border: 1px solid #ccc; padding: 8px; width: 250px; text-align: center; box-sizing: border-box;">
-                ${(this.selectedOptions[i] || '')}
-              </td>
+  ${this.selectedOptions[i] ? 
+    this.selectedOptions[i].charAt(0).toUpperCase() + this.selectedOptions[i].slice(1).toLowerCase() : 
+    ''
+  }
+</td>
             </tr>
           `).join('')}
         </tbody>
