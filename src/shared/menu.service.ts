@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
+import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
    //Hits Assessment
@@ -16,8 +19,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class MenuService {
-  private menuItemsSource = new BehaviorSubject<any[]>([]);
-  menuItems$ = this.menuItemsSource.asObservable();
+
+  constructor(
+    private alertController: AlertController,
+    private cookieService: CookieService,
+    private router: Router
+  ) {}
+  
+  private readonly storageKey = 'menuItems';
 
   private filterOptionsSubject = new BehaviorSubject<any[]>([]);
   private organizationsSubject = new BehaviorSubject<any[]>([]);
@@ -31,6 +40,7 @@ export class MenuService {
   
 
   private ratsAssessmentData: RatsAssessmentData | null = null;
+  private ssripaDataSubject = new BehaviorSubject<any[] | null>(null);
 
   private showAdditionalMenusSource = new BehaviorSubject<{ show: boolean, sectionTitle: string | null }>({
     show: false,
@@ -61,14 +71,29 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
   this.showAdditionalMenusSource.next({ show, sectionTitle });
 }
 
-  setMenuItems(items: any[]) {
-    this.menuItemsSource.next(items);
+setMenuItems(menuItems: any[]): void {
+  try {
+    sessionStorage.setItem(this.storageKey, JSON.stringify(menuItems));
+  } catch (e) {
+    console.error('Error saving menu items to sessionStorage', e);
   }
+}
 
-  getMenuItems() {
-    return this.menuItemsSource.value;
+// Get menu items from sessionStorage
+getMenuItems(): any[] {
+  try {
+    const menuItemsStr = sessionStorage.getItem(this.storageKey);
+    return menuItemsStr ? JSON.parse(menuItemsStr) : [];
+  } catch (e) {
+    console.error('Error reading menu items from sessionStorage', e);
+    return [];
   }
+}
 
+// Clear menu items from sessionStorage
+clearMenuItems(): void {
+  sessionStorage.removeItem(this.storageKey);
+}
 
   setFilterOptions(options: any[]) {
     this.filterOptionsSubject.next(options);
@@ -99,6 +124,33 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
       return this.hitsAssessmentData;
     }
 
+    //Ssripa Assessment
+    setSsripaData(data: any[]) {
+      this.ssripaDataSubject.next(data); // Emit new data
+    }
+
+    private dangerAssessment:any;
+    setDangerAssessment(data: any) {
+      this.dangerAssessment = data;
+    }
+    
+    getDangerAssessment(): any | null {
+      return this.dangerAssessment;
+    }
+  
+    getSsripaData(): Observable<any[] | null> {
+      return this.ssripaDataSubject.asObservable(); // Return as Observable
+    }
+  
+    getSsripaDataValue(): any[] | null {
+      return this.ssripaDataSubject.getValue(); // Get current value synchronously
+    }
+  
+    clearSsripaData() {
+      this.ssripaDataSubject.next(null); // Clear data
+    }
+
+
     setRatsAssessment(data: RatsAssessmentData) {
       this.ratsAssessmentData = data;
     }
@@ -119,5 +171,34 @@ toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
     getStateDistancesValue(): { [key: string]: number } {
       return this.stateDistancesSubject.getValue();
     }
+
+    
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            // this.guidedType = 'staff-guided';
+            this.cookieService.delete('username');
+            this.cookieService.delete('loginTime');
+            this.cookieService.delete('userdetails');
+            sessionStorage.clear();
+            localStorage.clear();
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
+  }
 
 }

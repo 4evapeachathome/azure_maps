@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController, IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { MenuService } from 'src/shared/menu.service';
+import { presentToast } from 'src/shared/utility';
 
 @Component({
   selector: 'assessment-page',
@@ -27,7 +28,8 @@ export class AssessmentPageComponent  implements OnInit {
     private router: Router,
     private cookieService: CookieService,
     private apiService: ApiService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -35,14 +37,6 @@ export class AssessmentPageComponent  implements OnInit {
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
-        console.log('this.loggedInUser@@@@@@', this.loggedInUser);
-        // let obj = {
-        //         "id": 2,
-        //         "documentId": "fb19slqtj667jlt58ipssahn",
-        //         "name": "RATS",
-        //         "description": "Rats assessment"
-        //       };
-        // this.loggedInUser?.assessment_type.push(obj);
         this.assessmentTypes = this.loggedInUser?.assessment_type || [];
         this.selectedAssessment = null;
         this.loaded = true;
@@ -56,13 +50,18 @@ export class AssessmentPageComponent  implements OnInit {
     }
   }
 
-  onGuidedTypeChange() {
+  onGuidedTypeChange(event:any) {
     this.updateGuidedTypeLabel();
   }
 
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
-    console.log('Selected assessment:', this.selectedAssessment);
+    let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
+      if(type.name == this.selectedAssessment) {
+        return type;
+      }
+    });
+    sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
   }
 
   getSelectedAssessmentDescription(): string {
@@ -73,6 +72,8 @@ export class AssessmentPageComponent  implements OnInit {
   navigateWithHitsCache(targetRoute: string) {
     const cached = this.menuService.getHitsAssessment();
     if (cached) {
+      sessionStorage.removeItem('isSSripa');
+      sessionStorage.setItem('isHits', 'true');      
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getHitsAssessmentQuestions().subscribe({
@@ -86,6 +87,8 @@ export class AssessmentPageComponent  implements OnInit {
       
           // Store both questions and answerOptions in the service
           this.menuService.setHitsAssessment({ questions, answerOptions });
+          sessionStorage.removeItem('isSSripa');
+          sessionStorage.setItem('isHits', 'true');
           this.router.navigate([targetRoute]);
         },
         error: (err) => {
@@ -98,16 +101,64 @@ export class AssessmentPageComponent  implements OnInit {
   private updateGuidedTypeLabel() {
     // Update the label based on the selected guidedType
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
-    sessionStorage.setItem('guidedType', this.guidedType);
+    
   }
+
+  navigateWithSsripaCache(targetRoute: string) {
+    const cached = this.menuService.getSsripaDataValue(); // Synchronous access
+    if (cached) {
+      sessionStorage.removeItem('isHits');
+      sessionStorage.setItem('isSSripa', 'true');
+      this.router.navigate([targetRoute]);
+    } else {
+      this.apiService.getSripaa().subscribe({
+        next: (quiz: any) => {
+          this.menuService.setSsripaData(quiz || []); 
+          sessionStorage.removeItem('isHits');// Update BehaviorSubject
+          sessionStorage.setItem('isSSripa', 'true');
+          this.router.navigate([targetRoute]);
+        },
+        error: (err) => {
+          console.error('Failed to load SSRIPA data:', err);
+        }
+      });
+    }
+  }
+
+  navigateWithDangerCache(targetRoute: string) {
+    const cached = this.menuService.getDangerAssessment(); // Synchronous access
+    if (cached) {
+      sessionStorage.removeItem('isHits');
+      sessionStorage.removeItem('isSSripa');
+      sessionStorage.setItem('isDanger', 'true');
+      this.router.navigate([targetRoute]);
+    } else {
+      this.apiService.getDAAssessmentQuestions().subscribe({
+        next: (res: any) => {
+          //debugger;
+          this.menuService.setDangerAssessment(res); 
+          sessionStorage.removeItem('isHits');// Update BehaviorSubject
+          sessionStorage.removeItem('isSSripa');
+          sessionStorage.setItem('isDanger', 'true');
+          this.router.navigate([targetRoute]);
+        },
+        error: (err) => {
+          console.error('Failed to load SSRIPA data:', err);
+        }
+      });
+    }
+  }
+
 
   goToTest() {
     if (this.selectedAssessment) {
+      sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.selectedAssessment?.toLowerCase().trim();
-      console.log('assessmentName>>>>>>>>', assessmentName);
+      sessionStorage.setItem('caseNumber', this.caseNumber);
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':
+
           this.navigateWithHitsCache('/hitsassessment');
           break;
         case 'conflict tactic scale 2':
@@ -117,18 +168,19 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/danger-assessment-immigrants'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'da':
-          this.router.navigate(['/dangerassessment'], { state: { assessmentType: this.selectedAssessment } });
+        case 'the danger assessment (da)':
+          this.navigateWithDangerCache('/dangerassessment');
           break;
         case 'relationship assessment tool originally called web scale':
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'signs of self-recognition in intimate partner abuse (ssripa)':
-          this.router.navigate(['/ssripa'], { state: { assessmentType: this.selectedAssessment } });
-          sessionStorage.setItem('isSSripa', 'true');
+          this.navigateWithSsripaCache('/ssripariskassessment');
           break;
-        case 'rats':
-        case 'rats assessment':
-          this.navigateWithRatsCache('/ratsassessment');
+        case 'web':
+        case 'web assessment':
+        case "women's experience with battering":
+          this.navigateWithRatsCache('/webassessment');
           break;
         default:
           console.warn('No matching route found for selected assessment.');
@@ -155,56 +207,50 @@ export class AssessmentPageComponent  implements OnInit {
 
 
   async logout() {
-    const alert = await this.alertController.create({
-      header: 'Confirm Logout',
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary'
-        },
-        {
-          text: 'Logout',
-          handler: () => {
-            this.selectedAssessment = null;
-            this.guidedType = 'staff-guided';
-            this.cookieService.delete('username');
-            this.cookieService.delete('loginTime');
-            this.cookieService.delete('userdetails');
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
+    this.menuService.logout().then(() => {
+      // this.guidedType = 'staff-guided';
+    }).catch(error => {
+      this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
     });
-  
-    await alert.present();
   }
 
 
   navigateWithRatsCache(targetRoute: string) {
     const cached = this.menuService.getRatsAssessment();
     if (cached) {
+      sessionStorage.removeItem('isHits');
+      sessionStorage.removeItem('isSSripa');
+      sessionStorage.removeItem('isDanger');
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getRatsAssessmentQuestions().subscribe({
         next: (res: any) => {
-          const { questions, answerOptions } = res;
-          console.log('getRatsAssessmentQuestions res>>>>>', res);
+          sessionStorage.removeItem('isHits');
+          sessionStorage.removeItem('isSSripa');
+          sessionStorage.removeItem('isDanger');
+
+          let { questions, answerOptions } = res;
           // Sort the multiple_answer_option for each question (if still needed)
-          // questions.forEach((q: any) => {
-          //   q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
-          // });
+          questions.forEach((q: any) => {
+            q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);
+          });
+          
+          let sortedOptions = answerOptions.sort((a: any, b: any) => a.score - b.score);
+          answerOptions = sortedOptions;
       
-          // // Store both questions and answerOptions in the service
-          // this.menuService.setHitsAssessment({ questions, answerOptions });
-          // this.router.navigate([targetRoute]);
+          // Store both questions and answerOptions in the service
+          this.menuService.setRatsAssessment({ questions, answerOptions });
+          this.router.navigate([targetRoute]);
         },
         error: (err) => {
           console.error('Failed to load HITS data:', err);
         }
       });
     }
+  }
+
+  private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+    await presentToast(this.toastController, message, duration, position);
   }
 
 }

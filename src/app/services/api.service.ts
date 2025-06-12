@@ -1015,6 +1015,15 @@ postSsripaAssessmentResponse(payload: any): Observable<any> {
   return this.http.post(endpoint, payload , { headers });
 }
 
+postHitsAssessmentResponse(payload: any): Observable<any> {
+  const endpoint = APIEndpoints.saveHitsAssessment;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  // Strapi requires the payload inside a `data` key
+  return this.http.post(endpoint, payload , { headers });
+}
 
 //Risk Assessment Module
 getUserLogins(): Observable<any[]> {
@@ -1025,7 +1034,7 @@ getUserLogins(): Observable<any[]> {
         fields: ['name', 'description']
       },
       support_service: {
-        fields: ['OrgName']
+        fields: ['OrgName', 'documentId', 'asssessmentNumber']
       }
     }
   };
@@ -1036,7 +1045,6 @@ getUserLogins(): Observable<any[]> {
      // debugger;
       const decryptField = (encryptedValue: any): string | null => {
         if (!encryptedValue) return null;
-
         try {
           const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
           const decrypted = bytes.toString(CryptoJS.enc.Utf8);
@@ -1046,18 +1054,19 @@ getUserLogins(): Observable<any[]> {
           return encryptedValue;
         }
       };
-
       return res.data.map((item: any) => ({
         id: item?.id ?? null,
         username: item?.Username ? decryptField(item.Username) : '',
         temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
         orgName: item?.support_service?.OrgName ?? 'N/A',
+        documentId: item?.support_service?.documentId ?? 'N/A',
         assessment_type: item?.assessment_type ?? [],
         createdAt: item?.createdAt ?? '',
         IsPasswordChanged: item?.IsPasswordChanged ?? false,
         updatedAt: item?.updatedAt ?? '',
         password: item?.password ? decryptField(item.password) : '',
         isSendInvite: item?.sendInvite ?? false,
+        asssessmentNumber: item.asssessmentNumber ?? ''
       }));
     }),
     catchError((error) => {
@@ -1210,7 +1219,7 @@ getHitsResultCalculation(): Observable<any> {
   return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
     populate: {
       AnswerOption: {
-        fields: ['label', 'minScore', 'maxScore']
+        fields: ['color', 'min', 'max','label']
       }
     }, 
     fields: ['Note', 'Caution'] 
@@ -1261,18 +1270,19 @@ getRatsAssessmentQuestions(): Observable<any> {
             multiple_options_for_rat: (item.multiple_options_for_rat || []).map((opt: any) => ({
               id: opt.id,
               documentId: opt.documentId,
-              label: opt.label || '',
+              Label: opt.Label || '',
               score: opt.score ?? null
             }))
           }));
 
       // Process the second API response (answer options)
+
       const answerOptions = !res2.data || !Array.isArray(res2.data)
         ? []
         : res2.data.map((item: any) => ({
             id: item.id,
             documentId: item.documentId,
-            label: item.label || '',
+            Label: item.Label || '',
             score: item.score ?? null
           }));
 
@@ -1289,14 +1299,72 @@ getRatsAssessmentQuestions(): Observable<any> {
   );
 }
 
-//getresultfor DA assessment
-getHitsDAAssessmentQuestoins(): Observable<any> {
-  return this.getWithQuery(APIEndpoints.hitsresultcalculation, {
-    populate: {
-      DAChild: {
-        fields: ['questionText', 'questionOrder', 'weightageScore']
-      }
-    }, 
+  getRatsResultCalculation(): Observable<any> {
+    return this.getWithQuery(APIEndpoints.ratResultCalculation, {
+      fields: ['Note', 'Caution']
+    }, environment.apitoken).pipe(
+      catchError((error: any) => {
+        console.error('Error fetching Hits result API:', error);
+        return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+      })
+    );
+  }
+
+  saveRatAssessment(assessmentSummary: any, support_service: string, asssessmentNumber: string, assessmentScore: number, caseNumber: string, guidedType: string, qrCodeUrl: string) {
+    const endpoint = APIEndpoints.saveRatAssessment;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${environment.apitoken}`
+    });
+    // Strapi requires the payload inside a `data` key
+    // return this.http.post(endpoint, payload , { headers });
+    return this.http.post(`${endpoint}`, { data: {assessmentSummary, support_service, asssessmentNumber, assessmentScore, caseNumber, guidedType, qrCodeUrl} }, { headers });
+  }
+
+  getRatsResult(code: any): Observable<any> {
+    return this.http.get(APIEndpoints.ratResult + code, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${environment.apitoken}`
+      })
+    }).pipe(
+      map((res: any) => {
+        if (res.data) {
+          const result = res.data;
+          return result;
+        } else {
+          return null; // No results found
+        }
+      }),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => new Error(error?.error?.message || 'An error occurred while fetching result. Please try again later.'));
+      })
+    );
+
+  }
+
+  // DA assessment
+  getDAAssessmentQuestions(): Observable<any> {
+    return this.getWithQuery(APIEndpoints.daAssessmentQuestions, {
+      populate: {
+        DAChild: {
+          fields: ['questionText', 'weightageScore', 'questionOrder']
+        }
+      },
+      fields: ['questionText', 'score', 'weightage_score', 'questionOrder']
+    }, environment.apitoken).pipe(
+      catchError((error: any) => {
+        console.error('Error fetching DA Assessment Questions API:', error);
+        return throwError(() => new Error('An error occurred while fetching DA Assessment Questions API. Please try again later.'));
+      })
+    );
+  }
+
+
+
+getDAresultcalculation(): Observable<any> {
+  return this.getWithQuery(APIEndpoints.daAssessmentResult, {
+    fields: ['color', 'min', 'max','label']
   }, environment.apitoken).pipe(
     catchError((error: any) => {
       console.error('Error fetching Hits result API:', error);
@@ -1305,5 +1373,27 @@ getHitsDAAssessmentQuestoins(): Observable<any> {
   );
 }
 
+generateGuid(url:string): Observable<any> {
+  return this.http.get(url, {
+    headers: {
+      Authorization: `Bearer ${environment.apitoken}`
+    }
+  }).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching HITS GUID:', error);
+      return throwError(() => new Error('An error occurred while generating HITS GUID. Please try again later.'));
+    })
+  );
+}
+
+saveDaAssessmentResponse(payload: any): Observable<any> {
+  const endpoint = APIEndpoints.daAssessmentResponse;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  // Strapi requires the payload inside a `data` key
+  return this.http.post(endpoint, payload , { headers });
+}
 
 }

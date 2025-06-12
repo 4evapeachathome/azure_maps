@@ -17,9 +17,10 @@ export class SsriparesultsComponent  implements OnInit {
   @Input() quizTitle: string = '';
   @Input() sripa: any[] = [];
   @Input() selectedOptions: string[] = [];
-  @Input() myAngularxQrCode: string = 'https://http://localhost:8100/login'; // QR code content
+  @Input() myAngularxQrCode: string = ''; // QR code content
   @ViewChild('resultContent', { static: false }) resultContent!: ElementRef;
   @ViewChild('qrCodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
+  qrcodeUrl: string = '';
 
   highSeverityTriggered = false;
 
@@ -74,34 +75,30 @@ export class SsriparesultsComponent  implements OnInit {
   
       // Table
       const table = document.createElement('table');
-      table.style.width = '100%';
+      table.style.width = '800px';  // Match the container's max-width
       table.style.borderCollapse = 'collapse';
+      table.style.tableLayout = 'fixed';  // Enforce fixed layout
       table.innerHTML = `
         <thead>
           <tr>
-            <th style="border: 1px solid #ccc; padding: 8px;">Question</th>
-            <th style="border: 1px solid #ccc; padding: 8px;">Yes</th>
-            <th style="border: 1px solid #ccc; padding: 8px;">No</th>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">S.No</th>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 700px; box-sizing: border-box;">Question</th>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 100px; box-sizing: border-box;">Answer</th>
           </tr>
         </thead>
         <tbody>
           ${this.sripa.map((q, i) => `
             <tr>
-              <td style="border: 1px solid #ccc; padding: 8px;">
-                ${q.text}
-              </td>
-              <td style="text-align: center; border: 1px solid #ccc; padding: 8px;">
-                ${this.selectedOptions[i] === 'yes' ? '✔' : ''}
-              </td>
-              <td style="text-align: center; border: 1px solid #ccc; padding: 8px;">
-                ${this.selectedOptions[i] === 'no' ? '✔' : ''}
+              <td style="border: 1px solid #ccc; padding: 8px; width: 50px; text-align: center; box-sizing: border-box;">${i + 1}</td>
+              <td style="border: 1px solid #ccc; padding: 8px; width: 500px; box-sizing: border-box;">${q.text}</td>
+              <td style="border: 1px solid #ccc; padding: 8px; width: 250px; text-align: center; box-sizing: border-box;">
+                ${(this.selectedOptions[i] || '')}
               </td>
             </tr>
           `).join('')}
         </tbody>
       `;
       container.appendChild(table);
-  
       // Warning message
       if (this.highSeverityTriggered) {
         const warning = document.createElement('div');
@@ -137,6 +134,7 @@ export class SsriparesultsComponent  implements OnInit {
   }
 
   checkHighSeverity(): void {
+    this.qrcodeUrl =`${window.location.origin}/viewresult?${this.myAngularxQrCode}`
     this.highSeverityTriggered = this.sripa.some((q, idx) =>
       this.selectedOptions[idx] === 'yes' && q.severity?.toLowerCase() === 'high'
     );

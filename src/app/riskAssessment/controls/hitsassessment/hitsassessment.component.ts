@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { MenuService } from 'src/shared/menu.service';
+import { Utility } from 'src/shared/utility';
 
 @Component({
   selector: 'app-hitsassessment',
@@ -22,6 +23,7 @@ export class HitsassessmentComponent  implements OnInit {
   scaleOptions: string[] = [];
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
+  @Input() hitsGuid:any;
 
   constructor(
     private router: Router,
@@ -47,7 +49,7 @@ export class HitsassessmentComponent  implements OnInit {
       return;
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
-    
+    //debugger;
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -87,19 +89,19 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
 
 
   setupHitsQuestions(questions: any[], answerOptions: any[]) {
-    const scaleSet = new Set<string>();
-    answerOptions.forEach((opt: any) => {
-      scaleSet.add(`${opt.score}. ${opt.label}`);
-    });
+    // Sort answer options by score to ensure correct order
+    const sortedOptions = answerOptions.sort((a, b) => a.score - b.score);
   
-    this.scaleOptions = [...scaleSet];
+    // Map the sorted options to the scale format (e.g., "1. NEVER", "2. RARELY", etc.)
+    this.scaleOptions = sortedOptions.map(opt => `${opt.score}. ${opt.label}`);
   
+    // Map questions to the hitsQuestions format
     this.hitsQuestions = questions.map((q: any) => ({
       id: q.id,
       text: q.question_text,
       selected: null,
       weight_critical_alert: q.weight_critical_alert,
-      options: answerOptions.map((opt: any) => ({
+      options: sortedOptions.map((opt: any) => ({
         score: opt.score,
         label: opt.label
       })),
@@ -116,48 +118,83 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
     return this.hitsQuestions.every(q => q.selected !== null && q.selected !== undefined);
   }
 
-  submit() {
-    let totalScore = 0;
-    const answerSummary: { questionId: number; questionText: string; selectedScore: number | null }[] = [];
-    let criticalAlert = false;
+  async submit() {
+    // Create the alert using AlertController
+    const alert = await this.alertController.create({
+      header: 'Confirm Submission',
+      message: 'Are you sure you want to submit the assessment?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Submission canceled');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            // Proceed with the original logic if OK is clicked
+            let totalScore = 0;
+            const answerSummary: { question: string; answer: string | null }[] = [];
+            let criticalAlert = false;
   
-    // Single loop to calculate totalScore, build answerSummary, and check for critical alert
-    for (const question of this.hitsQuestions) {
-      // Handle selected score for totalScore and answerSummary
-      const selectedScore = question.selected ? question.selected.score : null;
-      if (selectedScore !== null) {
-        totalScore += selectedScore;
-      }
+            for (const question of this.hitsQuestions) {
+              const selected = question.selected;
+              const selectedScore = selected ? selected.score : null;
+              const selectedAnswer = selected ? selected.label : null;
   
-      // Add to answerSummary
-      answerSummary.push({
-        questionId: question.id,
-        questionText: question.text,
-        selectedScore: selectedScore
-      });
+              if (selectedScore !== null) {
+                totalScore += selectedScore;
+              }
   
-      // Check for critical alert condition
-      if (!criticalAlert && question.weight_critical_alert && question.selected) {
-        const matchFound = question.criticalOptions.some((opt: any) =>
-          opt.score === question.selected.score || opt.label === question.selected.label
-        );
+              answerSummary.push({
+                question: question.text,
+                answer: selectedAnswer
+              });
   
-        if (matchFound) {
-          criticalAlert = true;
-          // No break needed since we'll exit after this loop iteration if needed
+              if (!criticalAlert && question.weight_critical_alert && selected) {
+                const matchFound = question.criticalOptions.some((opt: any) =>
+                  opt.score === selected.score || opt.label === selected.label
+                );
+                if (matchFound) {
+                  criticalAlert = true;
+                }
+              }
+            }
+  
+            const payload = {
+              data: {
+                AssessmentGuid: this.hitsGuid,
+                response: answerSummary,
+                Score: totalScore,
+                CaseNumber: this.caseNumber,
+                support_service: this.loggedInUser?.documentId
+              }
+            };
+  
+            this.apiService.postHitsAssessmentResponse(payload).subscribe({
+              next: (res) => {
+                sessionStorage.setItem('hitsAssessmentResult', JSON.stringify({
+                  totalScore,
+                  summary: answerSummary,
+                  criticalAlert,
+                  hitsurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
+                }));
+                console.log('Assessment saved:', res);
+                this.router.navigate(['/riskassessmentsummary']);
+              },
+              error: (err) => {
+                console.error('Failed to save assessment', err);
+              }
+            });
+          }
         }
-      }
-    }
+      ]
+    });
   
-    const result = {
-      totalScore,
-      summary: answerSummary,
-      criticalAlert
-    };
-  
-    sessionStorage.setItem('hitsAssessmentResult', JSON.stringify(result));
-    //debugger;
-    this.router.navigate(['/riskassessmentsummary']);
+    // Present the alert
+    await alert.present();
   }
 
   goBack() {

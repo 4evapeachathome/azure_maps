@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -36,6 +36,8 @@ showAnswers: boolean[] = [];
 selectedOptions: string[] = [];
 finalAnswerHtml: string = '';
 showresults: boolean = false;
+hasYesAnswer: boolean = false;
+@Input() ssripaGuid:any; // Track if any 'yes' answer is selected
 
 constructor(private apiService: ApiService) {}
 
@@ -68,6 +70,7 @@ renderRichTextFromText(text: string): string {
 selectOption(index: number, option: 'yes' | 'no'): void {
   this.selectedOptions[index] = option;
   this.showresults = this.selectedOptions.some(opt => opt !== null);
+  this.hasYesAnswer = this.selectedOptions.some(opt => opt === 'yes');
 }
 
 prevSlide(): void {
@@ -123,26 +126,29 @@ renderText(child: any): string {
   return text;
 }
 
+capitalizeFirstLetter(str: string | null) {
+  if (!str) return null;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 submitAssessmentResponse(): Observable<any> {
-  const respondedQuestions = this.sripa
-    .map((q, index) => {
-      const selected = this.selectedOptions[index];
-      if (selected) {
-        return {
-          question: q.text,
-          selectedOption: selected,
-          actionPlan: selected === 'yes' ? q.actions[0]?.description || null : null
-        };
-      }
-      return null;
-    })
-    .filter(q => q !== null);
+  const respondedQuestions = this.sripa.map((q, index) => {
+    const selected = this.selectedOptions[index];
+    const answer = selected ? selected.charAt(0).toUpperCase() + selected.slice(1).toLowerCase() : '';
+    return {
+      question: q.text,
+      answer: answer
+    };
+  });
+
+  
 
   const payload = {
     data: {
       response: respondedQuestions,
-      AssessmentGuid: Utility.generateGUID('ssripa'),
+      AssessmentGuid: this.ssripaGuid,
       support_service: null,
+      CaseNumber: null, // Replace with actual case number if available
       IsAssessmentfromEducationModule: true
     }
   };

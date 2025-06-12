@@ -4,7 +4,7 @@
       <!-- Show Quiz Component -->
       <ion-row class="comp-space" *ngIf="!hidewhenshowingresults">
         <ion-col>
-          <pathome-sripacomp></pathome-sripacomp>
+          <pathome-sripacomp [ssripaGuid]="sripaData"></pathome-sripacomp>
         </ion-col>
       </ion-row>
       
@@ -19,7 +19,7 @@
           
          <ion-segment [(ngModel)]="selectedTab" class="web-tab-toggle" mode="md">
             <ion-segment-button value="results">Results</ion-segment-button>
-            <ion-segment-button value="actionplan">Action Plan</ion-segment-button>
+            <ion-segment-button value="actionplan" [disabled]="sripaCompRef && !sripaCompRef.hasYesAnswer">Action Plan</ion-segment-button>
           </ion-segment>
         
         </ion-col>
@@ -73,7 +73,11 @@
           </ion-button>
 
           <ion-button color="primary" size="small" (click)="showResults()" *ngIf="sripaCompRef?.showresults">
-            Show results
+            Submit
+          </ion-button>
+
+          <ion-button color="primary" size="small" (click)="retakeAssessment()" *ngIf="hidewhenshowingresults">
+            Retake Assessment
           </ion-button>
         </ion-col>
       </ion-row>

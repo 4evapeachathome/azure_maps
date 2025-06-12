@@ -10,7 +10,7 @@
         <div class="qr-section">
           <qrcode
             #qrCodeElement
-            [qrdata]="myAngularxQrCode"
+            [qrdata]="qrcodeUrl"
             [width]="100"
             [errorCorrectionLevel]="'M'"
           ></qrcode>
@@ -24,30 +24,21 @@
           <table>
             <thead>
               <tr>
+                <th>S No.</th>
                 <th>Question</th>
-                <th class="thr-width-auto">Yes</th>
-                <th class="thr-width-auto">No</th>
+                <th class="thr-width-auto">Answer</th>
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="let q of sripa; let i = index"
-                class="question-summary"
-              >
+              <tr *ngFor="let q of sripa; let i = index" class="question-summary">
+                <td>{{ i + 1 }}</td>
                 <td>{{ q.text }}</td>
                 <td class="thr-width-auto">
-                  <ion-radio-group [value]="selectedOptions[i]">
-                    <ion-radio disabled value="yes" mode="md"></ion-radio><br />
-                  </ion-radio-group>
-                </td>
-                <td class="thr-width-auto">
-                  <ion-radio-group [value]="selectedOptions[i]">
-                    <ion-radio disabled value="no" mode="md"></ion-radio>
-                  </ion-radio-group>
+                  {{ selectedOptions[i] | uppercase }}
                 </td>
               </tr>
             </tbody>
-          </table>     
+          </table>  
         </div>
       </ion-col>
     </ion-row>

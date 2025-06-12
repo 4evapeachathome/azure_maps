@@ -1,16 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AlertController, IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { interval, Subscription } from 'rxjs';
 import html2pdf from 'html2pdf.js'; 
 import { QRCodeComponent  } from 'angularx-qrcode';
-import domtoimage from 'dom-to-image-more';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { CookieService } from 'ngx-cookie-service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { SummarypageComponent } from "../summarypage/summarypage.component";
+import { presentToast } from 'src/shared/utility';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { ASSESSMENT_TYPE } from 'src/shared/constants';
 
 
 @Component({
@@ -20,27 +23,27 @@ import { SummarypageComponent } from "../summarypage/summarypage.component";
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
 })
-export class AssessmentsummaryComponent  implements OnInit {
+export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
+  @Input() reloadFlag: boolean = false;
   hidePdfContainer = true;
-  caseNumber: string='';
+  caseNumber: string='<>';
   loggedInUser:any = null;
   loaded: boolean = false;
   riskValue!: number; // Dynamic risk value (0-100)
   riskLevelsTitle: string = 'Risk Levels';
   stressCurveLabel: string = 'Stress Curve';
-  @ViewChild('qrcodeEl', { static: false }) qrcodeEl!: QRCodeComponent;
-  @ViewChild('pdfExportContainer', { static: false }) pdfExportContainer!: ElementRef;
-  @ViewChild('qrImage', { static: false }) qrImage!: ElementRef<HTMLImageElement>;
-  @ViewChild('gaugeCanvas', { static: false }) gaugeCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('qrcodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
+  @ViewChild('riskMeterRef') summaryPage!: SummarypageComponent;
   showbarcode: boolean = false;
   isSSripa:boolean = false;
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
   answerSummary: any[] = [];
-  assessmentTitle: string = 'Risk Assessment Results';
-  myAngularxQrCode: string = 'https://sripaalink.com'; // QR code content
+  assessmentTitle: string = 'Risk Assessment Result';
+  QrcodeUrl: string = ''; // QR code content
   hitResults: any[] = []; // To store the API response
   errorMessage: string | null = null;
+  isHitsAssessment: boolean = false;
   riskGaugeMin: number = 0;
   riskGaugeMax: number = 100;
   gaugeThresholds: any[] = [];
@@ -49,24 +52,53 @@ export class AssessmentsummaryComponent  implements OnInit {
   note!: string;
   caution!: string;
   selectedAssessment: string | null = null; // To store the selected assessment type
+  rangevalue:any;
+  showSummary = false; /// enable when to show summary
+  isRatAssessment = false;
+  ratAssessmentResult: any;
+  responseJson: any;
+  isHitAssessment = false;
+  assessmentNumber: string = '';
+  hasFetchedData: boolean = false; // Track if logins have been fetched
+  ASSESSMENT_TYPE = ASSESSMENT_TYPE;
 
-  constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController) { }
+  levelofdanger:string=''; // Track if logins have been fetched
+  isDanger: boolean = false; // Track if logins have been fetched
+
+  constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController) { }
 
   ngOnInit() {
-    // const encodedUser = this.cookieService.get('userdetails');
-    // if (encodedUser) {
-    //   try {
-    //     this.loggedInUser = JSON.parse(atob(encodedUser));
-    //   } catch {
-    //     console.error('Invalid cookie format, logging out...');
-    //     this.cookieService.delete('userdetails');
-    //     this.router.navigate(['/login']);
-    //     return;
-    //   }
-    // } else {
-    //   this.router.navigate(['/login']);
-    //   return;
-    // }
+    if (!this.hasFetchedData) {
+      this.initializeComponent();
+      this.hasFetchedData = true;
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedData) {
+      this.initializeComponent();
+      this.hasFetchedData = true;
+      setTimeout(() => {
+        this.tryLoadRiskMeterImage();
+      }, 100);
+    }
+  }
+
+  initializeComponent(){
+    const encodedUser = this.cookieService.get('userdetails');
+    if (encodedUser) {
+      try {
+        this.loggedInUser = JSON.parse(atob(encodedUser));
+      } catch {
+        console.error('Invalid cookie format, logging out...');
+        this.cookieService.delete('userdetails');
+        this.router.navigate(['/login']);
+        return;
+      }
+    } else {
+      this.router.navigate(['/login']);
+      return;
+    }
   
     const storedGuidedType = sessionStorage.getItem('guidedType');
     if (storedGuidedType) {
@@ -74,21 +106,83 @@ export class AssessmentsummaryComponent  implements OnInit {
     }
   
     this.updateGuidedTypeLabel();
+
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
+    this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-    const resultStr = sessionStorage.getItem('hitsAssessmentResult');
-    if (resultStr) {
-      const result = JSON.parse(resultStr);
-      this.riskValue = result.totalScore;
-      this.answerSummary = result.summary;
-      this.criticalalert = result.criticalAlert === 'true' || result.criticalAlert === true;
+
+    if(this.isSSripa) {
+      const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
+      if (resultStr) {
+        const result = JSON.parse(resultStr);
+        //debugger;
+        this.responseJson= result.summary;
+        this.QrcodeUrl= result.ssripasurl;
+      }
     }
-  
-    this.fetchHitResults();
+   
+    if(this.selectedAssessment?.toLowerCase() == 'hits' && this.isHitsAssessment) {
+      const resultStr = sessionStorage.getItem('hitsAssessmentResult');
+      if (resultStr) {
+        const result = JSON.parse(resultStr);
+        //debugger;
+        this.responseJson= result.summary;
+        this.riskValue = result.totalScore;
+        this.answerSummary = result.summary;
+        this.criticalalert = result.criticalAlert === 'true' || result.criticalAlert === true;
+        this.QrcodeUrl= result.hitsurl;
+      }
+      this.fetchHitResults();
+    }
+
+    this.isDanger =sessionStorage.getItem('isDanger') === 'true';
+
+    if(this.isDanger) {
+      const resultStr = sessionStorage.getItem('daAssessmentResult');
+      if(resultStr){
+        const result = JSON.parse(resultStr);
+        this.responseJson= result.summary;
+        this.riskValue = result.totalScore;
+        this.QrcodeUrl= result.daurl;
+        this.levelofdanger = result.Levelofdanger;
+      }
+
+    }
+
     this.loaded = true;
+    this.caseNumber = sessionStorage.getItem('caseNumber') || '';
+    
+    if(this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+      let ratResult = sessionStorage.getItem('ratsAssessmentResult');
+      if(ratResult) {
+        this.ratAssessmentResult = JSON.parse(ratResult || '');
+        this.assessmentNumber = this.ratAssessmentResult.asssessmentNumber;
+      }
+    }
+    this.checkSelectedAssessment(this.assessmentNumber);
   }
 
+  ngAfterViewInit(): void {
+    let ratResult = sessionStorage.getItem('ratsAssessmentResult');
+    if(ratResult && this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+      this.ratAssessmentResult = JSON.parse(ratResult || '')
+      if(this.ratAssessmentResult) {
+        this.QrcodeUrl = `${window.location.origin}/viewresult?code=${this.ratAssessmentResult?.asssessmentNumber}`
+      }
+    }
+    setTimeout(() => {
+      this.tryLoadRiskMeterImage();
+    }, 100);
+  }
 
+  tryLoadRiskMeterImage() {
+    const canvasEl = this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement;
+    if (canvasEl) {
+      // do html2canvas or whatever
+    } else {
+      console.warn('Gauge element not found');
+    }
+  }
 
 
   private updateGuidedTypeLabel() {
@@ -98,61 +192,252 @@ export class AssessmentsummaryComponent  implements OnInit {
 
   async downloadPDF() {
     try {
-      // 1. Show the PDF container (if hidden)
-      this.hidePdfContainer = false;
-  
-      // 2. Wait briefly for Angular change detection
-      await new Promise(resolve => setTimeout(resolve, 100));
-  
-      // 3. Capture the QR code canvas (if needed)
-      const canvas = this.qrcodeEl.qrcElement.nativeElement.querySelector('canvas');
-      if (canvas) {
-        const qrImageDataUrl = canvas.toDataURL('image/png');
-        this.qrImage.nativeElement.src = qrImageDataUrl;
+      // 1. Create the container for PDF content
+      const container = document.createElement('div');
+      container.style.cssText = `
+        position: absolute;
+        left: -9999px;
+        padding: 18px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        max-width: 800px;
+        background: white;
+        box-sizing: border-box;
+      `;
+
+      // 2. Add title
+      const title = document.createElement('h5');
+      title.innerText = this.selectedAssessment || 'N/A';
+      title.style.textAlign = 'center';
+      title.style.marginBottom = '16px';
+      title.style.fontWeight = 'bold';
+      container.appendChild(title);
+
+      // 4. Create row for result info and QR code
+      const mainRow = document.createElement('div');
+      mainRow.style.display = 'flex';
+      mainRow.style.justifyContent = 'space-between';  // Space between left and right sections
+      mainRow.style.alignItems = 'flex-start';
+      mainRow.style.margin = '20px 0';
+      
+      // Left section: Case Number and Result Info
+      const leftSection = document.createElement('div');
+      leftSection.style.display = 'flex';
+      leftSection.style.flexDirection = 'column';
+      leftSection.style.gap = '10px';
+      
+      // Add user info (Case Number)
+      const userInfo = document.createElement('div');
+      userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || '<>'}</p>`;
+      leftSection.appendChild(userInfo);
+      
+      // Add result info
+      const resultInfo = document.createElement('div');  // Changed to div for consistency
+      resultInfo.style.display = 'inline-block';
+      resultInfo.style.minWidth = '300px';  // Ensure enough space for text
+      resultInfo.style.whiteSpace = 'normal';
+      if (sessionStorage.getItem('isHits') === 'true') {
+        resultInfo.innerHTML = `<p style="white-space: nowrap;">Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
+      } 
+      else if (this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>
+          ${this.guidedType === 'staff-guided' ? `
+          <p><strong>Status:</strong> ${this.riskValue >= 20 ? 'Positive' : 'Negative'}</p>` : ''}`;
+      } 
+      else if (sessionStorage.getItem('isSSripa') === 'true') {
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
       }
-  
-      // 4. Wait for the QR image to load (if used)
-      await new Promise(resolve => setTimeout(resolve, 200));
-  
-      // 5. Capture the entire PDF container as a PNG image
-      const dataUrl = await domtoimage.toPng(this.pdfExportContainer.nativeElement, {
-        quality: 1, // Highest quality
-        bgcolor: '#ffffff', // White background
-      });
-  
-      // 6. Create a temporary container with the captured image
-      const tempDiv = document.createElement('div');
-      tempDiv.style.width = '100%';
-      tempDiv.style.padding = '20px';
-      tempDiv.style.background = 'white';
-  
-      const img = new Image();
-      img.src = dataUrl;
-      img.style.width = '100%';
-      tempDiv.appendChild(img);
-  
-      // 7. Append to body (temporarily)
-      document.body.appendChild(tempDiv);
-  
-      // 8. Generate PDF from the image
-      const opt = {
-        margin: 0.5,
-        filename: 'Assessment-Summary.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+      leftSection.appendChild(resultInfo);
+      
+      mainRow.appendChild(leftSection);
+      
+      // Right section: QR Code
+      const qrCanvas = this.qrCodeElement?.qrcElement?.nativeElement.querySelector('canvas');
+      if (qrCanvas) {
+        const qrSpan = document.createElement('span');
+        qrSpan.style.display = 'inline-block';
+        qrSpan.style.textAlign = 'center';
+      
+        const qrLabel = document.createElement('p');
+        qrLabel.innerText = this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase() ? 'Here is the access code for your assessment:' : 'Here is your QR Code.';
+        qrLabel.style.marginBottom = '10px';
+        qrSpan.appendChild(qrLabel);
+      
+        const qrImg = document.createElement('img');
+        qrImg.src = qrCanvas.toDataURL('image/png');
+        qrImg.style.width = '128px';
+        qrImg.style.height = '128px';
+        qrSpan.appendChild(qrImg);
+      
+        const fixedUrl = this.QrcodeUrl.replace(/\\/g, '/');
+        const urlObj = new URL(fixedUrl);
+        const code = new URLSearchParams(urlObj.search).get('code');
+        const codeInfo = document.createElement('p');
+        codeInfo.innerText = `Code: ${code}`;
+        codeInfo.style.marginTop = '10px';
+        qrSpan.appendChild(codeInfo);
+      
+        mainRow.appendChild(qrSpan);
+      }
+      
+      container.appendChild(mainRow);
+
+      // 7. Create row for score info (without QR code)
+      const scoreRow = document.createElement('div');
+      scoreRow.style.display = 'flex';
+      scoreRow.style.justifyContent = 'center';
+      scoreRow.style.alignItems = 'flex-start';
+      scoreRow.style.gap = '30px';
+      scoreRow.style.margin = '20px 0';
+
+      // 8. Add score info
+      const scoreInfo = document.createElement('span');
+      scoreInfo.style.display = 'inline-block';
+      if (sessionStorage.getItem('isHits') === 'true') {
+        scoreInfo.innerHTML = `
+          ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
+          ${this.guidedType === 'staff-guided' ? 
+            `<p><strong>Note:</strong> ${this.note || ''}</p>
+             <p><strong>Caution:</strong> ${this.caution || ''}</p>` : ''}
+        `;
+      }
+      scoreRow.appendChild(scoreInfo);
+      container.appendChild(scoreRow);
+
+      // 9. Function to generate PDF
+      const generatePDF = async (containerElement:any) => {
+        const table = document.createElement('table');
+        table.style.cssText = `
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        `;
+        table.innerHTML = `
+        <thead>
+          <tr>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">S.No</th>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">Question</th>
+            <th style="border: 1px solid #ccc; padding: 8px; width: 250px; box-sizing: border-box;">Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${this.responseJson.map((item:any, index:any) => `
+            <tr style="page-break-inside: avoid;">
+              <td style="border: 1px solid #ccc; padding: 8px; width: 80px; text-align: center; box-sizing: border-box;">${index + 1}</td>
+              <td style="border: 1px solid #ccc; padding: 8px; width: 470px; box-sizing: border-box;">${item.question}</td>
+              <td style="border: 1px solid #ccc; padding: 8px; width: 250px; text-align: center; box-sizing: border-box;">${item.answer}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+        containerElement.appendChild(table);
+        document.body.appendChild(containerElement);
+
+        const canvas = await html2canvas(containerElement, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#FFFFFF',
+          windowWidth: containerElement.scrollWidth,
+          windowHeight: containerElement.scrollHeight,
+          allowTaint: true,
+          logging: true,
+          onclone: (clonedDoc) => {
+            clonedDoc.querySelectorAll('[style*="display: none"]').forEach(el => ((el as HTMLElement).style.display = 'block'));
+          }
+        });
+
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = { top: 15, bottom: 20, left: 15, right: 15 };
+        const contentWidth = pageWidth - margin.left - margin.right;
+        const contentHeight = pageHeight - margin.top - margin.bottom;
+
+        const imgWidth = contentWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const totalPages = Math.ceil(imgHeight / contentHeight);
+
+        for (let i = 0; i < totalPages; i++) {
+          if (i > 0) pdf.addPage();
+
+          const sliceCanvas = document.createElement('canvas');
+          sliceCanvas.width = canvas.width;
+          sliceCanvas.height = Math.floor((contentHeight * canvas.height) / imgHeight);
+          const ctx = sliceCanvas.getContext('2d');
+          if (!ctx) throw new Error('Failed to get context for PDF page slice');
+
+          ctx.drawImage(
+            canvas,
+            0,
+            i * contentHeight * (canvas.height / imgHeight),
+            canvas.width,
+            sliceCanvas.height,
+            0,
+            0,
+            canvas.width,
+            sliceCanvas.height
+          );
+
+          pdf.addImage({
+            imageData: sliceCanvas.toDataURL('image/png'),
+            format: 'PNG',
+            x: margin.left,
+            y: margin.top,
+            width: imgWidth,
+            height: (sliceCanvas.height * imgWidth) / canvas.width
+          });
+
+          if (totalPages > 1) {
+            pdf.setFontSize(10);
+            pdf.setTextColor(100);
+            pdf.text(`Page ${i + 1} of ${totalPages}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+          }
+        }
+
+        pdf.save(`${this.selectedAssessment || 'Assessment'} Result.pdf`);
       };
-  
-      await html2pdf().from(tempDiv).set(opt).save();
-  
-      // 9. Clean up
-      document.body.removeChild(tempDiv);
-      this.hidePdfContainer = true;
+
+      // 10. Capture the risk meter (gauge)
+      this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
+      const riskMeterContainer = !this.isSSripa ? this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement : null;
+
+      if (riskMeterContainer && this.selectedAssessment?.toLowerCase() !== ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+
+        const scoreDisplayContainer = riskMeterContainer.querySelector('.score-display');
+        if (scoreDisplayContainer) {
+          scoreDisplayContainer.remove();
+        }
+        const meterSpan = document.createElement('span');
+        meterSpan.style.display = 'inline-block';
+        meterSpan.style.textAlign = 'center';
+
+        const meterLabel = document.createElement('p');
+        meterLabel.innerText = 'Risk Meter';
+        meterLabel.style.marginBottom = '10px';
+        meterSpan.appendChild(meterLabel);
+
+        const gaugeClone = riskMeterContainer.cloneNode(true);
+        const hiddenElements = gaugeClone.querySelectorAll('[style*="display: none"]');
+        hiddenElements.forEach((el:any) => (el.style.display = 'block'));
+
+        gaugeClone.style.width = '200px';
+        gaugeClone.style.height = '128px';
+        meterSpan.appendChild(gaugeClone);
+        scoreRow.appendChild(meterSpan);
+
+        this.cdRef.detectChanges();
+        await new Promise(resolve => setTimeout(resolve, 100));
+        await generatePDF(container);
+      } else {
+        console.error('Gauge container not found');
+        await generatePDF(container);
+      }
     } catch (error) {
       console.error('Error generating PDF:', error);
-      this.hidePdfContainer = true;
     }
-  }
+}
+
 
   stayLoggedIn() {
     const now = Date.now().toString();
@@ -195,7 +480,7 @@ export class AssessmentsummaryComponent  implements OnInit {
     this.apiService.getHitsResultCalculation().subscribe({
       next: (response: any) => {
         if (response && response.data) {
-        //  debugger;
+          //debugger;
           this.hitResults = response.data;
   
           // Extract and store Note and Caution (assumes only one item in hitResults)
@@ -203,31 +488,12 @@ export class AssessmentsummaryComponent  implements OnInit {
           this.note = hitData?.Note || '';
           this.caution = hitData?.Caution || '';
   
-          const answerOptions = hitData?.AnswerOption || [];
-  
-          // Set min and max for the gauge from nested AnswerOption scores
-          const allMinScores = answerOptions.map((opt: any) => opt.minScore);
-          const allMaxScores = answerOptions.map((opt: any) => opt.maxScore ?? opt.minScore);
-  
-          this.riskGaugeMin = Math.min(...allMinScores);
-          this.riskGaugeMax = Math.max(...allMaxScores);
-  
-          // Handle critical alert case
-          if (this.criticalalert) {
-        //    debugger;
-            this.thresholdValues = {
-              10: { color: 'red' },
-              20: { color: 'red' }
-            };
-          } else {
-            // Map API data to thresholds
-            this.thresholdValues = {};
-            answerOptions.forEach((option: any) => {
-              this.thresholdValues[option.minScore] = {
-                color: this.getColorForLabel(option.label),
-              };
-            });
-          }
+          this.rangevalue = hitData?.AnswerOption.map((option:any) => ({
+            min: option.min,
+            max: option.max,
+            color: option.color,
+            label: option.label
+          }));
         } else {
           this.hitResults = [];
           this.thresholdValues = {};
@@ -245,13 +511,37 @@ export class AssessmentsummaryComponent  implements OnInit {
     });
   }
 
-  getColorForLabel(label: string): string {
-    switch (label?.toLowerCase()) {
-      case 'yellow': return 'green';
-      case 'orange': return 'orange';
-      case 'red': return 'red';
-      default: return 'gray';
+  
+  checkSelectedAssessment(code: string) {
+    if (code && code.toLowerCase().includes('web-')) {
+      this.fetchWebResults(code);
+    } else if(code && code.toLowerCase().includes('hit-')) {
+    } else if(code && code.toLowerCase().includes('da-')) {
+    } else if(code && code.toLowerCase().includes('dai-')) {
+    } else if(code && code.toLowerCase().includes('cts-')) {
+    } else if(code && code.toLowerCase().includes('ssripa-')) {
+    } else {
+      this.selectedAssessment = '';
     }
+  }
+
+  fetchWebResults(code: string) {
+    this.apiService.getRatsResult(code).subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.responseJson = response.assessmentSummary;
+          this.riskValue = response.totalScore;
+        }
+      },
+      error: (error: any) => {
+        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
+        this.showToast(errorMsg, 3000, 'top');
+      }
+    })
+  }
+
+  private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+    await presentToast(this.toastController, message, duration, position);
   }
 
 }

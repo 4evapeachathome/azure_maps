@@ -11,38 +11,15 @@ $desktop: 1024px;
   padding: 0;
   box-sizing: border-box;
   margin: 0 auto;
-  min-height: 120px;
-
-  // @media (max-width: #{$mobile}) {
-  //   min-height: 180px;
-  // }
-
-  // @media (min-width: #{$mobile + 1}) and (max-width: #{$tablet}) {
-  //   min-height: 200px;
-  // }
+  min-height: 90px;
 }
 
 .gauge {
   position: relative;
-  width: 300px;
-  height: 150px;
+      width: 200px;
+    height: 85px;
   margin: 0 auto;
   max-width: 95%;
-
-  // @media (max-width: #{$mobile}) {
-  //   width: 260px;
-  //   height: 130px;
-  // }
-
-  // @media (min-width: #{$mobile + 1}) and (max-width: #{$tablet}) {
-  //   width: 280px;
-  //   height: 140px;
-  // }
-
-  // @media (min-width: #{$tablet + 1}) and (max-width: #{$desktop}) {
-  //   width: 300px;
-  //   height: 150px;
-  // }
 }
 
 .gauge-bg, .gauge-segments {
@@ -53,16 +30,11 @@ $desktop: 1024px;
   height: 100%;
   z-index: 1;
 
-  // path {
-  //   @media (max-width: #{$mobile}) {
-  //     stroke-width: 8;
-  //   }
-  // }
 }
 
 .pointer {
   position: absolute;
-  bottom: 30px;
+  bottom: 20px;
   left: 50%;
   width: 0;
   height: 0;
@@ -92,7 +64,7 @@ $desktop: 1024px;
     bottom: 0;
     left: -4px;
     width: 8px;
-    height: 60px;
+    height: 35px;
     background-color: currentColor;
     transform-origin: 50% 100%;
     clip-path: polygon(0 100%, 100% 100%, 50% 0);

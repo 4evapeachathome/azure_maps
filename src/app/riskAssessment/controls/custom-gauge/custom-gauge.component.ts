@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
@@ -24,78 +24,126 @@ interface GaugeSegment {
 export class CustomGaugeComponent implements OnInit, OnChanges {
   @Input() value: number = 0;
   @Input() min: number = 0;
-  @Input() max: number = 15;
+  @Input() max: number = 20;
+  @ViewChild('gaugeContainer', { static: true }) gaugeContainerRef!: ElementRef;
   @Input() ranges: GaugeRange[] = [
-    { min: 0, max: 5, color: '#4CAF50', label: 'Low Risk' },
-    { min: 5, max: 10, color: '#FFA500', label: 'Medium Risk' },
-    { min: 10, max: 15, color: '#FF0000', label: 'High Risk' }
+    { min: 1, max: 7, color: 'Yellow', label: 'Low risk' },
+    { min: 8, max: 10, color: 'Orange', label: 'Medium risk' },
+    { min: 11, max: 20, color: 'Red', label: 'High risk' }
   ];
-
+  normalisedRanges: GaugeRange[] = [];
   rotation: string = '0deg';
-  gaugeColor: string = '#4CAF50';
+  gaugeColor: string = '#FFFF00';
   segments: GaugeSegment[] = [];
   markers: { value: number; color: string }[] = [];
+  @Input() forceRedNeedle: boolean = false;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
+    this.normaliseRanges();
     this.calculateSegments();
     this.updateGauge();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['ranges']) {
+      this.normaliseRanges();
       this.calculateSegments();
     }
-    this.updateGauge();
+  
+    if (changes['value'] || changes['min'] || changes['max'] || changes['ranges'] || changes['forceRedNeedle']) {
+      this.updateGauge();
+    }
+  }
+
+  public getCanvasElement(): HTMLCanvasElement | null {
+    return this.gaugeContainerRef?.nativeElement?.querySelector('canvas') || null;
+  }
+
+  public mapColor(color: string): string {
+    const colorMap: { [key: string]: string } = {
+      'Yellow': '#8CE249',
+      'Orange': '#EDA635',
+      'Red': '#E82D48',
+    };
+    return colorMap[color] || color;
+  }
+
+  private normaliseRanges() {
+    if (!Array.isArray(this.ranges) || this.ranges.length === 0) {
+      this.normalisedRanges = [];
+      this.min = 0;
+      this.max = 100;
+      return;
+    }
+  
+    this.normalisedRanges = [...this.ranges]
+      .sort((a, b) => a.min - b.min)
+      .map(range => ({
+        ...range,
+        color: this.mapColor(range.color)
+      }));
+  
+    // Set min to the first range's min, not the input min
+    this.min = this.normalisedRanges[0]?.min ?? 0;
+    this.max = this.normalisedRanges[this.normalisedRanges.length - 1]?.max ?? 100;
   }
 
   private calculateSegments() {
     this.segments = [];
-    this.markers = [];
 
-    // Sort ranges by min value to ensure proper order
-    const sortedRanges = [...this.ranges].sort((a, b) => a.min - b.min);
+    const span = this.max - this.min;
+    let lastEndDeg = -90;
 
-    // Calculate total angle range (180 degrees from -90 to 90)
-    const totalAngle = 180;
-    const startAngle = -90;
+    this.normalisedRanges.forEach((r, idx) => {
+      const startPct = (r.min - this.min) / span;
+      let endPct = (r.max - this.min) / span;
 
-    // Add markers for all range boundaries
-    sortedRanges.forEach(range => {
-      this.markers.push({ value: range.min, color: range.color });
-      if (range === this.ranges[this.ranges.length - 1]) {
-        this.markers.push({ value: range.max, color: range.color });
+      const startDeg = -90 + startPct * 180;
+      let endDeg = -90 + endPct * 180;
+
+      if (idx < this.normalisedRanges.length - 1) {
+        const nextRange = this.normalisedRanges[idx + 1];
+        const nextStartPct = (nextRange.min - this.min) / span;
+        const nextStartDeg = -90 + nextStartPct * 180;
+
+        if (nextStartDeg > endDeg) {
+          endDeg = nextStartDeg;
+        }
       }
-    });
 
-    this.ranges.forEach(range => {
-      const segmentStartPercentage = (range.min - this.min) / (this.max - this.min);
-      const segmentEndPercentage = (range.max - this.min) / (this.max - this.min);
-      const segmentStartAngle = -90 + (segmentStartPercentage * 180);
-      const segmentEndAngle = -90 + (segmentEndPercentage * 180);
-      
-      const path = this.describeArc(100, 100, 80, segmentStartAngle, segmentEndAngle);
-      
       this.segments.push({
-        path,
-        color: range.color
+        path: this.describeArc(100, 100, 80, startDeg, endDeg),
+        color: r.color
       });
+
+      lastEndDeg = endDeg;
     });
   }
 
   private updateGauge() {
-    // Calculate rotation (-90 to 90 degrees for proper arc movement)
-    const percentage = (this.value - this.min) / (this.max - this.min);
-    const degrees = -90 + (percentage * 180);
-    this.rotation = `${degrees}deg`;
-
-    // Update color based on current value
-    const currentRange = this.ranges.find(range => 
-      this.value >= range.min && this.value <= range.max
-    );
-    this.gaugeColor = currentRange?.color || this.ranges[0].color;
+    if (!Array.isArray(this.normalisedRanges) || this.normalisedRanges.length === 0) {
+      this.rotation = '-90deg';
+      this.gaugeColor = '#ccc';
+      return;
+    }
+  
+    let adjustedValue = this.value;
+    const redRange = this.normalisedRanges.find(r => r.min === 11 && r.max === 20);
+  
+    if (this.forceRedNeedle) {
+      this.gaugeColor = '#FF0000';
+      adjustedValue = redRange?.min || 11;
+    } else {
+      const hit = this.normalisedRanges.find(r => this.value >= r.min && this.value <= r.max);
+      this.gaugeColor = hit?.color ?? this.normalisedRanges[0].color;
+    }
+  
+    const pct = (adjustedValue - this.min) / (this.max - this.min);
+    this.rotation = `${-90 + pct * 180}deg`;
   }
+
 
   private polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
     const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
@@ -105,10 +153,11 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
     };
   }
 
-  private describeArc(x: number, y: number, radius: number, startAngle: number, endAngle: number) {
+  public describeArc(x: number, y: number, radius: number, startAngle: number, endAngle: number) {
     const start = this.polarToCartesian(x, y, radius, endAngle);
     const end = this.polarToCartesian(x, y, radius, startAngle);
-    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+    const largeArcFlag = Math.abs(endAngle - startAngle) <= 180 ? "0" : "1";
+
     return [
       "M", start.x, start.y,
       "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y

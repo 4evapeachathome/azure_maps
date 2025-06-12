@@ -1,27 +1,29 @@
-<div class="gauge-container">
+<div #gaugeContainer class="gauge-container">
   <div class="gauge">
     <!-- Background arc -->
     <svg class="gauge-bg" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet" width="100%" height="100%">
       <path
-        d="M20,100 A80,80 0 0,1 180,100"
+        [attr.d]="describeArc(100, 100, 80, -90, 90)"
         fill="none"
         stroke="#ddd"
-        stroke-width="24"/>
+        stroke-width="35"
+      />
     </svg>
 
     <!-- Colored segments -->
-    <svg class="gauge-segments" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet" width="100%" height="100%">
-      <ng-container *ngFor="let segment of segments">
+    <svg class="gauge-segments" viewBox="0 0 200 120">
+      <ng-container *ngFor="let s of segments">
         <path
-            [attr.d]="segment.path"
-            [attr.stroke]="segment.color"
-            fill="none"
-            stroke-width="24"/>
+          [attr.d]="s.path"
+          [attr.stroke]="s.color"
+          stroke-width="35"
+          stroke-linecap="butt"
+          fill="none" />
       </ng-container>
     </svg>
 
     <!-- Score Display -->
-    <div class="score-display"  style="display: none;">
+    <div class="score-display" style="display: none;">
       <div class="value">{{value | number:'1.0-0'}}</div>
     </div>
 
@@ -32,7 +34,7 @@
         <div class="needle-stem" [style.background-color]="gaugeColor"></div>
       </div>
     </div>
-    
+
     <!-- Value markers -->
     <div class="markers" style="display: none;">
       <span *ngFor="let marker of markers"
@@ -40,14 +42,6 @@
             [style.color]="marker.color">
         {{ marker.value }}
       </span>
-    </div>
-  </div>
-
-  <!-- Legend -->
-  <div class="legend" style="display: none;">
-    <div *ngFor="let range of ranges" class="legend-item">
-      <span class="color-box" [style.background-color]="range.color"></span>
-      <span class="label">{{ range.label || range.min + '-' + range.max }}</span>
     </div>
   </div>
 </div>

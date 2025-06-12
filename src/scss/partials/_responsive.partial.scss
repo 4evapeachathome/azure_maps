@@ -29,7 +29,7 @@
   .container-min-height{
     width: 100%;
     height: calc(100% - 35px);
-    display: table;
+   // display: table;
   }
   .hb-img{
 
@@ -70,9 +70,18 @@
   }
       .container-banner {
           ion-card-content {
-            .cb-header {
-              font-size: $font-size-xlll  !important;
-          }         
+          //   .cb-header {
+          //     font-size: $font-size-xlll  !important;
+          // }   
+          .cb-headeing-1 {
+       font-size: $font-size-xlll  !important;
+    }
+     .cb-headeing-2 {
+       font-size: $font-size-xll  !important;
+    }
+     .cb-headeing-3 {
+       font-size: $font-size-xl !important;
+    }      
 
         }
       }
@@ -299,3 +308,8 @@ text-align: left !important;
 //     background-image: url(riskAssesment1.svg) !important;
 //  }
   }
+@media (min-width: 1900px)  {
+  .contact-max-height{
+    height: 100%;
+  }
+}

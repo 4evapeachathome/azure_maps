@@ -22,6 +22,7 @@ export class LoginPageComponent  implements OnInit {
   showPassword = false;
   showNewPassword = false;
   @Input() reloadFlag: boolean = false;
+  private hasFetchedLogins: boolean = false; // Track if logins have been fetched
 
   constructor(
     private fb: FormBuilder,
@@ -39,15 +40,21 @@ export class LoginPageComponent  implements OnInit {
   ngOnInit() {
     // Fetch user logins on component initialization 
     this.loginForm.reset();
-    this.getUserLogins();
+    if (!this.hasFetchedLogins) {
+      this.getUserLogins();
+      this.hasFetchedLogins = true;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true) {
+    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedLogins) {
       this.loginForm.reset();
-      this.getUserLogins()  // Call your API or logic
+      this.getUserLogins();
+      this.hasFetchedLogins = true;
     }
   }
+
+
 private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
     await presentToast(this.toastController, message, duration, position);
   }
@@ -107,7 +114,13 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
       await this.handleSuccessfulLogin(username, user);
 
   try {
-    await this.router.navigate(['/riskassessment']);
+    let url = sessionStorage.getItem('redirectUrl');
+    if(sessionStorage.getItem('redirectUrl') && url?.includes('code')) {
+      this.router.navigateByUrl(url || '');
+      sessionStorage.removeItem('redirectUrl');
+    } else {
+      await this.router.navigate(['/riskassessment']);
+    }
     await presentToast(this.toastController, 'Login successful!', 3000, 'top');
   } catch (err) {
     await presentToast(this.toastController, 'Navigation failed', 3000, 'top');
@@ -115,11 +128,11 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
   }
 }
   private async handleSuccessfulLogin(username: string, user: any) {
-    const encodedUsername = btoa(username);
-    const encodedUser = btoa(JSON.stringify(user));
+    // Safely encode Unicode strings for btoa
+    const toBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
+    const encodedUsername = toBase64(username);
+    const encodedUser = toBase64(JSON.stringify(user));
     const loginTimestamp = Date.now().toString();
-    console.log('encodedUser!!!!', JSON.parse(atob(encodedUser)));
-    console.log('encodedUsername!!!!!', (atob(encodedUsername)));
   
     this.cookieService.set('userdetails', encodedUser, {
       path: '/',

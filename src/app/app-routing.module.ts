@@ -4,6 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { RiskAssessmentGuard } from './guards/risk-assessment.guard';
 import { LoginGuard } from './guards/login-assessment.gaurd';
+import { viewResultGuard } from './guards/view-result.guard';
 //import { UserCreationAuthGuard } from './guards/setpassoword-auth.guard';
 
 const routes: Routes = [
@@ -46,18 +47,27 @@ const routes: Routes = [
   { path: 'riskassessmentsummary', loadChildren: () => import('./riskAssessment/assessment-summary/assessment-summary.module').then(m => m.AssessmentSummaryPageModule),canActivate: [RiskAssessmentGuard] },
   {
     path: 'hitsassessment',
-    loadChildren: () => import('./riskAssessment/hits-assessment-page/hits-assessment-page.module').then( m => m.HitsAssessmentPagePageModule)
+    loadChildren: () => import('./riskAssessment/hits-assessment-page/hits-assessment-page.module').then( m => m.HitsAssessmentPagePageModule),canActivate: [RiskAssessmentGuard]
   },
   {
-    path: 'ratsassessment',
-    loadChildren: () => import ('../app/riskAssessment/rat-assessment-page/risk-assessment/risk-assessment.module').then(m => m.RiskAssessmentModule)
+    path: 'webassessment',
+    loadChildren: () => import ('../app/riskAssessment/rat-assessment-page/risk-assessment/risk-assessment.module').then(m => m.RiskAssessmentModule),canActivate: [RiskAssessmentGuard]
   },
   {
     path: 'dangerassessment',
-    loadChildren: () => import ('../app/riskAssessment/da-assessment-page/da-assessment/da-assessment.module').then(m => m.DaAssessmentModule)
-  }
+    loadChildren: () => import ('../app/riskAssessment/da-assessment-page/da-assessment/da-assessment.module').then(m => m.DaAssessmentModule),canActivate: [RiskAssessmentGuard]
+  },
+  {
+    path: 'viewresult',
+    loadChildren: () => import ('../app/riskAssessment/view-result-page/view-result-page/view-result-page.module').then(m => m.ViewResultPageModule),
+    canActivate: [viewResultGuard]
+  },
+  {
+    path: 'ssripariskassessment',
+    loadChildren: () => import('./riskAssessment/risk-assessment-ssripa/risk-assessment-ssripa.module').then( m => m.RiskAssessmentSSripaPageModule),canActivate: [RiskAssessmentGuard]
+  },
 
-
+  
 
 ];
 

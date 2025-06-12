@@ -11,6 +11,7 @@ import { RiskassessmentFooterComponent } from "../controls/riskassessment-footer
 import { AssessmentsummaryComponent } from "../controls/assessmentsummary/assessmentsummary.component";
 import { RiskMeterComponent } from '../risk-meter/risk-meter.component';
 import { SummarypageComponent } from '../controls/summarypage/summarypage.component';
+import { AssessmentTableComponent } from '../controls/assessment-table/assessment-table.component';
 
 @NgModule({
   imports: [
@@ -23,10 +24,12 @@ import { SummarypageComponent } from '../controls/summarypage/summarypage.compon
     RiskMeterComponent,
     AssessmentsummaryComponent,
     RiskassessmentFooterComponent,
-    SummarypageComponent
+    SummarypageComponent,
+    AssessmentTableComponent
   ],
   declarations: [
-    AssessmentSummaryPage
+    AssessmentSummaryPage,
+    // AssessmentTableComponent
   ]
 })
 export class AssessmentSummaryPageModule {}

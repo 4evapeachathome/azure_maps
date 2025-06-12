@@ -10,6 +10,7 @@ import { LoadingController } from '@ionic/angular';
 })
 export class LegalrightsPage implements OnInit,AfterViewInit {
   selectedState: any = null;
+  isStateSelected: boolean = false;
   loading: HTMLIonLoadingElement | null = null;
   @ViewChild(UsaMapComponent) usaMapComponent!: UsaMapComponent;
 
@@ -19,6 +20,10 @@ export class LegalrightsPage implements OnInit,AfterViewInit {
   async ngOnInit() {
     // Only show loader if not pre-rendered
     await this.showLoader();
+  }
+
+  onStateSelected(state: { id: string; name: string; path: string }) {
+    this.isStateSelected = !!state; // Set to true if a state is selected (state is not null/undefined)
   }
 
   async ngAfterViewInit() {
