@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -27,6 +27,7 @@ import { Observable } from 'rxjs';
     ]
 })
 export class SripacompComponent  implements OnInit {
+  @Output() hasYesAnswerChanged = new EventEmitter<boolean>();
   quizTitle = '';
 sripa: any[] = [];
 yesanswer: any[] = [];
@@ -71,6 +72,7 @@ selectOption(index: number, option: 'yes' | 'no'): void {
   this.selectedOptions[index] = option;
   this.showresults = this.selectedOptions.some(opt => opt !== null);
   this.hasYesAnswer = this.selectedOptions.some(opt => opt === 'yes');
+  this.hasYesAnswerChanged.emit(this.hasYesAnswer);
 }
 
 prevSlide(): void {

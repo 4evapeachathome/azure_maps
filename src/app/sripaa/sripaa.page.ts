@@ -30,6 +30,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
   quizTitle: string = '';
   sripa: any[] = [];
   selectedOptions: string[] = [];
+  hasYesAnswer = false;
 
   constructor(
     private menuService: MenuService,
@@ -61,18 +62,18 @@ export class SripaaPage implements OnInit,AfterViewInit {
     await this.showLoader();
   }
   
-  retakeAssessment(){
+  async retakeAssessment(){
+    await this.loadSSripaData();
     this.hidewhenshowingresults= false;
   }
 
-  loadSSripaData() {
+  async loadSSripaData() {
     try {
       // Replace with your actual API URL
       const url = this.ssripGuidUrl;
       
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
-          debugger;
           this.sripaData = response?.guid;
         },
         error: (err) => {
