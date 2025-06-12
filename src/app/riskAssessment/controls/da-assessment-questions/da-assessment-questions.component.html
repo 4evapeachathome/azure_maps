@@ -13,7 +13,7 @@
             <ion-row>
               <ion-col size="12" size-sm="12">
                 <div class="user-info">
-                  <ion-text>Hi, User</ion-text>
+                  <ion-text>Hi, {{ loggedInUser?.username || "User" }}</ion-text>
                 
                 
                 
@@ -25,7 +25,7 @@
   <ion-icon name="person-circle"></ion-icon>
 </ion-button>
   <div class="dropdown-content">
-  <a >Logout</a>
+  <a (click)="logout()">Logout</a>
 
   </div>
                   </div>
@@ -37,7 +37,7 @@
                 <ion-item>
                   <ion-input
                     label="Case Number"
-                 
+                    [(ngModel)]="caseNumber"
                     placeholder="Case Number (Optional)"
                     labelPlacement="stacked"
                   ></ion-input>
@@ -45,8 +45,8 @@
               </ion-col>   
               <ion-col size="12" size-sm="12" size-lg="7" class="radio-selected-container">
 
-                <ion-radio-group  [allowEmptySelection]="true">
-                  <ion-radio  labelPlacement="end" mode="md">Self Guided</ion-radio>
+                <ion-radio-group [(ngModel)]="guidedType">
+                  <ion-radio [value]="guidedType" labelPlacement="end" mode="md">{{ guidedTypeLabel }}</ion-radio>
                 </ion-radio-group>
 
               </ion-col>             
@@ -64,180 +64,59 @@
                 <table class="assessment-table-container da-assessment-table quiz-slide">
                   <thead>
                     <tr>
-                      <th colspan="2">Questions Set - 1 of 5</th>
-                      <th style="display: flex;justify-content: end;"> <div class="header-pagination">   <div class="pagination">
-          <ion-icon 
-            name="chevron-back-outline"
-            class="nav-arrow prev" 
-           >
-          </ion-icon>
-          
-      
-          <ion-icon 
-            name="chevron-forward-outline"
-            class="nav-arrow next" 
-           >
-          </ion-icon>
-        </div>
-        </div> 
-      </th>
+                      <th colspan="2">{{ currentRangeText }}</th>
+                      <th style="display: flex;justify-content: end;">
+                        <div class="header-pagination">
+                          <div class="pagination">
+                            <ion-icon 
+  name="chevron-back-outline"
+  class="nav-arrow prev" 
+  (click)="prevPage()"
+  [class.disabled]="currentPageIndex === 0"
+></ion-icon>
+
+<ion-icon 
+  name="chevron-forward-outline"
+  class="nav-arrow next" 
+  (click)="nextPage()"
+  [class.disabled]="!daAssessment || (currentPageIndex + 1) * questionsPerPage >= daAssessment.length"
+></ion-icon>
+                          </div>
+                        </div>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <th class="tbody-first"></th>
-                       <th class="tbody-container row-header"> <div class="tbc-content"><span>Yes</span></div></th>
-                       <th class="tbody-container row-header"> <div class="tbc-content"><span>No</span></div></th>
-                       
+                      <th class="tbody-container row-header"><div class="tbc-content"><span>Yes</span></div></th>
+                      <th class="tbody-container row-header"><div class="tbc-content"><span>No</span></div></th>
                     </tr>
-                     <tr >
-                      <th>1. Has the physical violence increased in severity or frequency over the past year?</th>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
                   
-                       </td>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       
-                    </tr>
-                      <tr >
-                      <th>2. Does he own a gun?</th>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       
-                    </tr>
-                      <tr >
-                      <th>3. Have you left him after living together during the past year?</th>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       
-                    </tr>
-                      <tr class="sub-questions">
-                      <th>3a. If you have never lived with him, click here</th>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       
-                    </tr>
-                      <tr >
-                      <th>4. Is he unemployed?</th>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       
-                    </tr>
-                      <tr >
-                      <th>5. Has he ever used a weapon against you or threatened you with a lethal weapon? (If yes, was the weapon a gun? check here</th>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       <td class="tbody-container row-container">
-                        
-                      <ion-radio-group  value="center" class="tbc-content">
-                        <!-- <ion-item *ngFor="let option of question.options"> -->
-                          <!-- <ion-label>{{ option.label }}</ion-label> -->
-                          <ion-radio mode="md" slot="start" alignment="center" justify="center" labelPlacement="stacked"></ion-radio>
-                        <!-- </ion-item> -->
-                      </ion-radio-group>
-                  
-                       </td>
-                       
-                    </tr>
-                     <tr style="display: none;">
-      <th></th>
-      <th class="tbody-container row-container-footer"><div class="tbc-content"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></th>
-    </tr>
+                    <ng-container *ngFor="let question of paginatedQuestions; let i = index">
+                      <tr>
+                        <th>{{ (currentPageIndex * questionsPerPage) + i + 1 }}. {{ question.questionText }}</th>
+                        <td class="tbody-container row-container">
+                          <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question, $event)">
+                            <ion-radio value="Yes" labelPlacement="end">Yes</ion-radio>
+                            <ion-radio value="No" labelPlacement="end">No</ion-radio>
+                          </ion-radio-group>
+                        </td>
+                      </tr>
+                    
+                      <tr *ngFor="let sub of question.DAChild; let j = index" class="sub-questions">
+                        <th>
+                          {{ currentPageIndex * questionsPerPage + i + 1 }}{{ getCharFromCode(97 + j) }}.
+                          {{ sub.questionText }}
+                        </th>
+                        <td class="tbody-container row-container">
+                          <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub, $event)">
+                            <ion-radio value="Yes" labelPlacement="end">Yes</ion-radio>
+                            <ion-radio value="No" labelPlacement="end">No</ion-radio>
+                          </ion-radio-group>
+                        </td>
+                      </tr>
+                    </ng-container>
                   </tbody>
            
                 </table>
@@ -275,7 +154,7 @@
                   <ion-button fill="outline" color="medium"
                     >Back</ion-button
                   >
-                  <ion-button color="primary" 
+                  <ion-button color="primary" (click)="submitDangerAssessment()" [disabled]="!allParentQuestionsAnswered"
                     >Submit</ion-button
                   >
                 </div>

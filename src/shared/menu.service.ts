@@ -128,6 +128,15 @@ clearMenuItems(): void {
     setSsripaData(data: any[]) {
       this.ssripaDataSubject.next(data); // Emit new data
     }
+
+    private dangerAssessment:any;
+    setDangerAssessment(data: any) {
+      this.dangerAssessment = data;
+    }
+    
+    getDangerAssessment(): any | null {
+      return this.dangerAssessment;
+    }
   
     getSsripaData(): Observable<any[] | null> {
       return this.ssripaDataSubject.asObservable(); // Return as Observable

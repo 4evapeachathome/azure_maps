@@ -125,20 +125,22 @@ renderText(child: any): string {
   return text;
 }
 
+capitalizeFirstLetter(str: string | null) {
+  if (!str) return null;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 submitAssessmentResponse(): Observable<any> {
-  const respondedQuestions = this.sripa
-    .map((q, index) => {
-      const selected = this.selectedOptions[index];
-      if (selected) {
-        return {
-          question: q.text,
-          selectedOption: selected,
-          actionPlan: selected === 'yes' ? q.actions[0]?.description || null : null
-        };
-      }
-      return null;
-    })
-    .filter(q => q !== null);
+  const respondedQuestions = this.sripa.map((q, index) => {
+    const selected = this.selectedOptions[index];
+    const answer = selected ? selected.charAt(0).toUpperCase() + selected.slice(1).toLowerCase() : '';
+    return {
+      question: q.text,
+      answer: answer
+    };
+  });
+
+  
 
   const payload = {
     data: {

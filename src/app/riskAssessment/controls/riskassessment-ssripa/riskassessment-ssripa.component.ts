@@ -120,18 +120,14 @@ showresults: boolean = false;
         {
           text: 'OK',
           handler: () => {
-            const respondedQuestions = this.sripa
-              .map((q, index) => {
-                const selected = this.selectedOptions[index];
-                if (selected) {
-                  return {
-                    question: q.text,
-                    answer: selected,
-                  };
-                }
-                return null;
-              })
-              .filter(q => q !== null);
+            const respondedQuestions = this.sripa.map((q, index) => {
+              const selected = this.selectedOptions[index];
+              const answer = selected ? selected.charAt(0).toUpperCase() + selected.slice(1).toLowerCase() : '';
+              return {
+                question: q.text,
+                answer: answer
+              };
+            });
   
             const payload = {
               data: {

@@ -1373,6 +1373,19 @@ getDAresultcalculation(): Observable<any> {
   );
 }
 
+generateHitsGuid(url:string): Observable<any> {
+  return this.http.get(url, {
+    headers: {
+      Authorization: `Bearer ${environment.apitoken}`
+    }
+  }).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching HITS GUID:', error);
+      return throwError(() => new Error('An error occurred while generating HITS GUID. Please try again later.'));
+    })
+  );
+}
+
 saveDaAssessmentResponse(payload: any): Observable<any> {
   const endpoint = APIEndpoints.daAssessmentResponse;
   const headers = new HttpHeaders({
