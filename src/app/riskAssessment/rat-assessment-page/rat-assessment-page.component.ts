@@ -29,7 +29,7 @@ export class RatAssessmentPageComponent implements OnInit {
 
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
-          debugger;
+       //   debugger;
           this.webData = response?.guid;
         },
         error: (err) => {
