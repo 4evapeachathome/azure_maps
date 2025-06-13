@@ -42,6 +42,10 @@ export class AssessmentPageComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loadInitialData();
+  }
+
+  loadInitialData() {
     const encodedUser = this.cookieService.get('userdetails'); // Or 'username'
     if (encodedUser) {
       try {

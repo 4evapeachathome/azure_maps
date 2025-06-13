@@ -7,7 +7,7 @@ import html2pdf from 'html2pdf.js';
 import { QRCodeComponent  } from 'angularx-qrcode';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { CookieService } from 'ngx-cookie-service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { SummarypageComponent } from "../summarypage/summarypage.component";
 import { presentToast } from 'src/shared/utility';
@@ -22,7 +22,7 @@ import { MenuService } from 'src/shared/menu.service';
   templateUrl: './assessmentsummary.component.html',
   styleUrls: ['./assessmentsummary.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
+  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule,RouterModule, SummarypageComponent]
 })
 export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   @Input() reloadFlag: boolean = false;
