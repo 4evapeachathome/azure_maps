@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
@@ -30,9 +30,14 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       private menuService: MenuService,
       private cookieService: CookieService,
       private alertController: AlertController,
-      private toastController: ToastController) { }
+      private toastController: ToastController,
+      private cdRef:ChangeDetectorRef) { }
 
   ngOnInit() {
+    this.loadinitialData();
+  }
+
+  loadinitialData() {
     const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
       try {
@@ -60,16 +65,21 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
 
     const cachedRats = this.menuService.getRatsAssessment();
     if (cachedRats && cachedRats.questions && cachedRats.questions.length > 0) {
+      // answerOptions should be defined in the cachedRats object
+      cachedRats.questions.forEach((q: any) => {
+        q.selected = null; // Reset selected for each question
+      });
       this.setupRatsQuestions(cachedRats.questions, cachedRats.answerOptions);
     } else {
       // Load from API if cache is empty
       this.apiService.getRatsAssessmentQuestions().subscribe({
-        next: (hitsData: any) => {
-          let { questions, answerOptions } = hitsData;
-
+        next: (webData: any) => {
+          let { questions, answerOptions } = webData;
+          this.cdRef.detectChanges();
           // Sort the multiple_options_for_rat for each question (if still needed)
           questions.forEach((q: any) => {
             q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);
+            q.selected = null; // Reset selected for each question
           });
 
           let sortedOptions = answerOptions.sort((a: any, b: any) => a.score - b.score);
@@ -98,7 +108,8 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     answerOptions.forEach((opt: any) => {
       scaleSet.add(`${opt.score}. ${opt.Label}`);
     });
-  
+    this.cdRef.detectChanges();
+
     this.scaleOptions = [...scaleSet];
   
     this.ratsQuestions = questions.map((q: any) => ({
@@ -115,6 +126,11 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
         label: opt.Label
       }))
     }));
+    // Reset selected for each question
+    this.ratsQuestions.forEach((q: any) => { 
+      q.selected = null; // Reset selected for each question
+    });
+    this.cdRef.detectChanges();
   
     this.loaded = true;
   }
@@ -221,11 +237,18 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   }
 
   async logout() {
-    this.menuService.logout().then(() => {
+    try {
+      await this.menuService.logout();
       // this.guidedType = 'staff-guided';
-    }).catch(error => {
-      this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
-    });
+    } catch (error: any) {
+      const errorMsg = error?.error?.error?.message || error?.error?.message || error?.message || 'Failed to logout';
+      const alert = await this.alertController.create({
+        header: 'Logout Failed',
+        message: errorMsg,
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
   private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
