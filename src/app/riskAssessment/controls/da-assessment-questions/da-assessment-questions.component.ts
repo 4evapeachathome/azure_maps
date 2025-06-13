@@ -121,11 +121,14 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   
   get currentRangeText() {
     if (!this.daAssessment || this.daAssessment.length === 0) {
-      return 'Questions Set - 0 to 0';
+      return 'Question Set 0-0 of 0';
     }
-    const start = this.currentPageIndex * this.questionsPerPage + 1;
-    const end = Math.min(start + this.questionsPerPage - 1, this.daAssessment.length);
-    return `Questions Set - ${start} to ${end}`;
+    const currentPageIndex = Math.max(0, this.currentPageIndex);
+    const questionsPerPage = Math.max(1, this.questionsPerPage);
+    const start = currentPageIndex * questionsPerPage + 1;
+    const end = Math.min(start + questionsPerPage - 1, this.daAssessment.length);
+    const total = this.daAssessment.length;
+    return `Question Set ${start}-${end} of ${total}`;
   }
 
   getCharFromCode(code: number): string {
