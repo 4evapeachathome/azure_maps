@@ -39,5 +39,8 @@ export const getConstant = (category: keyof Constants, key: string) => {
 };
 
 export const ASSESSMENT_TYPE = {
-  WEB: "Women's Experience with Battering"
+  WEB: "Women's Experience with Battering",
+  HITS: "HITS Assessment",
+  DA: "Danger Assessment",
+  SSRIPA:"Signs of Self-Recognition in Intimate Partner Abuse (SSRIPA)"
 }

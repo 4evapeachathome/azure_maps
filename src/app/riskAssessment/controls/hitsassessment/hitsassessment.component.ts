@@ -16,6 +16,7 @@ import { Utility } from 'src/shared/utility';
           imports: [CommonModule, IonicModule, FormsModule]
 })
 export class HitsassessmentComponent  implements OnInit {
+  
   loggedInUser: any = null;
   caseNumber: string = '';
   loaded: boolean = false;
@@ -34,6 +35,10 @@ export class HitsassessmentComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loadinitialData();
+  }
+
+  loadinitialData() {
     const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
       try {
@@ -80,8 +85,8 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
           console.error('Failed to load HITS data from API:', err);
         }
       });
-    }
-  }
+    }}
+
 
   private updateGuidedTypeLabel() {
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
@@ -168,6 +173,8 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                 AssessmentGuid: this.hitsGuid,
                 response: answerSummary,
                 Score: totalScore,
+                guidedType: this.guidedType,
+                isCriticalAlert: criticalAlert,
                 CaseNumber: this.caseNumber,
                 support_service: this.loggedInUser?.documentId
               }

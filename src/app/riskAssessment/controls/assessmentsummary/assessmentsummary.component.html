@@ -84,20 +84,9 @@
             <ion-row class="assessment-summary-text" *ngIf="selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase()">
               <ion-col>
                 <ion-text>
-                  Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
+                  Thanks for taking this assessment.<br /><br />
+                  <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
                   <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: </strong>{{riskValue >= 20 ? 'Positive' : 'Negative'}}</div>
-
-                  <strong *ngIf="QrcodeUrl !== ''"> Here is the access code for your assessment: </strong><br /><br />
-
-                  <ion-row>
-                    <ion-col size="12" size-sm="12">
-                      <div class="qr-code-wrapper" *ngIf="QrcodeUrl !== ''">
-                        <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
-                      </div>
-                    </ion-col>
-                  </ion-row>
-
-                  <!-- <div >Your score is: <span class="score">{{ riskValue }}</span></div> -->
                 </ion-text>
               </ion-col>
             </ion-row>
@@ -113,10 +102,10 @@
 
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="7" class="p-0">            
-                <ion-row *ngIf="isSSripa || isHitsAssessment || isDanger">
+                <ion-row *ngIf="isSSripa || isHitsAssessment || isDanger || (selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase())">
                   <ion-col size="12" size-sm="12">
-                    <ion-text>Here is you QRcode:</ion-text>
-                    <div class="qr-code-wrapper">
+                    <ion-text>Here is your QR code:</ion-text>
+                    <div class="qr-code-wrapper" *ngIf="QrcodeUrl">
                       <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
                     </div>
                   </ion-col>
@@ -124,22 +113,27 @@
               </ion-col>          
               <ion-col size="12" size-sm="12" size-lg="5" class="p-0">
                 <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitsAssessment || isDanger)">
+                     <ion-col size="12" size-sm="12">
                   <app-summarypage #riskMeterRef [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
+               </ion-col>
                 </ion-row>
                        
               </ion-col>
-              <ion-row>
-                <ion-button  (click)="downloadPDF()" color="primary" size="small">Download as PDF</ion-button>
-              </ion-row>   
+             
             </ion-row>
+             <ion-row>
+                   <ion-col size="12" size-sm="12" class="mobile-center-align">
+                <ion-button  (click)="downloadPDF()" color="primary" size="small">Export to PDF</ion-button>
+                </ion-col>
+              </ion-row>   
             <!--Table to handle response for all the assessments-->
             <ion-row>
               <table class="assessment-table-container hits-assessment-table">
                 <thead>
                   <tr>
-                    <th scope="col" style="text-align: left;">S No.</th>
+                    <th scope="col" style="text-align: left; width: 75px;">S No.</th>
                     <th scope="col" style="text-align: left;">Question</th>
-                    <th scope="col" style="text-align: left;">Answer</th>
+                    <th scope="col" style="text-align: left; width: 130px;">Answer</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -159,7 +153,7 @@
                   </ng-container>
                 </tbody>
               </table>
-
+              <ion-button [routerLink]="['/riskassessment']">Take another assessment</ion-button>
               <!-- <app-assessment-table [selectedAssessment]="this.selectedAssessment"></app-assessment-table> -->
             </ion-row>
 

@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { filter, Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { DaAssessmentQuestionsComponent } from '../controls/da-assessment-questions/da-assessment-questions.component';
 
 @Component({
   selector: 'app-da-assessment-page',
@@ -9,16 +12,38 @@ import { APIEndpoints } from 'src/shared/endpoints';
   styleUrls: ['./da-assessment-page.component.scss'],
   standalone: false
 })
-export class DaAssessmentPageComponent  implements OnInit {
+export class DaAssessmentPageComponent  implements OnInit, OnDestroy {
   daGuidUrl :string = APIEndpoints.daGuidUrl; // Replace with your actual API URL
   loading: HTMLIonLoadingElement | null = null;
-  constructor(private apiService:ApiService,private loadingController: LoadingController) { }
+  @ViewChild(DaAssessmentQuestionsComponent) dacomp!: DaAssessmentQuestionsComponent;
+  private navigationSubscription: Subscription | null = null; // Subscription to track navigation events
+  constructor(private apiService:ApiService,private loadingController: LoadingController, private router:Router) { }
   daData: any; // This will hold the data fetched from the API
+  isInitialLoad: boolean = true; // Track if it's the initial load
 
-  async ngOnInit() {
-    this.loadDaData();
-    await this.showLoader();
-  }
+ async ngOnInit() {
+       // Set up navigation event subscription
+       this.navigationSubscription = this.router.events
+         .pipe(filter(event => event instanceof NavigationEnd))
+         .subscribe((event: NavigationEnd) => {
+           if (event.urlAfterRedirects.includes('dangerassessment')) {
+             console.log('Navigated to SSRIPA page, refreshing data');
+             // Skip data load on initial NavigationEnd if already loaded
+             if (!this.isInitialLoad) {
+              if(this.dacomp){
+                this.dacomp.loadInitialData();
+              }
+               this.loadDaData();
+               this.showLoader();
+             }
+           }
+         });
+   
+       // Load data initially
+       this.loadDaData();
+       await this.showLoader();
+       this.isInitialLoad = false; // Mark initial load as complete
+     }
 
   loadDaData() {
     try {
@@ -27,7 +52,7 @@ export class DaAssessmentPageComponent  implements OnInit {
       
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
-          debugger;
+       //   debugger;
           this.daData = response?.guid;
         },
         error: (err) => {
@@ -78,4 +103,10 @@ export class DaAssessmentPageComponent  implements OnInit {
   }
 
 
+  ngOnDestroy() {
+    // Clean up subscription
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
+  }
 }

@@ -7,13 +7,14 @@ import html2pdf from 'html2pdf.js';
 import { QRCodeComponent  } from 'angularx-qrcode';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { CookieService } from 'ngx-cookie-service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { SummarypageComponent } from "../summarypage/summarypage.component";
 import { presentToast } from 'src/shared/utility';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ASSESSMENT_TYPE } from 'src/shared/constants';
+import { MenuService } from 'src/shared/menu.service';
 
 
 @Component({
@@ -21,7 +22,7 @@ import { ASSESSMENT_TYPE } from 'src/shared/constants';
   templateUrl: './assessmentsummary.component.html',
   styleUrls: ['./assessmentsummary.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule, SummarypageComponent]
+  imports: [CommonModule, IonicModule, FormsModule, QRCodeComponent, NgxGaugeModule,RouterModule, SummarypageComponent]
 })
 export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   @Input() reloadFlag: boolean = false;
@@ -66,7 +67,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   levelofdanger:string=''; // Track if logins have been fetched
   isDanger: boolean = false; // Track if logins have been fetched
 
-  constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController) { }
+  constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController,   private menuService: MenuService) { }
 
   ngOnInit() {
     if (!this.hasFetchedData) {
@@ -111,7 +112,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-debugger;
+    // debugger;
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
@@ -157,7 +158,8 @@ debugger;
       let ratResult = sessionStorage.getItem('ratsAssessmentResult');
       if(ratResult) {
         this.ratAssessmentResult = JSON.parse(ratResult || '');
-        this.assessmentNumber = this.ratAssessmentResult.asssessmentNumber;
+        this.assessmentNumber = this.ratAssessmentResult.AssessmentGuid;
+        this.riskValue = this.ratAssessmentResult?.assessmentScore;
       }
       this.checkSelectedAssessment(this.assessmentNumber);
     }    
@@ -168,7 +170,7 @@ debugger;
     if(ratResult && this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
       this.ratAssessmentResult = JSON.parse(ratResult || '')
       if(this.ratAssessmentResult) {
-        this.QrcodeUrl = `${window.location.origin}/viewresult?code=${this.ratAssessmentResult?.asssessmentNumber}`
+        this.QrcodeUrl = `${window.location.origin}/viewresult?code=${this.ratAssessmentResult?.AssessmentGuid}`
       }
     }
     setTimeout(() => {
@@ -264,7 +266,7 @@ debugger;
       qrSpan.style.textAlign = 'center';
 
       const qrLabel = document.createElement('p');
-      qrLabel.innerText = this.selectedAssessment?.toLowerCase() === ASSESSMENT_TYPE.WEB?.toLowerCase() ? 'Here is the access code for your assessment:' : 'Here is your QR Code.';
+      qrLabel.innerText = 'Here is your QR Code.';
       qrLabel.style.marginBottom = '10px';
       qrSpan.appendChild(qrLabel);
 
@@ -316,6 +318,13 @@ debugger;
               `<p><strong>Please talk to your service provider about what the Danger Assessment means in your situation.</p>` : ''}
         `;
       }
+
+      if(this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+        scoreInfo.innerHTML = `
+          ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
+        `;
+      }
+
       scoreRiskRow.appendChild(scoreInfo);
 
       // Add risk meter to the new row
@@ -477,36 +486,18 @@ getCharFromCode(code: number): string {
 
 
   async logout() {
-    const alert = await this.alertController.create({
-      header: 'Confirm Logout',
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary'
-        },
-        {
-          text: 'Logout',
-          handler: () => {
-            this.guidedType = 'staff-guided';
-            this.cookieService.delete('username');
-            this.cookieService.delete('loginTime');
-            this.cookieService.delete('userdetails');
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
+    this.menuService.logout().then(() => {
+      // this.guidedType = 'staff-guided';
+    }).catch(error => {
+      this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
     });
-  
-    await alert.present();
   }
   
   fetchDaResults() {
     this.apiService.getDAresultcalculation().subscribe({
       next: (response: any) => {
         if (response && response.data) {
-          debugger;
+          // debugger;
           this.daResult = response.data;
   
   
@@ -588,7 +579,7 @@ getCharFromCode(code: number): string {
       next: (response: any) => {
         if (response) {
           this.responseJson = response.assessmentSummary;
-          this.riskValue = response.totalScore;
+          this.riskValue = this.ratAssessmentResult?.assessmentScore;
         }
       },
       error: (error: any) => {

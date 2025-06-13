@@ -1034,7 +1034,7 @@ getUserLogins(): Observable<any[]> {
         fields: ['name', 'description']
       },
       support_service: {
-        fields: ['OrgName', 'documentId', 'asssessmentNumber']
+      fields: ['OrgName', 'documentId']
       }
     }
   };
@@ -1054,6 +1054,7 @@ getUserLogins(): Observable<any[]> {
           return encryptedValue;
         }
       };
+      console.log('getUserSupportServiceData res*****', res);
       return res.data.map((item: any) => ({
         id: item?.id ?? null,
         username: item?.Username ? decryptField(item.Username) : '',
@@ -1066,12 +1067,13 @@ getUserLogins(): Observable<any[]> {
         updatedAt: item?.updatedAt ?? '',
         password: item?.password ? decryptField(item.password) : '',
         isSendInvite: item?.sendInvite ?? false,
-        asssessmentNumber: item.asssessmentNumber ?? ''
+        AssessmentGuid: item.AssessmentGuid ?? '',
+        support_service: item?.support_service ?? {}
       }));
     }),
     catchError((error) => {
-      console.error('Error fetching/decrypting user logins:', error);
-      return throwError(() => new Error('Failed to load user logins.'));
+      console.error('Error fetching support_service data for user:', error);
+      return throwError(() => new Error('Failed to load support_service data.'));
     })
   );
 }
@@ -1310,7 +1312,7 @@ getRatsAssessmentQuestions(): Observable<any> {
     );
   }
 
-  saveRatAssessment(assessmentSummary: any, support_service: string, asssessmentNumber: string, assessmentScore: number, caseNumber: string, guidedType: string, qrCodeUrl: string) {
+  saveRatAssessment(assessmentSummary: any, support_service: string, AssessmentGuid: string, assessmentScore: number, caseNumber: string, guidedType: string, qrCodeUrl: string) {
     const endpoint = APIEndpoints.saveRatAssessment;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -1318,7 +1320,7 @@ getRatsAssessmentQuestions(): Observable<any> {
     });
     // Strapi requires the payload inside a `data` key
     // return this.http.post(endpoint, payload , { headers });
-    return this.http.post(`${endpoint}`, { data: {assessmentSummary, support_service, asssessmentNumber, assessmentScore, caseNumber, guidedType, qrCodeUrl} }, { headers });
+    return this.http.post(`${endpoint}`, { data: {assessmentSummary, support_service, AssessmentGuid, assessmentScore, caseNumber, guidedType, qrCodeUrl} }, { headers });
   }
 
   getRatsResult(code: any): Observable<any> {
@@ -1395,5 +1397,42 @@ saveDaAssessmentResponse(payload: any): Observable<any> {
   // Strapi requires the payload inside a `data` key
   return this.http.post(endpoint, payload , { headers });
 }
+
+//get assessment results using assessment id
+getAssessmentResponse(url: string): Observable<any> {
+  return this.getWithQuery(url, {
+    populate: {
+      support_service: {
+        fields: ['documentId'],
+        populate: {
+          user_login: {
+            fields: ['username'],
+            populate: {
+              assessment_type: {
+                fields: ['name', 'description']
+              }
+            }
+          }
+        }
+      }
+    },
+    fields: [
+      'id',
+      'documentId',
+      'AssessmentGuid',
+      'response',
+      'CaseNumber',
+      'Score'
+    ]
+  }, environment.apitoken).pipe(
+    tap((response: any) => {
+    }),
+    catchError((error: any) => {
+      console.error('Error fetching DA Assessment Response API:', error);
+      return throwError(() => new Error('An error occurred while fetching DA Assessment Response API. Please try again later.'));
+    })
+  );
+}
+
 
 }

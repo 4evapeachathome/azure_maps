@@ -38,6 +38,10 @@ showresults: boolean = false;
       private alertController: AlertController) { }
 
   ngOnInit() {
+    this.loadInitialData(); 
+  }
+
+  loadInitialData(){
     const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
       try {
@@ -136,6 +140,7 @@ showresults: boolean = false;
                 AssessmentGuid: this.sripaGuid,
                 support_service: this.loggedInUser?.documentId ?? null,
                 CaseNumber: this.caseNumber,
+                guidedType: this.guidedType,
                 IsAssessmentfromEducationModule: false
               }
             };

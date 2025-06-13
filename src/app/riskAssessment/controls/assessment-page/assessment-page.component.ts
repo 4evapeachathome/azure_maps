@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { ASSESSMENT_TYPE } from 'src/shared/constants';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast } from 'src/shared/utility';
 
@@ -23,6 +25,13 @@ export class AssessmentPageComponent  implements OnInit {
   guidedType: 'self-guided' | 'staff-guided' = 'staff-guided';
   assessmentTypes: { id: number; name: string; description: string }[] = [];
   guidedTypeLabel: string = 'Staff-Guided';
+  assessmentNumber: string = '';
+  ASSESSMENT_TYPE = ASSESSMENT_TYPE;
+  isHitAssessment = false;
+  isDaAssessment = false;
+  isSSripa = false;
+  isDataLoaded = false;
+
   constructor(
     private menuService: MenuService,
     private router: Router,
@@ -33,6 +42,10 @@ export class AssessmentPageComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loadInitialData();
+  }
+
+  loadInitialData() {
     const encodedUser = this.cookieService.get('userdetails'); // Or 'username'
     if (encodedUser) {
       try {
@@ -256,5 +269,83 @@ export class AssessmentPageComponent  implements OnInit {
   private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
     await presentToast(this.toastController, message, duration, position);
   }
+
+  viewResult(code: string) {
+    if (code && code.toLowerCase().includes('web-')) {
+      this.fetchRatResults(code);
+    } else if(code && code.toLowerCase().includes('hits-')) {
+      this.isHitAssessment = true;
+      const url = APIEndpoints.getHitsAssessmentByGuid + code;
+      this.GetAssessmentResponsebycode(url);
+    } else if(code && code.toLowerCase().includes('da-')) {
+      this.isDaAssessment = true;
+      const url = APIEndpoints.getDaAssessmentByGuid + code;
+      this.GetAssessmentResponsebycode(url);
+    } else if(code && code.toLowerCase().includes('dai-')) {
+    } else if(code && code.toLowerCase().includes('cts-')) {
+    } else if(code && code.toLowerCase().includes('ssripa-')) {
+      this.isSSripa = true;
+      const url = APIEndpoints.getSSripaAssessmentByGuid + code;
+      this.GetAssessmentResponsebycode(url);
+    } else {
+      this.selectedAssessment = '';
+    }
+  }
+
+  fetchRatResults(code: string) {
+    this.apiService.getRatsResult(code).subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
+        }
+      },
+      error: (error: any) => {
+        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch the assessment';
+        this.showToast(errorMsg, 3000, 'top');
+      }
+    })
+  }
+
+  async GetAssessmentResponsebycode(url: string) {
+    if (url && this.isDaAssessment) {
+      try {
+        const res: any = await new Promise((resolve, reject) => {
+          this.apiService.getAssessmentResponse(url).subscribe(resolve, reject);
+        });
+        const response = res?.data;
+        this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
+      } catch (error) {
+        console.error('DA Assessment fetch error:', error);
+        this.showToast('Failed to fetch the assessment', 3000, 'top');
+      }
+    }
+  
+    if (url && this.isHitAssessment) {
+      try {
+        const res: any = await new Promise((resolve, reject) => {
+          this.apiService.getAssessmentResponse(url).subscribe(resolve, reject);
+        });
+        const response = res?.data;
+        this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
+      } catch (error) {
+        console.error('HITS Assessment fetch error:', error);
+        this.showToast('Failed to fetch the assessment', 3000, 'top');
+      }
+    }
+  
+    if (url && this.isSSripa) {
+      this.apiService.getAssessmentResponse(url).subscribe(
+        (res: any) => {
+        const response = res?.data;
+        this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
+        },
+        (error) => { 
+          console.error('SSRIPA Assessment fetch error:', error);
+          this.showToast('Failed to fetch the assessment', 3000, 'top');
+        }
+      );
+    }
+  }
+
 
 }

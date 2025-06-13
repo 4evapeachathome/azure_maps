@@ -9,6 +9,7 @@ import { ViewResultPageComponent } from '../view-result-page.component';
 import { ViewResultComponent } from '../../controls/view-result/view-result.component';
 import { AssessmentTableComponent } from '../../controls/assessment-table/assessment-table.component';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { SummarypageComponent } from '../../controls/summarypage/summarypage.component';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { QRCodeComponent } from 'angularx-qrcode';
     FormsModule,
     IonicModule,
     RiskassessmentFooterComponent,
+    SummarypageComponent,
     AssessmentTableComponent,
     QRCodeComponent
   ]

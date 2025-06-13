@@ -28,7 +28,8 @@
             </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="5">
-                <strong class="case-number">Case Number: {{" " + caseNumber}}</strong>
+                <strong class="case-number">Case Number: {{" " + caseNumber 
+                  || '<>'}}</strong>
               </ion-col>
               <ion-col size="12" size-sm="12" size-lg="7" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType" [allowEmptySelection]="true">
@@ -41,27 +42,65 @@
                 <h2>{{ assessmentTitle }}</h2>
               </ion-col>
             </ion-row>
-            <ion-row class="assessment-summary-text" *ngIf="isHitAssessment">
-              <ion-col>
-                <ion-text>
-                  Thanks for taking the <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
-                  <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br />
-                  <strong>Note:</strong> {{ note }}<br />
-                  <strong>Caution:</strong> {{ caution }}
-                </ion-text>
-              </ion-col>
+            <ion-row class="assessment-summary-text" *ngIf="isDataLoaded && (isDaAssessment || isHitAssessment || isSSripa)">
+              <ion-row>
+                <ion-col>
+                  <ion-text>
+                    Thanks for taking the <strong>{{ selectedAssessment }}</strong>.<br /><br />
+                  </ion-text>
+                </ion-col>
+
+                <ion-col>
+                  <strong *ngIf="qCodeValue !== ''"> Here is your Qrcode:
+                  </strong><br /><br />
+  
+                  <ion-row>
+                    <ion-col size="12" size-sm="12">
+                      <div *ngIf="qCodeValue !== ''">
+                        <qrcode #qrcodeElement [qrdata]="qCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col *ngIf="isDaAssessment || isHitAssessment">
+                  <strong> Here is your score: </strong><br /><span class="score">{{ score }}</span><br />
+                  <ng-container *ngIf="isHitAssessment" >
+                    <strong>Note:</strong> {{ note }}<br />
+                    <strong>Caution:</strong> {{ caution }}
+                  </ng-container>
+                  <ng-container *ngIf="guidedType === 'staff-guided' && isDaAssessment; else selfGuided">
+                    <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
+                  </ng-container>
+                  <ng-template #selfGuided>
+                    <strong>
+                      Please talk to your service provider about what the Danger Assessment means in your situation.
+                    </strong><br />
+                  </ng-template>
+                </ion-col>
+
+
+                  <ion-col class="p-0">
+                    <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitAssessment || isDaAssessment)">
+                      <app-summarypage  [range]="rangevalue" [isRiskRed]="hitsCriticalAlert" [riskScore]="score"></app-summarypage>
+                    </ion-row>                           
+                  </ion-col>
+
+              </ion-row>
             </ion-row>
 
             <ion-row class="assessment-summary-text" *ngIf="isRatAssessment">
               <ion-col>
-                <ion-text *ngFor="let item of ratAssessmentResultList">
+                <ion-text *ngFor="let item of AssessmentResultList">
                   Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
 
                   <div>Your score is: <span class="score">{{ item.assessmentScore }}</span></div>
                   <div class="result" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">Status: {{item.assessmentScore >= 20 ?
                     'Positive' : 'Negative'}}</div>
 
-                  <strong *ngIf="qCodeValue !== ''"> Here is the access code for your assessment:
+                  <strong *ngIf="qCodeValue !== ''"> Here is your Qrcode:
                   </strong><br /><br />
 
                   <ion-row>
@@ -83,18 +122,29 @@
               </ion-col>
             </ion-row>
 
-            <table class="faq-table">
+            <table class="assessment-table-container hits-assessment-table">
               <thead>
                 <tr>
-                  <th scope="col">Question</th>
-                  <th scope="col">Answer</th>
+                  <th scope="col" style="text-align: left;">S No.</th>
+                  <th scope="col" style="text-align: left;">Question</th>
+                  <th scope="col" style="text-align: left;">Answer</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of responseJson">
-                  <td>{{ item.question }}</td>
-                  <td>{{ item.answer }}</td>
-                </tr>
+                <ng-container *ngFor="let item of responseJson; let i = index">
+                  <!-- Parent Row -->
+                  <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.question }}</td>
+                    <td style="text-transform: capitalize;">{{ item.answer }}</td>
+                  </tr>
+                  <!-- Child Rows (if DAChild exists and has data) -->
+                  <tr *ngFor="let child of item.DAChild; let j = index">
+                    <td>{{ i + 1 }}{{ getCharFromCode(97 + j) }}</td> <!-- Generates 3a, 3b, etc. -->
+                    <td>{{ child.question }}</td>
+                    <td style="text-transform: capitalize;">{{ child.answer }}</td>
+                  </tr>
+                </ng-container>
               </tbody>
             </table>
 

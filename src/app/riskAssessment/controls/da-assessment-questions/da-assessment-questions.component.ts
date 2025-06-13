@@ -37,7 +37,11 @@ constructor(
 
 
   ngOnInit() {
-     const encodedUser = this.cookieService.get('userdetails');
+    this.loadInitialData(); 
+  }
+
+  loadInitialData() {
+    const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
@@ -62,7 +66,7 @@ constructor(
     this.updateGuidedTypeLabel();
 
     const cachedHits = this.menuService.getDangerAssessment();
-    debugger;
+    //debugger;
 
 if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   this.daAssessment = this.initializeAssessmentData(cachedHits.data);
@@ -82,7 +86,6 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
         }
       });
     }
-    
   }
 
   initializeAssessmentData(data: any[]) {
@@ -265,6 +268,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                 AssessmentGuid: this.daGuid,
                 response: answerSummary,
                 Score: totalScore,
+                guidedType: this.guidedType,
                 CaseNumber: this.caseNumber,
                 support_service: this.loggedInUser?.documentId,
                 Levelofdanger: levelOfDanger,

@@ -71,12 +71,17 @@ export const APIEndpoints = {
     ratScaleOptions :`${environment.apiHost}/api/multiple-options-for-rats`,
     ratResultCalculation :`${environment.apiHost}/api/rat-results`,
     saveRatAssessment: `${environment.apiHost}/api/rat-assessment-response-summaries`,
-    ratResult :`${environment.apiHost}/api/rat-assessment-response-summaries/by-assessment-number?asssessmentNumber=`,
+    ratResult :`${environment.apiHost}/api/rat-assessment-response-summaries/by-assessment-number?AssessmentGuid=`,
     webGuidUrl :`${environment.apiHost}/api/generate-web-guid`,
     
     DAAssesmentQuestions :`${environment.apiHost}/api/da-assessment-questions`,
     daAssessmentQuestions :`${environment.apiHost}/api/da-assessment-questions`,
     daAssessmentResult :`${environment.apiHost}/api/da-score-levels`,
     daAssessmentResponse :`${environment.apiHost}/api/da-assessment-responses`,
-    daGuidUrl :`${environment.apiHost}/api/generate-da-guid`
+    daGuidUrl :`${environment.apiHost}/api/generate-da-guid`,
+
+    //Get by Guid url
+    getDaAssessmentByGuid :`${environment.apiHost}/api/da-assessment-responses/by-guid?AssessmentGuid=`,
+    getHitsAssessmentByGuid :`${environment.apiHost}/api/hits-assessment-responses/by-guid?AssessmentGuid=`,
+    getSSripaAssessmentByGuid :`${environment.apiHost}/api/ssripa-assessment-responses/by-guid?AssessmentGuid=`,
   }
