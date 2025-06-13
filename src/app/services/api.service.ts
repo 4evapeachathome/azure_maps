@@ -1396,4 +1396,47 @@ saveDaAssessmentResponse(payload: any): Observable<any> {
   return this.http.post(endpoint, payload , { headers });
 }
 
+//get assessment results using assessment id
+getAssessmentResponse(url: string): Observable<any> {
+  return this.getWithQuery(url, {
+    populate: {
+      support_service: {
+        fields: ['documentId'],
+        populate: {
+          user_login: {
+            fields: ['username'],
+            populate: {
+              assessment_type: {
+                fields: ['name', 'description']
+              }
+            }
+          }
+        }
+      }
+    },
+    fields: [
+      'id',
+      'documentId',
+      'AssessmentGuid',
+      'response',
+      'CaseNumber',
+      'Score'
+    ]
+  }, environment.apitoken).pipe(
+    tap((response: any) => {
+      if (response.data) {
+        const result = response.data;
+        return result;
+      } else {
+        return null; 
+      }
+    }),
+    catchError((error: any) => {
+      console.error('Error fetching DA Assessment Response API:', error);
+      return throwError(() => new Error('An error occurred while fetching DA Assessment Response API. Please try again later.'));
+    })
+  );
+}
+
+
 }

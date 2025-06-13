@@ -168,6 +168,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                 AssessmentGuid: this.hitsGuid,
                 response: answerSummary,
                 Score: totalScore,
+                guidedType: this.guidedType,
                 CaseNumber: this.caseNumber,
                 support_service: this.loggedInUser?.documentId
               }

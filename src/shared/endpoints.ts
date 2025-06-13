@@ -78,5 +78,10 @@ export const APIEndpoints = {
     daAssessmentQuestions :`${environment.apiHost}/api/da-assessment-questions`,
     daAssessmentResult :`${environment.apiHost}/api/da-score-levels`,
     daAssessmentResponse :`${environment.apiHost}/api/da-assessment-responses`,
-    daGuidUrl :`${environment.apiHost}/api/generate-da-guid`
+    daGuidUrl :`${environment.apiHost}/api/generate-da-guid`,
+
+    //Get by Guid url
+    getDaAssessmentByGuid :`${environment.apiHost}/api/da-assessment-responses/by-guid?AssessmentGuid=`,
+    getHitsAssessmentByGuid :`${environment.apiHost}/api/hits-assessment-responses/by-guid?AssessmentGuid=`,
+    getSSripaAssessmentByGuid :`${environment.apiHost}/api/ssripa-assessment-responses/by-guid?AssessmentGuid=`,
   }

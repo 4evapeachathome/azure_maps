@@ -136,6 +136,7 @@ showresults: boolean = false;
                 AssessmentGuid: this.sripaGuid,
                 support_service: this.loggedInUser?.documentId ?? null,
                 CaseNumber: this.caseNumber,
+                guidedType: this.guidedType,
                 IsAssessmentfromEducationModule: false
               }
             };

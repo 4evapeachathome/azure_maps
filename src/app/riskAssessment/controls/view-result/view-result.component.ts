@@ -6,8 +6,36 @@ import { QRCodeComponent } from 'angularx-qrcode';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { ASSESSMENT_TYPE } from 'src/shared/constants';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast } from 'src/shared/utility';
+
+interface AssessmentResponse {
+  data: {
+    id: number;
+    documentId: string;
+    AssessmentGuid: string;
+    response: Array<{
+      answer: string;
+      question: string;
+      DAChild?: Array<{ answer: string; question: string }>; // Optional for da-assessment-response
+      [key: string]: any; // Allow additional properties
+    }>;
+    CaseNumber: string;
+    Score?: number;
+    support_service: {
+      documentId: string;
+      user_login: {
+        username: string;
+        assessment_type: Array<{
+          name: string;
+          description: string;
+        }>;
+      } | null;
+    } | null;
+  };
+  meta: Record<string, any>;
+}
 
 @Component({
   selector: 'app-view-result',
@@ -40,6 +68,8 @@ export class ViewResultComponent  implements OnInit {
   qCodeValue: string = '';
 
   isHitAssessment = false;
+  isSSripa = false;
+  isDaAssessment = false;
   ratAssessmentResultList: any = [];
   assessmentNumber: string = '';
   responseJson: any;
@@ -94,16 +124,26 @@ export class ViewResultComponent  implements OnInit {
       this.selectedAssessment = this.ASSESSMENT_TYPE.WEB;
       this.isRatAssessment = true;
       this.fetchRatResults(code);
-    } else if(code && code.toLowerCase().includes('hit-')) {
-      this.selectedAssessment = 'hit';
+    } else if(code && code.toLowerCase().includes('hits-')) {
+      this.selectedAssessment = this.ASSESSMENT_TYPE.HITS;
+      this.isHitAssessment = true;
+      const url =APIEndpoints.getHitsAssessmentByGuid + code;
+      this.GetAssessmentResponsebycode(url);
     } else if(code && code.toLowerCase().includes('da-')) {
-      this.selectedAssessment = 'da';
+      this.selectedAssessment = this.ASSESSMENT_TYPE.DA;
+      this.isDaAssessment = true;
+      const url =APIEndpoints.getDaAssessmentByGuid + code;
+      this.GetAssessmentResponsebycode(url);
     } else if(code && code.toLowerCase().includes('dai-')) {
       this.selectedAssessment = 'dai';
     } else if(code && code.toLowerCase().includes('cts-')) {
       this.selectedAssessment = 'cts';
     } else if(code && code.toLowerCase().includes('ssripa-')) {
-      this.selectedAssessment = 'ssripa';
+      this.selectedAssessment = this.ASSESSMENT_TYPE.SSRIPA;
+      this.isSSripa = true;
+      const url =APIEndpoints.getSSripaAssessmentByGuid + code;
+      this.GetAssessmentResponsebycode(url);
+      
     } else {
       this.selectedAssessment = '';
     }
@@ -133,4 +173,41 @@ export class ViewResultComponent  implements OnInit {
     await presentToast(this.toastController, message, duration, position);
   }
 
+  GetAssessmentResponsebycode(url: string) {
+    if(url && this.isDaAssessment) {
+    this.apiService.getAssessmentResponse(url).subscribe(
+      (response: AssessmentResponse) => {
+        debugger;
+        console.log('DA Assessment Response:', response.data);
+      },
+      (error) => console.error('Error:', error.message)
+    );
+  }
+
+    // HITS Assessment
+    if(url && this.isHitAssessment) {
+    this.apiService.getAssessmentResponse(url).subscribe(
+      (response: AssessmentResponse) => {
+        debugger
+        console.log('HITS Assessment Response:', response.data);
+      },
+      (error) => console.error('Error:', error.message)
+    );
+  }
+
+    // SSRIPA Assessment
+    if(url && this.isSSripa) {
+    this.apiService.getAssessmentResponse(url).subscribe(
+      (response: AssessmentResponse) => {
+        debugger
+        console.log('SSRIPA Assessment Response:', response.data);
+      },
+      (error) => console.error('Error:', error.message)
+    );
+  }
 }
+  
+}
+
+
+

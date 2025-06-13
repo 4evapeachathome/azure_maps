@@ -265,6 +265,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                 AssessmentGuid: this.daGuid,
                 response: answerSummary,
                 Score: totalScore,
+                guidedType: this.guidedType,
                 CaseNumber: this.caseNumber,
                 support_service: this.loggedInUser?.documentId,
                 Levelofdanger: levelOfDanger,

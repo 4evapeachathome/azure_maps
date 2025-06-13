@@ -151,6 +151,7 @@ submitAssessmentResponse(): Observable<any> {
       response: respondedQuestions,
       AssessmentGuid: this.ssripaGuid,
       support_service: null,
+      guidedType: null,
       CaseNumber: null, // Replace with actual case number if available
       IsAssessmentfromEducationModule: true
     }
