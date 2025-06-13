@@ -124,7 +124,6 @@ height: calc(100% - 40px);
     display: flex;
     gap: 16px;
     margin-bottom: 16px;
- 
   }
   .radio-checked{
   font-weight:$font-bold ;
@@ -340,7 +339,7 @@ justify-content: end;
       tr{
         background: var(--risk-login-background);
         color: $color-deep-Gray;
-    font-size: $font-size-l;
+    font-size: $font-size-base;
 
       }
     }
@@ -467,3 +466,18 @@ span, ion-radio{
       font-weight: $font-bold ;
     }
   }
+  table{
+    tbody{
+      tr{
+        td{
+          ion-radio-group{
+      justify-content: center;
+    margin-bottom: inherit !important;
+  }
+        }
+      }
+    }
+  }
+  .view-results .assessment-summary-text{
+  color: var(--color-deep-Gray);
+}

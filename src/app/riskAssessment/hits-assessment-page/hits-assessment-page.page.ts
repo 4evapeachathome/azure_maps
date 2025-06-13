@@ -47,7 +47,7 @@ export class HitsAssessmentPagePage implements OnInit {
       
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
-          debugger;
+          //debugger;
           this.hitsData = response?.guid;
         },
         error: (err) => {

@@ -62,7 +62,7 @@ constructor(
     this.updateGuidedTypeLabel();
 
     const cachedHits = this.menuService.getDangerAssessment();
-    debugger;
+    //debugger;
 
 if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   this.daAssessment = this.initializeAssessmentData(cachedHits.data);

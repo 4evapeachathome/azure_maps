@@ -114,9 +114,9 @@
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="7" class="p-0">            
                 <ion-row *ngIf="isSSripa || isHitsAssessment || isDanger">
-                  <ion-col size="12" size-sm="12">
+                  <ion-col size="12" size-sm="12" >
                     <ion-text>Here is your QR Code:</ion-text>
-                    <div class="qr-code-wrapper">
+                    <div class="qr-code-wrapper mobile-center-align">
                       <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
                     </div>
                   </ion-col>
@@ -124,22 +124,27 @@
               </ion-col>          
               <ion-col size="12" size-sm="12" size-lg="5" class="p-0">
                 <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitsAssessment || isDanger)">
+                     <ion-col size="12" size-sm="12">
                   <app-summarypage #riskMeterRef [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
+               </ion-col>
                 </ion-row>
                        
               </ion-col>
-              <ion-row>
-                <ion-button  (click)="downloadPDF()" color="primary" size="small">Export to PDF</ion-button>
-              </ion-row>   
+             
             </ion-row>
+             <ion-row>
+                   <ion-col size="12" size-sm="12" class="mobile-center-align">
+                <ion-button  (click)="downloadPDF()" color="primary" size="small">Export to PDF</ion-button>
+                </ion-col>
+              </ion-row>   
             <!--Table to handle response for all the assessments-->
             <ion-row>
               <table class="assessment-table-container hits-assessment-table">
                 <thead>
                   <tr>
-                    <th scope="col" style="text-align: left;">S No.</th>
+                    <th scope="col" style="text-align: left; width: 75px;">S No.</th>
                     <th scope="col" style="text-align: left;">Question</th>
-                    <th scope="col" style="text-align: left;">Answer</th>
+                    <th scope="col" style="text-align: left; width: 130px;">Answer</th>
                   </tr>
                 </thead>
                 <tbody>

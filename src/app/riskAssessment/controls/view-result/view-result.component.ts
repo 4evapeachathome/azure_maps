@@ -191,7 +191,7 @@ export class ViewResultComponent  implements OnInit {
         this.guidedType = response.guidedType;
         this.score = response.Score;
         this.hitsCriticalAlert = response.isCriticalAlert;
-        debugger;
+       // debugger;
         this.supportService = response.support_service;
         this.updateGuidedTypeLabel();
         this.caseNumber = response?.CaseNumber;

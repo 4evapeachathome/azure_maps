@@ -111,7 +111,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-debugger;
+//debugger;
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
@@ -506,7 +506,7 @@ getCharFromCode(code: number): string {
     this.apiService.getDAresultcalculation().subscribe({
       next: (response: any) => {
         if (response && response.data) {
-          debugger;
+        //  debugger;
           this.daResult = response.data;
   
   
