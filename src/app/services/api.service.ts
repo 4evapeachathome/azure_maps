@@ -1054,7 +1054,6 @@ getUserLogins(): Observable<any[]> {
           return encryptedValue;
         }
       };
-      console.log('getUserSupportServiceData res*****', res);
       return res.data.map((item: any) => ({
         id: item?.id ?? null,
         username: item?.Username ? decryptField(item.Username) : '',

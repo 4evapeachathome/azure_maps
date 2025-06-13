@@ -89,11 +89,18 @@ export class ViewResultComponent  implements OnInit {
   }
 
   async logout() {
-    this.menuService.logout().then(() => {
+    try {
+      await this.menuService.logout();
       // this.guidedType = 'staff-guided';
-    }).catch(error => {
-      this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
-    });
+    } catch (error: any) {
+      const errorMsg = error?.error?.error?.message || error?.error?.message || error?.message || 'Failed to logout';
+      const alert = await this.alertController.create({
+        header: 'Logout Failed',
+        message: errorMsg,
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
   private updateGuidedTypeLabel() {

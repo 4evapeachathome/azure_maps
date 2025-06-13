@@ -486,11 +486,18 @@ getCharFromCode(code: number): string {
 
 
   async logout() {
-    this.menuService.logout().then(() => {
+    try {
+      await this.menuService.logout();
       // this.guidedType = 'staff-guided';
-    }).catch(error => {
-      this.showToast(error.error.error.message || 'Failed to logout', 3000, 'top');
-    });
+    } catch (error: any) {
+      const errorMsg = error?.error?.error?.message || error?.error?.message || error?.message || 'Failed to logout';
+      const alert = await this.alertController.create({
+        header: 'Logout Failed',
+        message: errorMsg,
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
   
   fetchDaResults() {
@@ -591,6 +598,20 @@ getCharFromCode(code: number): string {
 
   private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
     await presentToast(this.toastController, message, duration, position);
+  }
+
+  takeAnotherAssessment() {
+    sessionStorage.removeItem('hitsAssessmentResult');
+    sessionStorage.removeItem('ratsAssessmentResult');
+    sessionStorage.removeItem('ssripaAssessmentResult');
+    sessionStorage.removeItem('daAssessmentResult');
+    sessionStorage.removeItem('isHits');
+    sessionStorage.removeItem('isSSripa');
+    sessionStorage.removeItem('isDanger');
+    sessionStorage.removeItem('selectedAssessment');
+    this.caseNumber = '';
+    this.selectedAssessment = null;
+    this.router.navigate(['/riskassessment']);
   }
 
 }

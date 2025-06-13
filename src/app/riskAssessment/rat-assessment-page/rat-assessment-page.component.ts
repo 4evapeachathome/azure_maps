@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
@@ -15,9 +15,16 @@ export class RatAssessmentPageComponent implements OnInit {
   webData: any;
   webGuidUrl: string = APIEndpoints.webGuidUrl; // Replace with your actual API URL
 
-  constructor(private loadingController: LoadingController, private apiService:ApiService) { }
+  constructor(private loadingController: LoadingController, private apiService:ApiService, private cdRef:ChangeDetectorRef) { }
 
   async ngOnInit() {
+    this.cdRef.detectChanges();
+    // Clear any cached data related to the RAT assessment
+    sessionStorage.removeItem('ratsAssessmentResult');
+
+    // ...add any other cache keys you use...
+    this.cdRef.detectChanges();
+    
     this.loadWebData();
     await this.showLoader();
   }
