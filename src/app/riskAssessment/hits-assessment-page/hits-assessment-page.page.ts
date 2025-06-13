@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { filter, Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
 
@@ -13,14 +15,30 @@ export class HitsAssessmentPagePage implements OnInit {
   loading: HTMLIonLoadingElement | null = null;
   hitsData: any;
   hitsGuidUrl: string = APIEndpoints.hitsGuidUrl; // Replace with your actual API URL
+  isInitialLoad: boolean = true; // Track if it's the initial load
+  private navigationSubscription: Subscription | null = null; // Subscription to track navigation events
+  constructor(private loadingController: LoadingController, private apiService:ApiService, private router:Router) { }
 
-  constructor(private loadingController: LoadingController, private apiService:ApiService) { }
-
-  async ngOnInit() {
-    // Only show loader if not pre-rendered
-    this.loadHitsData();
-    await this.showLoader();
-  }
+   async ngOnInit() {
+      // Set up navigation event subscription
+      this.navigationSubscription = this.router.events
+        .pipe(filter(event => event instanceof NavigationEnd))
+        .subscribe((event: NavigationEnd) => {
+          if (event.urlAfterRedirects.includes('hitsassessment')) {
+            console.log('Navigated to SSRIPA page, refreshing data');
+            // Skip data load on initial NavigationEnd if already loaded
+            if (!this.isInitialLoad) {
+              this.loadHitsData();
+              this.showLoader();
+            }
+          }
+        });
+  
+      // Load data initially
+      this.loadHitsData();
+      await this.showLoader();
+      this.isInitialLoad = false; // Mark initial load as complete
+    }
 
   loadHitsData() {
     try {
