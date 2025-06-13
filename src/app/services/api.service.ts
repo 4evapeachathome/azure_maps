@@ -1424,12 +1424,6 @@ getAssessmentResponse(url: string): Observable<any> {
     ]
   }, environment.apitoken).pipe(
     tap((response: any) => {
-      if (response.data) {
-        const result = response.data;
-        return result;
-      } else {
-        return null; 
-      }
     }),
     catchError((error: any) => {
       console.error('Error fetching DA Assessment Response API:', error);

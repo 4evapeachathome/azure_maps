@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { QRCodeComponent } from 'angularx-qrcode';
+import {SummarypageComponent} from 'src/app/riskAssessment/controls/summarypage/summarypage.component';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { ASSESSMENT_TYPE } from 'src/shared/constants';
@@ -10,32 +11,6 @@ import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast } from 'src/shared/utility';
 
-interface AssessmentResponse {
-  data: {
-    id: number;
-    documentId: string;
-    AssessmentGuid: string;
-    response: Array<{
-      answer: string;
-      question: string;
-      DAChild?: Array<{ answer: string; question: string }>; // Optional for da-assessment-response
-      [key: string]: any; // Allow additional properties
-    }>;
-    CaseNumber: string;
-    Score?: number;
-    support_service: {
-      documentId: string;
-      user_login: {
-        username: string;
-        assessment_type: Array<{
-          name: string;
-          description: string;
-        }>;
-      } | null;
-    } | null;
-  };
-  meta: Record<string, any>;
-}
 
 @Component({
   selector: 'app-view-result',
@@ -52,27 +27,32 @@ export class ViewResultComponent  implements OnInit {
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
   answerSummary: any[] = [];
+  daResult: any[] = [];
   assessmentTitle: string = 'Risk Assessment Results';
   hitResults: any[] = []; // To store the API response
   errorMessage: string | null = null;
   criticalalert: boolean = false;
   note!: string;
   caution!: string;
+  score!:any;
   selectedAssessment: string | null = null; // To store the selected assessment type
   riskValue!: number; // Dynamic risk value (0-100)
-
+  supportService:any;
   showSummary = false; /// enable when to show summary
-
+  isassessmenfromeducation: boolean = false;
   isRatAssessment = false;
   ratAssessmentResult: any;
   qCodeValue: string = '';
-
+  levelofdanger: string = '';
   isHitAssessment = false;
   isSSripa = false;
+  rangevalue:any[] = [];
+  hitsCriticalAlert: boolean = false;
   isDaAssessment = false;
-  ratAssessmentResultList: any = [];
+  AssessmentResultList: any = [];
   assessmentNumber: string = '';
   responseJson: any;
+  isDataLoaded = false;
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
   @ViewChild('qrcodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
 
@@ -153,7 +133,7 @@ export class ViewResultComponent  implements OnInit {
     this.apiService.getRatsResult(code).subscribe({
       next: (response: any) => {
         if (response) {
-          this.ratAssessmentResultList.push(response);
+          this.AssessmentResultList.push(response);
           this.responseJson = response.assessmentSummary;
           this.guidedType = response.guidedType;
           this.updateGuidedTypeLabel();
@@ -173,38 +153,141 @@ export class ViewResultComponent  implements OnInit {
     await presentToast(this.toastController, message, duration, position);
   }
 
-  GetAssessmentResponsebycode(url: string) {
-    if(url && this.isDaAssessment) {
-    this.apiService.getAssessmentResponse(url).subscribe(
-      (response: AssessmentResponse) => {
+  async GetAssessmentResponsebycode(url: string) {
+    if (url && this.isDaAssessment) {
+      try {
+        const res: any = await new Promise((resolve, reject) => {
+          this.apiService.getAssessmentResponse(url).subscribe(resolve, reject);
+        });
+        const response = res?.data;
+  
+        this.responseJson = response.response;
+        this.levelofdanger = response.Levelofdanger;
+        this.guidedType = response.guidedType;
+        this.score = response.Score;
+        this.supportService = response.support_service;
+        this.updateGuidedTypeLabel();
+        this.caseNumber = response?.CaseNumber;
+        this.qCodeValue = response.AssessmentGuid
+          ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
+          : '';
+        this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
+  
+        await this.fetchDaResults();
+        this.isDataLoaded = true;
+      } catch (error) {
+        console.error('DA Assessment fetch error:', error);
+      }
+    }
+  
+    if (url && this.isHitAssessment) {
+      try {
+        const res: any = await new Promise((resolve, reject) => {
+          this.apiService.getAssessmentResponse(url).subscribe(resolve, reject);
+        });
+        const response = res?.data;
+  
+        this.responseJson = response.response;
+        this.guidedType = response.guidedType;
+        this.score = response.Score;
+        this.hitsCriticalAlert = response.isCriticalAlert;
         debugger;
-        console.log('DA Assessment Response:', response.data);
-      },
-      (error) => console.error('Error:', error.message)
-    );
+        this.supportService = response.support_service;
+        this.updateGuidedTypeLabel();
+        this.caseNumber = response?.CaseNumber;
+        this.qCodeValue = response.AssessmentGuid
+          ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
+          : '';
+        this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
+  
+        await this.fetchHitResults();
+        this.isDataLoaded = true;
+      } catch (error) {
+        console.error('HITS Assessment fetch error:', error);
+      }
+    }
+  
+    if (url && this.isSSripa) {
+      this.apiService.getAssessmentResponse(url).subscribe(
+        (res: any) => {
+          const response = res?.data;
+  
+          this.responseJson = response.response;
+          this.guidedType = response.guidedType;
+          this.supportService = response.support_service;
+          this.isassessmenfromeducation = response.IsAssessmentfromEducationModule;
+          this.updateGuidedTypeLabel();
+          this.caseNumber = response?.CaseNumber;
+          this.qCodeValue = response.AssessmentGuid
+            ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
+            : '';
+            this.isDataLoaded = true;
+          this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
+        },
+        (error) => console.error('SSRIPA Assessment fetch error:', error)
+      );
+    }
   }
 
-    // HITS Assessment
-    if(url && this.isHitAssessment) {
-    this.apiService.getAssessmentResponse(url).subscribe(
-      (response: AssessmentResponse) => {
-        debugger
-        console.log('HITS Assessment Response:', response.data);
+async fetchHitResults(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    this.apiService.getHitsResultCalculation().subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          this.hitResults = response.data;
+          const hitData = response.data[0];
+          this.note = hitData?.Note || '';
+          this.caution = hitData?.Caution || '';
+          this.rangevalue = hitData?.AnswerOption?.map((option: any) => ({
+            min: option.min,
+            max: option.max,
+            color: option.color,
+            label: option.label,
+          }));
+        } else {
+          this.hitResults = [];
+          this.note = '';
+          this.caution = '';
+        }
+        resolve();
       },
-      (error) => console.error('Error:', error.message)
-    );
-  }
+      error: (error: any) => {
+        this.errorMessage = error;
+        console.error('Error in fetchHitResults:', error);
+        reject(error);
+      },
+    });
+  });
+}
 
-    // SSRIPA Assessment
-    if(url && this.isSSripa) {
-    this.apiService.getAssessmentResponse(url).subscribe(
-      (response: AssessmentResponse) => {
-        debugger
-        console.log('SSRIPA Assessment Response:', response.data);
+async fetchDaResults(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    this.apiService.getDAresultcalculation().subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          this.daResult = response.data;
+          this.rangevalue = this.daResult.map((option: any) => ({
+            min: option.min,
+            max: option.max,
+            color: option.color,
+            label: option.label,
+          }));
+        } else {
+          this.daResult = [];
+        }
+        resolve();
       },
-      (error) => console.error('Error:', error.message)
-    );
-  }
+      error: (error: any) => {
+        this.errorMessage = error;
+        console.error('Error in fetchDaResults:', error);
+        reject(error);
+      },
+    });
+  });
+}
+
+getCharFromCode(code: number): string {
+  return String.fromCharCode(code);
 }
   
 }

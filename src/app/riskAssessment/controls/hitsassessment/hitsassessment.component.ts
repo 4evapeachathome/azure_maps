@@ -169,6 +169,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                 response: answerSummary,
                 Score: totalScore,
                 guidedType: this.guidedType,
+                isCriticalAlert: criticalAlert,
                 CaseNumber: this.caseNumber,
                 support_service: this.loggedInUser?.documentId
               }
