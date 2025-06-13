@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { filter, Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { HitsassessmentComponent } from '../controls/hitsassessment/hitsassessment.component';
 
 @Component({
   selector: 'app-hits-assessment-page',
@@ -11,8 +12,9 @@ import { APIEndpoints } from 'src/shared/endpoints';
   styleUrls: ['./hits-assessment-page.page.scss'],
   standalone: false,
 })
-export class HitsAssessmentPagePage implements OnInit {
+export class HitsAssessmentPagePage implements OnInit, OnDestroy {
   loading: HTMLIonLoadingElement | null = null;
+  @ViewChild(HitsassessmentComponent) hits!: HitsassessmentComponent;
   hitsData: any;
   hitsGuidUrl: string = APIEndpoints.hitsGuidUrl; // Replace with your actual API URL
   isInitialLoad: boolean = true; // Track if it's the initial load
@@ -28,6 +30,9 @@ export class HitsAssessmentPagePage implements OnInit {
             console.log('Navigated to SSRIPA page, refreshing data');
             // Skip data load on initial NavigationEnd if already loaded
             if (!this.isInitialLoad) {
+              if(this.hits) {
+                this.hits.loadinitialData(); // Call the method to load data
+              }
               this.loadHitsData();
               this.showLoader();
             }
@@ -94,6 +99,13 @@ export class HitsAssessmentPagePage implements OnInit {
         console.warn('Loader already dismissed or not yet created');
       }
       this.loading = null;
+    }
+  }
+
+  ngOnDestroy() {
+    // Clean up subscription
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
     }
   }
 }

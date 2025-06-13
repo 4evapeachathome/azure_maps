@@ -37,7 +37,11 @@ constructor(
 
 
   ngOnInit() {
-     const encodedUser = this.cookieService.get('userdetails');
+    this.loadInitialData(); 
+  }
+
+  loadInitialData() {
+    const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
@@ -82,7 +86,6 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
         }
       });
     }
-    
   }
 
   initializeAssessmentData(data: any[]) {

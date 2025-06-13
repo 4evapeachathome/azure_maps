@@ -38,6 +38,10 @@ showresults: boolean = false;
       private alertController: AlertController) { }
 
   ngOnInit() {
+    this.loadInitialData(); 
+  }
+
+  loadInitialData(){
     const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
       try {
