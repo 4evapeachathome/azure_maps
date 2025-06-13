@@ -67,7 +67,9 @@ export class SripaaPage implements OnInit,AfterViewInit {
   async retakeAssessment(){
     await this.loadSSripaData();
     sessionStorage.removeItem('hasYesAnswer');
+    await this.showLoader();
     this.hidewhenshowingresults= false;
+    
   }
 
   async loadSSripaData() {
