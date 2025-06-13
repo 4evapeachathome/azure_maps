@@ -164,6 +164,7 @@ export class AssessmentPageComponent  implements OnInit {
         case 'hits assessment':
 
           this.navigateWithHitsCache('/hitsassessment');
+          this.selectedAssessment = null;
           break;
         case 'conflict tactic scale 2':
           this.router.navigate(['/cts2'], { state: { assessmentType: this.selectedAssessment } });
@@ -174,17 +175,20 @@ export class AssessmentPageComponent  implements OnInit {
         case 'da':
         case 'the danger assessment (da)':
           this.navigateWithDangerCache('/dangerassessment');
+          this.selectedAssessment = null;
           break;
         case 'relationship assessment tool originally called web scale':
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'signs of self-recognition in intimate partner abuse (ssripa)':
           this.navigateWithSsripaCache('/ssripariskassessment');
+          this.selectedAssessment = null;
           break;
         case 'web':
         case 'web assessment':
         case "women's experience with battering":
           this.navigateWithRatsCache('/webassessment');
+          this.selectedAssessment = null;
           break;
         default:
           console.warn('No matching route found for selected assessment.');

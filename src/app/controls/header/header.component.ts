@@ -37,11 +37,7 @@ export class HeaderComponent  implements OnInit {
     const excludedPaths = [
       '/home',
       '',
-      '/login',
-      '/hitsassessment',
-      '/riskassessment',
-      '/usercreation',
-      '/riskassessmentsummary'
+      '/riskassessment', '/setpassword', '/riskassessmentsummary','/login','/hitsassessment', '/ratsassessment', '/dangerassessment','/ssripariskassessment', '/webassessment', '/viewresult'
     ];
   
     this.showExitButton = !excludedPaths.includes(currentPath);
