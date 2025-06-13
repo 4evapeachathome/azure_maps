@@ -71,7 +71,7 @@ export const APIEndpoints = {
     ratScaleOptions :`${environment.apiHost}/api/multiple-options-for-rats`,
     ratResultCalculation :`${environment.apiHost}/api/rat-results`,
     saveRatAssessment: `${environment.apiHost}/api/rat-assessment-response-summaries`,
-    ratResult :`${environment.apiHost}/api/rat-assessment-response-summaries/by-assessment-number?asssessmentNumber=`,
+    ratResult :`${environment.apiHost}/api/rat-assessment-response-summaries/by-assessment-number?AssessmentGuid=`,
     webGuidUrl :`${environment.apiHost}/api/generate-web-guid`,
     
     DAAssesmentQuestions :`${environment.apiHost}/api/da-assessment-questions`,

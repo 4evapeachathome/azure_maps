@@ -32,28 +32,6 @@ export class Utility {
       return null;
     };
   }
-
-  // GUID generator with custom prefix
-  static generateGUID(type: string): string {
-    const uuid = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-    switch (type.toLowerCase()) {
-      case 'web':
-        return `WEB-${uuid}`;
-      case 'hits':
-        return `HITS-${uuid}`;
-      case 'da':
-        return `DA-${uuid}`;
-      case 'dai':
-        return `DAI-${uuid}`;
-      case 'cts':
-        return `CTS-${uuid}`;
-      case 'ssripa':
-        return `SSRIPA-${uuid}`;
-      default:
-        return `GEN-${uuid}`; // fallback generic prefix
-    }
-  }
 }
 
 // Utility function to present a toast message

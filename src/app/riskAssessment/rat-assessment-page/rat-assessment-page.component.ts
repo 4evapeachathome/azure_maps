@@ -18,7 +18,7 @@ export class RatAssessmentPageComponent implements OnInit {
   constructor(private loadingController: LoadingController, private apiService:ApiService) { }
 
   async ngOnInit() {
-    // this.loadWebData();
+    this.loadWebData();
     await this.showLoader();
   }
 

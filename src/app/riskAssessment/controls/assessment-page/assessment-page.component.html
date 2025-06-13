@@ -35,16 +35,31 @@
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col size="12" size-sm="12" size-lg="5">
-                <ion-item>
-                  <ion-input
-                    label="Case Number"
-                    [(ngModel)]="caseNumber"
-                    placeholder="Case Number (Optional)"
-                    labelPlacement="stacked"
-                  ></ion-input>
-                </ion-item>
-              </ion-col>
+              <ion-row>
+                <ion-col size="12" size-sm="12" size-lg="4">
+                  <ion-item>
+                    <ion-input
+                      label="Case Number (Optional)"
+                      [(ngModel)]="caseNumber"
+                      placeholder="Case Number (Optional)"
+                      labelPlacement="stacked"
+                    ></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="12" size-lg="6">
+                  <ion-item>
+                    <ion-input
+                      label="View result by Assessment Number"
+                      [(ngModel)]="assessmentNumber"
+                      placeholder="Assessment Number"
+                      labelPlacement="stacked"
+                    ></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="12" size-lg="2">
+                  <ion-button color="primary" (click)="viewResult(assessmentNumber)">Search</ion-button>
+                </ion-col>
+              </ion-row>
               <ion-col *ngIf="selectedAssessment" size="12" size-sm="12" size-lg="7" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType">
                   <ion-radio [value]="guidedType" labelPlacement="end" mode="md">{{ guidedTypeLabel }}</ion-radio>

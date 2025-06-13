@@ -66,6 +66,7 @@ export class ViewResultComponent  implements OnInit {
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
+        console.log('this.loggedInUser>>>>>>', this.loggedInUser);
       } catch {
         this.cookieService.delete('userdetails');
         this.router.navigate(['/login']);
@@ -133,13 +134,27 @@ export class ViewResultComponent  implements OnInit {
     this.apiService.getRatsResult(code).subscribe({
       next: (response: any) => {
         if (response) {
-          this.AssessmentResultList.push(response);
-          this.responseJson = response.assessmentSummary;
-          this.guidedType = response.guidedType;
-          this.updateGuidedTypeLabel();
-          this.caseNumber = response?.caseNumber;
-          this.qCodeValue = response.qrCodeUrl;
-          this.showToast(response?.message || 'Assessment result fetch successfully.', 3000, 'top');
+          let checkValidation = false;
+          this.loggedInUser.assessment_type.map((loggedInUser: any) => {
+              response.support_service.user_login.assessment_type.map((type: any) => {
+              if(loggedInUser.documentId == type.documentId) {
+                checkValidation = true;
+              }
+            });
+          });
+
+          if(checkValidation) {
+            this.AssessmentResultList.push(response);
+            this.responseJson = response.assessmentSummary;
+            this.guidedType = response.guidedType;
+            this.updateGuidedTypeLabel();
+            this.caseNumber = response?.caseNumber;
+            this.qCodeValue = response.qrCodeUrl;
+            this.showToast(response?.message || 'Assessment result fetch successfully.', 3000, 'top');
+          } else {
+            this.showToast('You are not authorized to view this assessment result.', 3000, 'top');
+            this.router.navigate(['/login']);
+          }
         }
       },
       error: (error: any) => {
@@ -160,21 +175,36 @@ export class ViewResultComponent  implements OnInit {
           this.apiService.getAssessmentResponse(url).subscribe(resolve, reject);
         });
         const response = res?.data;
+
+        let checkValidation = false;
+        this.loggedInUser.assessment_type.map((item: any) => {
+            response.support_service.user_login.assessment_type.map((type: any) => {
+            if(item.documentId == type.documentId) {
+              checkValidation = true;
+            }
+          });
+        });
+
+        if(checkValidation) {
+          this.responseJson = response.response;
+          this.levelofdanger = response.Levelofdanger;
+          this.guidedType = response.guidedType;
+          this.score = response.Score;
+          this.supportService = response.support_service;
+          this.updateGuidedTypeLabel();
+          this.caseNumber = response?.CaseNumber;
+          this.qCodeValue = response.AssessmentGuid
+            ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
+            : '';
+          this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
+    
+          await this.fetchDaResults();
+          this.isDataLoaded = true;
+        } else {
+          this.showToast('You are not authorized to view this assessment result.', 3000, 'top');
+          this.router.navigate(['/login']);
+        }
   
-        this.responseJson = response.response;
-        this.levelofdanger = response.Levelofdanger;
-        this.guidedType = response.guidedType;
-        this.score = response.Score;
-        this.supportService = response.support_service;
-        this.updateGuidedTypeLabel();
-        this.caseNumber = response?.CaseNumber;
-        this.qCodeValue = response.AssessmentGuid
-          ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
-          : '';
-        this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
-  
-        await this.fetchDaResults();
-        this.isDataLoaded = true;
       } catch (error) {
         console.error('DA Assessment fetch error:', error);
       }
@@ -186,22 +216,39 @@ export class ViewResultComponent  implements OnInit {
           this.apiService.getAssessmentResponse(url).subscribe(resolve, reject);
         });
         const response = res?.data;
+        
+        let checkValidation = false;
+        this.loggedInUser.assessment_type.map((item: any) => {
+          debugger
+            response.support_service.user_login.assessment_type.map((type: any) => {
+              debugger
+            if(item.documentId == type.documentId) {
+              checkValidation = true;
+            }
+          });
+        });
+
+        if(checkValidation) {
+          this.responseJson = response.response;
+          this.guidedType = response.guidedType;
+          this.score = response.Score;
+          this.hitsCriticalAlert = response.isCriticalAlert;
+          debugger;
+          this.supportService = response.support_service;
+          this.updateGuidedTypeLabel();
+          this.caseNumber = response?.CaseNumber;
+          this.qCodeValue = response.AssessmentGuid
+            ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
+            : '';
+          this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
+    
+          await this.fetchHitResults();
+          this.isDataLoaded = true;
+        } else {
+          this.showToast('You are not authorized to view this assessment result.', 3000, 'top');
+          this.router.navigate(['/login']);
+        }
   
-        this.responseJson = response.response;
-        this.guidedType = response.guidedType;
-        this.score = response.Score;
-        this.hitsCriticalAlert = response.isCriticalAlert;
-        debugger;
-        this.supportService = response.support_service;
-        this.updateGuidedTypeLabel();
-        this.caseNumber = response?.CaseNumber;
-        this.qCodeValue = response.AssessmentGuid
-          ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
-          : '';
-        this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
-  
-        await this.fetchHitResults();
-        this.isDataLoaded = true;
       } catch (error) {
         console.error('HITS Assessment fetch error:', error);
       }
@@ -211,18 +258,28 @@ export class ViewResultComponent  implements OnInit {
       this.apiService.getAssessmentResponse(url).subscribe(
         (res: any) => {
           const response = res?.data;
+
+        let checkValidation = false;
+        if(response.IsAssessmentfromEducationModule) {
+          this.allowSrppa(response);
+        } else {
+          this.loggedInUser.assessment_type.map((item: any) => {
+              response.support_service.user_login.assessment_type.map((type: any) => {
+              if(item.documentId == type.documentId) {
+                checkValidation = true;
+              }
+            });
+          });
+
+          if(checkValidation) {
+            this.allowSrppa(response);
+          } else {
+            this.showToast('You are not authorized to view this assessment result.', 3000, 'top');
+            this.router.navigate(['/login']);
+          }
+        }
+
   
-          this.responseJson = response.response;
-          this.guidedType = response.guidedType;
-          this.supportService = response.support_service;
-          this.isassessmenfromeducation = response.IsAssessmentfromEducationModule;
-          this.updateGuidedTypeLabel();
-          this.caseNumber = response?.CaseNumber;
-          this.qCodeValue = response.AssessmentGuid
-            ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
-            : '';
-            this.isDataLoaded = true;
-          this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
         },
         (error) => console.error('SSRIPA Assessment fetch error:', error)
       );
@@ -289,6 +346,20 @@ async fetchDaResults(): Promise<void> {
 getCharFromCode(code: number): string {
   return String.fromCharCode(code);
 }
+
+  allowSrppa(response: any) {
+    this.responseJson = response.response;
+    this.guidedType = response.guidedType;
+    this.supportService = response.support_service;
+    this.isassessmenfromeducation = response.IsAssessmentfromEducationModule;
+    this.updateGuidedTypeLabel();
+    this.caseNumber = response?.CaseNumber;
+    this.qCodeValue = response.AssessmentGuid
+      ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
+      : '';
+      this.isDataLoaded = true;
+    this.showToast(response?.message || 'Assessment result fetched successfully.', 3000, 'top');
+  }
   
 }
 
