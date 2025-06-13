@@ -165,14 +165,14 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
                 }
               }
             }
-            // let assessmentNumberID = this.webGuid;
-            let assessmentNumberID = Utility.generateGUID('web');
+            let assessmentNumberID = this.webGuid;
+            // let assessmentNumberID = Utility.generateGUID('web');
             const result = {
               // totalScore,
               response: answerSummary,
               // criticalAlert,
               support_service: this.loggedInUser.documentId,
-              asssessmentNumber: assessmentNumberID,
+              AssessmentGuid: assessmentNumberID,
               assessmentScore: totalScore,
               caseNumber: this.caseNumber || '',
               guidedType: this.guidedType,
@@ -183,7 +183,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
             this.apiService.saveRatAssessment(
               result.response,
               result.support_service,
-              result.asssessmentNumber,
+              result.AssessmentGuid,
               result.assessmentScore,
               result.caseNumber,
               result.guidedType,

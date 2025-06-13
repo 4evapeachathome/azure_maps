@@ -6,7 +6,13 @@ const routes: Routes = [
   {
     path: '',
     component: ViewResultComponent
+  },
+  // add route for viewresult with code parameter
+  {
+    path: 'viewresult?code=:code',
+    component: ViewResultComponent
   }
+
 ];
 
 @NgModule({
