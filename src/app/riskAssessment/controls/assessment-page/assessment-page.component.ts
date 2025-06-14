@@ -97,6 +97,7 @@ export class AssessmentPageComponent  implements OnInit {
           // Sort the multiple_answer_option for each question (if still needed)
           questions.forEach((q: any) => {
             q.multiple_answer_option.sort((a: any, b: any) => a.score - b.score);
+            q.selected = null; // Reset selected for each question
           });
       
           // Store both questions and answerOptions in the service
@@ -257,6 +258,7 @@ export class AssessmentPageComponent  implements OnInit {
           // Sort the multiple_answer_option for each question (if still needed)
           questions.forEach((q: any) => {
             q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);
+            q.selected = null; // Reset selected for each question
           });
           
           let sortedOptions = answerOptions.sort((a: any, b: any) => a.score - b.score);
