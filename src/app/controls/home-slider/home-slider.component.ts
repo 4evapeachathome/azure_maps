@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
@@ -35,6 +35,7 @@ import { MenuService } from 'src/shared/menu.service';
 })
 export class HomeSliderComponent implements OnInit {
   mainTitle: string = ''; // Stores the main title
+  @Output() loaded = new EventEmitter<void>();
   descriptions: any[] = []; // Stores slider content
   imageUrls: string[] = []; // Stores image URLs
   currentIndex: number = 0; // To track active slider index
@@ -79,9 +80,13 @@ export class HomeSliderComponent implements OnInit {
           this.currentIndex = 0;
   
         }
+        this.loaded.emit();
+
       },
       (error) => {
         console.error('Error fetching home slider component:', error);
+        this.loaded.emit();
+
       }
     );
   }

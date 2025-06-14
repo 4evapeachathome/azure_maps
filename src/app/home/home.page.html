@@ -9,27 +9,27 @@
     <!-- First Row: Single Component -->
     <ion-row class="comp-space">
       <ion-col>
-        <pathome-happy-home></pathome-happy-home>
+        <pathome-happy-home (loaded)="onChildLoaded()"></pathome-happy-home>
       </ion-col>
     </ion-row>
 
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row class="comp-space hc-spacing">
       <ion-col size="12" size-sm="12" size-lg="4" class="hcs-r hc-cp">
-        <pathome-daily-tips></pathome-daily-tips>
+        <pathome-daily-tips (loaded)="onChildLoaded()"></pathome-daily-tips>
       </ion-col>      
       <ion-col size="12" size-sm="12" size-lg="4"  class="hcs hc-cp">
-        <pathome-wellness-tips></pathome-wellness-tips>
+        <pathome-wellness-tips (loaded)="onChildLoaded()"></pathome-wellness-tips>
       </ion-col>
       <ion-col size="12" size-sm="12" size-lg="4"  class="hcs-l hc-cp">
-        <pathome-peace-harmony></pathome-peace-harmony>
+        <pathome-peace-harmony (loaded)="onChildLoaded()"></pathome-peace-harmony>
       </ion-col>
     </ion-row>
 
     <!-- Third Row: Full-Width Slide Component -->
     <ion-row class="comp-space">
       <ion-col>
-        <pathome-home-slider [routerLink]="['/peaceathome']" [routerLinkTitle]="'Peace at Home'" [endpoint]="sliderEndpoint" [paramName]="'homeslider'"></pathome-home-slider>
+        <pathome-home-slider (loaded)="onChildLoaded()" [routerLink]="['/peaceathome']" [routerLinkTitle]="'Peace at Home'" [endpoint]="sliderEndpoint" [paramName]="'homeslider'"></pathome-home-slider>
       </ion-col>
     </ion-row>
 

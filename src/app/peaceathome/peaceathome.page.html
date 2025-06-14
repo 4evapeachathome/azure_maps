@@ -6,21 +6,21 @@
     <!-- First Row: Single Component -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-peaceathome></pathome-peaceathome>
+        <pathome-peaceathome (loaded)="onChildLoaded()"></pathome-peaceathome>
       </ion-col>
     </ion-row>
 
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-home-slider [endpoint]="peaceathomeslider" [showButton]="false" [paramName]="'peaceathomeslider'"></pathome-home-slider>
+        <pathome-home-slider (loaded)="onChildLoaded()" [endpoint]="peaceathomeslider" [showButton]="false" [paramName]="'peaceathomeslider'"></pathome-home-slider>
       </ion-col>
     </ion-row>
 
     <!-- Third Row: Full-Width Slide Component -->
     <ion-row class="comp-space">
       <ion-col size="12">
-       <pathome-relational></pathome-relational>
+       <pathome-relational (loaded)="onChildLoaded()"></pathome-relational>
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">

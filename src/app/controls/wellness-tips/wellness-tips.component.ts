@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { getConstant } from 'src/shared/constants';
@@ -14,6 +14,7 @@ import { getConstant } from 'src/shared/constants';
 })
 export class WellnessTipsComponent  implements OnInit {
   tips: { id: number; wellnesstips: string }[] = [];
+  @Output() loaded = new EventEmitter<void>();
   currentTip: string = '';
   HealthTipTitle: string = '';
   HealthTipImageUrl: string = '';
@@ -52,10 +53,14 @@ export class WellnessTipsComponent  implements OnInit {
         } else {
           this.setDefaultTip();
         }
+        this.loaded.emit();
+
       },
       (error) => {
         console.error('Error fetching health tips:', error);
         this.setDefaultTip();
+        this.loaded.emit();
+
       }
     );
   }

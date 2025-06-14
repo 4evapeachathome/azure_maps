@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
@@ -16,6 +16,7 @@ export class PeaceHarmonyComponent  implements OnInit {
 title: any;
 description:any;
 image:any;
+@Output() loaded = new EventEmitter<void>();
 
   constructor(private apiService:ApiService, private menuService:MenuService) { }
 
@@ -36,15 +37,20 @@ image:any;
           this.title = firstBanner.title || ''; 
           this.description = firstBanner.description || '';
           this.image = firstBanner.image || ''; 
+          this.loaded.emit();
         } else {
           console.warn('No data found in the response.');
           this.title = '';
           this.description = '';
           this.image = '';
+          this.loaded.emit();
+
         }
       },
       (error) => {
         console.error('Error fetching expert advice data:', error);
+        this.loaded.emit();
+
       }
     );
   }

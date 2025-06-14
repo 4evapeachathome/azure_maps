@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from '../../services/api.service'; 
@@ -13,6 +13,7 @@ import { ApiService } from '../../services/api.service';
 export class RelationalComponent  implements OnInit {
   personalItems: any[] = [];
   interpersonalItems: any[] = [];
+   @Output() loaded = new EventEmitter<void>();
 
   constructor(private apiService: ApiService) { }
 
@@ -24,9 +25,12 @@ export class RelationalComponent  implements OnInit {
       if (data && data.data && data.data[0]) {
         this.personalItems = data.data[0].Personal || [];
         this.interpersonalItems = data.data[0].Interpersonal || [];
+        
       }
+      this.loaded.emit(); // Emit the loaded event after fetching data
     } catch (err) {
       console.error('Error in fetching Personal and Interpersonal items from Strapi:', err);
+      this.loaded.emit(); // Emit the loaded event even if there's an error
     }
   }
 
