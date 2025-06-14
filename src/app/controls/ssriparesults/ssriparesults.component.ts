@@ -158,10 +158,13 @@ export class SsriparesultsComponent  implements OnInit {
   
       // Clean up
       document.body.removeChild(container);
+      return Promise.resolve();
     } catch (error) {
       console.error('PDF export failed:', error);
+      
       // Optionally show an alert or toast
       alert('Failed to export PDF. Please try again.');
+      return Promise.reject(error);
     }
   }
 

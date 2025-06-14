@@ -189,14 +189,26 @@ export class SripaaPage implements OnInit,AfterViewInit {
 
   
 
-  exportCurrentTabAsPDF() {
-    setTimeout(() => {
+  async exportCurrentTabAsPDF() {
+    try {
+      // Show loader
+      await this.showLoader();
+      
+      // Add slight delay to ensure loader is visible before heavy work starts
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
       if (this.selectedTab === 'results') {
-        this.resultsRef?.exportToPDF();
+        await this.resultsRef?.exportToPDF();
       } else if (this.selectedTab === 'actionplan') {
-        this.actionPlanRef?.exportAsPDF();
+        await this.actionPlanRef?.exportAsPDF();
       }
-    }, 100);
+    } catch (error) {
+      console.error('Export failed:', error);
+      // Optionally show error to user
+    } finally {
+      // Always hide loader when done
+      await this.hideLoader();
+    }
   }
 
 }

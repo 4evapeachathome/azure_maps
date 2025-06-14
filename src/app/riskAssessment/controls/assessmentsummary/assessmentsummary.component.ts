@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { interval, Subscription } from 'rxjs';
@@ -63,7 +63,9 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   assessmentNumber: string = '';
   hasFetchedData: boolean = false; // Track if logins have been fetched
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
-
+  @Output() exportStarted = new EventEmitter<void>();
+  @Output() exportCompleted = new EventEmitter<void>();
+  @Output() exportFailed = new EventEmitter<Error>();
   levelofdanger:string=''; // Track if logins have been fetched
   isDanger: boolean = false; // Track if logins have been fetched
 
@@ -195,6 +197,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
   async downloadPDF() {
     try {
+      this.exportStarted.emit();
       // 1. Create the container for PDF content
       const container = document.createElement('div');
       container.style.cssText = `
@@ -466,8 +469,10 @@ containerElement.appendChild(table);
       };
 
       await generatePDF(container);
+      this.exportCompleted.emit();
     } catch (error) {
       console.error('Error generating PDF:', error);
+      this.exportFailed.emit();
     }
 }
 
