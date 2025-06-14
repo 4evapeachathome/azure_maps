@@ -14,25 +14,21 @@ import { MenuService } from 'src/shared/menu.service';
 export class HomePage implements OnInit,AfterViewInit {
   sliderEndpoint:string = APIEndpoints.sliderapi;
   loading: HTMLIonLoadingElement | null = null;
+  private totalComponents = 4; // Number of child components with API calls
+  private loadedComponents = 0;
   
 
   constructor(private router: Router, private menuService:MenuService, private loadingController: LoadingController) {}
 
   async ngOnInit() {
-    // Only show loader if not pre-rendered
     await this.showLoader();
   }
 
-  async ngAfterViewInit() {
-    const idleCallback = window['requestIdleCallback'] || function (cb: any) {
-      setTimeout(cb, 1000);
-    };
-
-    idleCallback(() => {
-      setTimeout(() => {
-        this.hideLoader();
-      }, 500);
-    });
+  ngAfterViewInit() {
+    //optionally set back
+    setTimeout(() => {
+      this.hideLoader();
+    }, 10000); // 10 seconds max
   }
 
   async showLoader() {
@@ -42,11 +38,6 @@ export class HomePage implements OnInit,AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
-
-    // Force dismiss after 10 seconds just in case
-    setTimeout(() => {
-      this.hideLoader();
-    }, 6500);
   }
 
   async hideLoader() {
@@ -57,6 +48,19 @@ export class HomePage implements OnInit,AfterViewInit {
         console.warn('Loader already dismissed or not yet created');
       }
       this.loading = null;
+    }
+  }
+
+  onChildLoaded() {
+    if (this.loadedComponents >= this.totalComponents) {
+      console.log(`Ignoring extra load event from after all components loaded`);
+      return;
+    }
+    this.loadedComponents++;
+    console.log(`Child component loaded: (${this.loadedComponents}/${this.totalComponents})`);
+    if (this.loadedComponents >= this.totalComponents) {
+      console.log(`All children loaded`);
+      this.hideLoader();
     }
   }
 

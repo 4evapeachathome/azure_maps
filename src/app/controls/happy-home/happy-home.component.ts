@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
@@ -29,6 +29,7 @@ interface BannerTitle {
 
 export class HappyHomeComponent  implements OnInit {
    bannerTitle: BannerTitle | null = null;
+   @Output() loaded = new EventEmitter<void>();
    bannerTitleHighlight: string = '';
    content: any;
    bannerDescription: string= '';
@@ -37,6 +38,8 @@ export class HappyHomeComponent  implements OnInit {
 
   ngOnInit() {
     this.fetchHappyHomeData();
+    this.loaded.emit();
+
   }
 
   expandMenu(sectionTitle: string) {

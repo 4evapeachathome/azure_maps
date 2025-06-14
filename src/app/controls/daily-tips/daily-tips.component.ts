@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -23,6 +23,7 @@ import { getConstant } from 'src/shared/constants';
 export class DailyTipsComponent implements OnInit {
   currentDate: Date;
   allTips: any[] = [];
+  @Output() loaded = new EventEmitter<void>();
   quotes: string = '';
   dailyPeaceTitle: string = '';
   weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -47,6 +48,7 @@ export class DailyTipsComponent implements OnInit {
     this.previousTipIndex = storedIndex ? parseInt(storedIndex, 10) : null;
     this.calculateWeekDates();
     this.fetchDailyTipData();
+    this.loaded.emit();
   }
 
   calculateWeekDates() {

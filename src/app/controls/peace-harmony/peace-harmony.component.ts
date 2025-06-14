@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
@@ -16,11 +16,13 @@ export class PeaceHarmonyComponent  implements OnInit {
 title: any;
 description:any;
 image:any;
+@Output() loaded = new EventEmitter<void>();
 
   constructor(private apiService:ApiService, private menuService:MenuService) { }
 
   ngOnInit() {
     this.getExpertAdviceData();
+    this.loaded.emit();
   }
 
   expandMenu(sectionTitle: string) {
