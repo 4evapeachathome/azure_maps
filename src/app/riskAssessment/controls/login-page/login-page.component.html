@@ -43,12 +43,16 @@
             <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['incorrectPassword']" class="text-red-500">
               Incorrect password.
             </div>
+
+            <div class="captcha-container" style="margin: 1rem 0;">
+              <div #recaptcha></div>
+            </div>
     
             <!-- Forgot Password Link -->
             <div class="ra-login-buttons">
               <a href="#" (click)="onForgotPassword($event)">Forgot password?</a>
                <!-- Submit Button -->
-            <ion-button color="primary" [disabled]="loginForm.invalid" type="submit" expand="block">
+            <ion-button color="primary" [disabled]="loginForm.invalid || !isCaptchaVerified" type="submit" expand="block">
               Submit
             </ion-button>
             </div>

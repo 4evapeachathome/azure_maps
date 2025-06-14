@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, NgZone, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -23,13 +23,18 @@ export class LoginPageComponent  implements OnInit {
   showNewPassword = false;
   @Input() reloadFlag: boolean = false;
   private hasFetchedLogins: boolean = false; // Track if logins have been fetched
+  @ViewChild('recaptcha', { static: true }) recaptchaElement!: ElementRef;
+  isCaptchaVerified: boolean = false;
+  captchaToken: string = '';
+  widgetId: number = -1;
 
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
     private cookieService: CookieService,
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private ngZone: NgZone
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -42,14 +47,40 @@ export class LoginPageComponent  implements OnInit {
     this.loginForm.reset();
     if (!this.hasFetchedLogins) {
       this.getUserLogins();
+      this.renderReCaptcha();
       this.hasFetchedLogins = true;
     }
   }
+
+  renderReCaptcha() {
+    if (typeof window !== 'undefined' && (window as any).grecaptcha) {
+      this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
+        sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+        callback: (response: string) => {
+          this.ngZone.run(() => {
+            this.captchaToken = response;
+            this.isCaptchaVerified = true;
+          });
+        },
+        'expired-callback': () => {
+          this.ngZone.run(() => {
+            this.isCaptchaVerified = false;
+            this.captchaToken = '';
+          });
+        }
+      });
+    } else {
+      // If grecaptcha is not available, try again in 500ms
+      setTimeout(() => this.renderReCaptcha(), 500);
+    }
+  }
+
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedLogins) {
       this.loginForm.reset();
       this.getUserLogins();
+      this.renderReCaptcha();
       this.hasFetchedLogins = true;
     }
   }
@@ -98,6 +129,12 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
       this.loginForm.markAllAsTouched();
       return;
     }
+    if (!this.isCaptchaVerified || !this.captchaToken) {
+      console.error('Please complete the captcha first');
+      this.loginForm.reset();
+      this.resetCaptcha();
+      return;
+    }
 
     const { username, password } = this.loginForm.value;
     const user = this.userLogins.find(u => u.username?.toLowerCase() === username.trim()?.toLowerCase());
@@ -133,6 +170,8 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
     const encodedUsername = toBase64(username);
     const encodedUser = toBase64(JSON.stringify(user));
     const loginTimestamp = Date.now().toString();
+    this.loginForm.reset();
+    this.resetCaptcha();
   
     this.cookieService.set('userdetails', encodedUser, {
       path: '/',
@@ -149,6 +188,14 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
       sameSite: 'Strict',
       secure: true,
     });
+  }
+
+  resetCaptcha() {
+    this.isCaptchaVerified = false;
+    this.captchaToken = '';
+    if (typeof window !== 'undefined' && (window as any).grecaptcha && this.widgetId !== -1) {
+      (window as any).grecaptcha.reset(this.widgetId);
+    }
   }
 
 }

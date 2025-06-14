@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, NgZone, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -20,11 +20,17 @@ export class SetPasswordComponent implements OnInit {
   userLogins: any[] = [];
   flowType: string | null = null;
   @Input() reloadFlag: boolean = false;
+   @ViewChild('recaptcha', { static: true }) recaptchaElement!: ElementRef;
+    isCaptchaVerified: boolean = false;
+    captchaToken: string = '';
+    widgetId: number = -1;
+    private hasFetchedLogins: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
     private router: Router,
+    private ngZone: NgZone,
     private route: ActivatedRoute,
     private toastController: ToastController
   ) {
@@ -48,13 +54,23 @@ export class SetPasswordComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.resetFormAndFetchUsers();
-    this.flowType = this.route.snapshot.queryParamMap.get('flow');
+    if (!this.hasFetchedLogins) {
+      this.resetFormAndFetchUsers();
+      this.renderReCaptcha();
+      this.hasFetchedLogins = true;
+      this.flowType = this.route.snapshot.queryParamMap.get('flow');
+
+    }
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true) {
+    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedLogins) {
       this.resetFormAndFetchUsers();
+      this.renderReCaptcha();
+      this.hasFetchedLogins = true;
+      this.flowType = this.route.snapshot.queryParamMap.get('flow');
+
     }
   }
 
@@ -65,6 +81,29 @@ export class SetPasswordComponent implements OnInit {
 
   private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
     await presentToast(this.toastController, message, duration, position);
+  }
+
+  renderReCaptcha() {
+    if (typeof window !== 'undefined' && (window as any).grecaptcha) {
+      this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
+        sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+        callback: (response: string) => {
+          this.ngZone.run(() => {
+            this.captchaToken = response;
+            this.isCaptchaVerified = true;
+          });
+        },
+        'expired-callback': () => {
+          this.ngZone.run(() => {
+            this.isCaptchaVerified = false;
+            this.captchaToken = '';
+          });
+        }
+      });
+    } else {
+      // If grecaptcha is not available, try again in 500ms
+      setTimeout(() => this.renderReCaptcha(), 500);
+    }
   }
 
   getUserLogins() {
@@ -91,6 +130,12 @@ export class SetPasswordComponent implements OnInit {
       await this.showToast('Please fill all required fields correctly.', 3000, 'top');
       return;
     }
+    if (!this.isCaptchaVerified || !this.captchaToken) {
+      console.error('Please complete the captcha first');
+      this.userForm.reset();
+      this.resetCaptcha();
+      return;
+    }
 
     if (this.flowType === 'onboarding' || this.flowType === 'forgotpassword') {
       await this.handlePasswordUpdate();
@@ -108,10 +153,22 @@ export class SetPasswordComponent implements OnInit {
         await this.showToast(res?.message, 2500, 'top');
         this.router.navigate(['/login']);
         this.userForm.reset();
+        this.resetCaptcha();
       },
       error: async (err: any) => {
         await this.showToast(err.error.error.message, 3000, 'top');
+        this.userForm.reset();
+        this.resetCaptcha();
       },
     });
   }
+
+  resetCaptcha() {
+    this.isCaptchaVerified = false;
+    this.captchaToken = '';
+    if (typeof window !== 'undefined' && (window as any).grecaptcha && this.widgetId !== -1) {
+      (window as any).grecaptcha.reset(this.widgetId);
+    }
+  }
+
 }
