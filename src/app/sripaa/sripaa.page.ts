@@ -65,14 +65,14 @@ export class SripaaPage implements OnInit,AfterViewInit {
   }
   
   async retakeAssessment(){
-    await this.loadSSripaData();
-    sessionStorage.removeItem('hasYesAnswer');
     await this.showLoader();
+    this.loadSSripaData();
+    sessionStorage.removeItem('hasYesAnswer');
     this.hidewhenshowingresults= false;
-    
+    this.hideLoader();
   }
 
-  async loadSSripaData() {
+   loadSSripaData() {
     try {
       // Replace with your actual API URL
       const url = this.ssripGuidUrl;
