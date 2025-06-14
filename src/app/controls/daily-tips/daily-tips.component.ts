@@ -48,7 +48,6 @@ export class DailyTipsComponent implements OnInit {
     this.previousTipIndex = storedIndex ? parseInt(storedIndex, 10) : null;
     this.calculateWeekDates();
     this.fetchDailyTipData();
-    this.loaded.emit();
   }
 
   calculateWeekDates() {
@@ -89,10 +88,14 @@ export class DailyTipsComponent implements OnInit {
         } else {
           this.setDefaultTip();
         }
+        this.loaded.emit();
+
       },
       (error) => {
         console.error('Error fetching daily tip:', error);
         this.setDefaultTip();
+        this.loaded.emit();
+
       }
     );
   }

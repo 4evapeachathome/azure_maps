@@ -38,8 +38,6 @@ export class HappyHomeComponent  implements OnInit {
 
   ngOnInit() {
     this.fetchHappyHomeData();
-    this.loaded.emit();
-
   }
 
   expandMenu(sectionTitle: string) {
@@ -52,9 +50,11 @@ export class HappyHomeComponent  implements OnInit {
         const happyHomeData = response[0];
         this.bannerTitle = happyHomeData.content;
         this.peaceathomeImg = happyHomeData.image;
+        this.loaded.emit();
       },
       (error) => {
         console.error('Error fetching happy home data:', error);
+        this.loaded.emit();
       }
     );
   }

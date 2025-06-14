@@ -22,7 +22,6 @@ image:any;
 
   ngOnInit() {
     this.getExpertAdviceData();
-    this.loaded.emit();
   }
 
   expandMenu(sectionTitle: string) {
@@ -38,15 +37,20 @@ image:any;
           this.title = firstBanner.title || ''; 
           this.description = firstBanner.description || '';
           this.image = firstBanner.image || ''; 
+          this.loaded.emit();
         } else {
           console.warn('No data found in the response.');
           this.title = '';
           this.description = '';
           this.image = '';
+          this.loaded.emit();
+
         }
       },
       (error) => {
         console.error('Error fetching expert advice data:', error);
+        this.loaded.emit();
+
       }
     );
   }

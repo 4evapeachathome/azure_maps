@@ -32,7 +32,6 @@ export class WellnessTipsComponent  implements OnInit {
     const storedIndex = localStorage.getItem(this.storageKey);
     this.previousTipIndex = storedIndex ? parseInt(storedIndex, 10) : null;
     this.fetchWellnessTip();
-    this.loaded.emit();
   }
 
   
@@ -54,10 +53,14 @@ export class WellnessTipsComponent  implements OnInit {
         } else {
           this.setDefaultTip();
         }
+        this.loaded.emit();
+
       },
       (error) => {
         console.error('Error fetching health tips:', error);
         this.setDefaultTip();
+        this.loaded.emit();
+
       }
     );
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
@@ -16,6 +16,7 @@ export class PeaceathomeComponent  implements OnInit {
  contentBlocks: any[] = [];
   titleContent: any;
   paragraphContent: any;
+   @Output() loaded = new EventEmitter<void>();
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
@@ -30,10 +31,14 @@ export class PeaceathomeComponent  implements OnInit {
           this.titleContent = response.title;
           this.contentBlocks = response.ContentBlocks;
         this.paragraphContent = response.title[1]?.children[0]?.text || '';
+        this.loaded.emit();
+
         }
       },
       (error) => {
         console.error('Error fetching peace at home:', error);
+        this.loaded.emit();
+
       }
     );
   }

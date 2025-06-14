@@ -11,11 +11,12 @@ import { MenuService } from 'src/shared/menu.service';
   standalone: false,
   // imports: [IonicModule, MenuComponent]
 })
-export class HomePage implements OnInit,AfterViewInit {
+export class HomePage implements OnInit, AfterViewInit {
   sliderEndpoint:string = APIEndpoints.sliderapi;
   loading: HTMLIonLoadingElement | null = null;
-  private totalComponents = 4; // Number of child components with API calls
+  private totalComponents = 5; // Number of child components with API calls
   private loadedComponents = 0;
+  private loaderDismissed = false;
   
 
   constructor(private router: Router, private menuService:MenuService, private loadingController: LoadingController) {}
@@ -25,9 +26,13 @@ export class HomePage implements OnInit,AfterViewInit {
   }
 
   ngAfterViewInit() {
-    //optionally set back
     setTimeout(() => {
-      this.hideLoader();
+      if (!this.loaderDismissed) {
+        console.log('Fallback timeout triggered: dismissing loader');
+        this.hideLoader();
+      } else {
+        console.log('Fallback timeout ignored: loader already dismissed');
+      }
     }, 10000); // 10 seconds max
   }
 
@@ -38,31 +43,37 @@ export class HomePage implements OnInit,AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
+    console.log('Loader presented');
   }
 
   async hideLoader() {
-    if (this.loading) {
+    if (this.loading && !this.loaderDismissed) {
       try {
         await this.loading.dismiss();
+        console.log('Loader dismissed');
       } catch (e) {
-        console.warn('Loader already dismissed or not yet created');
+        console.warn('Loader already dismissed or error dismissing:', e);
       }
+      this.loaderDismissed = true;
       this.loading = null;
     }
   }
 
-  onChildLoaded() {
-    if (this.loadedComponents >= this.totalComponents) {
-      console.log(`Ignoring extra load event from after all components loaded`);
-      return;
-    }
-    this.loadedComponents++;
-    console.log(`Child component loaded: (${this.loadedComponents}/${this.totalComponents})`);
-    if (this.loadedComponents >= this.totalComponents) {
-      console.log(`All children loaded`);
-      this.hideLoader();
-    }
+ async onChildLoaded() {
+  if (this.loaderDismissed) {
+    console.log(`Ignoring extra load event after loader dismissed`);
+    return;
   }
+
+  this.loadedComponents++;
+
+  console.log(`Component loaded (${this.loadedComponents}/${this.totalComponents})`);
+
+  if (this.loadedComponents >= this.totalComponents) {
+    console.log(`All components loaded, hiding loader...`);
+    await this.hideLoader(); // <- important
+  }
+}
 
   navigateToPeaceAtHome() {
     this.router.navigate(['/peaceathome']);

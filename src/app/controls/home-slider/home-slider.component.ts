@@ -50,7 +50,6 @@ export class HomeSliderComponent implements OnInit {
 
   ngOnInit() {
     this.getHomeSlidersData(this.endpoint, this.paramName);
-    this.loaded.emit();
   }
 
 
@@ -81,9 +80,13 @@ export class HomeSliderComponent implements OnInit {
           this.currentIndex = 0;
   
         }
+        this.loaded.emit();
+
       },
       (error) => {
         console.error('Error fetching home slider component:', error);
+        this.loaded.emit();
+
       }
     );
   }
