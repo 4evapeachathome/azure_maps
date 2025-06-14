@@ -10,7 +10,9 @@
     <ion-row class="ra-container h-100">
       <ion-col>
         <!-- <app-summarypage></app-summarypage> -->
-        <app-assessmentsummary [reloadFlag]="reloadData"></app-assessmentsummary>
+        <app-assessmentsummary [reloadFlag]="reloadData" (exportStarted)="showLoader()"
+        (exportCompleted)="hideLoader()"
+        (exportFailed)="hideLoader()"></app-assessmentsummary>
       </ion-col>
     </ion-row>
  
