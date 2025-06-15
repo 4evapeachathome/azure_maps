@@ -134,7 +134,7 @@
                   <ion-button  *ngIf="selectedAssessment" color="secondary" (click)="goBack()"
                     >Back</ion-button
                   >
-                  <ion-button color="primary" (click)="goToTest()"
+                  <ion-button color="primary" [disabled]="!selectedAssessment" (click)="goToTest()"
                     >Go to Test</ion-button
                   >
                 </div>

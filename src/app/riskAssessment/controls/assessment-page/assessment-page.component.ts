@@ -75,6 +75,7 @@ export class AssessmentPageComponent  implements OnInit {
       }
     });
     sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
+    this.updateGuidedTypeLabel();
   }
 
   getSelectedAssessmentDescription(): string {
@@ -212,6 +213,7 @@ export class AssessmentPageComponent  implements OnInit {
     this.selectedAssessment = null;
     this.caseNumber = '';
     this.guidedType = 'staff-guided';
+    this.updateGuidedTypeLabel();
   }
 
   stayLoggedIn() {
