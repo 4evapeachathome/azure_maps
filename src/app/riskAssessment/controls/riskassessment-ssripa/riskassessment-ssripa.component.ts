@@ -113,7 +113,7 @@ showresults: boolean = false;
     // Create the alert using AlertController
     const alert = await this.alertController.create({
       header: 'Confirm Submission',
-      message: 'Are you sure you want to submit the assessment response?',
+      message: 'Are you sure you want to submit the assessment?',
       buttons: [
         {
           text: 'Cancel',

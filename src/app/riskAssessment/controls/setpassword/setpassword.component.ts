@@ -143,6 +143,7 @@ export class SetPasswordComponent implements OnInit {
   }
   private async handlePasswordUpdate() {
     const { username, password, newPassword } = this.userForm.value;
+    
     const updatePayload = {
       Username: username,
       password: newPassword,

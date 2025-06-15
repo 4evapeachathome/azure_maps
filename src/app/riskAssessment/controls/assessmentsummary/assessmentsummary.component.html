@@ -96,6 +96,14 @@
                 <ion-text>
                   Thanks for taking this assessment.<br /><br />
                 </ion-text>
+                <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
+                  <strong>Please expediate action.</strong><br />
+                </ng-container>
+                <ng-template #selfGuided>
+                  <strong>
+                    Take action immediately; talk to your service providers for assistance.
+                  </strong><br />
+                </ng-template>
               </ion-col>
             </ion-row>
 

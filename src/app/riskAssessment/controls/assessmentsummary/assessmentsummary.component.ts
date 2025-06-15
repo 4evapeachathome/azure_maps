@@ -321,6 +321,14 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
               `<p><strong>Please talk to your service provider about what the Danger Assessment means in your situation.</p>` : ''}
         `;
       }
+      if (sessionStorage.getItem('isSSripa') === 'true') {
+        scoreInfo.innerHTML = `
+          ${this.guidedType === 'staff-guided' ? 
+            `<p><strong>Please expediate action.</strong></p>` : ''}
+          ${this.guidedType === 'self-guided' ? 
+              `<p><strong>Take action immediately; talk to your service providers for assistance.</p>` : ''}
+        `;
+      }
 
       if(this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
         scoreInfo.innerHTML = `
