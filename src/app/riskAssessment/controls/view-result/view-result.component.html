@@ -60,7 +60,8 @@
                     <strong>Note:</strong> {{ note }}<br />
                     <strong>Caution:</strong> {{ caution }}
                   </ng-container>
-                  <ng-container *ngIf="guidedType === 'staff-guided' && isDaAssessment; else selfGuided">
+                  <ng-container *ngIf="isDaAssessment">
+                  <ng-container *ngIf="(guidedType === 'staff-guided') && isDaAssessment; else selfGuided">
                     <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
                   </ng-container>
                   <ng-template #selfGuided>
@@ -68,6 +69,7 @@
                       Please talk to your service provider about what the Danger Assessment means in your situation.
                     </strong><br />
                   </ng-template>
+                </ng-container>
                 </ion-col>
 
 

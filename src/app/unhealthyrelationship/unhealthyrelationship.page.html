@@ -5,32 +5,32 @@
     <!-- First Row: Single Component -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-healthyrelatitonship [endpoint]="unhealthyrelationcontent"></pathome-healthyrelatitonship>
+        <pathome-healthyrelatitonship (loaded)="onChildLoaded()" [endpoint]="unhealthyrelationcontent"></pathome-healthyrelatitonship>
       </ion-col>
     </ion-row>
 
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-home-slider [endpoint]="unhealthyrelationslider" [showButton]="false" [paramName]="'unhealthyrelationslider'" ></pathome-home-slider>
+        <pathome-home-slider (loaded)="onChildLoaded()" [endpoint]="unhealthyrelationslider" [showButton]="false" [paramName]="'unhealthyrelationslider'" ></pathome-home-slider>
       </ion-col>
     </ion-row>
 
     <ion-row class="comp-space">
       <ion-col size="12">
-      <pathome-unhealthyrelationshipcontent [contentPlacement]="'left'" [endPoint]="unhealthyrelationcontentone"></pathome-unhealthyrelationshipcontent>
+      <pathome-unhealthyrelationshipcontent (loaded)="onChildLoaded()" [contentPlacement]="'left'" [endPoint]="unhealthyrelationcontentone"></pathome-unhealthyrelationshipcontent>
       </ion-col>
     </ion-row>
     
 
     <ion-row class="comp-space">
           <ion-col size="12">
-            <pathome-unhealthyrelationshipcontent [contentPlacement]="'right'" [endPoint]="unhealthyrelationcontenttwo"></pathome-unhealthyrelationshipcontent>
+            <pathome-unhealthyrelationshipcontent (loaded)="onChildLoaded()" [contentPlacement]="'right'" [endPoint]="unhealthyrelationcontenttwo"></pathome-unhealthyrelationshipcontent>
           </ion-col>
         </ion-row>
 
         <ion-row class="comp-space">
           <ion-col size="12">
-            <pathome-unhealthyrelationshipcontent [contentPlacement]="'left'" [endPoint]="unhealthyrelationcontentthree"></pathome-unhealthyrelationshipcontent>
+            <pathome-unhealthyrelationshipcontent (loaded)="onChildLoaded()" [contentPlacement]="'left'" [endPoint]="unhealthyrelationcontentthree"></pathome-unhealthyrelationshipcontent>
           </ion-col>
         </ion-row>
         <ion-row class="comp-space">
