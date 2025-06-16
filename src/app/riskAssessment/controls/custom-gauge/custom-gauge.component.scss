@@ -59,15 +59,38 @@ $desktop: 1024px;
     border-radius: 50%;
   }
 
+  // .needle-stem {
+  //   position: absolute;
+  //   bottom: 0;
+  //   left: -4px;
+  //   width: 8px;
+  //   height: 35px;
+  //   background-color: currentColor;
+  //   transform-origin: 50% 100%;
+  //   clip-path: polygon(0 100%, 100% 100%, 50% 0);
+  // }
+
   .needle-stem {
     position: absolute;
     bottom: 0;
-    left: -4px;
-    width: 8px;
-    height: 35px;
-    background-color: currentColor;
-    transform-origin: 50% 100%;
-    clip-path: polygon(0 100%, 100% 100%, 50% 0);
+    left: 50%;
+    width: 2px; /* thin needle */
+    height: 30px;
+    background-color: currentColor; /* or currentColor */
+    transform: translateX(-50%) rotate(0deg); /* dynamically rotate */
+    transform-origin: bottom center;
+    z-index: 2;
+  }
+  
+  .needle-stem::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -5px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
   }
 }
 

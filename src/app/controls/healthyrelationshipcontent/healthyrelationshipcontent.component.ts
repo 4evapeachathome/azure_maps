@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
@@ -16,6 +16,7 @@ export class HealthyrelationshipcontentComponent  implements OnInit {
  @Input() isBtnVisible: boolean = false;
  @Input() endpoint: string='';
  @Input() routerLink: string | string[] = [];
+ @Output() loaded = new EventEmitter<void>();
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
@@ -29,9 +30,11 @@ export class HealthyrelationshipcontentComponent  implements OnInit {
           // Keep all paragraphs, including empty ones
           this.content = response.data[0].content;
         }
+        this.loaded.emit(); // Emit the loaded event after fetching data
       },
       (error) => {
         console.error('Error fetching healthy relationship data:', error);
+        this.loaded.emit(); 
       }
     );
   }
