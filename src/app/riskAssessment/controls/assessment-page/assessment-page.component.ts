@@ -244,6 +244,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   navigateWithRatsCache(targetRoute: string) {
     const cached = this.menuService.getRatsAssessment();
+    console.log('navigateWithRatsCache selectedAssessment*******', this.selectedAssessment);
     if (cached) {
       sessionStorage.removeItem('isHits');
       sessionStorage.removeItem('isSSripa');

@@ -86,6 +86,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.tryLoadRiskMeterImage();
       }, 100);
     }
+    this.cdRef.detectChanges();
+    this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
   }
 
   initializeComponent(){
@@ -624,6 +626,7 @@ getCharFromCode(code: number): string {
     sessionStorage.removeItem('selectedAssessment');
     this.caseNumber = '';
     this.selectedAssessment = null;
+    this.responseJson = [];
     this.router.navigate(['/riskassessment']);
   }
 
