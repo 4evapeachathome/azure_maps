@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, NgZone, OnInit, Output, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -28,7 +28,8 @@ export class ContactUsFormComponent  implements OnInit {
     email: '',
     feedback: '',
   };
-
+  @Output() loaded = new EventEmitter<void>();
+  @Output() showloadeder = new EventEmitter<void>();
  
 
   constructor(private apiService: ApiService,private toastController: ToastController,private ngZone: NgZone) { }
@@ -39,6 +40,7 @@ export class ContactUsFormComponent  implements OnInit {
 
 
   async onSubmit() {
+    this.showloadeder.emit(); // Emit showloader event before submission
     if (this.validateForm()) {
       if (!this.isCaptchaVerified || !this.captchaToken) {
         console.error('Please complete the captcha first');
@@ -57,20 +59,25 @@ export class ContactUsFormComponent  implements OnInit {
             this.onClear();
             this.ContactForm.resetForm();
             this.resetCaptcha();
+            this.loaded.emit(); // Emit loaded event after successful submission
+            
           } else {
             console.error('Invalid response format - missing ID');
             const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
             await presentToast(this.toastController, errorMessage);
+            this.loaded.emit();
           }
         },
         error: async (error) => {
           console.error('Error sending contact data', error);
           const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
           await presentToast(this.toastController, errorMessage);
+          this.loaded.emit();
         }
       });
     } else {
       console.error('Form validation failed');
+      this.loaded.emit();
     }
   }
   

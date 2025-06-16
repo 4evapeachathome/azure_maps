@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -14,6 +14,7 @@ export class UnhealthyrelationexampleComponent  implements OnInit {
  title:string = '';
  description:string= '';
  content:any;
+ @Output() loaded = new EventEmitter<void>();
   constructor(private apiService: ApiService) { }
 
   ngOnInit() {
@@ -29,10 +30,11 @@ export class UnhealthyrelationexampleComponent  implements OnInit {
         this.description = res.Description;
         this.content = res.content;
       }
-        
+        this.loaded.emit(); // Emit the loaded event after fetching data
       },
       (error) => {
         console.error('Error fetching physical abuse data:', error);
+        this.loaded.emit();
       }
     );
   }

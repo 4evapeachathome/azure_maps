@@ -4,7 +4,7 @@
   <ion-grid  class="support-d-flex100 sm-cont-margin">
     <ion-row class="h-100">
       <ion-col>
-      <pathome-supportservice></pathome-supportservice>
+      <pathome-supportservice (showLoader)="initiateLoader()" (loaded)="onChildLoaded()"></pathome-supportservice>
       </ion-col>
     </ion-row>
 

@@ -210,15 +210,9 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
                   sessionStorage.setItem('ratsAssessmentResult', JSON.stringify(result));
                   const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
                   presentToast(this.toastController, successMessage);
-                  console.log('this.ratsQuestions >>>>>>>', this.ratsQuestions);
-                  // this.ratsQuestions = [];
-                  // this.ratsQuestions.forEach((q: any) => {
-                  //   q.selected = null; // Reset selected for each question
-                  // });
                   this.cdRef.detectChanges();
                   this.router.navigate(['/riskassessmentsummary']).then(() => {
                     this.cdRef.detectChanges();
-                    // Clear the case number after navigation;
                     this.ratsQuestions.forEach((q: any) => {
                       q.selected = null; // Reset selected for each question
                     });

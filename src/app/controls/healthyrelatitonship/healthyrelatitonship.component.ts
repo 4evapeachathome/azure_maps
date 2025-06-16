@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
@@ -17,6 +17,7 @@ export class HealthyrelatitonshipComponent  implements OnInit {
   title: any[] = [];
   paragraphContent: any;
   @Input() endpoint:string = '';
+  @Output() loaded = new EventEmitter<void>();
 
   constructor(private apiService:ApiService) { }
 
@@ -67,9 +68,11 @@ export class HealthyrelatitonshipComponent  implements OnInit {
   
           //this.paragraphContent = data.title?.[1]?.children?.[0]?.text || '';
         }
+        this.loaded.emit(); // Emit the loaded event after fetching data
       },
       (error) => {
         console.error('Error fetching api data:', error);
+        this.loaded.emit(); 
       }
     );
   }

@@ -3,22 +3,22 @@
   <ion-grid  class="p-b-0 sm-cont-margin">
     <ion-row class="comp-space">
   <ion-col size="12">
-  <pathome-healthyrelatitonship [endpoint]="healtyrelationTitleContent"></pathome-healthyrelatitonship>
+  <pathome-healthyrelatitonship (loaded)="onChildLoaded()" [endpoint]="healtyrelationTitleContent"></pathome-healthyrelatitonship>
   </ion-col>
  </ion-row>
  <ion-row class="comp-space">
   <ion-col size="12">
-    <pathome-healthyrelationshipcontent [endpoint]="healthyrelationcontentwithoutbutton" [isBtnVisible]="false"></pathome-healthyrelationshipcontent>
+    <pathome-healthyrelationshipcontent (loaded)="onChildLoaded()" [endpoint]="healthyrelationcontentwithoutbutton" [isBtnVisible]="false"></pathome-healthyrelationshipcontent>
   </ion-col>
  </ion-row>
  <ion-row class="comp-space">
   <ion-col size="12">
-    <pathome-home-slider [endpoint]="healthyrelationslider" [paramName]="'HealthyRelationshipSlider'" [showButton]="false"></pathome-home-slider>
+    <pathome-home-slider (loaded)="onChildLoaded()" [endpoint]="healthyrelationslider" [paramName]="'HealthyRelationshipSlider'" [showButton]="false"></pathome-home-slider>
   </ion-col>
 </ion-row>
 <ion-row class="comp-space">
   <ion-col size="12">
-    <pathome-healthyrelationshipcontent [endpoint]="healthyrelationcontentwithbutton" [routerLink]="['/nopeaceathome']" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
+    <pathome-healthyrelationshipcontent (loaded)="onChildLoaded()" [endpoint]="healthyrelationcontentwithbutton" [routerLink]="['/nopeaceathome']" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
   </ion-col>
  </ion-row>
  <ion-row class="comp-space">

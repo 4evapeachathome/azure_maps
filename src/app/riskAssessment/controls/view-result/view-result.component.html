@@ -1,4 +1,4 @@
-<div class="common-container risk-assessment-container h-100">
+<div class="common-container risk-assessment-container view-results h-100">
   <ion-grid class="p-0 h-100">
     <ion-row class="h-100">
       <!-- Left Image Panel -->
@@ -39,33 +39,22 @@
             </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="12">
-                <h2>{{ assessmentTitle }}</h2>
+                <h2>{{ selectedAssessment }}</h2>
               </ion-col>
             </ion-row>
             <ion-row class="assessment-summary-text" *ngIf="isDataLoaded && (isDaAssessment || isHitAssessment || isSSripa)">
+                <ion-col size="12" size-sm="12" class="p-0">
               <ion-row>
                 <ion-col>
                   <ion-text>
-                    Thanks for taking the <strong>{{ selectedAssessment }}</strong>.<br /><br />
+                   Thanks for taking this assessment.<br /><br />
                   </ion-text>
                 </ion-col>
 
-                <ion-col>
-                  <strong *ngIf="qCodeValue !== ''"> Here is your Qrcode:
-                  </strong><br /><br />
-  
-                  <ion-row>
-                    <ion-col size="12" size-sm="12">
-                      <div *ngIf="qCodeValue !== ''">
-                        <qrcode #qrcodeElement [qrdata]="qCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
-                      </div>
-                    </ion-col>
-                  </ion-row>
-                </ion-col>
+               
               </ion-row>
-
-              <ion-row>
-                <ion-col *ngIf="isDaAssessment || isHitAssessment">
+              <ion-row class="hits-summary-text" *ngIf="isDaAssessment || isHitAssessment">
+                <ion-col >
                   <strong> Here is your score: </strong><br /><span class="score">{{ score }}</span><br />
                   <ng-container *ngIf="isHitAssessment" >
                     <strong>Note:</strong> {{ note }}<br />
@@ -82,52 +71,85 @@
                 </ion-col>
 
 
-                  <ion-col class="p-0">
-                    <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitAssessment || isDaAssessment)">
-                      <app-summarypage  [range]="rangevalue" [isRiskRed]="hitsCriticalAlert" [riskScore]="score"></app-summarypage>
-                    </ion-row>                           
-                  </ion-col>
-
               </ion-row>
+
+                <ion-row>
+              <ion-col size="12" size-sm="12" size-lg="7" class="p-0">            
+                <ion-row *ngIf="qCodeValue !== ''"> 
+                  <ion-col size="12" size-sm="12" >
+                    <ion-text>Here is your QRcode:</ion-text>
+                    <div class="qr-code-wrapper mobile-center-align">
+                        <div *ngIf="qCodeValue !== ''">
+                       <qrcode #qrcodeElement [qrdata]="qCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
+                   </div>
+                      </div>
+                  </ion-col>
+                </ion-row>            
+              </ion-col>          
+              <ion-col size="12" size-sm="12" size-lg="5" class="p-0">
+                <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitAssessment || isDaAssessment)">
+                     <ion-col size="12" size-sm="12">
+                  <app-summarypage  [range]="rangevalue" [isRiskRed]="hitsCriticalAlert" [riskScore]="score"></app-summarypage>
+               </ion-col>
+                </ion-row>
+                       
+              </ion-col>
+             
+            </ion-row>
+</ion-col>
+              
             </ion-row>
 
             <ion-row class="assessment-summary-text" *ngIf="isRatAssessment">
-              <ion-col>
-                <ion-text *ngFor="let item of AssessmentResultList">
-                  Thanks for taking <strong>{{ selectedAssessment }}</strong> assessment.<br /><br />
+              <ion-col *ngFor="let item of AssessmentResultList">               
+
+                   <ion-row>
+                    <ion-col size="12" size-sm="12">
+                        <ion-text >
+                  Thanks for taking this assessment.<br /><br />
 
                   <div>Your score is: <span class="score">{{ item.assessmentScore }}</span></div>
                   <div class="result" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">Status: {{item.assessmentScore >= 20 ?
                     'Positive' : 'Negative'}}</div>
-
-                  <strong *ngIf="qCodeValue !== ''"> Here is your Qrcode:
-                  </strong><br /><br />
-
-                  <ion-row>
-                    <ion-col size="12" size-sm="12">
-                      <div *ngIf="qCodeValue !== ''">
-                        <qrcode #qrcodeElement [qrdata]="qCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
-                      </div>
+                    </ion-text>
                     </ion-col>
                   </ion-row>
 
+                
+                  <ion-row *ngIf="qCodeValue !== ''"> 
+                  <ion-col size="12" size-sm="12" >
+                    <ion-text>Here is your QRcode:</ion-text>
+                    <div class="qr-code-wrapper mobile-center-align">
+                        <div *ngIf="qCodeValue !== ''">
+                       <qrcode #qrcodeElement [qrdata]="qCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
+                   </div>
+                      </div>
+                  </ion-col>
+                </ion-row> 
+                
+                  <ion-row>
+                    <ion-col size="12" size-sm="12">
+                       
+                       <div class="summary">Summary:</div>
+                    </ion-col>
+                  </ion-row>
                   
-                  <div class="summary">Summary:</div>
+               
 
                    <!-- <div>
                     <app-assessment-table [selectedAssessment]="this.selectedAssessment"></app-assessment-table>
                   </div> -->
 
-                </ion-text>
+             
               </ion-col>
             </ion-row>
 
             <table class="assessment-table-container hits-assessment-table">
               <thead>
                 <tr>
-                  <th scope="col" style="text-align: left;">S No.</th>
+                  <th scope="col" style="text-align: left; width: 75px;">S No.</th>
                   <th scope="col" style="text-align: left;">Question</th>
-                  <th scope="col" style="text-align: left;">Answer</th>
+                  <th scope="col" style="text-align: left; width: 130px;">Answer</th>
                 </tr>
               </thead>
               <tbody>

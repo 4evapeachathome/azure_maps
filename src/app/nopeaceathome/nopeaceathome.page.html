@@ -6,14 +6,14 @@
     <!-- First Row: Single Component -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-healthyrelatitonship [endpoint]="nopeaceathometitlecontent"></pathome-healthyrelatitonship>
+        <pathome-healthyrelatitonship (loaded)="onChildLoaded()" [endpoint]="nopeaceathometitlecontent"></pathome-healthyrelatitonship>
       </ion-col>
     </ion-row>
 
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-home-slider [routerLink]="['/unhealthyrelationship']" [routerLinkTitle]="'Unhealthy Relationship'" [endpoint]="nopeaceathomeslider" [showButton]="true" [paramName]="'nopeaceathome'"></pathome-home-slider>
+        <pathome-home-slider (loaded)="onChildLoaded()" [routerLink]="['/unhealthyrelationship']" [routerLinkTitle]="'Unhealthy Relationship'" [endpoint]="nopeaceathomeslider" [showButton]="true" [paramName]="'nopeaceathome'"></pathome-home-slider>
       </ion-col>
     </ion-row>
 
@@ -21,13 +21,13 @@
      
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-unhealthyrelationshipcontent [endPoint]="nopeacehouseholdconflicts" contentPlacement="left"></pathome-unhealthyrelationshipcontent>
+        <pathome-unhealthyrelationshipcontent (loaded)="onChildLoaded()" [endPoint]="nopeacehouseholdconflicts" contentPlacement="left"></pathome-unhealthyrelationshipcontent>
 
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-unhealthyrelationshipcontent [endPoint]="nopeacetoxicrelationship" contentPlacement="right"></pathome-unhealthyrelationshipcontent>
+        <pathome-unhealthyrelationshipcontent (loaded)="onChildLoaded()" [endPoint]="nopeacetoxicrelationship" contentPlacement="right"></pathome-unhealthyrelationshipcontent>
       </ion-col>
     </ion-row>
     
@@ -35,14 +35,14 @@
 
         <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-healthyrelationshipcontent [endpoint]="nopeacepartnerviolencecontent" [routerLink]="['/unhealthyrelationship']" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
+        <pathome-healthyrelationshipcontent (loaded)="onChildLoaded()" [endpoint]="nopeacepartnerviolencecontent" [routerLink]="['/unhealthyrelationship']" [isBtnVisible]="true"></pathome-healthyrelationshipcontent>
       </ion-col>
     </ion-row>
     
 
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-unhealthyrelationexample></pathome-unhealthyrelationexample>
+        <pathome-unhealthyrelationexample (loaded)="onChildLoaded()"></pathome-unhealthyrelationexample>
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">

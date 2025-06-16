@@ -185,28 +185,18 @@ showresults: boolean = false;
 
 
   async logout() {
-    const alert = await this.alertController.create({
-      header: 'Confirm Logout',
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary'
-        },
-        {
-          text: 'Logout',
-          handler: () => {
-            this.cookieService.delete('username');
-            this.cookieService.delete('loginTime');
-            this.cookieService.delete('userdetails');
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
-    });
-  
-    await alert.present();
+    try {
+      await this.menuService.logout();
+      // this.guidedType = 'staff-guided';
+    } catch (error: any) {
+      const errorMsg = error?.error?.error?.message || error?.error?.message || error?.message || 'Failed to logout';
+      const alert = await this.alertController.create({
+        header: 'Logout Failed',
+        message: errorMsg,
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
   private updateGuidedTypeLabel() {
