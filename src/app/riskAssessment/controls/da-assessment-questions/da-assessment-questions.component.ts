@@ -121,15 +121,15 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   
   get currentRangeText() {
     if (!this.daAssessment || this.daAssessment.length === 0) {
-      return 'Question Set 0-0 of 0';
+      return 'Question Set 0 of 0';
     }
+    const totalQuestions = this.daAssessment.length;
+    const questionsPerSet = 5; // Each set has 5 questions
+    const totalSets = Math.ceil(totalQuestions / questionsPerSet); // Total sets by dividing by 5
     const currentPageIndex = Math.max(0, this.currentPageIndex);
-    const questionsPerPage = Math.max(1, this.questionsPerPage);
-    const start = currentPageIndex * questionsPerPage + 1;
-    const end = Math.min(start + questionsPerPage - 1, this.daAssessment.length);
-    const total = this.daAssessment.length;
-    return `Question Set ${start}-${end} of ${total}`;
-  }
+    const currentSet = currentPageIndex + 1; // Current set number (page index starts at 0, so add 1)
+    return `Question Set ${currentSet} of ${totalSets}`;
+}
 
   getCharFromCode(code: number): string {
     return String.fromCharCode(code);
