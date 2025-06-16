@@ -120,9 +120,6 @@ export class SupportserviceComponent  implements OnInit{
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
   filteredlocationwithinradius: any[] = [];
-  @Output() loaded = new EventEmitter<void>();
-  @Output() showLoader = new EventEmitter<void>();
-
   autocompleteService: any;
   placesService: any;
   autocompleteItems: Place[] = [];
@@ -160,7 +157,6 @@ export class SupportserviceComponent  implements OnInit{
 }
 
 loadFilterSupportSeviceData(){
-  this.showLoader.emit(); // Emit showLoader event before loading data
   this.sharedDataService.filterOptions$.subscribe(options => {
     this.filterOptions = options;
   });
@@ -168,7 +164,6 @@ loadFilterSupportSeviceData(){
   this.sharedDataService.organizations$.subscribe(orgs => {
     this.organizations = orgs;
   });
-  this.loaded.emit(); // Emit loaded event after data is set
 }
 
 updateMarkerLabels() {

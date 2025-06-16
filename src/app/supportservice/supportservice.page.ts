@@ -11,27 +11,24 @@ import { LoadingController } from '@ionic/angular';
 export class SupportservicePage implements OnInit,AfterViewInit {
   loading: HTMLIonLoadingElement | null = null;
   @ViewChild(SupportserviceComponent) supportServiceComponent!: SupportserviceComponent;
-  private totalComponents = 1; // Number of child components with API calls
-  private loadedComponents = 0;
-  private loaderDismissed = false;
+
   constructor(private loadingController: LoadingController) { }
 
   async ngOnInit() {
-  }
-
-  async initiateLoader() {
+    // Only show loader if not pre-rendered
     await this.showLoader();
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      if (!this.loaderDismissed) {
-        console.log('Fallback timeout triggered: dismissing loader');
+  async ngAfterViewInit() {
+    const idleCallback = window['requestIdleCallback'] || function (cb: any) {
+      setTimeout(cb, 1000);
+    };
+
+    idleCallback(() => {
+      setTimeout(() => {
         this.hideLoader();
-      } else {
-        console.log('Fallback timeout ignored: loader already dismissed');
-      }
-    }, 5000); // 10 seconds max
+      }, 500);
+    });
   }
 
   async showLoader() {
@@ -41,37 +38,23 @@ export class SupportservicePage implements OnInit,AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
-    console.log('Loader presented');
+
+    // Force dismiss after 10 seconds just in case
+    setTimeout(() => {
+      this.hideLoader();
+    }, 5000);
   }
 
   async hideLoader() {
-    if (this.loading && !this.loaderDismissed) {
+    if (this.loading) {
       try {
         await this.loading.dismiss();
-        console.log('Loader dismissed');
       } catch (e) {
-        console.warn('Loader already dismissed or error dismissing:', e);
+        console.warn('Loader already dismissed or not yet created');
       }
-      this.loaderDismissed = true;
       this.loading = null;
     }
   }
-
- async onChildLoaded() {
-  if (this.loaderDismissed) {
-    console.log(`Ignoring extra load event after loader dismissed`);
-    return;
-  }
-
-  this.loadedComponents++;
-
-  console.log(`Component loaded (${this.loadedComponents}/${this.totalComponents})`);
-
-  if (this.loadedComponents >= this.totalComponents) {
-    console.log(`All components loaded, hiding loader...`);
-    await this.hideLoader(); // <- important
-  }
-}
 
 
   ionViewWillEnter() {
