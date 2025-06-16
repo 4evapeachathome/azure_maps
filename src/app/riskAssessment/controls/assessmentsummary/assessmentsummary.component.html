@@ -112,7 +112,7 @@
               <ion-col size="12" size-sm="12" size-lg="7" class="p-0">            
                 <ion-row *ngIf="isSSripa || isHitsAssessment || isDanger || (selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase())">
                   <ion-col size="12" size-sm="12">
-                    <ion-text>Here is your QR code:</ion-text>
+                    <ion-text><strong>Here is your QR code:</strong></ion-text>
                     <div class="qr-code-wrapper" *ngIf="QrcodeUrl">
                       <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
                     </div>

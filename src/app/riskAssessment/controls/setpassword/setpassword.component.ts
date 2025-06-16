@@ -128,6 +128,7 @@ export class SetPasswordComponent implements OnInit {
     this.apiService.getUserLogins().subscribe({
       next: (data: any) => {
         this.userLogins = data || [];
+        debugger;
       },
       error: (error: any) => {
         console.error('Failed to fetch user logins', error);

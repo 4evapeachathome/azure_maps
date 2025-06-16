@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
@@ -120,7 +120,8 @@ export class SupportserviceComponent  implements OnInit{
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
   filteredlocationwithinradius: any[] = [];
-  
+  @Output() loaded = new EventEmitter<void>();
+  @Output() showLoader = new EventEmitter<void>();
 
   autocompleteService: any;
   placesService: any;
@@ -159,6 +160,7 @@ export class SupportserviceComponent  implements OnInit{
 }
 
 loadFilterSupportSeviceData(){
+  this.showLoader.emit(); // Emit showLoader event before loading data
   this.sharedDataService.filterOptions$.subscribe(options => {
     this.filterOptions = options;
   });
@@ -166,6 +168,7 @@ loadFilterSupportSeviceData(){
   this.sharedDataService.organizations$.subscribe(orgs => {
     this.organizations = orgs;
   });
+  this.loaded.emit(); // Emit loaded event after data is set
 }
 
 updateMarkerLabels() {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -15,6 +15,7 @@ export class UnhealthyRelationshipContent  implements OnInit {
   webImage:any;
   @Input() contentPlacement:string = 'right';
   @Input() endPoint:string = '';
+  @Output() loaded = new EventEmitter<void>();
 
   constructor(private apiService:ApiService) { }
 
@@ -105,8 +106,11 @@ export class UnhealthyRelationshipContent  implements OnInit {
             };
           });
         }
+        this.loaded.emit(); // Emit the loaded event after fetching data
      },
-      (error) => console.error('Error loading data:', error)
+      (error) => { console.error('Error loading data:', error)
+      this.loaded.emit(); 
+      }
     );
   }
   
