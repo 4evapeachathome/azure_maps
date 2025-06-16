@@ -23,7 +23,7 @@ export class AssessmentPageComponent  implements OnInit {
   caseNumber: string = '';
   loaded: boolean = false;
   guidedType: 'self-guided' | 'staff-guided' = 'staff-guided';
-  assessmentTypes: { id: number; name: string; description: string }[] = [];
+  assessmentTypes: { id: number; name: string; description: string; navigate:string }[] = [];
   guidedTypeLabel: string = 'Staff-Guided';
   assessmentNumber: string = '';
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
@@ -31,6 +31,7 @@ export class AssessmentPageComponent  implements OnInit {
   isDaAssessment = false;
   isSSripa = false;
   isDataLoaded = false;
+  navigate: string = ''; // To store the navigate value from the selected assessment
 
   constructor(
     private menuService: MenuService,
@@ -51,6 +52,7 @@ export class AssessmentPageComponent  implements OnInit {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
         this.assessmentTypes = this.loggedInUser?.assessment_type || [];
+        debugger;
         this.selectedAssessment = null;
         this.loaded = true;
       } catch {
@@ -70,13 +72,17 @@ export class AssessmentPageComponent  implements OnInit {
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
-      if(type.name == this.selectedAssessment) {
-        return type;
-      }
+        if (type.name == this.selectedAssessment) {
+            return type;
+        }
     });
     sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
+
+    // Extract and store the navigate value
+    this.navigate = selectedAssessmentId[0]?.navigate || '';
+
     this.updateGuidedTypeLabel();
-  }
+}
 
   getSelectedAssessmentDescription(): string {
     const selectedType = this.assessmentTypes.find(type => type.name === this.selectedAssessment);
@@ -172,19 +178,12 @@ export class AssessmentPageComponent  implements OnInit {
   goToTest() {
     if (this.selectedAssessment) {
       sessionStorage.setItem('guidedType', this.guidedType);
-      const assessmentName = this.selectedAssessment?.toLowerCase().trim();
+      const assessmentName = this.navigate?.toLowerCase().trim();
       sessionStorage.setItem('caseNumber', this.caseNumber);
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':
-
           this.navigateWithHitsCache('/hitsassessment');
-          break;
-        case 'conflict tactic scale 2':
-          this.router.navigate(['/cts2'], { state: { assessmentType: this.selectedAssessment } });
-          break;
-        case 'danger assessment for immigrants':
-          this.router.navigate(['/danger-assessment-immigrants'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'da':
         case 'the danger assessment (da)':
@@ -194,6 +193,7 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'signs of self-recognition in intimate partner abuse (ssripa)':
+        case 'ssripa':
           this.navigateWithSsripaCache('/ssripariskassessment');
           break;
         case 'web':

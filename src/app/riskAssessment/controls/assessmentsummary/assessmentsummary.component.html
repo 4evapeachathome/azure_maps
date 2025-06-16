@@ -35,12 +35,7 @@
                   </div>
                 </div>
               </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="12" size-sm="12" size-lg="5">
-                <ion-text class="case-number" disabled="true">Case Number : <span>{{' ' + caseNumber || '<>' }}</span></ion-text>
-              </ion-col>
-              <ion-col size="12" size-sm="12" size-lg="7" class="radio-selected-container">
+              <ion-col size="12" size-sm="12" size-lg="12" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType" >
                   <ion-radio [value]="guidedType" labelPlacement="end" mode="md" class="guided-label">{{ guidedTypeLabel }}</ion-radio>
                 </ion-radio-group>
@@ -49,6 +44,11 @@
             <ion-row>
               <ion-col size="12" size-sm="12">
                 <h2>{{ selectedAssessment }}</h2>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="12" size-lg="5">
+                <ion-text class="case-number" disabled="true">Case Number : <span>{{' ' + caseNumber || '<>' }}</span></ion-text>
               </ion-col>
             </ion-row>
             <ion-row class="hits-summary-text" *ngIf="isHitsAssessment">

@@ -69,14 +69,16 @@ constructor(
     //debugger;
 
 if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
-  this.daAssessment = this.initializeAssessmentData(cachedHits.data);
+  const sortedData = cachedHits.data.sort((a:any, b:any) => a.questionOrder - b.questionOrder);
+  this.daAssessment = this.initializeAssessmentData(sortedData);
   this.daQues = this.daAssessment;
     } else {
       // Load from API if cache is empty
       this.apiService.getDAAssessmentQuestions().subscribe({
         next: (res: any) => {
           if(res && res.data && res.data.length > 0) {
-            this.daAssessment = this.initializeAssessmentData(res.data);  
+            const sortedData = res.data.sort((a:any, b:any) => a.questionOrder - b.questionOrder);
+            this.daAssessment = this.initializeAssessmentData(sortedData);  
             this.daQues = this.daAssessment;     
             this.menuService.setDangerAssessment(res);
           }

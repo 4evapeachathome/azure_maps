@@ -586,7 +586,7 @@ getCharFromCode(code: number): string {
   checkSelectedAssessment(code: string) {
     if (code && code.toLowerCase().includes('web-')) {
       this.fetchWebResults(code);
-    } else if(code && code.toLowerCase().includes('hit-')) {
+    } else if(code && code.toLowerCase().includes('hits-')) {
     } else if(code && code.toLowerCase().includes('da-')) {
     } else if(code && code.toLowerCase().includes('dai-')) {
     } else if(code && code.toLowerCase().includes('cts-')) {
@@ -595,6 +595,7 @@ getCharFromCode(code: number): string {
       this.selectedAssessment = '';
     }
   }
+  
 
   fetchWebResults(code: string) {
     this.apiService.getRatsResult(code).subscribe({

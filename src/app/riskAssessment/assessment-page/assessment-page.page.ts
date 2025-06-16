@@ -58,7 +58,7 @@ export class AssessmentPagePage implements OnInit,AfterViewInit {
     // Force dismiss after 10 seconds just in case
     setTimeout(() => {
       this.hideLoader();
-    }, 5000);
+    }, 3000);
   }
 
   async hideLoader() {
