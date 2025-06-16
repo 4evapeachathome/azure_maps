@@ -40,7 +40,7 @@ export class ContactUsFormComponent  implements OnInit {
 
 
   async onSubmit() {
-    this.showloadeder.emit(); // Emit showloader event before submission
+    // Emit showloader event before submission
     if (this.validateForm()) {
       if (!this.isCaptchaVerified || !this.captchaToken) {
         console.error('Please complete the captcha first');
@@ -48,7 +48,7 @@ export class ContactUsFormComponent  implements OnInit {
         this.ContactForm.resetForm();
         return;
       }
-  
+      this.showloadeder.emit(); 
       this.apiService.sendContactData(this.formData).subscribe({
         next: async (response) => {
           
