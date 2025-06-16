@@ -2,11 +2,15 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { SetPasswordPage } from './set-password.page';
+import { onBoardingResolver } from './on-boarding.resolver';
 
 const routes: Routes = [
   {
     path: '',
-    component: SetPasswordPage
+    component: SetPasswordPage,
+    resolve: {
+      flowType: onBoardingResolver
+    }
   }
 ];
 

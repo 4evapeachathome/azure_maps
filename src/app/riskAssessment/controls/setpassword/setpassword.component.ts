@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, NgZone, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
+import { filter } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { presentToast } from 'src/shared/utility';
 
@@ -18,7 +19,7 @@ export class SetPasswordComponent implements OnInit {
   showPassword = false;
   showNewPassword = false;
   userLogins: any[] = [];
-  flowType: string | null = null;
+  flowType: any | null = null;
   @Input() reloadFlag: boolean = false;
    @ViewChild('recaptcha', { static: true }) recaptchaElement!: ElementRef;
     isCaptchaVerified: boolean = false;
@@ -26,13 +27,17 @@ export class SetPasswordComponent implements OnInit {
     widgetId: number = -1;
     private hasFetchedLogins: boolean = false;
 
+  resolvedData: any;
+  previousUrl: string = '';
+  currentUrl: string = '';
+
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
     private router: Router,
     private ngZone: NgZone,
     private route: ActivatedRoute,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {
     this.userForm = this.fb.group(
       {
@@ -58,12 +63,21 @@ export class SetPasswordComponent implements OnInit {
       this.resetFormAndFetchUsers();
       this.renderReCaptcha();
       this.hasFetchedLogins = true;
-      this.flowType = this.route.snapshot.queryParamMap.get('flow');
-
+      // this.flowType = this.route.snapshot.queryParamMap.get('flow');
     }
-
+    this.flowType = this.route.snapshot.data['flowType'].flowType || null;
+    // remove query param from url once we get this.flowType
+    if (this.flowType !== null) {
+      sessionStorage.setItem('flowType', this.flowType);
+      this.router.navigate([], {
+        queryParams: { flow: null },
+        queryParamsHandling: 'merge',
+      });
+    } else {
+      this.flowType = sessionStorage.getItem('flowType');
+    }
   }
-
+  
   ngOnChanges(changes: SimpleChanges) {
     if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedLogins) {
       this.resetFormAndFetchUsers();
@@ -84,8 +98,12 @@ export class SetPasswordComponent implements OnInit {
   }
 
   renderReCaptcha() {
-    if (typeof window !== 'undefined' && (window as any).grecaptcha) {
-      this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
+    if (
+      typeof window !== 'undefined' &&
+      (window as any).grecaptcha &&
+      typeof (window as any).grecaptcha.render === 'function'
+    ) {
+      this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement?.nativeElement, {
         sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
         callback: (response: string) => {
           this.ngZone.run(() => {
@@ -101,7 +119,7 @@ export class SetPasswordComponent implements OnInit {
         }
       });
     } else {
-      // If grecaptcha is not available, try again in 500ms
+      // If grecaptcha or render is not available, try again in 500ms
       setTimeout(() => this.renderReCaptcha(), 500);
     }
   }
