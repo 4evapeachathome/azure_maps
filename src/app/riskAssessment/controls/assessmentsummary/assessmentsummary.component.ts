@@ -116,7 +116,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-    // debugger;
+    debugger;
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
@@ -124,6 +124,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         //debugger;
         this.responseJson= result.summary;
         this.QrcodeUrl= result.ssripasurl;
+        const urlObj = new URL(this.QrcodeUrl);
+        this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
       }
     }
    
@@ -137,6 +139,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.answerSummary = result.summary;
         this.criticalalert = result.criticalAlert === 'true' || result.criticalAlert === true;
         this.QrcodeUrl= result.hitsurl;
+        const urlObj = new URL(this.QrcodeUrl);
+        this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
       }
       this.fetchHitResults();
     }
@@ -151,6 +155,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.riskValue = result.totalScore;
         this.QrcodeUrl= result.daurl;
         this.levelofdanger = result.Levelofdanger;
+        const urlObj = new URL(this.QrcodeUrl);
+        this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
       }
       this.fetchDaResults();
     }

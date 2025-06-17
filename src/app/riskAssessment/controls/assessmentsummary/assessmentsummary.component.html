@@ -116,6 +116,7 @@
                     <div class="qr-code-wrapper" *ngIf="QrcodeUrl">
                       <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
                     </div>
+                    <ion-text>Code: {{assessmentNumber}}</ion-text>
                   </ion-col>
                 </ion-row>            
               </ion-col>          
