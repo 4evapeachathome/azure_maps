@@ -1039,6 +1039,10 @@ getUserLogins(): Observable<any[]> {
       support_service: {
       fields: ['OrgName', 'documentId']
       }
+    },
+    pagination: {
+      page: 1,
+      pageSize: 10000 
     }
   };
 
@@ -1076,6 +1080,44 @@ getUserLogins(): Observable<any[]> {
     catchError((error) => {
       console.error('Error fetching support_service data for user:', error);
       return throwError(() => new Error('Failed to load support_service data.'));
+    })
+  );
+}
+
+login(username: string, password: string): Observable<any> {
+  const encryptedUsername = CryptoJS.AES.encrypt(username.trim(), environment.secretKey).toString();
+  const encryptedPassword = CryptoJS.AES.encrypt(password.trim(), environment.secretKey).toString();
+ 
+  const payload = {
+    username: encryptedUsername,
+    password: encryptedPassword,
+  };
+
+  return this.http.post(`${APIEndpoints.loginbyemail}`, payload).pipe(
+    map((res: any) => {
+      debugger;
+      if (!res.data || res.data.length === 0) return null;
+      const decrypt = (val: string) => {
+        const bytes = CryptoJS.AES.decrypt(val, environment.secretKey);
+        return bytes.toString(CryptoJS.enc.Utf8);
+      };
+
+      const user = res.data[0];
+      return {
+        id: user.id,
+        username: decrypt(user.Username),
+        password: decrypt(user.password),
+        temp_password: decrypt(user.temp_password),
+        support_service: user.support_service ?? {},
+        assessment_type: user.assessment_type ?? [],
+        isSendInvite: user.sendInvite ?? false,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
+    }),
+    catchError((err) => {
+      const errorMessage = err?.error?.error?.message || 'Login failed';
+      return throwError(() => new Error(errorMessage));
     })
   );
 }

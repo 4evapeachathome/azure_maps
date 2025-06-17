@@ -142,48 +142,91 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
       },
     });
   }
-  async onSubmit() {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-    if (!this.isCaptchaVerified || !this.captchaToken) {
-      console.error('Please complete the captcha first');
-      this.loginForm.reset();
-      this.resetCaptcha();
-      return;
-    }
+  
+//   async onSubmit() {
+//     if (this.loginForm.invalid) {
+//       this.loginForm.markAllAsTouched();
+//       return;
+//     }
+//     if (!this.isCaptchaVerified || !this.captchaToken) {
+//       console.error('Please complete the captcha first');
+//       this.loginForm.reset();
+//       this.resetCaptcha();
+//       return;
+//     }
 
-    const { username, password } = this.loginForm.value;
-    const user = this.userLogins.find(u => u.username?.toLowerCase() === username.trim()?.toLowerCase());
+//     const { username, password } = this.loginForm.value;
+//     const user = this.userLogins.find(u => u.username?.toLowerCase() === username.trim()?.toLowerCase());
   
-    if (!user) {
-      this.loginForm.get('username')?.setErrors({ userNotFound: true });
-      return;
-    }
+//     if (!user) {
+//       this.loginForm.get('username')?.setErrors({ userNotFound: true });
+//       return;
+//     }
   
-    if (user.password !== password) {
-      this.loginForm.get('password')?.setErrors({ incorrectPassword: true });
-      return;
-    }
-      await this.handleSuccessfulLogin(username, user);
+//     if (user.password !== password) {
+//       this.loginForm.get('password')?.setErrors({ incorrectPassword: true });
+//       return;
+//     }
+//       await this.handleSuccessfulLogin(username, user);
+
+//   try {
+//     let url = sessionStorage.getItem('redirectUrl');
+//     if(sessionStorage.getItem('redirectUrl') && url?.includes('code')) {
+//       this.hasFetchedLogins = false;
+//       this.router.navigateByUrl(url || '');
+//       sessionStorage.removeItem('redirectUrl');
+//     } else {
+//       this.hasFetchedLogins = false;
+//       await this.router.navigate(['/riskassessment']);
+//     }
+//     await presentToast(this.toastController, 'Login successful!', 3000, 'top');
+//   } catch (err) {
+//     await presentToast(this.toastController, 'Navigation failed', 3000, 'top');
+//     console.error('Navigation error:', err);
+//   }
+// }
+async onSubmit() {
+  if (this.loginForm.invalid) {
+    this.loginForm.markAllAsTouched();
+    return;
+  }
+
+  if (!this.isCaptchaVerified || !this.captchaToken) {
+    console.error('Please complete the captcha first');
+    this.loginForm.reset();
+    this.resetCaptcha();
+    return;
+  }
+
+  const { username, password } = this.loginForm.value;
 
   try {
+    const user = await this.apiService.login(username, password).toPromise();
+
+    await this.handleSuccessfulLogin(user.username, user);
+
     let url = sessionStorage.getItem('redirectUrl');
-    if(sessionStorage.getItem('redirectUrl') && url?.includes('code')) {
+    if (url?.includes('code')) {
       this.hasFetchedLogins = false;
-      this.router.navigateByUrl(url || '');
+      this.router.navigateByUrl(url);
       sessionStorage.removeItem('redirectUrl');
     } else {
       this.hasFetchedLogins = false;
       await this.router.navigate(['/riskassessment']);
     }
+
     await presentToast(this.toastController, 'Login successful!', 3000, 'top');
-  } catch (err) {
-    await presentToast(this.toastController, 'Navigation failed', 3000, 'top');
-    console.error('Navigation error:', err);
+  } catch (error: any) {
+    console.error('Login failed:', error);
+  
+    if (error?.message) {
+      await presentToast(this.toastController, error.message, 3000, 'top');
+    } else {
+      await presentToast(this.toastController, 'Login failed', 3000, 'top');
+    }
   }
 }
+
   private async handleSuccessfulLogin(username: string, user: any) {
     // Safely encode Unicode strings for btoa
     const toBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
