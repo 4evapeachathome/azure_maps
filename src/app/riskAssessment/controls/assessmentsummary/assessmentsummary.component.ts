@@ -511,6 +511,7 @@ getCharFromCode(code: number): string {
 
   async logout() {
     try {
+      this.hasFetchedData = false; // Reset the flag to allow reloading
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {
@@ -637,6 +638,8 @@ getCharFromCode(code: number): string {
     sessionStorage.removeItem('selectedAssessment');
     this.caseNumber = '';
     this.selectedAssessment = null;
+    this.hasFetchedData = false;
+    this.isDanger = false;
     this.responseJson = [];
     this.router.navigate(['/riskassessment']);
   }

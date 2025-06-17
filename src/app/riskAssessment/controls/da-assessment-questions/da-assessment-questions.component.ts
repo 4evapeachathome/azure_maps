@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
@@ -26,6 +26,8 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   guidedTypeLabel: string = 'Self-Guided';
   @Input() daGuid:any;
   daQues:any;
+  hasloadedDate: boolean = false;
+  @Input() reloadFlag: boolean = false; 
 
 constructor(
     private router: Router,
@@ -35,10 +37,19 @@ constructor(
     private alertController: AlertController
   ) { }
 
-
   ngOnInit() {
-    this.loadInitialData(); 
+    if (!this.hasloadedDate) {
+      this.loadInitialData(); 
+    this.hasloadedDate = true;
+    }
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+      if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasloadedDate) {
+        this.loadInitialData(); 
+        this.hasloadedDate = true;
+      }
+    }
 
   loadInitialData() {
     const encodedUser = this.cookieService.get('userdetails');
@@ -151,8 +162,9 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   }
 
   goBack() {
-    this.router.navigate(['/riskassessment']);
+    this.hasloadedDate = false;
     this.caseNumber = '';
+    this.router.navigate(['/riskassessment']);
   }
 
   stayLoggedIn() {
@@ -167,6 +179,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
 
   async logout() {
     try {
+      this.hasloadedDate = false;
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {
@@ -280,6 +293,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                   caseNumber: this.caseNumber
                 }));
                 console.log('Assessment saved:', res);
+                this.hasloadedDate = false;
                 this.router.navigate(['/riskassessmentsummary']);
               },
               error: (err) => {
