@@ -53,7 +53,25 @@ export class LoginPageComponent  implements OnInit {
   }
 
   renderReCaptcha() {
-    if (typeof window !== 'undefined' && (window as any).grecaptcha) {
+    if (typeof window !== 'undefined' && !(window as any).grecaptcha) {
+      // Load the reCAPTCHA script if not already loaded
+      const scriptId = 'recaptcha-script';
+      if (!document.getElementById(scriptId)) {
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => this.renderReCaptcha();
+        document.body.appendChild(script);
+      } else {
+        // Wait for the script to load
+        setTimeout(() => this.renderReCaptcha(), 500);
+      }
+      return;
+    }
+    if ((window as any).grecaptcha && typeof (window as any).grecaptcha.render === 'function') {
+    //  if (typeof window !== 'undefined' && (window as any).grecaptcha) {  
       this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
         sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
         callback: (response: string) => {
@@ -70,7 +88,7 @@ export class LoginPageComponent  implements OnInit {
         }
       });
     } else {
-      // If grecaptcha is not available, try again in 500ms
+      // If grecaptcha is not available or not ready, try again in 500ms
       setTimeout(() => this.renderReCaptcha(), 500);
     }
   }

@@ -52,7 +52,7 @@ export class AssessmentPageComponent  implements OnInit {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
         this.assessmentTypes = this.loggedInUser?.assessment_type || [];
-        debugger;
+        // debugger;
         this.selectedAssessment = null;
         this.loaded = true;
       } catch {
@@ -72,11 +72,12 @@ export class AssessmentPageComponent  implements OnInit {
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
-        if (type.name == this.selectedAssessment) {
+      if (type.name?.toLowerCase() == this.selectedAssessment?.toLowerCase()) {
             return type;
         }
     });
     sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
+    console.log('this.selectedAssessment>>>>>>', this.selectedAssessment, this.assessmentTypes, selectedAssessmentId);
 
     // Extract and store the navigate value
     this.navigate = selectedAssessmentId[0]?.navigate || '';
@@ -179,6 +180,7 @@ export class AssessmentPageComponent  implements OnInit {
     if (this.selectedAssessment) {
       sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.navigate?.toLowerCase().trim();
+      console.log('assessmentName>>>>>>>>', assessmentName);
       sessionStorage.setItem('caseNumber', this.caseNumber);
       switch (assessmentName) {
         case 'hits':

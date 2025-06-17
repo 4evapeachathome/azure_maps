@@ -277,6 +277,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                   summary: answerSummary,
                   Levelofdanger: levelOfDanger,
                   daurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
+                  caseNumber: this.caseNumber
                 }));
                 console.log('Assessment saved:', res);
                 this.router.navigate(['/riskassessmentsummary']);
