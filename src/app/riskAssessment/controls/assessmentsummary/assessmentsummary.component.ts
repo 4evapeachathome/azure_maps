@@ -246,7 +246,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
       // Add user info (Case Number)
       const userInfo = document.createElement('div');
-      userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || '<>'}</p>`;
+      userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || ''}</p>`;
       leftSection.appendChild(userInfo);
 
       // Add result info
