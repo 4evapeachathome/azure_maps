@@ -117,6 +117,7 @@ export class AssessmentPageComponent  implements OnInit {
     if (cached) {
       sessionStorage.removeItem('isSSripa');
       sessionStorage.removeItem('isDanger');
+      sessionStorage.removeItem('isWeb');  
       sessionStorage.setItem('isHits', 'true');      
       this.router.navigate([targetRoute]);
     } else {
@@ -134,6 +135,7 @@ export class AssessmentPageComponent  implements OnInit {
           this.menuService.setHitsAssessment({ questions, answerOptions });
           sessionStorage.removeItem('isDanger');
           sessionStorage.removeItem('isSSripa');
+          sessionStorage.removeItem('isWeb'); 
           sessionStorage.setItem('isHits', 'true');
           this.router.navigate([targetRoute]);
         },
@@ -155,6 +157,7 @@ export class AssessmentPageComponent  implements OnInit {
     if (cached) {
       sessionStorage.removeItem('isHits');
       sessionStorage.removeItem('isDanger');
+      sessionStorage.removeItem('isWeb'); 
       sessionStorage.setItem('isSSripa', 'true');
       this.router.navigate([targetRoute]);
     } else {
@@ -163,6 +166,7 @@ export class AssessmentPageComponent  implements OnInit {
           this.menuService.setSsripaData(quiz || []); 
           sessionStorage.removeItem('isHits');// Update BehaviorSubject
           sessionStorage.removeItem('isDanger');
+          sessionStorage.removeItem('isWeb'); 
           sessionStorage.setItem('isSSripa', 'true');
           this.router.navigate([targetRoute]);
         },
@@ -178,6 +182,7 @@ export class AssessmentPageComponent  implements OnInit {
     if (cached) {
       sessionStorage.removeItem('isHits');
       sessionStorage.removeItem('isSSripa');
+      sessionStorage.removeItem('isWeb'); 
       sessionStorage.setItem('isDanger', 'true');
       this.router.navigate([targetRoute]);
     } else {
@@ -187,6 +192,7 @@ export class AssessmentPageComponent  implements OnInit {
           this.menuService.setDangerAssessment(res); 
           sessionStorage.removeItem('isHits');// Update BehaviorSubject
           sessionStorage.removeItem('isSSripa');
+          sessionStorage.removeItem('isWeb'); 
           sessionStorage.setItem('isDanger', 'true');
           this.router.navigate([targetRoute]);
         },
@@ -272,6 +278,7 @@ export class AssessmentPageComponent  implements OnInit {
       sessionStorage.removeItem('isHits');
       sessionStorage.removeItem('isSSripa');
       sessionStorage.removeItem('isDanger');
+      sessionStorage.setItem('isWeb', 'true');  
       this.router.navigate([targetRoute]);
     } else {
       this.apiService.getRatsAssessmentQuestions().subscribe({
@@ -279,6 +286,7 @@ export class AssessmentPageComponent  implements OnInit {
           sessionStorage.removeItem('isHits');
           sessionStorage.removeItem('isSSripa');
           sessionStorage.removeItem('isDanger');
+          sessionStorage.setItem('isWeb', 'true');  
 
           let { questions, answerOptions } = res;
           // Sort the multiple_answer_option for each question (if still needed)
