@@ -1252,7 +1252,7 @@ ion-item {
         border-radius: 50%;
         border-width: 0.125rem;
         border-style: solid;
-        border-color: rgb(var(--ion-text-color-rgb, 0, 0, 0), 0.6);
+        border-color: var(--color-dark-Gray);
       }
       &::part(mark) {
         border-radius: 50%;

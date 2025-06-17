@@ -106,6 +106,7 @@
     margin: 2px 0;
     --padding-start: 10px;
     --inner-padding-end: 8px;
+        --color: var(--color-deep-Gray);
     &.selected,
     &:hover {
       font-weight: $font-semibold;

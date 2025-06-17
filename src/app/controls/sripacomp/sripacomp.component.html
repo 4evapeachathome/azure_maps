@@ -21,9 +21,9 @@
         <div class="qs-row qz-button-row">
           <div class="qs-col ta-center">
             <ion-radio-group class="qz-btn-radio">
-              <ion-radio value="healthy"     (click)="selectOption(i, 'yes')"
+              <ion-radio value="healthy"   mode="md"  (click)="selectOption(i, 'yes')"
               [class.selected]="selectedOptions[i] === 'yes'">Yes</ion-radio><br />
-              <ion-radio value="unhealthy"   (click)="selectOption(i, 'no')"
+              <ion-radio value="unhealthy" mode="md"  (click)="selectOption(i, 'no')"
               [class.selected]="selectedOptions[i] === 'no'">No</ion-radio><br />                
             </ion-radio-group>
 
