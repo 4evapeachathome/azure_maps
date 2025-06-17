@@ -22,7 +22,6 @@ export class HitsAssessmentPagePage implements OnInit,AfterViewInit {
   constructor(private loadingController: LoadingController, private apiService:ApiService, private router:Router) { }
 
   async ngOnInit() {
-    await this.showLoader();
   }
 
   ionViewWillEnter() {

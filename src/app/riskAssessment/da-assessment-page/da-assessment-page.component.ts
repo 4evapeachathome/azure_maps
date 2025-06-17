@@ -21,7 +21,6 @@ export class DaAssessmentPageComponent  implements OnInit,AfterViewInit {
 
 
      async ngOnInit() {
-      await this.showLoader();
     }
   
     ionViewWillEnter() {

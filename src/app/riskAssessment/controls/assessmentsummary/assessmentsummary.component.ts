@@ -635,6 +635,7 @@ getCharFromCode(code: number): string {
     this.caseNumber = '';
     this.selectedAssessment = null;
     this.hasFetchedData = false;
+    this.isDanger = false;
     this.responseJson = [];
     this.router.navigate(['/riskassessment']);
   }
