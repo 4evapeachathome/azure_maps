@@ -77,7 +77,7 @@ constructor(
     this.updateGuidedTypeLabel();
 
     const cachedHits = this.menuService.getDangerAssessment();
-    //debugger;
+    
 
 if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   const sortedData = cachedHits.data.sort((a:any, b:any) => a.questionOrder - b.questionOrder);

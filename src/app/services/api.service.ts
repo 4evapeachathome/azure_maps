@@ -1029,61 +1029,130 @@ postHitsAssessmentResponse(payload: any): Observable<any> {
 }
 
 //Risk Assessment Module
-getUserLogins(): Observable<any[]> {
-  const endpoint = APIEndpoints.userLogins;
-  const options: QueryOptions = {
-    populate: {
-      assessment_type: {
-        fields: ['name', 'description','navigate']
-      },
-      support_service: {
-      fields: ['OrgName', 'documentId']
-      }
-    }
+// getUserLogins(): Observable<any[]> {
+//   const endpoint = APIEndpoints.userLogins;
+//   const options: QueryOptions = {
+//     populate: {
+//       assessment_type: {
+//         fields: ['name', 'description','navigate']
+//       },
+//       support_service: {
+//       fields: ['OrgName', 'documentId']
+//       }
+//     },
+//     pagination: {
+//       page: 1,
+//       pageSize: 10000 
+//     }
+//   };
+
+//   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+//     map((res: any) => {
+//       if (!res.data || res.data.length === 0) return [];
+//      // debugger;
+//       const decryptField = (encryptedValue: any): string | null => {
+//         if (!encryptedValue) return null;
+//         try {
+//           const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
+//           const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+//           return decrypted || encryptedValue;
+//         } catch (error) {
+//           console.warn('Decryption failed for:', encryptedValue, error);
+//           return encryptedValue;
+//         }
+//       };
+//       return res.data.map((item: any) => ({
+//         id: item?.id ?? null,
+//         username: item?.Username ? decryptField(item.Username) : '',
+//         temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
+//         orgName: item?.support_service?.OrgName ?? 'N/A',
+//         documentId: item?.support_service?.documentId ?? 'N/A',
+//         assessment_type: item?.assessment_type ?? [],
+//         createdAt: item?.createdAt ?? '',
+//         IsPasswordChanged: item?.IsPasswordChanged ?? false,
+//         updatedAt: item?.updatedAt ?? '',
+//         password: item?.password ? decryptField(item.password) : '',
+//         isSendInvite: item?.sendInvite ?? false,
+//         AssessmentGuid: item.AssessmentGuid ?? '',
+//         support_service: item?.support_service ?? {}
+//       }));
+//     }),
+//     catchError((error) => {
+//       console.error('Error fetching support_service data for user:', error);
+//       return throwError(() => new Error('Failed to load support_service data.'));
+//     })
+//   );
+// }
+
+login(username: string, password: string): Observable<any> {
+  const encryptedUsername = CryptoJS.AES.encrypt(username.trim(), environment.secretKey).toString();
+  const encryptedPassword = CryptoJS.AES.encrypt(password.trim(), environment.secretKey).toString();
+ 
+  const payload = {
+    username: encryptedUsername,
+    password: encryptedPassword,
   };
 
-  return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
+  return this.http.post(`${APIEndpoints.loginbyemail}`, payload).pipe(
     map((res: any) => {
-      if (!res.data || res.data.length === 0) return [];
-     // debugger;
-      const decryptField = (encryptedValue: any): string | null => {
-        if (!encryptedValue) return null;
-        try {
-          const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
-          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-          return decrypted || encryptedValue;
-        } catch (error) {
-          console.warn('Decryption failed for:', encryptedValue, error);
-          return encryptedValue;
-        }
+      debugger;
+      if (!res.data || res.data.length === 0) return null;
+      const decrypt = (val: string) => {
+        const bytes = CryptoJS.AES.decrypt(val, environment.secretKey);
+        return bytes.toString(CryptoJS.enc.Utf8);
       };
-      return res.data.map((item: any) => ({
-        id: item?.id ?? null,
-        username: item?.Username ? decryptField(item.Username) : '',
-        temp_password: item?.temp_password ? decryptField(item.temp_password) : '',
-        orgName: item?.support_service?.OrgName ?? 'N/A',
-        documentId: item?.support_service?.documentId ?? 'N/A',
-        assessment_type: item?.assessment_type ?? [],
-        createdAt: item?.createdAt ?? '',
-        IsPasswordChanged: item?.IsPasswordChanged ?? false,
-        updatedAt: item?.updatedAt ?? '',
-        password: item?.password ? decryptField(item.password) : '',
-        isSendInvite: item?.sendInvite ?? false,
-        AssessmentGuid: item.AssessmentGuid ?? '',
-        support_service: item?.support_service ?? {}
-      }));
+
+      const user = res.data[0];
+      return {
+        id: user.id,
+        documentId:user.documentId,
+        username: decrypt(user.Username),
+        password: decrypt(user.password),
+        temp_password: decrypt(user.temp_password),
+        support_service: user.support_service ?? {},
+        isSendInvite: user.sendInvite ?? false,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
     }),
-    catchError((error) => {
-      console.error('Error fetching support_service data for user:', error);
-      return throwError(() => new Error('Failed to load support_service data.'));
+    catchError((err) => {
+      const errorMessage = err?.error?.error?.message || 'Login failed';
+      return throwError(() => new Error(errorMessage));
     })
   );
 }
 
+ changePassword(username: string, currentPassword: string, newPassword: string): Observable<any> {
+    // Encrypt all fields before sending
+    const encryptedUsername = CryptoJS.AES.encrypt(username.trim(), environment.secretKey).toString();
+    const encryptedPassword = CryptoJS.AES.encrypt(currentPassword.trim(), environment.secretKey).toString();
+    const encryptedNewPassword = CryptoJS.AES.encrypt(newPassword.trim(), environment.secretKey).toString();
+
+    const payload = {
+      username: encryptedUsername,
+      password: encryptedPassword,
+      newpassword: encryptedNewPassword,
+    };
+
+    return this.http.post(`${APIEndpoints.changePassword}`, payload).pipe(
+      map((res: any) => {
+        if (!res || !res.data) {
+          throw new Error('Invalid response');
+        }
+        return res; // message and data like Username, updatedAt, IsPasswordChanged
+      }),
+      catchError((err) => {
+        console.error('Change password failed:', err);
+        const errorMessage = err?.error?.message || 'Failed to update password';
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
 //get user login by id
 getUserLoginById(uid: number | string): Observable<any> {
   const endpoint = `${APIEndpoints.userLogins}/${uid}`;
-//debugger;
+
   const noCacheHeaders = new HttpHeaders({
     'Cache-Control': 'no-cache',
     'Pragma': 'no-cache',
@@ -1149,6 +1218,23 @@ forgetPassword(payload: any): Observable<any> {
   });
   // Strapi requires the payload inside a `data` key
   return this.http.post(endpoint, payload , { headers });
+}
+
+//GetAssessmentType
+getAssessmentType(docId:string): Observable<any> {
+  return this.getWithQuery(`${APIEndpoints.userLogins}/${docId}`, {
+    populate: {
+      assessment_type: {
+        fields: ['name', 'description','navigate']
+      }
+    }, 
+    fields: ['documentId'] 
+  }, environment.apitoken).pipe(
+    catchError((error: any) => {
+      console.error('Error fetching Hits result API:', error);
+      return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+    })
+  );
 }
 
 

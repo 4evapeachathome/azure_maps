@@ -63,8 +63,18 @@ export class AssessmentPageComponent  implements OnInit {
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
-        this.assessmentTypes = this.loggedInUser?.assessment_type || [];
-        // debugger;
+        if (this.loggedInUser?.documentId) {
+          this.apiService.getAssessmentType(this.loggedInUser.documentId).subscribe({
+            next: (response: any) => {
+              
+              this.assessmentTypes = response?.data?.assessment_type || [];
+            },
+            error: (error: any) => {
+              console.error('Failed to fetch assessment types:', error);
+              this.assessmentTypes = [];
+            }
+          });
+        }
         this.selectedAssessment = null;
         this.loaded = true;
       } catch {
@@ -173,7 +183,7 @@ export class AssessmentPageComponent  implements OnInit {
     } else {
       this.apiService.getDAAssessmentQuestions().subscribe({
         next: (res: any) => {
-          //debugger;
+          
           this.menuService.setDangerAssessment(res); 
           sessionStorage.removeItem('isHits');// Update BehaviorSubject
           sessionStorage.removeItem('isSSripa');
