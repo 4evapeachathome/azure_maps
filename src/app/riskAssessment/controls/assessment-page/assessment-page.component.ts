@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
@@ -23,14 +23,17 @@ export class AssessmentPageComponent  implements OnInit {
   caseNumber: string = '';
   loaded: boolean = false;
   guidedType: 'self-guided' | 'staff-guided' = 'staff-guided';
-  assessmentTypes: { id: number; name: string; description: string }[] = [];
+  assessmentTypes: { id: number; name: string; description: string; navigate:string }[] = [];
   guidedTypeLabel: string = 'Staff-Guided';
   assessmentNumber: string = '';
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
   isHitAssessment = false;
   isDaAssessment = false;
   isSSripa = false;
+  @Input() reloadFlag: boolean = false; // Input to trigger reload
   isDataLoaded = false;
+  hasloadedDate = false; // To track if data has been loaded
+  navigate: string = ''; // To store the navigate value from the selected assessment
 
   constructor(
     private menuService: MenuService,
@@ -42,8 +45,18 @@ export class AssessmentPageComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
+    if (!this.hasloadedDate) {
     this.loadInitialData();
+    this.hasloadedDate = true;
+    }
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+      if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasloadedDate) {
+        this.loadInitialData()
+        this.hasloadedDate = true;
+      }
+    }
 
   loadInitialData() {
     const encodedUser = this.cookieService.get('userdetails'); // Or 'username'
@@ -51,6 +64,7 @@ export class AssessmentPageComponent  implements OnInit {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
         this.assessmentTypes = this.loggedInUser?.assessment_type || [];
+        // debugger;
         this.selectedAssessment = null;
         this.loaded = true;
       } catch {
@@ -70,13 +84,18 @@ export class AssessmentPageComponent  implements OnInit {
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
-      if(type.name == this.selectedAssessment) {
-        return type;
-      }
+      if (type.name?.toLowerCase() == this.selectedAssessment?.toLowerCase()) {
+            return type;
+        }
     });
     sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
+    console.log('this.selectedAssessment>>>>>>', this.selectedAssessment, this.assessmentTypes, selectedAssessmentId);
+
+    // Extract and store the navigate value
+    this.navigate = selectedAssessmentId[0]?.navigate || '';
+
     this.updateGuidedTypeLabel();
-  }
+}
 
   getSelectedAssessmentDescription(): string {
     const selectedType = this.assessmentTypes.find(type => type.name === this.selectedAssessment);
@@ -171,20 +190,15 @@ export class AssessmentPageComponent  implements OnInit {
 
   goToTest() {
     if (this.selectedAssessment) {
+      this.hasloadedDate = false; // Reset the flag to allow reloading data
       sessionStorage.setItem('guidedType', this.guidedType);
-      const assessmentName = this.selectedAssessment?.toLowerCase().trim();
+      const assessmentName = this.navigate?.toLowerCase().trim();
+      console.log('assessmentName>>>>>>>>', assessmentName);
       sessionStorage.setItem('caseNumber', this.caseNumber);
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':
-
           this.navigateWithHitsCache('/hitsassessment');
-          break;
-        case 'conflict tactic scale 2':
-          this.router.navigate(['/cts2'], { state: { assessmentType: this.selectedAssessment } });
-          break;
-        case 'danger assessment for immigrants':
-          this.router.navigate(['/danger-assessment-immigrants'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'da':
         case 'the danger assessment (da)':
@@ -194,6 +208,7 @@ export class AssessmentPageComponent  implements OnInit {
           this.router.navigate(['/relationship-assessment'], { state: { assessmentType: this.selectedAssessment } });
           break;
         case 'signs of self-recognition in intimate partner abuse (ssripa)':
+        case 'ssripa':
           this.navigateWithSsripaCache('/ssripariskassessment');
           break;
         case 'web':

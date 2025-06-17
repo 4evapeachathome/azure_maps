@@ -13,27 +13,25 @@ import { AssessmentPageComponent } from '../controls/assessment-page/assessment-
 export class AssessmentPagePage implements OnInit,AfterViewInit {
   loading: HTMLIonLoadingElement | null = null;
   @ViewChild(AssessmentPageComponent) childComponent!: AssessmentPageComponent;
-    private navigationSubscription: Subscription | null = null; // Subscription to track navigation events
-  
+    reloadData: boolean = false; // Flag to trigger ngOnChanges in child component
 
   constructor(private loadingController: LoadingController, private router:Router) { }
 
    async ngOnInit() {
         // Set up navigation event subscription
-        this.navigationSubscription = this.router.events
-          .pipe(filter(event => event instanceof NavigationEnd))
-          .subscribe((event: NavigationEnd) => {
-            if (event.urlAfterRedirects.includes('riskassessment')) {
-              console.log('Navigated to SSRIPA page, refreshing data');
-              // Skip data load on initial NavigationEnd if already loaded
-                if(this.childComponent) {
-                  this.childComponent.loadInitialData(); // Call the method to load data
-                }
-                this.showLoader();
-
-            }
-          });
+        this.showLoader();
       }
+
+      ionViewWillEnter() {
+        // Toggle off first
+        this.reloadData = false;
+      
+        // Then toggle on after a small delay to trigger ngOnChanges in the child
+        setTimeout(() => {
+          this.reloadData = true;
+        }, 0); // Delay can be 0 or a few ms
+      }
+    
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {
@@ -58,7 +56,7 @@ export class AssessmentPagePage implements OnInit,AfterViewInit {
     // Force dismiss after 10 seconds just in case
     setTimeout(() => {
       this.hideLoader();
-    }, 5000);
+    }, 3000);
   }
 
   async hideLoader() {
@@ -71,12 +69,4 @@ export class AssessmentPagePage implements OnInit,AfterViewInit {
       this.loading = null;
     }
   }
-
-  ngOnDestroy() {
-    // Clean up subscription
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
-    }
-  }
-
 }

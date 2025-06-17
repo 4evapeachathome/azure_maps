@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
@@ -21,7 +21,7 @@ export class RiskassessmentSSripaComponent  implements OnInit {
 
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
-
+@Input() reloadFlag: boolean = false; // Input property to trigger reload
   quizTitle = '';
 sripa: any[] = [];
 yesanswer: any[] = [];
@@ -30,6 +30,7 @@ showAnswers: boolean[] = [];
 selectedOptions: string[] = [];
 showresults: boolean = false;
 @Input() sripaGuid: any;
+hasloadedDate: boolean = false;
 
   constructor(private router: Router,
       private apiService: ApiService,
@@ -37,10 +38,19 @@ showresults: boolean = false;
       private cookieService: CookieService,
       private alertController: AlertController) { }
 
-  ngOnInit() {
-    this.loadInitialData(); 
-  }
-
+      ngOnInit() {
+        if (!this.hasloadedDate) {
+          this.loadInitialData();
+        this.hasloadedDate = true;
+        }
+      }
+    
+      ngOnChanges(changes: SimpleChanges) {
+          if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasloadedDate) {
+            this.loadInitialData();
+            this.hasloadedDate = true;
+          }
+        }
   loadInitialData(){
     const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
@@ -151,7 +161,9 @@ showresults: boolean = false;
                 sessionStorage.setItem('ssripaAssessmentResult', JSON.stringify({
                   summary: respondedQuestions,
                   ssripasurl: `${window.location.origin}/viewresult?code=${response.data.AssessmentGuid}`,
+                  caseNumber: this.caseNumber
                 }));
+                this.hasloadedDate = false; // Reset to allow reloading
                 this.router.navigate(['/riskassessmentsummary']);
               },
               error: (err) => {
@@ -170,8 +182,9 @@ showresults: boolean = false;
 
 
   goBack() {
-    this.router.navigate(['/riskassessment']);
+    this.hasloadedDate = false;
     this.caseNumber = '';
+    this.router.navigate(['/riskassessment']);
   }
 
   stayLoggedIn() {
@@ -186,6 +199,7 @@ showresults: boolean = false;
 
   async logout() {
     try {
+      this.hasloadedDate = false;
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {

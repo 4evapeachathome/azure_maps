@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
@@ -26,6 +26,8 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   guidedTypeLabel: string = 'Self-Guided';
   @Input() daGuid:any;
   daQues:any;
+  hasloadedDate: boolean = false;
+  @Input() reloadFlag: boolean = false; 
 
 constructor(
     private router: Router,
@@ -35,10 +37,19 @@ constructor(
     private alertController: AlertController
   ) { }
 
-
   ngOnInit() {
-    this.loadInitialData(); 
+    if (!this.hasloadedDate) {
+      this.loadInitialData(); 
+    this.hasloadedDate = true;
+    }
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+      if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasloadedDate) {
+        this.loadInitialData(); 
+        this.hasloadedDate = true;
+      }
+    }
 
   loadInitialData() {
     const encodedUser = this.cookieService.get('userdetails');
@@ -69,14 +80,16 @@ constructor(
     //debugger;
 
 if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
-  this.daAssessment = this.initializeAssessmentData(cachedHits.data);
+  const sortedData = cachedHits.data.sort((a:any, b:any) => a.questionOrder - b.questionOrder);
+  this.daAssessment = this.initializeAssessmentData(sortedData);
   this.daQues = this.daAssessment;
     } else {
       // Load from API if cache is empty
       this.apiService.getDAAssessmentQuestions().subscribe({
         next: (res: any) => {
           if(res && res.data && res.data.length > 0) {
-            this.daAssessment = this.initializeAssessmentData(res.data);  
+            const sortedData = res.data.sort((a:any, b:any) => a.questionOrder - b.questionOrder);
+            this.daAssessment = this.initializeAssessmentData(sortedData);  
             this.daQues = this.daAssessment;     
             this.menuService.setDangerAssessment(res);
           }
@@ -149,8 +162,9 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   }
 
   goBack() {
-    this.router.navigate(['/riskassessment']);
+    this.hasloadedDate = false;
     this.caseNumber = '';
+    this.router.navigate(['/riskassessment']);
   }
 
   stayLoggedIn() {
@@ -165,6 +179,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
 
   async logout() {
     try {
+      this.hasloadedDate = false;
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {
@@ -275,8 +290,10 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                   summary: answerSummary,
                   Levelofdanger: levelOfDanger,
                   daurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
+                  caseNumber: this.caseNumber
                 }));
                 console.log('Assessment saved:', res);
+                this.hasloadedDate = false;
                 this.router.navigate(['/riskassessmentsummary']);
               },
               error: (err) => {

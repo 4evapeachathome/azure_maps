@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { filter, Subscription } from 'rxjs';
@@ -12,56 +12,53 @@ import { HitsassessmentComponent } from '../controls/hitsassessment/hitsassessme
   styleUrls: ['./hits-assessment-page.page.scss'],
   standalone: false,
 })
-export class HitsAssessmentPagePage implements OnInit, OnDestroy {
+export class HitsAssessmentPagePage implements OnInit,AfterViewInit {
   loading: HTMLIonLoadingElement | null = null;
   @ViewChild(HitsassessmentComponent) hits!: HitsassessmentComponent;
   hitsData: any;
   hitsGuidUrl: string = APIEndpoints.hitsGuidUrl; // Replace with your actual API URL
   isInitialLoad: boolean = true; // Track if it's the initial load
-  private navigationSubscription: Subscription | null = null; // Subscription to track navigation events
+  reloadData:boolean = false; // Subscription to track navigation events
   constructor(private loadingController: LoadingController, private apiService:ApiService, private router:Router) { }
 
-   async ngOnInit() {
-      // Set up navigation event subscription
-      this.navigationSubscription = this.router.events
-        .pipe(filter(event => event instanceof NavigationEnd))
-        .subscribe((event: NavigationEnd) => {
-          if (event.urlAfterRedirects.includes('hitsassessment')) {
-            console.log('Navigated to SSRIPA page, refreshing data');
-            // Skip data load on initial NavigationEnd if already loaded
-            if (!this.isInitialLoad) {
-              if(this.hits) {
-                this.hits.loadinitialData(); // Call the method to load data
-              }
-              this.loadHitsData();
-              this.showLoader();
-            }
-          }
-        });
-  
-      // Load data initially
-      this.loadHitsData();
-      await this.showLoader();
-      this.isInitialLoad = false; // Mark initial load as complete
-    }
+  async ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    // Show loader
+    this.showLoader();
+
+    // Fetch data
+    this.loadHitsData();
+
+    // Toggle reloadData for child component
+    this.reloadData = false;
+    setTimeout(() => {
+      this.reloadData = true;
+    }, 0);
+  }
 
   loadHitsData() {
     try {
-      // Replace with your actual API URL
       const url = this.hitsGuidUrl;
-      
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
-          //debugger;
           this.hitsData = response?.guid;
+          // Optionally notify child or update state
+          console.log('Hits data loaded:', this.hitsData); // Debugging
         },
         error: (err) => {
           console.error('API Error:', err);
-          // Handle error (show toast, etc.)
+          this.hideLoader(); // Dismiss loader on error
+        },
+        complete: () => {
+          // Ensure loader is dismissed after data is fetched
+          this.hideLoader();
         }
       });
     } catch (err) {
       console.error('Error:', err);
+      this.hideLoader();
     }
   }
 
@@ -102,10 +99,4 @@ export class HitsAssessmentPagePage implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-    // Clean up subscription
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
-    }
-  }
 }

@@ -124,6 +124,9 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         //debugger;
         this.responseJson= result.summary;
         this.QrcodeUrl= result.ssripasurl;
+        const urlObj = new URL(this.QrcodeUrl);
+        this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
+        this.caseNumber = result?.caseNumber;
       }
     }
    
@@ -137,6 +140,9 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.answerSummary = result.summary;
         this.criticalalert = result.criticalAlert === 'true' || result.criticalAlert === true;
         this.QrcodeUrl= result.hitsurl;
+        const urlObj = new URL(this.QrcodeUrl);
+        this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
+        this.caseNumber = result?.caseNumber;
       }
       this.fetchHitResults();
     }
@@ -151,6 +157,9 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.riskValue = result.totalScore;
         this.QrcodeUrl= result.daurl;
         this.levelofdanger = result.Levelofdanger;
+        const urlObj = new URL(this.QrcodeUrl);
+        this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
+        this.caseNumber = result?.caseNumber;
       }
       this.fetchDaResults();
     }
@@ -237,7 +246,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
       // Add user info (Case Number)
       const userInfo = document.createElement('div');
-      userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || '<>'}</p>`;
+      userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || ''}</p>`;
       leftSection.appendChild(userInfo);
 
       // Add result info
@@ -502,6 +511,7 @@ getCharFromCode(code: number): string {
 
   async logout() {
     try {
+      this.hasFetchedData = false; // Reset the flag to allow reloading
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {
@@ -586,7 +596,7 @@ getCharFromCode(code: number): string {
   checkSelectedAssessment(code: string) {
     if (code && code.toLowerCase().includes('web-')) {
       this.fetchWebResults(code);
-    } else if(code && code.toLowerCase().includes('hit-')) {
+    } else if(code && code.toLowerCase().includes('hits-')) {
     } else if(code && code.toLowerCase().includes('da-')) {
     } else if(code && code.toLowerCase().includes('dai-')) {
     } else if(code && code.toLowerCase().includes('cts-')) {
@@ -595,6 +605,7 @@ getCharFromCode(code: number): string {
       this.selectedAssessment = '';
     }
   }
+  
 
   fetchWebResults(code: string) {
     this.apiService.getRatsResult(code).subscribe({
@@ -602,6 +613,7 @@ getCharFromCode(code: number): string {
         if (response) {
           this.responseJson = response.assessmentSummary;
           this.riskValue = this.ratAssessmentResult?.assessmentScore;
+          this.caseNumber = response?.caseNumber;
         }
       },
       error: (error: any) => {
@@ -626,6 +638,8 @@ getCharFromCode(code: number): string {
     sessionStorage.removeItem('selectedAssessment');
     this.caseNumber = '';
     this.selectedAssessment = null;
+    this.hasFetchedData = false;
+    this.isDanger = false;
     this.responseJson = [];
     this.router.navigate(['/riskassessment']);
   }

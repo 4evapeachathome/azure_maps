@@ -966,7 +966,7 @@ getQuizzes(): Observable<any> {
 getSripaa(): Observable<any> {
   const endpoint = APIEndpoints.ssripaQuestions; // Update to point to 'api/ssripa-questions'
   const options: QueryOptions = {
-    fields: ['text'],
+    fields: ['text','order'],
     populate: {
       severity: {
         fields: ['title']
@@ -986,15 +986,18 @@ getSripaa(): Observable<any> {
       }
 
       // Map each question to the desired format
-      return res.data.map((item: any) => ({
+      const mappedData = res.data.map((item: any) => ({
         id: item.id,
         text: item.text || '',
+        order: item.order, // Include order in the mapped data for sorting
         severity: item.severity?.title || '',
         actions: item.actions?.map((act: any) => ({
           description: act.action || ''
         })) || []
-        
       }));
+
+      // Sort the mapped data by the order field
+      return mappedData.sort((a:any, b:any) => a.order - b.order);
 
     }),
     catchError(error => {
@@ -1031,7 +1034,7 @@ getUserLogins(): Observable<any[]> {
   const options: QueryOptions = {
     populate: {
       assessment_type: {
-        fields: ['name', 'description']
+        fields: ['name', 'description','navigate']
       },
       support_service: {
       fields: ['OrgName', 'documentId']
@@ -1157,7 +1160,7 @@ getHitsAssessmentQuestions(): Observable<any> {
 
   // Define query options for the first endpoint (questions)
   const options1: QueryOptions = {
-    fields: ['question_text', 'weight_critical_alert'],
+    fields: ['question_text', 'weight_critical_alert','question_order'],
     populate: {
       multiple_answer_option: {
         fields: ['label', 'score']
@@ -1184,13 +1187,15 @@ getHitsAssessmentQuestions(): Observable<any> {
             documentId: item.documentId,
             question_text: item.question_text || '',
             weight_critical_alert: item.weight_critical_alert || false,
+            question_order: item.question_order, // Include question_order for sorting
             multiple_answer_option: (item.multiple_answer_option || []).map((opt: any) => ({
               id: opt.id,
               documentId: opt.documentId,
               label: opt.label || '',
               score: opt.score ?? null
             }))
-          }));
+          }))
+          .sort((a:any, b:any) => a.question_order - b.question_order);
 
       // Process the second API response (answer options)
       const answerOptions = !res2.data || !Array.isArray(res2.data)
@@ -1253,7 +1258,6 @@ getRatsAssessmentQuestions(): Observable<any> {
     fields: ['Label', 'score'] // 'Label', 'score'
   };
 
-  console.log('endpoint1>>>>>>', endpoint1);
   // Make the two API calls in parallel using forkJoin
   return forkJoin([
     this.getWithQuery(endpoint1, options1, environment.apitoken), // First API call (questions)
@@ -1273,7 +1277,8 @@ getRatsAssessmentQuestions(): Observable<any> {
               documentId: opt.documentId,
               Label: opt.Label || '',
               score: opt.score ?? null
-            }))
+            })),
+            questionOrder: item.questionOrder
           }));
 
       // Process the second API response (answer options)

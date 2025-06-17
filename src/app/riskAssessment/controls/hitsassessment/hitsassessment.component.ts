@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
@@ -25,6 +25,8 @@ export class HitsassessmentComponent  implements OnInit {
   guidedType: string = 'self-guided'; // Default value
   guidedTypeLabel: string = 'Self-Guided';
   @Input() hitsGuid:any;
+  hasloadedDate: boolean = false;
+  @Input() reloadFlag: boolean = false; // Input property to trigger reload
 
   constructor(
     private router: Router,
@@ -34,9 +36,20 @@ export class HitsassessmentComponent  implements OnInit {
     private alertController: AlertController
   ) { }
 
-  ngOnInit() {
-    this.loadinitialData();
-  }
+   ngOnInit() {
+     if (!this.hasloadedDate) {
+     this.loadinitialData();
+     this.hasloadedDate = true;
+     }
+   }
+ 
+   ngOnChanges(changes: SimpleChanges) {
+       if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasloadedDate) {
+         this.loadinitialData();
+         this.hasloadedDate = true;
+       }
+     }
+  
 
   loadinitialData() {
     const encodedUser = this.cookieService.get('userdetails');
@@ -187,8 +200,10 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                   summary: answerSummary,
                   criticalAlert,
                   hitsurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
+                  caseNumber: this.caseNumber
                 }));
                 console.log('Assessment saved:', res);
+                this.hasloadedDate = false; // Reset the flag to allow reloading
                 this.router.navigate(['/riskassessmentsummary']);
               },
               error: (err) => {
@@ -205,8 +220,9 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
   }
 
   goBack() {
-    this.router.navigate(['/riskassessment']);
+    this.hasloadedDate = false;
     this.caseNumber = '';
+    this.router.navigate(['/riskassessment']);
   }
 
   stayLoggedIn() {
@@ -221,6 +237,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
 
   async logout() {
     try {
+      this.hasloadedDate = false;
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {

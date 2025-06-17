@@ -171,6 +171,7 @@ export class SetPasswordComponent implements OnInit {
     this.apiService.updateUserLogin(updatePayload).subscribe({
       next: async (res: any) => {
         await this.showToast(res?.message, 2500, 'top');
+        this.hasFetchedLogins = false;
         this.router.navigate(['/login']);
         this.userForm.reset();
         this.resetCaptcha();

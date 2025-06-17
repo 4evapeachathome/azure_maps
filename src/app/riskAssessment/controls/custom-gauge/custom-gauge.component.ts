@@ -130,11 +130,11 @@ export class CustomGaugeComponent implements OnInit, OnChanges {
     }
   
     let adjustedValue = this.value;
-    const redRange = this.normalisedRanges.find(r => r.min === 11 && r.max === 20);
   
     if (this.forceRedNeedle) {
-      this.gaugeColor = '#FF0000';
-      adjustedValue = redRange?.min || 11;
+      const lastRange = this.normalisedRanges[this.normalisedRanges.length - 1];
+      this.gaugeColor = lastRange?.color ?? '#ccc';
+      adjustedValue = lastRange?.max ?? this.max;
     } else {
       const hit = this.normalisedRanges.find(r => this.value >= r.min && this.value <= r.max);
       this.gaugeColor = hit?.color ?? this.normalisedRanges[0].color;
