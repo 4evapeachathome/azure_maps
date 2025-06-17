@@ -90,7 +90,7 @@ export class SetPasswordComponent implements OnInit {
 
   private resetFormAndFetchUsers() {
     this.userForm.reset();
-    this.getUserLogins();
+    //this.getUserLogins();
   }
 
   private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
@@ -124,18 +124,18 @@ export class SetPasswordComponent implements OnInit {
     }
   }
 
-  getUserLogins() {
-    this.apiService.getUserLogins().subscribe({
-      next: (data: any) => {
-        this.userLogins = data || [];
-        debugger;
-      },
-      error: (error: any) => {
-        console.error('Failed to fetch user logins', error);
-        this.showToast('Failed to fetch user logins.', 3000, 'top');
-      },
-    });
-  }
+  // getUserLogins() {
+  //   this.apiService.getUserLogins().subscribe({
+  //     next: (data: any) => {
+  //       this.userLogins = data || [];
+  //       debugger;
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Failed to fetch user logins', error);
+  //       this.showToast('Failed to fetch user logins.', 3000, 'top');
+  //     },
+  //   });
+  // }
 
   matchPasswordsValidator(formGroup: FormGroup) {
     const password = formGroup.get('password')?.value;

@@ -121,7 +121,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
-        //debugger;
+        
         this.responseJson= result.summary;
         this.QrcodeUrl= result.ssripasurl;
         const urlObj = new URL(this.QrcodeUrl);
@@ -134,7 +134,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       const resultStr = sessionStorage.getItem('hitsAssessmentResult');
       if (resultStr) {
         const result = JSON.parse(resultStr);
-        //debugger;
+        
         this.responseJson= result.summary;
         this.riskValue = result.totalScore;
         this.answerSummary = result.summary;
@@ -561,7 +561,7 @@ getCharFromCode(code: number): string {
     this.apiService.getHitsResultCalculation().subscribe({
       next: (response: any) => {
         if (response && response.data) {
-          //debugger;
+          
           this.hitResults = response.data;
   
           // Extract and store Note and Caution (assumes only one item in hitResults)

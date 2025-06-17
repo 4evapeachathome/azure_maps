@@ -226,9 +226,9 @@ export class ViewResultComponent  implements OnInit {
         
         let checkValidation = false;
         this.loggedInUser.assessment_type.map((item: any) => {
-          debugger
+          //debugger
             response.support_service.user_login.assessment_type.map((type: any) => {
-              debugger
+              //debugger
             if(item.documentId == type.documentId) {
               checkValidation = true;
             }
@@ -240,7 +240,7 @@ export class ViewResultComponent  implements OnInit {
           this.guidedType = response.guidedType;
           this.score = response.Score;
           this.hitsCriticalAlert = response.isCriticalAlert;
-          debugger;
+          
           this.supportService = response.support_service;
           this.updateGuidedTypeLabel();
           this.caseNumber = response?.CaseNumber;
