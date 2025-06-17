@@ -138,9 +138,14 @@ export class SetPasswordComponent implements OnInit {
   }
 
   matchPasswordsValidator(formGroup: FormGroup) {
-    const newPassword = formGroup.get('newPassword')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
-    return newPassword === confirmPassword ? null : { passwordMismatch: true };
+    const password = formGroup.get('password')?.value;
+  const newPassword = formGroup.get('newPassword')?.value;
+  const confirmPassword = formGroup.get('confirmPassword')?.value;
+  
+  if (password === newPassword) {
+    return { samePassword: true };
+  }
+  return newPassword === confirmPassword ? null : { passwordMismatch: true };
   }
 
   async onSubmit() {
@@ -160,24 +165,53 @@ export class SetPasswordComponent implements OnInit {
       await this.handlePasswordUpdate();
     }
   }
+  // private async handlePasswordUpdate() {
+  //   const { username, password, newPassword } = this.userForm.value;
+    
+  //   const updatePayload = {
+  //     Username: username,
+  //     password: newPassword,
+  //     temp_password: password
+  //   };
+  //   this.apiService.updateUserLogin(updatePayload).subscribe({
+  //     next: async (res: any) => {
+  //       await this.showToast(res?.message, 2500, 'top');
+  //       this.hasFetchedLogins = false;
+  //       this.router.navigate(['/login']);
+  //       this.userForm.reset();
+  //       this.resetCaptcha();
+  //     },
+  //     error: async (err: any) => {
+  //       await this.showToast(err.error.error.message, 3000, 'top');
+  //       this.userForm.reset();
+  //       this.resetCaptcha();
+  //     },
+  //   });
+  // }
   private async handlePasswordUpdate() {
     const { username, password, newPassword } = this.userForm.value;
-    
-    const updatePayload = {
-      Username: username,
-      password: newPassword,
-      temp_password: password
-    };
-    this.apiService.updateUserLogin(updatePayload).subscribe({
+    const processedUsername = username.trim().toLowerCase();
+    if (!username || !password || !newPassword) {
+      await this.showToast('All fields are required', 3000, 'top');
+      return;
+    }
+  
+    this.apiService.changePassword(processedUsername, password, newPassword).subscribe({
       next: async (res: any) => {
-        await this.showToast(res?.message, 2500, 'top');
+        await this.showToast(res?.message || 'Password updated successfully', 2500, 'top');
         this.hasFetchedLogins = false;
         this.router.navigate(['/login']);
         this.userForm.reset();
         this.resetCaptcha();
       },
       error: async (err: any) => {
-        await this.showToast(err.error.error.message, 3000, 'top');
+        const message =
+          err?.message ||
+          err?.error?.message ||
+          err?.error?.error?.message ||
+          'Failed to update password';
+  
+        await this.showToast(message, 3000, 'top');
         this.userForm.reset();
         this.resetCaptcha();
       },

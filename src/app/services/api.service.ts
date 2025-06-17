@@ -1122,6 +1122,33 @@ login(username: string, password: string): Observable<any> {
   );
 }
 
+ changePassword(username: string, currentPassword: string, newPassword: string): Observable<any> {
+    // Encrypt all fields before sending
+    const encryptedUsername = CryptoJS.AES.encrypt(username.trim(), environment.secretKey).toString();
+    const encryptedPassword = CryptoJS.AES.encrypt(currentPassword.trim(), environment.secretKey).toString();
+    const encryptedNewPassword = CryptoJS.AES.encrypt(newPassword.trim(), environment.secretKey).toString();
+
+    const payload = {
+      username: encryptedUsername,
+      password: encryptedPassword,
+      newpassword: encryptedNewPassword,
+    };
+
+    return this.http.post(`${APIEndpoints.changePassword}`, payload).pipe(
+      map((res: any) => {
+        if (!res || !res.data) {
+          throw new Error('Invalid response');
+        }
+        return res; // message and data like Username, updatedAt, IsPasswordChanged
+      }),
+      catchError((err) => {
+        console.error('Change password failed:', err);
+        const errorMessage = err?.error?.message || 'Failed to update password';
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
 //get user login by id
 getUserLoginById(uid: number | string): Observable<any> {
   const endpoint = `${APIEndpoints.userLogins}/${uid}`;

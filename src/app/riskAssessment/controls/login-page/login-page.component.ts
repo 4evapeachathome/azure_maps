@@ -46,7 +46,7 @@ export class LoginPageComponent  implements OnInit {
     // Fetch user logins on component initialization 
     this.loginForm.reset();
     if (!this.hasFetchedLogins) {
-      this.getUserLogins();
+      //this.getUserLogins();
       this.renderReCaptcha();
       this.hasFetchedLogins = true;
     }
@@ -97,7 +97,7 @@ export class LoginPageComponent  implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedLogins) {
       this.loginForm.reset();
-      this.getUserLogins();
+      //this.getUserLogins();
       this.renderReCaptcha();
       this.hasFetchedLogins = true;
     }
@@ -108,17 +108,17 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
     await presentToast(this.toastController, message, duration, position);
   }
 
-  getUserLogins() {
-    this.apiService.getUserLogins().subscribe({
-      next: (data: any) => {
-        this.userLogins = data || [];
-       // debugger;
-      },
-      error: (error: any) => {
-        console.error('Failed to fetch user logins', error);
-      }
-    });
-  }
+  // getUserLogins() {
+  //   this.apiService.getUserLogins().subscribe({
+  //     next: (data: any) => {
+  //       this.userLogins = data || [];
+  //      // debugger;
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Failed to fetch user logins', error);
+  //     }
+  //   });
+  // }
 
 
   onForgotPassword(event: Event) {
@@ -199,9 +199,10 @@ async onSubmit() {
   }
 
   const { username, password } = this.loginForm.value;
+  const processedUsername = username?.trim()?.toLowerCase();
 
   try {
-    const user = await this.apiService.login(username, password).toPromise();
+    const user = await this.apiService.login(processedUsername, password).toPromise();
 
     await this.handleSuccessfulLogin(user.username, user);
 
