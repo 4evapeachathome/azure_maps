@@ -189,7 +189,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                 guidedType: this.guidedType,
                 isCriticalAlert: criticalAlert,
                 CaseNumber: this.caseNumber,
-                support_service: this.loggedInUser?.documentId
+                support_service: this.loggedInUser?.support_service?.documentId
               }
             };
   
@@ -200,7 +200,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                   summary: answerSummary,
                   criticalAlert,
                   hitsurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
-                  caseNumber: this.caseNumber
+                  caseNumber: res?.data?.CaseNumber
                 }));
                 console.log('Assessment saved:', res);
                 this.hasloadedDate = false; // Reset the flag to allow reloading

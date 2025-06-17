@@ -278,7 +278,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                 Score: totalScore,
                 guidedType: this.guidedType,
                 CaseNumber: this.caseNumber,
-                support_service: this.loggedInUser?.documentId,
+                support_service: this.loggedInUser?.support_service?.documentId,
                 Levelofdanger: levelOfDanger,
               }
             };

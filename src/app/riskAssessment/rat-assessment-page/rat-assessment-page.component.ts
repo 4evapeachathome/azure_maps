@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
@@ -9,13 +9,28 @@ import { APIEndpoints } from 'src/shared/endpoints';
   styleUrls: ['./rat-assessment-page.component.scss'],
   standalone: false
 })
-export class RatAssessmentPageComponent implements OnInit {
+export class RatAssessmentPageComponent implements OnInit, AfterViewInit {
 
   loading: HTMLIonLoadingElement | null = null;
   webData: any;
   webGuidUrl: string = APIEndpoints.webGuidUrl; // Replace with your actual API URL
+  reloadData:boolean = false; 
 
   constructor(private loadingController: LoadingController, private apiService:ApiService, private cdRef:ChangeDetectorRef) { }
+
+  ionViewWillEnter() {
+    // Show loader
+    this.showLoader();
+
+    // Fetch data
+    this.loadWebData();
+
+    // Toggle reloadData for child component
+    this.reloadData = false;
+    setTimeout(() => {
+      this.reloadData = true;
+    }, 0);
+  }
 
   async ngOnInit() {
     this.cdRef.detectChanges();
@@ -25,27 +40,28 @@ export class RatAssessmentPageComponent implements OnInit {
     // ...add any other cache keys you use...
     this.cdRef.detectChanges();
     
-    this.loadWebData();
-    await this.showLoader();
   }
 
   loadWebData() {
     try {
-      // Replace with your actual API URL
       const url = this.webGuidUrl;
-
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
-       //   debugger;
           this.webData = response?.guid;
+          this.hideLoader();
         },
         error: (err) => {
           console.error('API Error:', err);
-          // Handle error (show toast, etc.)
+          this.hideLoader(); // Dismiss loader on error
+        },
+        complete: () => {
+          // Ensure loader is dismissed after data is fetched
+          this.hideLoader();
         }
       });
     } catch (err) {
       console.error('Error:', err);
+      this.hideLoader();
     }
   }
 
