@@ -148,7 +148,7 @@ hasloadedDate: boolean = false;
               data: {
                 response: respondedQuestions,
                 AssessmentGuid: this.sripaGuid,
-                support_service: this.loggedInUser?.documentId ?? null,
+                support_service: this.loggedInUser?.support_service?.documentId ?? null,
                 CaseNumber: this.caseNumber,
                 guidedType: this.guidedType,
                 IsAssessmentfromEducationModule: false

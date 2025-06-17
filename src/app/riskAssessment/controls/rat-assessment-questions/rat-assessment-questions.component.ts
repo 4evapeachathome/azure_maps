@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
@@ -23,6 +23,8 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   guidedTypeLabel: string = 'Self-Guided';
   selectedAssessment: string = ''; 
   @Input() webGuid:any;
+  hasloadedDate: boolean = false;
+  @Input() reloadFlag: boolean = false; // Input property to trigger reload
 
   constructor(
       private router: Router,
@@ -34,7 +36,17 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       private cdRef:ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.loadinitialData();
+    if (!this.hasloadedDate) {
+      this.loadinitialData();
+      this.hasloadedDate = true;
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasloadedDate) {
+      this.loadinitialData();
+      this.hasloadedDate = true;
+    }
   }
 
   loadinitialData() {
@@ -192,7 +204,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
               // totalScore,
               response: answerSummary,
               // criticalAlert,
-              support_service: this.loggedInUser.documentId,
+              support_service: this.loggedInUser?.support_service?.documentId,
               AssessmentGuid: assessmentNumberID,
               assessmentScore: totalScore,
               caseNumber: this.caseNumber || '',
