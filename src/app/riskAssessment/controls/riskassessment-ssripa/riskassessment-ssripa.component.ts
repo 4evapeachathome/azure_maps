@@ -161,6 +161,7 @@ hasloadedDate: boolean = false;
                 sessionStorage.setItem('ssripaAssessmentResult', JSON.stringify({
                   summary: respondedQuestions,
                   ssripasurl: `${window.location.origin}/viewresult?code=${response.data.AssessmentGuid}`,
+                  caseNumber: this.caseNumber
                 }));
                 this.hasloadedDate = false; // Reset to allow reloading
                 this.router.navigate(['/riskassessmentsummary']);

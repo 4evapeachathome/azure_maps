@@ -69,6 +69,8 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       cachedRats.questions.forEach((q: any) => {
         q.selected = null; // Reset selected for each question
       });
+
+      cachedRats.questions = cachedRats.questions.sort((a: any, b: any) => a.questionOrder - b.questionOrder);
       this.setupRatsQuestions(cachedRats.questions, cachedRats.answerOptions);
     } else {
       // Load from API if cache is empty
@@ -77,10 +79,13 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
           let { questions, answerOptions } = webData;
           this.cdRef.detectChanges();
           // Sort the multiple_options_for_rat for each question (if still needed)
-          questions.forEach((q: any) => {
+          questions.forEach((q: any, index: number) => {
             q.multiple_options_for_rat.sort((a: any, b: any) => a.score - b.score);
             q.selected = null; // Reset selected for each question
           });
+
+          // Sort questions by questionOrder in ascending order
+          questions = questions.sort((a: any, b: any) => a.questionOrder - b.questionOrder);
 
           let sortedOptions = answerOptions.sort((a: any, b: any) => a.score - b.score);
           answerOptions = sortedOptions;

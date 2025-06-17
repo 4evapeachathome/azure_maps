@@ -116,7 +116,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-    debugger;
+    // debugger;
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
@@ -126,6 +126,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.QrcodeUrl= result.ssripasurl;
         const urlObj = new URL(this.QrcodeUrl);
         this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
+        this.caseNumber = result?.caseNumber;
       }
     }
    
@@ -141,6 +142,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.QrcodeUrl= result.hitsurl;
         const urlObj = new URL(this.QrcodeUrl);
         this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
+        this.caseNumber = result?.caseNumber;
       }
       this.fetchHitResults();
     }
@@ -157,6 +159,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         this.levelofdanger = result.Levelofdanger;
         const urlObj = new URL(this.QrcodeUrl);
         this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
+        this.caseNumber = result?.caseNumber;
       }
       this.fetchDaResults();
     }
@@ -610,6 +613,7 @@ getCharFromCode(code: number): string {
         if (response) {
           this.responseJson = response.assessmentSummary;
           this.riskValue = this.ratAssessmentResult?.assessmentScore;
+          this.caseNumber = response?.caseNumber;
         }
       },
       error: (error: any) => {

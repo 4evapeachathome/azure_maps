@@ -1258,7 +1258,6 @@ getRatsAssessmentQuestions(): Observable<any> {
     fields: ['Label', 'score'] // 'Label', 'score'
   };
 
-  console.log('endpoint1>>>>>>', endpoint1);
   // Make the two API calls in parallel using forkJoin
   return forkJoin([
     this.getWithQuery(endpoint1, options1, environment.apitoken), // First API call (questions)
@@ -1278,7 +1277,8 @@ getRatsAssessmentQuestions(): Observable<any> {
               documentId: opt.documentId,
               Label: opt.Label || '',
               score: opt.score ?? null
-            }))
+            })),
+            questionOrder: item.questionOrder
           }));
 
       // Process the second API response (answer options)

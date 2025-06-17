@@ -200,6 +200,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                   summary: answerSummary,
                   criticalAlert,
                   hitsurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
+                  caseNumber: this.caseNumber
                 }));
                 console.log('Assessment saved:', res);
                 this.hasloadedDate = false; // Reset the flag to allow reloading
