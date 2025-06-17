@@ -915,12 +915,13 @@ getQuizzes(): Observable<any> {
     map((res: any) => {
       const quiz = res.data?.[0];
       if (!quiz) return null;
+      const sortedQuestions = [...(quiz.questions || [])].sort((a, b) => a.id - b.id);
      // debugger;
       return {
         id: quiz.id,
         title: quiz.title,
         subheading: quiz.subheading,
-        questions: quiz.questions || []
+        questions: sortedQuestions
       };
     }),
     catchError(error => {
@@ -1143,7 +1144,11 @@ login(username: string, password: string): Observable<any> {
       }),
       catchError((err) => {
         console.error('Change password failed:', err);
-        const errorMessage = err?.error?.message || 'Failed to update password';
+        const errorMessage =
+          err?.error?.error?.message || // ✅ Correct path
+          err?.error?.message ||        // fallback
+          'Failed to update password';
+      
         return throwError(() => new Error(errorMessage));
       })
     );

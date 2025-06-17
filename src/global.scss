@@ -137,7 +137,7 @@ ion-card {
 }
 .div-scroll {
   overflow-y: auto;
-  top: 0;
+  top: -1px;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -1252,7 +1252,7 @@ ion-item {
         border-radius: 50%;
         border-width: 0.125rem;
         border-style: solid;
-        border-color: rgb(var(--ion-text-color-rgb, 0, 0, 0), 0.6);
+        border-color: var(--color-dark-Gray);
       }
       &::part(mark) {
         border-radius: 50%;

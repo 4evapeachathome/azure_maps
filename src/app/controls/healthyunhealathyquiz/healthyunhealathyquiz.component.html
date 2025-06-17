@@ -126,15 +126,15 @@
 
             <div class="qs-row">
               <div class="qs-col">
-                <strong>Q:</strong> {{ q.description }}
+                <strong>Q{{ i + 1 }} :</strong> {{ q.description }}
               </div>
               </div>
               <div class="qs-row qz-button-row">
                 <div class="qs-col ta-center">
                   <ion-radio-group class="qz-btn-radio">
-                    <ion-radio value="healthy"    (click)="selectOption(i, 'healthy')"
+                    <ion-radio value="healthy" mode="md"   (click)="selectOption(i, 'healthy')"
                     [class.selected]="q.selected === 'healthy'">Healthy</ion-radio><br />
-                    <ion-radio value="unhealthy"   (click)="selectOption(i, 'unhealthy')"
+                    <ion-radio value="unhealthy" mode="md"  (click)="selectOption(i, 'unhealthy')"
                     [class.selected]="q.selected === 'unhealthy'">Unhealthy</ion-radio><br />                
                   </ion-radio-group>
 
