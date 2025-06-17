@@ -10,28 +10,12 @@
         <div class="qs-row qs-header">
           <div class="qs-col header-pagination">
             <strong>Question:</strong>
-             <!-- <div class="pagination">
-          <ion-icon 
-            name="chevron-back-outline"
-            class="nav-arrow prev" 
-            (click)="prevSlide()" 
-            [class.disabled]="currentIndex === 0">
-          </ion-icon>
-          
-      
-          <ion-icon 
-            name="chevron-forward-outline"
-            class="nav-arrow next" 
-            (click)="nextSlide()" 
-            [class.disabled]="currentIndex === sripa.length - 1">
-          </ion-icon>
-        </div> -->
           </div>
         </div>
     
         <div class="qs-row question-row">
           <div class="qs-col">
-            <div><strong>{{ q.text }}</strong></div>
+            <div><strong>{{ i + 1 }}. {{ q.text }}</strong></div>
           </div>
         </div>
         <div class="qs-row qz-button-row">

@@ -201,10 +201,11 @@ export class SetPasswordComponent implements OnInit {
         await this.showToast(res?.message || 'Password updated successfully', 2500, 'top');
         this.hasFetchedLogins = false;
         this.router.navigate(['/login']);
-        this.userForm.reset();
+        //this.userForm.reset();
         this.resetCaptcha();
       },
       error: async (err: any) => {
+        debugger;
         const message =
           err?.message ||
           err?.error?.message ||
@@ -212,7 +213,7 @@ export class SetPasswordComponent implements OnInit {
           'Failed to update password';
   
         await this.showToast(message, 3000, 'top');
-        this.userForm.reset();
+        //this.userForm.reset();
         this.resetCaptcha();
       },
     });
