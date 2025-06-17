@@ -68,6 +68,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   @Output() exportFailed = new EventEmitter<Error>();
   levelofdanger:string=''; // Track if logins have been fetched
   isDanger: boolean = false; // Track if logins have been fetched
+  isWeb: boolean = false;
 
   constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController,   private menuService: MenuService) { }
 
@@ -164,9 +165,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       this.fetchDaResults();
     }
 
-    this.loaded = true;
-    
-    if(this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+    this.isWeb = sessionStorage.getItem('isWeb') == 'true';
+    if(this.isWeb) {
       let ratResult = sessionStorage.getItem('ratsAssessmentResult');
       if(ratResult) {
         this.ratAssessmentResult = JSON.parse(ratResult || '');
@@ -175,11 +175,12 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       }
       this.checkSelectedAssessment(this.assessmentNumber);
     }    
+    this.loaded = true;
   }
 
   ngAfterViewInit(): void {
     let ratResult = sessionStorage.getItem('ratsAssessmentResult');
-    if(ratResult && this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+    if(ratResult && this.isWeb) {
       this.ratAssessmentResult = JSON.parse(ratResult || '')
       if(this.ratAssessmentResult) {
         this.QrcodeUrl = `${window.location.origin}/viewresult?code=${this.ratAssessmentResult?.AssessmentGuid}`
@@ -255,7 +256,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       resultInfo.style.whiteSpace = 'normal';
       if (sessionStorage.getItem('isHits') === 'true') {
         resultInfo.innerHTML = `<p style="white-space: nowrap;">Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
-      } else if (this.selectedAssessment?.toLowerCase() === ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+      } else if (this.isWeb) {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>
           ${this.guidedType === 'staff-guided' ? `
           <p><strong>Status:</strong> ${this.riskValue >= 20 ? 'Positive' : 'Negative'}</p>` : ''}`;
@@ -340,7 +341,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         `;
       }
 
-      if(this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+      if(this.isWeb) {
         scoreInfo.innerHTML = `
           ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
         `;
@@ -352,7 +353,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
       const riskMeterContainer = !this.isSSripa ? this.summaryPage?.riskMeterComponent?.gaugeComponent?.gaugeContainerRef?.nativeElement : null;
 
-      if (riskMeterContainer && this.selectedAssessment?.toLowerCase() !== ASSESSMENT_TYPE.WEB?.toLowerCase()) {
+      if (riskMeterContainer && !this.isWeb) {
         const scoreDisplayContainer = riskMeterContainer.querySelector('.score-display');
         if (scoreDisplayContainer) {
           scoreDisplayContainer.remove();
