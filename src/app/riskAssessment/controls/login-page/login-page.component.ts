@@ -153,9 +153,11 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
   try {
     let url = sessionStorage.getItem('redirectUrl');
     if(sessionStorage.getItem('redirectUrl') && url?.includes('code')) {
+      this.hasFetchedLogins = false;
       this.router.navigateByUrl(url || '');
       sessionStorage.removeItem('redirectUrl');
     } else {
+      this.hasFetchedLogins = false;
       await this.router.navigate(['/riskassessment']);
     }
     await presentToast(this.toastController, 'Login successful!', 3000, 'top');

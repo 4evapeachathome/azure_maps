@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
@@ -30,7 +30,9 @@ export class AssessmentPageComponent  implements OnInit {
   isHitAssessment = false;
   isDaAssessment = false;
   isSSripa = false;
+  @Input() reloadFlag: boolean = false; // Input to trigger reload
   isDataLoaded = false;
+  hasloadedDate = false; // To track if data has been loaded
   navigate: string = ''; // To store the navigate value from the selected assessment
 
   constructor(
@@ -43,8 +45,18 @@ export class AssessmentPageComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
+    if (!this.hasloadedDate) {
     this.loadInitialData();
+    this.hasloadedDate = true;
+    }
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+      if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasloadedDate) {
+        this.loadInitialData()
+        this.hasloadedDate = true;
+      }
+    }
 
   loadInitialData() {
     const encodedUser = this.cookieService.get('userdetails'); // Or 'username'
@@ -177,6 +189,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   goToTest() {
     if (this.selectedAssessment) {
+      this.hasloadedDate = false; // Reset the flag to allow reloading data
       sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.navigate?.toLowerCase().trim();
       sessionStorage.setItem('caseNumber', this.caseNumber);

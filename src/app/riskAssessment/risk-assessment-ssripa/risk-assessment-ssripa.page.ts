@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { filter, Subscription } from 'rxjs';
@@ -12,40 +12,30 @@ import { RiskassessmentSSripaComponent } from '../controls/riskassessment-ssripa
   styleUrls: ['./risk-assessment-ssripa.page.scss'],
   standalone: false
 })
-export class RiskAssessmentSSripaPage implements OnInit,OnDestroy {
+export class RiskAssessmentSSripaPage implements OnInit,AfterViewInit {
  loading: HTMLIonLoadingElement | null = null;
  ssripGuidUrl :string = APIEndpoints.ssripGuidUrl; 
- private navigationSubscription: Subscription | null = null;
- @ViewChild(RiskassessmentSSripaComponent) ssripa!: RiskassessmentSSripaComponent;
-
- isInitialLoad: boolean = true; // Track if it's the initial load
+ reloadData: boolean = false; // Subscription to track navigation events
  sripaData:any;// Replace with your actual API URL
-  constructor(private loadingController: LoadingController, private apiService:ApiService,private router: Router) { }
+constructor(private loadingController: LoadingController, private apiService:ApiService,private router: Router) { }
 
   async ngOnInit() {
-    // Set up navigation event subscription
-    this.navigationSubscription = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        if (event.urlAfterRedirects.includes('ssripariskassessment')) {
-          console.log('Navigated to SSRIPA page, refreshing data');
-          // Skip data load on initial NavigationEnd if already loaded
-          if (!this.isInitialLoad) {
-            if(this.ssripa){
-              this.ssripa.loadInitialData(); // Call the method to load data
-            }
-            this.loadSSripaData();
-            this.showLoader();
-          }
-        }
-      });
-
-    // Load data initially
-    this.loadSSripaData();
     await this.showLoader();
-    this.isInitialLoad = false; // Mark initial load as complete
   }
 
+  ionViewWillEnter() {
+    // Show loader
+    this.showLoader();
+
+    // Fetch data
+    this.loadSSripaData();
+
+    // Toggle reloadData for child component
+    this.reloadData = false;
+    setTimeout(() => {
+      this.reloadData = true;
+    }, 0);
+  }
   loadSSripaData() {
     try {
       // Replace with your actual API URL
@@ -55,14 +45,21 @@ export class RiskAssessmentSSripaPage implements OnInit,OnDestroy {
         next: (response) => {
        //   debugger;
           this.sripaData = response?.guid;
+          this.hideLoader();
         },
         error: (err) => {
           console.error('API Error:', err);
+          this.hideLoader();
           // Handle error (show toast, etc.)
+        },
+        complete: () => {
+          // Ensure loader is dismissed after data is fetched
+          this.hideLoader();
         }
       });
     } catch (err) {
       console.error('Error:', err);
+      this.hideLoader();
     }
   }
 
@@ -100,13 +97,6 @@ export class RiskAssessmentSSripaPage implements OnInit,OnDestroy {
         console.warn('Loader already dismissed or not yet created');
       }
       this.loading = null;
-    }
-  }
-
-  ngOnDestroy() {
-    // Clean up subscription
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
     }
   }
 }
