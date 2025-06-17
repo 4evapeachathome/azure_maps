@@ -137,7 +137,7 @@ ion-card {
 }
 .div-scroll {
   overflow-y: auto;
-  top: 0;
+  top: -1px;
   position: absolute;
   bottom: 0;
   left: 0;
