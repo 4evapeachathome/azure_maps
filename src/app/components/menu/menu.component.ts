@@ -46,7 +46,7 @@ export class MenuComponent implements OnInit {
   private initiallyHiddenMenuTitles = [
     'No Peace at Home',
     'Support Service',
-    'Legal Rights'
+    'Your Rights'
   ];
 
   constructor(
@@ -67,14 +67,6 @@ export class MenuComponent implements OnInit {
     });
   }
 
-  signOut(){
-    this.showUserName = false;
-  }
-
-  UserLogin(){
-    this.showUserName = true;
-    this.router.navigate(['/login']);
-  }
 
   ngOnInit(): void {
   this.loadMenuItems();
@@ -239,11 +231,14 @@ collapseAllSections(): void {
     this.menuService.lastExpandedSection = item.title;
   
     // Expand clicked root-level menu if it has children
+    // if (!item.parentMenu && item.children && item.children.length > 0) {
+    //   if (!item.expanded) {
+    //     item.expanded = true;
+    //   }
+    // } 
     if (!item.parentMenu && item.children && item.children.length > 0) {
-      if (!item.expanded) {
-        item.expanded = true;
-      }
-    } 
+      item.expanded = !item.expanded; // Toggle the expanded state
+    }
     // Expand non-root items with children if not already expanded
     else if (item.children && item.children.length > 0) {
       if (!item.expanded) {

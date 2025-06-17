@@ -191,20 +191,22 @@ export class SetPasswordComponent implements OnInit {
   private async handlePasswordUpdate() {
     const { username, password, newPassword } = this.userForm.value;
     const processedUsername = username.trim().toLowerCase();
-    if (!username || !password || !newPassword) {
+    let newPass = newPassword.trim();
+    let tempPass = password.trim();
+    if (!username || !tempPass || !newPass) {
       await this.showToast('All fields are required', 3000, 'top');
       return;
     }
-  
-    this.apiService.changePassword(processedUsername, password, newPassword).subscribe({
+    this.apiService.changePassword(processedUsername, tempPass, newPass).subscribe({
       next: async (res: any) => {
         await this.showToast(res?.message || 'Password updated successfully', 2500, 'top');
         this.hasFetchedLogins = false;
         this.router.navigate(['/login']);
-        this.userForm.reset();
+        //this.userForm.reset();
         this.resetCaptcha();
       },
       error: async (err: any) => {
+        debugger;
         const message =
           err?.message ||
           err?.error?.message ||
@@ -212,7 +214,7 @@ export class SetPasswordComponent implements OnInit {
           'Failed to update password';
   
         await this.showToast(message, 3000, 'top');
-        this.userForm.reset();
+        //this.userForm.reset();
         this.resetCaptcha();
       },
     });

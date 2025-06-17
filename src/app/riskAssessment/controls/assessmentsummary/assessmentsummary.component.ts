@@ -165,7 +165,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     }
 
     this.loaded = true;
-    this.caseNumber = sessionStorage.getItem('caseNumber') || '';
     
     if(this.selectedAssessment?.toLowerCase() == ASSESSMENT_TYPE.WEB?.toLowerCase()) {
       let ratResult = sessionStorage.getItem('ratsAssessmentResult');

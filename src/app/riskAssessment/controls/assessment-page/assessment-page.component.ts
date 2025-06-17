@@ -203,8 +203,6 @@ export class AssessmentPageComponent  implements OnInit {
       this.hasloadedDate = false; // Reset the flag to allow reloading data
       sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.navigate?.toLowerCase().trim();
-      console.log('assessmentName>>>>>>>>', assessmentName);
-      sessionStorage.setItem('caseNumber', this.caseNumber);
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':
