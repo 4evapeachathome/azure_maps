@@ -228,6 +228,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
                   const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
                   presentToast(this.toastController, successMessage);
                   this.cdRef.detectChanges();
+                  this.hasloadedDate = false;
                   this.router.navigate(['/riskassessmentsummary']).then(() => {
                     this.cdRef.detectChanges();
                     this.ratsQuestions.forEach((q: any) => {
@@ -263,6 +264,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
 
   async logout() {
     try {
+      this.hasloadedDate = false;
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {
