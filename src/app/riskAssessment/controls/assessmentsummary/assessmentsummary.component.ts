@@ -639,7 +639,7 @@ getCharFromCode(code: number): string {
     this.caseNumber = '';
     this.selectedAssessment = null;
     this.hasFetchedData = false;
-    this.isDanger = false;
+    this.criticalalert = false;
     this.responseJson = [];
     this.router.navigate(['/riskassessment']);
   }
