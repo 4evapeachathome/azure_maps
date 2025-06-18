@@ -66,7 +66,6 @@ export class ViewResultComponent  implements OnInit {
     if (encodedUser) {
       try {
         this.loggedInUser = JSON.parse(atob(encodedUser));
-        console.log('this.loggedInUser>>>>>>', this.loggedInUser);
       } catch {
         this.cookieService.delete('userdetails');
         this.router.navigate(['/login']);
@@ -144,7 +143,7 @@ export class ViewResultComponent  implements OnInit {
           let checkValidation = false;
           this.loggedInUser.assessment_type.map((loggedInUser: any) => {
               response.support_service.user_login.assessment_type.map((type: any) => {
-              if(loggedInUser.documentId == type.documentId) {
+              if(loggedInUser?.documentId == type.documentId) {
                 checkValidation = true;
               }
             });
@@ -186,7 +185,7 @@ export class ViewResultComponent  implements OnInit {
         let checkValidation = false;
         this.loggedInUser.assessment_type.map((item: any) => {
             response.support_service.user_login.assessment_type.map((type: any) => {
-            if(item.documentId == type.documentId) {
+            if(item?.documentId == type.documentId) {
               checkValidation = true;
             }
           });
@@ -229,7 +228,7 @@ export class ViewResultComponent  implements OnInit {
           //debugger
             response.support_service.user_login.assessment_type.map((type: any) => {
               //debugger
-            if(item.documentId == type.documentId) {
+            if(item?.documentId == type.documentId) {
               checkValidation = true;
             }
           });
@@ -272,7 +271,7 @@ export class ViewResultComponent  implements OnInit {
         } else {
           this.loggedInUser.assessment_type.map((item: any) => {
               response.support_service.user_login.assessment_type.map((type: any) => {
-              if(item.documentId == type.documentId) {
+              if(item?.documentId == type.documentId) {
                 checkValidation = true;
               }
             });
