@@ -1111,6 +1111,7 @@ login(username: string, password: string): Observable<any> {
         password: decrypt(user.password),
         temp_password: decrypt(user.temp_password),
         support_service: user.support_service ?? {},
+        assessment_type: user?.assessment_type ?? [],
         isSendInvite: user.sendInvite ?? false,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,

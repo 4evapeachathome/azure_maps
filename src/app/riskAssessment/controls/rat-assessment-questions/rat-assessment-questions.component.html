@@ -63,7 +63,6 @@
                   <thead>
                     <tr>
                       <!-- <th colspan="2">How often does your partner?</th> -->
-
                     </tr>
                   </thead>
                   <tbody>
@@ -74,7 +73,7 @@
                       </th>
 
                     </tr>
-                    <tr *ngFor="let question of ratsQuestions">
+                    <tr *ngFor="let question of ratsQuestions;let i = index">
                       <th>{{ question.text }}</th>
                       <td class="tbody-container row-container">
 

@@ -99,7 +99,6 @@ export class AssessmentPageComponent  implements OnInit {
         }
     });
     sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
-    console.log('this.selectedAssessment>>>>>>', this.selectedAssessment, this.assessmentTypes, selectedAssessmentId);
 
     // Extract and store the navigate value
     this.navigate = selectedAssessmentId[0]?.navigate || '';
@@ -273,7 +272,6 @@ export class AssessmentPageComponent  implements OnInit {
 
   navigateWithRatsCache(targetRoute: string) {
     const cached = this.menuService.getRatsAssessment();
-    console.log('navigateWithRatsCache selectedAssessment*******', this.selectedAssessment);
     if (cached) {
       sessionStorage.removeItem('isHits');
       sessionStorage.removeItem('isSSripa');

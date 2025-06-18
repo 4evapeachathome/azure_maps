@@ -73,7 +73,7 @@
                     <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
                   </ng-container>
                   <ng-template #selfGuided>
-                    <strong>
+                    <strong class="highlight">
                       Please talk to your service provider about what the Danger Assessment means in your situation.
                     </strong><br />
                   </ng-template>
@@ -86,7 +86,7 @@
                 <ion-text>
                   Thanks for taking this assessment.<br /><br />
                   <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
-                  <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: </strong>{{riskValue >= 20 ? 'Positive' : 'Negative'}}</div>
+                  <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: <span class="highlight">{{riskValue >= 20 ? 'Positive' : 'Negative'}}</span></strong></div>
                 </ion-text>
               </ion-col>
             </ion-row>
@@ -100,7 +100,7 @@
                   <strong>Please expediate action.</strong><br />
                 </ng-container>
                 <ng-template #selfGuided>
-                  <strong>
+                  <strong class="highlight">
                     Take action immediately; talk to your service providers for assistance.
                   </strong><br />
                 </ng-template>
