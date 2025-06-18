@@ -76,6 +76,7 @@ export class AssessmentPageComponent  implements OnInit {
           });
         }
         this.selectedAssessment = null;
+        this.assessmentNumber = '';
         this.loaded = true;
       } catch {
         console.error('Invalid cookie format, logging out...');
@@ -206,6 +207,7 @@ export class AssessmentPageComponent  implements OnInit {
   goToTest() {
     if (this.selectedAssessment) {
       this.hasloadedDate = false; // Reset the flag to allow reloading data
+      this.assessmentNumber = '';
       sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.navigate?.toLowerCase().trim();
       switch (assessmentName) {
