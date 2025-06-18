@@ -32,6 +32,11 @@
                 </div>
               </ion-col>
             </ion-row>
+              <ion-row>
+              <ion-col size="12" size-sm="12">
+                <h2>The Danger Assessment</h2>
+              </ion-col>
+            </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="5">
                 <ion-item>
@@ -51,11 +56,7 @@
 
               </ion-col>             
             </ion-row>
-            <ion-row>
-              <ion-col size="12" size-sm="12">
-                <h2>The Danger Assessment</h2>
-              </ion-col>
-            </ion-row>
+          
 
 
             <ion-row> 
@@ -95,7 +96,7 @@
                   
                     <ng-container *ngFor="let question of paginatedQuestions; let i = index">
                       <tr>
-                        <th>{{ (currentPageIndex * questionsPerPage) + i + 1 }}. {{ question.questionText }}</th>
+                        <td>{{ (currentPageIndex * questionsPerPage) + i + 1 }}. {{ question.questionText }}</td>
                        <td class="thr-width-auto">
                           <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question, $event)">
                             <ion-radio value="Yes" labelPlacement="end" mode="md"></ion-radio>

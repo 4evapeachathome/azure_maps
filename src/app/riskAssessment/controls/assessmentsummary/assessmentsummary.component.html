@@ -35,29 +35,59 @@
                   </div>
                 </div>
               </ion-col>
-              <ion-col size="12" size-sm="12" size-lg="12" class="radio-selected-container">
-                <ion-radio-group [(ngModel)]="guidedType" >
+             
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="12" size-lg="7">
+                <h2>{{ selectedAssessment }}</h2>
+              </ion-col>
+              <ion-col size="12" size-sm="12" size-lg="5"  class="radio-selected-container">
+               <ion-radio-group [(ngModel)]="guidedType" >
                   <ion-radio [value]="guidedType" labelPlacement="end" mode="md" class="guided-label">{{ guidedTypeLabel }}</ion-radio>
                 </ion-radio-group>
               </ion-col>
             </ion-row>
+
+  
+           
+
             <ion-row>
-              <ion-col size="12" size-sm="12">
-                <h2>{{ selectedAssessment }}</h2>
+              <ion-col size="12" size-sm="12" size-lg="8">
+                   <ion-text class="case-number" disabled="true">Case Number : <span>{{' ' + caseNumber || '<>' }}</span></ion-text>
+              </ion-col>
+               <ion-col size="12" size-sm="12" size-lg="4" class="risk-item-center">
+                   <!-- <ion-text>Here is your QR code:</ion-text> -->
               </ion-col>
             </ion-row>
-            <ion-row>
-              <ion-col size="12" size-sm="12" size-lg="5">
-                <ion-text class="case-number" disabled="true">Case Number : <span>{{' ' + caseNumber }}</span></ion-text>
+ <ion-row>
+              <ion-col size="12" size-sm="12" size-lg="8" style="margin-bottom: 16px;">
+                    <ion-text>
+                  Thanks for taking <strong>{{ selectedAssessment }} </strong>.
+                  </ion-text>
+              </ion-col>
+               <ion-col size="12" size-sm="12" size-lg="4" class="risk-item-center">
+                  <ion-text>Here is your QR code:</ion-text>
+                 <div *ngIf="isSSripa || isHitsAssessment || isDanger || (selectedAssessment?.toLowerCase() == this.ASSESSMENT_TYPE.WEB?.toLowerCase())">
+                 
+                 
+                    <div class="qr-code-wrapper" *ngIf="QrcodeUrl">
+                      <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="130" [errorCorrectionLevel]="'M'"></qrcode>
+                    </div>
+                    <ion-text class="qr-code-text">Code: {{assessmentNumber}}</ion-text>
+               
+                </div> 
               </ion-col>
             </ion-row>
-            <ion-row class="hits-summary-text" *ngIf="isHitsAssessment">
+
+             <ion-row>
+              <ion-col size="12" size-sm="12" size-lg="8">
+                 <ion-row class="hits-summary-text" *ngIf="isHitsAssessment">
               <ion-col>
                 <ion-text>
-                  Thanks for taking this assessment.<br /><br />
-                  <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
+               
+                  <strong> Your Score: </strong><span class="score">{{ riskValue }}</span><br /><br />
                   <ng-container *ngIf="guidedType ==='staff-guided'">
-                    <strong>Note:</strong><br /> {{ note }}<br />
+                    <strong>Note:</strong><br /> {{ note }}<br /><br />
                     <strong>Caution:</strong><br /> {{ caution }}
                    </ng-container>  
                 </ion-text>
@@ -67,8 +97,9 @@
             <ion-row class="hits-summary-text" *ngIf="isDanger">
               <ion-col>
                 <ion-text>
-                  Thanks for taking this assessment.<br /><br />
-                  <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
+               
+                  <strong> Your Score: </strong><span class="score">{{ riskValue }}</span><br /><br />
+                  
                   <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
                     <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
                   </ng-container>
@@ -84,20 +115,18 @@
             <ion-row class="assessment-summary-text" *ngIf="isWeb">
               <ion-col>
                 <ion-text>
-                  Thanks for taking this assessment.<br /><br />
-                  <strong> Here is your score: </strong><br /><span class="score">{{ riskValue }}</span><br /><br />
-                  <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: <span class="highlight">{{riskValue >= 20 ? 'Positive' : 'Negative'}}</span></strong></div>
+                
+                  <strong> Your Score: </strong><span class="score">{{ riskValue }}</span><br /><br />
+                  <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: </strong>{{riskValue >= 20 ? 'Positive' : 'Negative'}}</div>
                 </ion-text>
               </ion-col>
             </ion-row>
 
             <ion-row class="hits-summary-text" *ngIf="isSSripa">
               <ion-col>
-                <ion-text>
-                  Thanks for taking this assessment.<br /><br />
-                </ion-text>
+              
                 <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
-                  <strong>Please expediate action.</strong><br />
+                  <ion-text>Please expediate action.</ion-text>
                 </ng-container>
                 <ng-template #selfGuided>
                   <strong class="highlight">
@@ -106,37 +135,32 @@
                 </ng-template>
               </ion-col>
             </ion-row>
-
-
-            <ion-row>
-              <ion-col size="12" size-sm="12" size-lg="7" class="p-0">            
-                <ion-row *ngIf="isSSripa || isHitsAssessment || isDanger || (isWeb)">
-                  <ion-col size="12" size-sm="12">
-                    <ion-text><strong>Here is your QR code:</strong></ion-text>
-                    <div class="qr-code-wrapper" *ngIf="QrcodeUrl">
-                      <qrcode #qrcodeElement [qrdata]="QrcodeUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
-                    </div>
-                    <ion-text>Code: {{assessmentNumber}}</ion-text>
-                  </ion-col>
-                </ion-row>            
-              </ion-col>          
-              <ion-col size="12" size-sm="12" size-lg="5" class="p-0">
-                <ion-row class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitsAssessment || isDanger)">
-                     <ion-col size="12" size-sm="12">
-                  <app-summarypage #riskMeterRef [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
-               </ion-col>
-                </ion-row>
-                       
+                  
               </ion-col>
+               <ion-col size="12" size-sm="12" size-lg="4" class="risk-item-center">
+                 <div class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitsAssessment || isDanger)">
+                   
+                  <app-summarypage #riskMeterRef [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
              
-            </ion-row>
-             <ion-row>
-                   <ion-col size="12" size-sm="12" class="mobile-center-align">
+                </div>
+                 <div>
+                  
                 <ion-button  (click)="downloadPDF()" color="primary" size="small">Export to PDF</ion-button>
-                </ion-col>
-              </ion-row>   
+              
+              </div>   
+              </ion-col>
+            </ion-row>
+
+
+          
+           
+
+
+           
+            
             <!--Table to handle response for all the assessments-->
             <ion-row>
+                <ion-col>
               <table class="assessment-table-container hits-assessment-table">
                 <thead>
                   <tr>
@@ -162,8 +186,14 @@
                   </ng-container>
                 </tbody>
               </table>
+                </ion-col>
+            </ion-row>
+             <ion-row>
+               <ion-col size="12" size-sm="12" class="assessment-button">
               <ion-button (click)="takeAnotherAssessment()" color="primary" size="small">Take another assessment</ion-button>
+           
               <!-- <app-assessment-table [selectedAssessment]="this.selectedAssessment"></app-assessment-table> -->
+           </ion-col>
             </ion-row>
 
 

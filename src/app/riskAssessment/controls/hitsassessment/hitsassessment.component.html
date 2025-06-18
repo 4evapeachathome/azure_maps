@@ -34,6 +34,11 @@
                 </div>
               </ion-col>
             </ion-row>
+                <ion-row>
+              <ion-col size="12" size-sm="12">
+                <h2>HITS Assessment</h2>
+              </ion-col>
+            </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="5">
                 <ion-item>
@@ -53,11 +58,7 @@
 
               </ion-col>             
             </ion-row>
-            <ion-row>
-              <ion-col size="12" size-sm="12">
-                <h2>HITS Assessment</h2>
-              </ion-col>
-            </ion-row>
+        
 
 
             <ion-row> 
@@ -74,7 +75,7 @@
                     <!-- Table Header -->
                     <tr>
                       <th class="tbody-first"></th>
-                      <th class="tbody-container row-header">
+                      <th class="tbody-container ">
                         <div class="tbc-content">
                           <span *ngFor="let scale of scaleOptions" class="scale-option">{{ scale }}</span>
                         </div>
@@ -83,7 +84,7 @@
                   
                     <!-- Table Rows for Questions -->
                     <tr *ngFor="let question of hitsQuestions">
-                      <th>{{ question.text }}</th>
+                      <td>{{ question.text }}</td>
                       <td class="tbody-container row-container">
                         <ion-radio-group class="tbc-content" [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>
                           <ion-radio
