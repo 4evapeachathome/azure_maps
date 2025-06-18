@@ -111,6 +111,7 @@ ion-card {
   box-shadow: none;
   border-radius: 8px;
   margin: 0;
+  background: var(--color-white);
 }
 .h-100 {
   height: 100%;
@@ -1349,7 +1350,7 @@ ion-item {
   display: block;
 }
 .support-map-height{
-  height: calc(100% - 35px);
+  height: calc(100% - 60px);
 }
 .cmh-container {
   position: absolute;
@@ -1359,9 +1360,9 @@ ion-item {
   height: 100%;
   overflow: hidden;
   overflow-y: auto;
-  .cmh-height{
-    height: 100%;
-  }
+  // .cmh-height{
+  //   // height: 100%;
+  // }
 }
 ion-footer {
   background-color: $color-dark-Gray;
@@ -1533,4 +1534,13 @@ ion-segment-view {
 }
 .risk-ssripa{
   padding: 16px;
+}
+.alert-wrapper{
+  background: var(--color-white) !important;
+}
+.alert-title{
+  color: var(--color-deep-Gray) !important;
+}
+.alert-message{
+   color: var(--color-dark-Gray) !important;
 }
