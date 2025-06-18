@@ -65,7 +65,7 @@
                     <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
                   </ng-container>
                   <ng-template #selfGuided>
-                    <strong>
+                    <strong class="highlight">
                       Please talk to your service provider about what the Danger Assessment means in your situation.
                     </strong><br />
                   </ng-template>
@@ -73,6 +73,19 @@
                 </ion-col>
 
 
+              </ion-row>
+              <ion-row class="hits-summary-text" *ngIf="isSSripa">
+                <ion-col>
+                
+                  <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
+                    <ion-text class="highlight"><strong>Please expediate action.</strong></ion-text>
+                  </ng-container>
+                  <ng-template #selfGuided>
+                    <strong class="highlight">
+                      Take action immediately; talk to your service providers for assistance.
+                    </strong><br />
+                  </ng-template>
+                </ion-col>
               </ion-row>
 
                 <ion-row>

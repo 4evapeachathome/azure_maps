@@ -154,7 +154,7 @@ export class SsriparesultsComponent  implements OnInit {
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
   
       pdf.addImage(img, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('SRRIPA Result.pdf');
+      pdf.save('SSRIPA Result.pdf');
   
       // Clean up
       document.body.removeChild(container);
