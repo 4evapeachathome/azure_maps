@@ -62,6 +62,7 @@ export class ViewResultComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isDataLoaded = false;
     const encodedUser = this.cookieService.get('userdetails');
     if (encodedUser) {
       try {
@@ -76,15 +77,12 @@ export class ViewResultComponent  implements OnInit {
       return;
     }
 
-    // this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
-        
     this.assessmentNumber = this.activatedRoute.snapshot.queryParamMap.get('code') || '';
     if(this.assessmentNumber) {
       this.checkSelectedAssessment(this.assessmentNumber);
     } else {
       this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
     }
-    this.loaded = true;
   }
 
   async logout() {
@@ -141,9 +139,9 @@ export class ViewResultComponent  implements OnInit {
       next: (response: any) => {
         if (response) {
           let checkValidation = false;
-          this.loggedInUser.assessment_type.map((loggedInUser: any) => {
-              response.support_service.user_login.assessment_type.map((type: any) => {
-              if(loggedInUser?.documentId == type.documentId) {
+          this.loggedInUser?.assessment_type?.map((loggedInUser: any) => {
+              response.support_service?.user_login?.assessment_type?.map((type: any) => {
+              if(loggedInUser?.documentId == type?.documentId) {
                 checkValidation = true;
               }
             });
@@ -157,6 +155,7 @@ export class ViewResultComponent  implements OnInit {
             this.caseNumber = response?.caseNumber;
             this.qCodeValue = response.qrCodeUrl;
             this.showToast(response?.message || 'Assessment result fetch successfully.', 3000, 'top');
+            this.isDataLoaded = true;
           } else {
             this.showToast('You are not authorized to view this assessment result.', 3000, 'top');
             this.router.navigate(['/login']);
@@ -183,9 +182,9 @@ export class ViewResultComponent  implements OnInit {
         const response = res?.data;
 
         let checkValidation = false;
-        this.loggedInUser.assessment_type.map((item: any) => {
-            response.support_service.user_login.assessment_type.map((type: any) => {
-            if(item?.documentId == type.documentId) {
+        this.loggedInUser?.assessment_type?.map((item: any) => {
+            response.support_service?.user_login?.assessment_type?.map((type: any) => {
+            if(item?.documentId == type?.documentId) {
               checkValidation = true;
             }
           });
@@ -224,16 +223,16 @@ export class ViewResultComponent  implements OnInit {
         const response = res?.data;
         
         let checkValidation = false;
-        this.loggedInUser.assessment_type.map((item: any) => {
+        this.loggedInUser?.assessment_type?.map((item: any) => {
           //debugger
-            response.support_service.user_login.assessment_type.map((type: any) => {
+            response.support_service?.user_login?.assessment_type?.map((type: any) => {
               //debugger
-            if(item?.documentId == type.documentId) {
+            if(item?.documentId == type?.documentId) {
               checkValidation = true;
             }
           });
         });
-
+        debugger;
         if(checkValidation) {
           this.responseJson = response.response;
           this.guidedType = response.guidedType;
@@ -269,9 +268,9 @@ export class ViewResultComponent  implements OnInit {
         if(response.IsAssessmentfromEducationModule) {
           this.allowSrppa(response);
         } else {
-          this.loggedInUser.assessment_type.map((item: any) => {
-              response.support_service.user_login.assessment_type.map((type: any) => {
-              if(item?.documentId == type.documentId) {
+          this.loggedInUser?.assessment_type?.map((item: any) => {
+              response.support_service?.user_login?.assessment_type?.map((type: any) => {
+              if(item?.documentId == type?.documentId) {
                 checkValidation = true;
               }
             });
