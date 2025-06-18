@@ -34,6 +34,7 @@ export class AssessmentPageComponent  implements OnInit {
   isDataLoaded = false;
   hasloadedDate = false; // To track if data has been loaded
   navigate: string = ''; // To store the navigate value from the selected assessment
+  isInvalidCode: boolean = false; // Flag to indicate if the code is invalid
 
   constructor(
     private menuService: MenuService,
@@ -90,6 +91,12 @@ export class AssessmentPageComponent  implements OnInit {
 
   onGuidedTypeChange(event:any) {
     this.updateGuidedTypeLabel();
+  }
+
+  onInputChange() {
+    if (!this.assessmentNumber) {
+      this.isInvalidCode = false; 
+    }
   }
 
   onAssessmentChange() {
@@ -206,6 +213,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   goToTest() {
     if (this.selectedAssessment) {
+      this.isInvalidCode = false;
       this.hasloadedDate = false; // Reset the flag to allow reloading data
       this.assessmentNumber = '';
       sessionStorage.setItem('guidedType', this.guidedType);
@@ -314,6 +322,7 @@ export class AssessmentPageComponent  implements OnInit {
   }
 
   viewResult(code: string) {
+    this.isInvalidCode = false;
     if (code && code.toLowerCase().includes('web-')) {
       this.fetchRatResults(code);
     } else if(code && code.toLowerCase().includes('hits-')) {
@@ -332,6 +341,7 @@ export class AssessmentPageComponent  implements OnInit {
       this.GetAssessmentResponsebycode(url);
     } else {
       this.selectedAssessment = '';
+      this.isInvalidCode = true;
     }
   }
 

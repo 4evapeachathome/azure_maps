@@ -110,8 +110,8 @@
                           </ion-radio-group>
                         </td>
                       </tr>
-                    
-                      <tr *ngFor="let sub of question.DAChild; let j = index" class="sub-questions">
+                      <ng-container *ngIf="question.selected === 'Yes'">
+                      <tr *ngFor="let sub of question.DAChild; let j = index"  class="sub-questions">
                         <th>
                           {{ currentPageIndex * questionsPerPage + i + 1 }}{{ getCharFromCode(97 + j) }}.
                           {{ sub.questionText }}
@@ -129,6 +129,7 @@
                           </ion-radio-group>
                         </td>
                       </tr>
+                      </ng-container>
                     </ng-container>
                   </tbody>
            
