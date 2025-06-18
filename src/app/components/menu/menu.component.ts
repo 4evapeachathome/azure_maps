@@ -240,10 +240,13 @@ collapseAllSections(): void {
       item.expanded = !item.expanded; // Toggle the expanded state
     }
     // Expand non-root items with children if not already expanded
+    // else if (item.children && item.children.length > 0) {
+    //   if (!item.expanded) {
+    //     item.expanded = true;
+    //   }
+    // }
     else if (item.children && item.children.length > 0) {
-      if (!item.expanded) {
-        item.expanded = true;
-      }
+      item.expanded = !item.expanded;
     }
   
     if (item.link) {
