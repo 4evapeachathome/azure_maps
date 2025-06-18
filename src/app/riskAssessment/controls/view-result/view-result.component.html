@@ -79,7 +79,7 @@
               <ion-col size="12" size-sm="12" size-lg="7" class="p-0">            
                 <ion-row *ngIf="qCodeValue !== ''"> 
                   <ion-col size="12" size-sm="12" >
-                    <ion-text>Here is your QRcode:</ion-text>
+                    <ion-text>Here is your QR code:</ion-text>
                     <div class="qr-code-wrapper mobile-center-align">
                         <div *ngIf="qCodeValue !== ''">
                        <qrcode #qrcodeElement [qrdata]="qCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
@@ -111,9 +111,11 @@
                         <ion-text >
                   Thanks for taking this assessment.<br /><br />
 
-                  <div>Your score is: <span class="score">{{ item.assessmentScore }}</span></div>
-                  <div class="result" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">Status: {{item.assessmentScore >= 20 ?
-                    'Positive' : 'Negative'}}</div>
+                  <div>Here is your score: <span class="score">{{ item.assessmentScore }}</span></div>
+                  <div class="result" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">
+                    <strong>Status: <span class="highlight">{{item.assessmentScore >= 20 ?
+                    'Positive' : 'Negative'}}</span></strong>
+                    </div>
                     </ion-text>
                     </ion-col>
                   </ion-row>
@@ -121,11 +123,12 @@
                 
                   <ion-row *ngIf="qCodeValue !== ''"> 
                   <ion-col size="12" size-sm="12" >
-                    <ion-text>Here is your QRcode:</ion-text>
+                    <ion-text><strong>Here is your QR code:</strong></ion-text>
                     <div class="qr-code-wrapper mobile-center-align">
                         <div *ngIf="qCodeValue !== ''">
                        <qrcode #qrcodeElement [qrdata]="qCodeValue" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
                    </div>
+                   <ion-text>Code: {{assessmentNumber}}</ion-text>
                       </div>
                   </ion-col>
                 </ion-row> 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, NgZone, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -27,6 +27,8 @@ export class LoginPageComponent  implements OnInit {
   isCaptchaVerified: boolean = false;
   captchaToken: string = '';
   widgetId: number = -1;
+  @Output() startloader = new EventEmitter<void>();
+  @Output() stoploader = new EventEmitter<Error>();
 
   constructor(
     private fb: FormBuilder,
@@ -122,6 +124,7 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
 
 
   onForgotPassword(event: Event) {
+    this.startloader.emit();
     event.preventDefault(); // prevent link behavior
     const rawUsername = this.loginForm.get('username')?.value || '';
     const username = rawUsername.trim().toLowerCase();
@@ -134,11 +137,13 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
         await this.showToast(res.message || 'Reset email sent, please check your inbox.', 3000, 'top');
         this.loginForm.patchValue({ password: '' });
         this.loginForm.get('password')?.setErrors(null);
+        this.stoploader.emit();
       },
       error: async (err: any) => {
         await this.showToast(err.error.error.message, 3000, 'top');
         this.loginForm.patchValue({ password: '' });
         this.loginForm.get('password')?.setErrors(null);
+        this.stoploader.emit();
       },
     });
   }
@@ -197,7 +202,7 @@ async onSubmit() {
     this.resetCaptcha();
     return;
   }
-
+  this.startloader.emit();
   const { username, password } = this.loginForm.value;
   const processedUsername = username?.trim()?.toLowerCase();
 
@@ -209,10 +214,12 @@ async onSubmit() {
     let url = sessionStorage.getItem('redirectUrl');
     if (url?.includes('code')) {
       this.hasFetchedLogins = false;
+      this.stoploader.emit();
       this.router.navigateByUrl(url);
       sessionStorage.removeItem('redirectUrl');
     } else {
       this.hasFetchedLogins = false;
+      this.stoploader.emit();
       await this.router.navigate(['/riskassessment']);
     }
 
@@ -252,6 +259,7 @@ async onSubmit() {
       sameSite: 'Strict',
       secure: true,
     });
+    this.stoploader.emit();
   }
 
   resetCaptcha() {

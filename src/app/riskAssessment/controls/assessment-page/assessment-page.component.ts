@@ -34,6 +34,7 @@ export class AssessmentPageComponent  implements OnInit {
   isDataLoaded = false;
   hasloadedDate = false; // To track if data has been loaded
   navigate: string = ''; // To store the navigate value from the selected assessment
+  isInvalidCode: boolean = false; // Flag to indicate if the code is invalid
 
   constructor(
     private menuService: MenuService,
@@ -76,6 +77,7 @@ export class AssessmentPageComponent  implements OnInit {
           });
         }
         this.selectedAssessment = null;
+        this.assessmentNumber = '';
         this.loaded = true;
       } catch {
         console.error('Invalid cookie format, logging out...');
@@ -91,6 +93,12 @@ export class AssessmentPageComponent  implements OnInit {
     this.updateGuidedTypeLabel();
   }
 
+  onInputChange() {
+    if (!this.assessmentNumber) {
+      this.isInvalidCode = false; 
+    }
+  }
+
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
@@ -99,7 +107,6 @@ export class AssessmentPageComponent  implements OnInit {
         }
     });
     sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
-    console.log('this.selectedAssessment>>>>>>', this.selectedAssessment, this.assessmentTypes, selectedAssessmentId);
 
     // Extract and store the navigate value
     this.navigate = selectedAssessmentId[0]?.navigate || '';
@@ -206,7 +213,9 @@ export class AssessmentPageComponent  implements OnInit {
 
   goToTest() {
     if (this.selectedAssessment) {
+      this.isInvalidCode = false;
       this.hasloadedDate = false; // Reset the flag to allow reloading data
+      this.assessmentNumber = '';
       sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.navigate?.toLowerCase().trim();
       switch (assessmentName) {
@@ -273,7 +282,6 @@ export class AssessmentPageComponent  implements OnInit {
 
   navigateWithRatsCache(targetRoute: string) {
     const cached = this.menuService.getRatsAssessment();
-    console.log('navigateWithRatsCache selectedAssessment*******', this.selectedAssessment);
     if (cached) {
       sessionStorage.removeItem('isHits');
       sessionStorage.removeItem('isSSripa');
@@ -314,6 +322,7 @@ export class AssessmentPageComponent  implements OnInit {
   }
 
   viewResult(code: string) {
+    this.isInvalidCode = false;
     if (code && code.toLowerCase().includes('web-')) {
       this.fetchRatResults(code);
     } else if(code && code.toLowerCase().includes('hits-')) {
@@ -332,6 +341,7 @@ export class AssessmentPageComponent  implements OnInit {
       this.GetAssessmentResponsebycode(url);
     } else {
       this.selectedAssessment = '';
+      this.isInvalidCode = true;
     }
   }
 
@@ -343,8 +353,8 @@ export class AssessmentPageComponent  implements OnInit {
         }
       },
       error: (error: any) => {
-        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch the assessment';
-        this.showToast(errorMsg, 3000, 'top');
+        console.error('Rat Assessment fetch error:', error);
+        this.showToast(String(error), 3000, 'top');
       }
     })
   }
@@ -359,7 +369,7 @@ export class AssessmentPageComponent  implements OnInit {
         this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
       } catch (error) {
         console.error('DA Assessment fetch error:', error);
-        this.showToast('Failed to fetch the assessment', 3000, 'top');
+        this.showToast(String(error), 3000, 'top');
       }
     }
   
@@ -372,7 +382,7 @@ export class AssessmentPageComponent  implements OnInit {
         this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
       } catch (error) {
         console.error('HITS Assessment fetch error:', error);
-        this.showToast('Failed to fetch the assessment', 3000, 'top');
+        this.showToast(String(error), 3000, 'top');
       }
     }
   
@@ -384,7 +394,7 @@ export class AssessmentPageComponent  implements OnInit {
         },
         (error) => { 
           console.error('SSRIPA Assessment fetch error:', error);
-          this.showToast('Failed to fetch the assessment', 3000, 'top');
+          this.showToast(String(error), 3000, 'top');
         }
       );
     }
