@@ -1434,8 +1434,16 @@ getRatsAssessmentQuestions(): Observable<any> {
           return null; // No results found
         }
       }),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => new Error(error?.error?.message || 'An error occurred while fetching result. Please try again later.'));
+      catchError((error: any) => {
+        console.error('Error fetching web Assessment Response API:', error);
+    
+      // Extract message from backend response
+      const backendMessage =
+        error?.error?.error?.message || // Strapi v4/v5 structure
+        error?.error?.message ||        // Some other possible nesting
+        'An error occurred while fetching the Qrcode';
+    
+      return throwError(() => new Error(backendMessage));
       })
     );
 
@@ -1524,8 +1532,15 @@ getAssessmentResponse(url: string): Observable<any> {
     tap((response: any) => {
     }),
     catchError((error: any) => {
-      console.error('Error fetching DA Assessment Response API:', error);
-      return throwError(() => new Error('An error occurred while fetching DA Assessment Response API. Please try again later.'));
+      console.error('Error fetching Assessment Response API:', error);
+    
+      // Extract message from backend response
+      const backendMessage =
+        error?.error?.error?.message || // Strapi v4/v5 structure
+        error?.error?.message ||        // Some other possible nesting
+        'An error occurred while fetching the Qrcode';
+    
+      return throwError(() => new Error(backendMessage));
     })
   );
 }

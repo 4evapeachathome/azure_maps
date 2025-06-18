@@ -9,7 +9,7 @@
     <!-- First Row: Single Component -->
     <ion-row class="ra-container h-100">
       <ion-col>
-        <login-page [reloadFlag]="reloadLoginData"></login-page>
+        <login-page (startloader)="showLoader()" (stoploader)="hideLoader()" [reloadFlag]="reloadLoginData"></login-page>
       </ion-col>
     </ion-row>
  

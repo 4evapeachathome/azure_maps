@@ -341,8 +341,8 @@ export class AssessmentPageComponent  implements OnInit {
         }
       },
       error: (error: any) => {
-        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch the assessment';
-        this.showToast(errorMsg, 3000, 'top');
+        console.error('Rat Assessment fetch error:', error);
+        this.showToast(String(error), 3000, 'top');
       }
     })
   }
@@ -357,7 +357,7 @@ export class AssessmentPageComponent  implements OnInit {
         this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
       } catch (error) {
         console.error('DA Assessment fetch error:', error);
-        this.showToast('Failed to fetch the assessment', 3000, 'top');
+        this.showToast(String(error), 3000, 'top');
       }
     }
   
@@ -370,7 +370,7 @@ export class AssessmentPageComponent  implements OnInit {
         this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
       } catch (error) {
         console.error('HITS Assessment fetch error:', error);
-        this.showToast('Failed to fetch the assessment', 3000, 'top');
+        this.showToast(String(error), 3000, 'top');
       }
     }
   
@@ -382,7 +382,7 @@ export class AssessmentPageComponent  implements OnInit {
         },
         (error) => { 
           console.error('SSRIPA Assessment fetch error:', error);
-          this.showToast('Failed to fetch the assessment', 3000, 'top');
+          this.showToast(String(error), 3000, 'top');
         }
       );
     }

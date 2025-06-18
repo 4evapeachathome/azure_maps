@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, NgZone, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -26,6 +26,8 @@ export class SetPasswordComponent implements OnInit {
     captchaToken: string = '';
     widgetId: number = -1;
     private hasFetchedLogins: boolean = false;
+     @Output() startloader = new EventEmitter<void>();
+      @Output() stoploader = new EventEmitter<Error>();
 
   resolvedData: any;
   previousUrl: string = '';
@@ -162,6 +164,7 @@ export class SetPasswordComponent implements OnInit {
     }
 
     if (this.flowType === 'onboarding' || this.flowType === 'forgotpassword') {
+      this.startloader.emit();
       await this.handlePasswordUpdate();
     }
   }
@@ -195,18 +198,20 @@ export class SetPasswordComponent implements OnInit {
     let tempPass = password.trim();
     if (!username || !tempPass || !newPass) {
       await this.showToast('All fields are required', 3000, 'top');
+      this.stoploader.emit();
       return;
     }
     this.apiService.changePassword(processedUsername, tempPass, newPass).subscribe({
       next: async (res: any) => {
         await this.showToast(res?.message || 'Password updated successfully', 2500, 'top');
         this.hasFetchedLogins = false;
+        this.stoploader.emit();
         this.router.navigate(['/login']);
-        //this.userForm.reset();
+        this.userForm.reset();
         this.resetCaptcha();
       },
       error: async (err: any) => {
-        debugger;
+        this.stoploader.emit();
         const message =
           err?.message ||
           err?.error?.message ||

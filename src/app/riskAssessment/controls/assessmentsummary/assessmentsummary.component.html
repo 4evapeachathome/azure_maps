@@ -117,7 +117,7 @@
                 <ion-text>
                 
                   <strong> Your Score: </strong><span class="score">{{ riskValue }}</span><br /><br />
-                  <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: </strong>{{riskValue >= 20 ? 'Positive' : 'Negative'}}</div>
+                  <div class="rat-score" *ngIf="guidedType?.toLowerCase() == 'staff-guided'"><strong>Status: </strong><strong class="highlight">{{riskValue >= 20 ? 'Positive' : 'Negative'}}</strong></div>
                 </ion-text>
               </ion-col>
             </ion-row>
@@ -126,7 +126,7 @@
               <ion-col>
               
                 <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
-                  <ion-text>Please expediate action.</ion-text>
+                  <ion-text class="highlight"><strong>Please expediate action.</strong></ion-text>
                 </ng-container>
                 <ng-template #selfGuided>
                   <strong class="highlight">
