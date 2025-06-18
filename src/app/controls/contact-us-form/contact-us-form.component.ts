@@ -49,6 +49,11 @@ export class ContactUsFormComponent  implements OnInit {
         return;
       }
       this.showloadeder.emit(); 
+      this.formData = {
+        name: this.formData?.name?.trim(),
+        email: this.formData?.email?.trim(),
+        feedback: this.formData?.feedback?.trim()
+      };
       this.apiService.sendContactData(this.formData).subscribe({
         next: async (response) => {
           
@@ -127,9 +132,9 @@ export class ContactUsFormComponent  implements OnInit {
 
   isFormEmpty(): boolean {
     const isFormDataEmpty = (
-      !this.formData.name.trim() &&
-      !this.formData.email.trim() &&
-      !this.formData.feedback.trim()
+      !this.formData?.name?.trim() &&
+      !this.formData?.email?.trim() &&
+      !this.formData?.feedback?.trim()
     );
     return isFormDataEmpty && !this.isCaptchaVerified;
   }
