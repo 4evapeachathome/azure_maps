@@ -323,6 +323,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   viewResult(code: string) {
     this.isInvalidCode = false;
+    code = code.trim();
     if (code && code.toLowerCase().includes('web-')) {
       this.fetchRatResults(code);
     } else if(code && code.toLowerCase().includes('hits-')) {
