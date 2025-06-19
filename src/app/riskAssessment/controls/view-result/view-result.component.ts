@@ -172,7 +172,7 @@ export class ViewResultComponent  implements OnInit {
     const responseAssessmentType = response?.assessment_type;
     debugger;
     return userAssessmentTypes.some(
-      (type:any) => type.documentId === responseAssessmentType.documentId
+      (type:any) => type?.documentId === responseAssessmentType?.documentId
     );
   }
 
