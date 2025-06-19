@@ -34,6 +34,11 @@
                 </div>
               </ion-col>
             </ion-row>
+                 <ion-row>
+              <ion-col size="12" size-sm="12">
+                <h2>{{this.selectedAssessment}} Assessment</h2>
+              </ion-col>
+            </ion-row>
             <ion-row>
               <ion-col size="12" size-sm="5">
                 <ion-item>
@@ -49,11 +54,7 @@
 
               </ion-col>
             </ion-row>
-            <ion-row>
-              <ion-col size="12" size-sm="12">
-                <h2>{{this.selectedAssessment}} Assessment</h2>
-              </ion-col>
-            </ion-row>
+       
 
 
             <ion-row>
@@ -66,7 +67,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
+                    <tr class="ta-tr-bg">
                       <th class="tbody-first"></th>
                       <th class="tbody-container row-header">
                         <div class="tbc-content"><span *ngFor="let scale of scaleOptions">{{ scale }}</span></div>
@@ -74,7 +75,7 @@
 
                     </tr>
                     <tr *ngFor="let question of ratsQuestions;let i = index">
-                      <th>{{ i + 1 }}. {{ question.text }}</th>
+                      <td>{{ i + 1 }}. {{ question.text }}</td>
                       <td class="tbody-container row-container">
 
                         <ion-radio-group value="center" class="tbc-content" [(ngModel)]="question.selected"

@@ -61,7 +61,7 @@ height: calc(100% - 40px);
     margin: 0;  
   }
   h3{
-    color: $color-dark-Gray;
+    color: $color-deep-Gray;
     font-size: $font-size-l;
     margin: 0;
     margin-bottom: 12px;
@@ -215,7 +215,7 @@ justify-content: end;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 10000;
  a {
-  color: $color-dark-Gray;
+  color: $color-deep-Gray;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
@@ -378,7 +378,7 @@ ion-radio::label .radio-wrapper {
       }
       .row-header{
        
-           text-transform: uppercase;
+         //  text-transform: uppercase;
        //font-size: $font-size-sm;
       }
       .row-container{
@@ -460,7 +460,7 @@ span, ion-radio{
         background: var(--color-white-smoke);
     th{
       padding-left: 50px;
-      color: var(--color-dark-Gray) !important;
+      color: var(--color-deep-Gray) !important;
       font-weight: normal;
     }
   }
@@ -494,4 +494,9 @@ span, ion-radio{
 }
 .qr-code-text{
   margin-bottom: 24px;
+}
+.ta-tr-bg{
+  background: var(--risk-login-background);
+    // color: var(--color-deep-Gray);
+    // font-size: 1rem;
 }
