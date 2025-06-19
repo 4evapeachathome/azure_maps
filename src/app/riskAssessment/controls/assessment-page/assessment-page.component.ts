@@ -360,6 +360,9 @@ export class AssessmentPageComponent  implements OnInit {
       next: (response: any) => {
         if (response) {
           this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
+          this.isInvalidCode = false;
+      this.hasloadedDate = false; // Reset the flag to allow reloading data
+      this.assessmentNumber = '';
         }
       },
       error: (error: any) => {
@@ -377,6 +380,9 @@ export class AssessmentPageComponent  implements OnInit {
         });
         const response = res?.data;
         this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
+        this.isInvalidCode = false;
+      this.hasloadedDate = false; // Reset the flag to allow reloading data
+      this.assessmentNumber = '';
       } catch (error) {
         console.error('DA Assessment fetch error:', error);
         this.showToast(String(error), 3000, 'top');
@@ -390,6 +396,9 @@ export class AssessmentPageComponent  implements OnInit {
         });
         const response = res?.data;
         this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
+        this.isInvalidCode = false;
+      this.hasloadedDate = false; // Reset the flag to allow reloading data
+      this.assessmentNumber = '';
       } catch (error) {
         console.error('HITS Assessment fetch error:', error);
         this.showToast(String(error), 3000, 'top');
@@ -401,6 +410,9 @@ export class AssessmentPageComponent  implements OnInit {
         (res: any) => {
         const response = res?.data;
         this.router.navigateByUrl('/viewresult?code=' + response?.AssessmentGuid);
+        this.isInvalidCode = false;
+      this.hasloadedDate = false; // Reset the flag to allow reloading data
+      this.assessmentNumber = '';
         },
         (error) => { 
           console.error('SSRIPA Assessment fetch error:', error);
