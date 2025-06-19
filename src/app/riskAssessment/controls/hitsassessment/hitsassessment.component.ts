@@ -189,7 +189,8 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                 guidedType: this.guidedType,
                 isCriticalAlert: criticalAlert,
                 CaseNumber: this.caseNumber,
-                support_service: this.loggedInUser?.support_service?.documentId
+                support_service: this.loggedInUser?.support_service?.documentId,
+                selectedAssessmentDocmentId: sessionStorage.getItem('selectedAssessmentDocId') || ''
               }
             };
   
