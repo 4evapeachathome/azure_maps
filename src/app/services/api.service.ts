@@ -1506,19 +1506,22 @@ saveDaAssessmentResponse(payload: any): Observable<any> {
 getAssessmentResponse(url: string): Observable<any> {
   return this.getWithQuery(url, {
     populate: {
-      support_service: {
-        fields: ['documentId'],
-        populate: {
-          user_login: {
-            fields: ['username'],
-            populate: {
-              assessment_type: {
-                fields: ['name', 'description']
-              }
-            }
-          }
-        }
+      assessment_type: {
+        fields: ['name', 'documentId','navigate','description'],
       }
+      // support_service: {
+      //   fields: ['documentId'],
+      //   populate: {
+      //     user_login: {
+      //       fields: ['username'],
+      //       populate: {
+      //         assessment_type: {
+      //           fields: ['name', 'description']
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
     },
     fields: [
       'id',
