@@ -272,6 +272,9 @@ export class AssessmentPageComponent  implements OnInit {
 
   async logout() {
     try {
+      this.isInvalidCode = false;
+      this.hasloadedDate = false; // Reset the flag to allow reloading data
+      this.assessmentNumber = '';
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {
