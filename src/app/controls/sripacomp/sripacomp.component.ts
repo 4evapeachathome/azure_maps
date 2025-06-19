@@ -153,7 +153,8 @@ submitAssessmentResponse(): Observable<any> {
       support_service: null,
       guidedType: 'self-guided',
       CaseNumber: '', // Replace with actual case number if available
-      IsAssessmentfromEducationModule: true
+      IsAssessmentfromEducationModule: true,
+      assessment_type:null,
     }
   };
 
