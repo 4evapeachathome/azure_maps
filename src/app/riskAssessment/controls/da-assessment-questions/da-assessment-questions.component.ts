@@ -280,6 +280,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
                 CaseNumber: this.caseNumber,
                 support_service: this.loggedInUser?.support_service?.documentId,
                 Levelofdanger: levelOfDanger,
+                assessment_type: sessionStorage.getItem('selectedAssessmentDocId') || ''
               }
             };
   

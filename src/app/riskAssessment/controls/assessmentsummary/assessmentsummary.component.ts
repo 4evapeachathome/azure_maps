@@ -636,6 +636,7 @@ getCharFromCode(code: number): string {
     sessionStorage.removeItem('isSSripa');
     sessionStorage.removeItem('isDanger');
     sessionStorage.removeItem('selectedAssessment');
+    sessionStorage.removeItem('selectedAssessmentDocId');
     this.caseNumber = '';
     this.selectedAssessment = null;
     this.hasFetchedData = false;
