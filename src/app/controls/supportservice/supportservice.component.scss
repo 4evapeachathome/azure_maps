@@ -60,6 +60,9 @@ ion-searchbar {
         --padding-start: 0 !important;
         --padding-end: 0 !important;
         margin-inline-end: 0 !important;
+        ion-icon{
+          margin-right: 8px !important;
+        }
       }
     }
   }
@@ -262,9 +265,9 @@ ion-badge {
   --padding-top: 10px;
     --padding-bottom: 10px;
     margin-inline-start: 8px;
-    --padding-start: 10px !important;
-    --padding-end: 10px !important;
-    min-width: 57px;
+    --padding-start: 12px !important;
+    --padding-end: 12px !important;
+   // min-width: 57px;
     ion-icon{
       width: 16px;
     }

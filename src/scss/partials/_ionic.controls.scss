@@ -90,13 +90,17 @@ ion-button{
 
   
 .search-toolbar {
-  .searchbar-input.sc-ion-searchbar-md {
+  .searchbar-input {
     border: 0;
     box-shadow: none;
     padding-inline-start: 0;
+        padding-inline-end: 25px;
     color: var(--color-dark-Gray);
   }
-  .searchbar-search-icon.sc-ion-searchbar-md {
+  .searchbar-clear-button{
+    inset-inline-end: 0;
+}
+  .searchbar-search-icon{
     display: none;
   }
 }
