@@ -78,7 +78,7 @@
               <ion-row class="hits-summary-text" *ngIf="isDaAssessment || isHitAssessment">
                 <ion-col >
                   <strong> Your score : </strong><span class="score">{{ score }}</span><br /><br />
-                  <ng-container *ngIf="isHitAssessment" >
+                  <ng-container *ngIf="isHitAssessment && guidedType === 'staff-guided'" >
                     <strong>Note:</strong><br /> {{ note }}<br /><br />
                     <strong>Caution:</strong> <br />{{ caution }}
                   </ng-container>
