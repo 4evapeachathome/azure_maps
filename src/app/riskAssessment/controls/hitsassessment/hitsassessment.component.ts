@@ -157,29 +157,41 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
             const answerSummary: { question: string; answer: string | null }[] = [];
             let criticalAlert = false;
   
-            for (const question of this.hitsQuestions) {
-              const selected = question.selected;
-              const selectedScore = selected ? selected.score : null;
-              const selectedAnswer = selected ? selected.label : null;
-  
-              if (selectedScore !== null) {
-                totalScore += selectedScore;
-              }
-  
-              answerSummary.push({
-                question: question.text,
-                answer: selectedAnswer
-              });
-  
-              if (!criticalAlert && question.weight_critical_alert && selected) {
-                const matchFound = question.criticalOptions.some((opt: any) =>
-                  opt.score === selected.score || opt.label === selected.label
-                );
-                if (matchFound) {
-                  criticalAlert = true;
-                }
-              }
-            }
+            const criticalQuestions = this.hitsQuestions.filter(q => q.weight_critical_alert);
+let allCriticalsMatched = true;
+
+for (const question of this.hitsQuestions) {
+  const selected = question.selected;
+  const selectedScore = selected ? selected.score : null;
+  const selectedAnswer = selected ? selected.label : null;
+
+  if (selectedScore !== null) {
+    totalScore += selectedScore;
+  }
+
+  answerSummary.push({
+    question: question.text,
+    answer: selectedAnswer,
+  });
+
+  if (question.weight_critical_alert) {
+    if (!selected) {
+      allCriticalsMatched = false;
+    } else {
+      const matchFound = question.criticalOptions.some(
+        (opt: any) =>
+          opt.score === selected.score || opt.label === selected.label
+      );
+      if (!matchFound) {
+        allCriticalsMatched = false;
+      }
+    }
+  }
+}
+
+if (criticalQuestions.length > 0 && allCriticalsMatched) {
+  criticalAlert = true;
+}
   
             const payload = {
               data: {

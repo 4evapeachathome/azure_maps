@@ -35,6 +35,7 @@ export class ViewResultComponent  implements OnInit {
   note!: string;
   caution!: string;
   score!:any;
+  highratedQuestions:boolean = false; // To track if any high-rated questions are answered
   selectedAssessment: string | null = null; // To store the selected assessment type
   riskValue!: number; // Dynamic risk value (0-100)
   supportService:any;
@@ -343,6 +344,7 @@ getCharFromCode(code: number): string {
     this.isassessmenfromeducation = response.IsAssessmentfromEducationModule;
     this.updateGuidedTypeLabel();
     this.caseNumber = response?.CaseNumber;
+    this.highratedQuestions =response.answeredHighratedquestion;
     this.qCodeValue = response.AssessmentGuid
       ? `${window.location.origin}/viewresult?code=${response.AssessmentGuid}`
       : '';

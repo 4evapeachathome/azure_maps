@@ -80,7 +80,9 @@
                   <strong> Your score : </strong><span class="score">{{ score }}</span><br /><br />
                   <ng-container *ngIf="isHitAssessment && guidedType === 'staff-guided'" >
                     <strong>Note:</strong><br /> {{ note }}<br /><br />
-                    <strong>Caution:</strong> <br />{{ caution }}
+                    <ng-container *ngIf="hitsCriticalAlert">
+                      <strong>Caution:</strong> <br />{{ caution }}
+                    </ng-container>                    
                   </ng-container>
                   <ng-container *ngIf="isDaAssessment">
                   <ng-container *ngIf="(guidedType === 'staff-guided') && isDaAssessment; else selfGuided">
@@ -96,7 +98,7 @@
 
 
               </ion-row>
-              <ion-row class="hits-summary-text" *ngIf="isSSripa">
+              <ion-row class="hits-summary-text" *ngIf="isSSripa && highratedQuestions">
                 <ion-col>
                 
                   <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
@@ -166,7 +168,7 @@
                <ion-col size="12" size-sm="12" size-lg="3" class="risk-item-center">
                  <div class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitAssessment || isDaAssessment)">
                    
-                   <app-summarypage  [range]="rangevalue" [isRiskRed]="hitsCriticalAlert" [riskScore]="score"></app-summarypage>
+                   <app-summarypage  [range]="rangevalue" [riskScore]="score"></app-summarypage>
              
                 </div>
                  <div>

@@ -134,6 +134,13 @@ capitalizeFirstLetter(str: string | null) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
+checkHighSeverityYes(): boolean {
+  return this.sripa.some((q, i) => 
+    q.severity?.toLowerCase() === 'high' &&
+    this.selectedOptions[i]?.trim().toLowerCase() === 'yes'
+  );
+}
+
 submitAssessmentResponse(): Observable<any> {
   const respondedQuestions = this.sripa.map((q, index) => {
     const selected = this.selectedOptions[index];
@@ -144,13 +151,13 @@ submitAssessmentResponse(): Observable<any> {
     };
   });
 
-  
-
+  const isHighSeverityYes = this.checkHighSeverityYes();
   const payload = {
     data: {
       response: respondedQuestions,
       AssessmentGuid: this.ssripaGuid,
       support_service: null,
+      answeredHighratedquestion:isHighSeverityYes,
       guidedType: 'self-guided',
       CaseNumber: '', // Replace with actual case number if available
       IsAssessmentfromEducationModule: true,

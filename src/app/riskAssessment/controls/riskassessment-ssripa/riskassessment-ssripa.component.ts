@@ -119,6 +119,13 @@ hasloadedDate: boolean = false;
     this.showresults = this.selectedOptions.some(opt => opt !== null);
   }
 
+  checkHighSeverityYes(): boolean {
+    return this.sripa.some((q, i) => 
+      q.severity?.toLowerCase() === 'high' &&
+      this.selectedOptions[i]?.trim().toLowerCase() === 'yes'
+    );
+  }
+
   async submitAssessmentResponse() {
     // Create the alert using AlertController
     const alert = await this.alertController.create({
@@ -143,6 +150,8 @@ hasloadedDate: boolean = false;
                 answer: answer
               };
             });
+
+            const isHighSeverityYes = this.checkHighSeverityYes();
   
             const payload = {
               data: {
@@ -151,6 +160,7 @@ hasloadedDate: boolean = false;
                 support_service: this.loggedInUser?.support_service?.documentId ?? null,
                 CaseNumber: this.caseNumber,
                 guidedType: this.guidedType,
+                answeredHighratedquestion: isHighSeverityYes,
                 IsAssessmentfromEducationModule: false,
                 assessment_type: sessionStorage.getItem('selectedAssessmentDocId') || ''
               }
@@ -162,7 +172,8 @@ hasloadedDate: boolean = false;
                 sessionStorage.setItem('ssripaAssessmentResult', JSON.stringify({
                   summary: respondedQuestions,
                   ssripasurl: `${window.location.origin}/viewresult?code=${response.data.AssessmentGuid}`,
-                  caseNumber: this.caseNumber
+                  caseNumber: this.caseNumber,
+                  answeredHighratedquestion: isHighSeverityYes
                 }));
                 this.hasloadedDate = false; // Reset to allow reloading
                 this.router.navigate(['/riskassessmentsummary']);
