@@ -55,14 +55,14 @@
               </ion-row>
               <ion-row class="hits-summary-text" *ngIf="isDaAssessment || isHitAssessment">
                 <ion-col >
-                  <strong> Here is your score: </strong><br /><span class="score">{{ score }}</span><br />
+                  <strong> Here is your score: </strong><span class="score highlight">{{ score }}</span><br />
                   <ng-container *ngIf="isHitAssessment" >
                     <strong>Note:</strong> {{ note }}<br />
                     <strong>Caution:</strong> {{ caution }}
                   </ng-container>
                   <ng-container *ngIf="isDaAssessment">
                   <ng-container *ngIf="(guidedType === 'staff-guided') && isDaAssessment; else selfGuided">
-                    <strong>Level of Danger:</strong><br /> {{ levelofdanger }}<br />
+                    <strong>Level of Danger: </strong><strong class="highlight">{{ levelofdanger }}</strong><br />
                   </ng-container>
                   <ng-template #selfGuided>
                     <strong class="highlight">
@@ -78,7 +78,7 @@
                 <ion-col>
                 
                   <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
-                    <ion-text class="highlight"><strong>Please expediate action.</strong></ion-text>
+                    <ion-text><strong class="highlight">Please expediate action.</strong></ion-text>
                   </ng-container>
                   <ng-template #selfGuided>
                     <strong class="highlight">
@@ -124,7 +124,7 @@
                         <ion-text >
                   Thanks for taking this assessment.<br /><br />
 
-                  <div>Here is your score: <span class="score">{{ item.assessmentScore }}</span></div>
+                  <div>Here is your score: <span class="score highlight">{{ item.assessmentScore }}</span></div>
                   <div class="result" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">
                     <strong>Status: <span class="highlight">{{item.assessmentScore >= 20 ?
                     'Positive' : 'Negative'}}</span></strong>

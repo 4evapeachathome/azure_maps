@@ -138,14 +138,8 @@ export class ViewResultComponent  implements OnInit {
     this.apiService.getRatsResult(code).subscribe({
       next: (response: any) => {
         if (response) {
-          let checkValidation = false;
-          this.loggedInUser?.assessment_type?.map((loggedInUser: any) => {
-              response.support_service?.user_login?.assessment_type?.map((type: any) => {
-              if(loggedInUser?.documentId == type?.documentId) {
-                checkValidation = true;
-              }
-            });
-          });
+          let checkValidation = this.CheckAssessmenttypeAuthorize(response);
+
 
           if(checkValidation) {
             this.AssessmentResultList.push(response);
@@ -173,6 +167,15 @@ export class ViewResultComponent  implements OnInit {
     await presentToast(this.toastController, message, duration, position);
   }
 
+  CheckAssessmenttypeAuthorize(response:any) : boolean{
+    const userAssessmentTypes = this.loggedInUser.assessment_type || [];
+    const responseAssessmentType = response?.assessment_type;
+    debugger;
+    return userAssessmentTypes.some(
+      (type:any) => type.documentId === responseAssessmentType.documentId
+    );
+  }
+
   async GetAssessmentResponsebycode(url: string) {
     if (url && this.isDaAssessment) {
       try {
@@ -181,14 +184,8 @@ export class ViewResultComponent  implements OnInit {
         });
         const response = res?.data;
 
-        let checkValidation = false;
-        this.loggedInUser?.assessment_type?.map((item: any) => {
-            response.support_service?.user_login?.assessment_type?.map((type: any) => {
-            if(item?.documentId == type?.documentId) {
-              checkValidation = true;
-            }
-          });
-        });
+
+        let checkValidation = this.CheckAssessmenttypeAuthorize(response);
 
         if(checkValidation) {
           this.responseJson = response.response;
@@ -222,17 +219,8 @@ export class ViewResultComponent  implements OnInit {
         });
         const response = res?.data;
         
-        let checkValidation = false;
-        this.loggedInUser?.assessment_type?.map((item: any) => {
-          //debugger
-            response.support_service?.user_login?.assessment_type?.map((type: any) => {
-              //debugger
-            if(item?.documentId == type?.documentId) {
-              checkValidation = true;
-            }
-          });
-        });
-        debugger;
+     
+        let checkValidation = this.CheckAssessmenttypeAuthorize(response);
         if(checkValidation) {
           this.responseJson = response.response;
           this.guidedType = response.guidedType;
@@ -263,18 +251,14 @@ export class ViewResultComponent  implements OnInit {
       this.apiService.getAssessmentResponse(url).subscribe(
         (res: any) => {
           const response = res?.data;
-
+          
         let checkValidation = false;
+
+
         if(response.IsAssessmentfromEducationModule) {
           this.allowSrppa(response);
         } else {
-          this.loggedInUser?.assessment_type?.map((item: any) => {
-              response.support_service?.user_login?.assessment_type?.map((type: any) => {
-              if(item?.documentId == type?.documentId) {
-                checkValidation = true;
-              }
-            });
-          });
+          checkValidation = this.CheckAssessmenttypeAuthorize(response);
 
           if(checkValidation) {
             this.allowSrppa(response);

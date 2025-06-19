@@ -23,7 +23,7 @@ export class AssessmentPageComponent  implements OnInit {
   caseNumber: string = '';
   loaded: boolean = false;
   guidedType: 'self-guided' | 'staff-guided' = 'staff-guided';
-  assessmentTypes: { id: number; name: string; description: string; navigate:string }[] = [];
+  assessmentTypes: { id: number; name: string; description: string; navigate:string, documentId: string }[] = [];
   guidedTypeLabel: string = 'Staff-Guided';
   assessmentNumber: string = '';
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
@@ -101,6 +101,12 @@ export class AssessmentPageComponent  implements OnInit {
 
   onAssessmentChange() {
     sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
+    let selectedAssessmentDocId = this.assessmentTypes.filter((x: any) => {
+      if(x.name?.toLowerCase() == this.selectedAssessment?.toLowerCase()) {
+        return x;
+      }
+    });
+    sessionStorage.setItem('selectedAssessmentDocId', selectedAssessmentDocId[0].documentId);
     let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
       if (type.name?.toLowerCase() == this.selectedAssessment?.toLowerCase()) {
             return type;
@@ -266,6 +272,9 @@ export class AssessmentPageComponent  implements OnInit {
 
   async logout() {
     try {
+      this.isInvalidCode = false;
+      this.hasloadedDate = false; // Reset the flag to allow reloading data
+      this.assessmentNumber = '';
       await this.menuService.logout();
       // this.guidedType = 'staff-guided';
     } catch (error: any) {

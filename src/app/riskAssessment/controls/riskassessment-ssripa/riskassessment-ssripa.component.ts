@@ -151,7 +151,8 @@ hasloadedDate: boolean = false;
                 support_service: this.loggedInUser?.support_service?.documentId ?? null,
                 CaseNumber: this.caseNumber,
                 guidedType: this.guidedType,
-                IsAssessmentfromEducationModule: false
+                IsAssessmentfromEducationModule: false,
+                assessment_type: sessionStorage.getItem('selectedAssessmentDocId') || ''
               }
             };
   
