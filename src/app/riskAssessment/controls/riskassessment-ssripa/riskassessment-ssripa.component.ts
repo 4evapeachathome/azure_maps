@@ -152,7 +152,7 @@ hasloadedDate: boolean = false;
                 CaseNumber: this.caseNumber,
                 guidedType: this.guidedType,
                 IsAssessmentfromEducationModule: false,
-                selectedAssessmentDocmentId: sessionStorage.getItem('selectedAssessmentDocId') || ''
+                assessment_type: sessionStorage.getItem('selectedAssessmentDocId') || ''
               }
             };
   

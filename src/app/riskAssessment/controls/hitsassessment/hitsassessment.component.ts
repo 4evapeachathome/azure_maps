@@ -190,7 +190,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                 isCriticalAlert: criticalAlert,
                 CaseNumber: this.caseNumber,
                 support_service: this.loggedInUser?.support_service?.documentId,
-                selectedAssessmentDocmentId: sessionStorage.getItem('selectedAssessmentDocId') || ''
+                assessment_type: sessionStorage.getItem('selectedAssessmentDocId') || ''
               }
             };
   

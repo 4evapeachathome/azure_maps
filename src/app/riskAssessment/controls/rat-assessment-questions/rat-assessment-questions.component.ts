@@ -210,7 +210,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
               caseNumber: this.caseNumber || '',
               guidedType: this.guidedType,
               qrCodeUrl: `${window.location.origin}/viewresult?code=${assessmentNumberID}`,
-              selectedAssessmentDocmentId: sessionStorage.getItem('selectedAssessmentDocId') || ''
+              assessment_type: sessionStorage.getItem('selectedAssessmentDocId') || ''
             };
 
 
@@ -222,7 +222,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
               result.caseNumber,
               result.guidedType,
               result.qrCodeUrl,
-              result.selectedAssessmentDocmentId
+              result.assessment_type
             ).subscribe({
               next: (res: any) => {
                 if (res?.data) {
