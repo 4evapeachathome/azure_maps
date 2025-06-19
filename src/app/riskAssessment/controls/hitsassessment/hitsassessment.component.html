@@ -83,7 +83,7 @@
                     </tr>
                   
                     <!-- Table Rows for Questions -->
-                    <tr *ngFor="let question of hitsQuestions; let i = index">
+                    <tr [ngClass]="{ 'unanswered': isUnanswered(question) }" *ngFor="let question of hitsQuestions; let i = index">
                       <td>{{ i + 1 }}. {{ question.text }}</td>
                       <td class="tbody-container row-container">
                         <ion-radio-group class="tbc-content" [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>
@@ -142,7 +142,7 @@
                   <ion-button color="secondary" (click)="goBack()"
                     >Back</ion-button
                   >
-                  <ion-button color="primary" [disabled]="!isAllQuestionsAnswered()" (click)="submit()"
+                  <ion-button color="primary" (click)="submit()"
                     >Submit</ion-button
                   >
                 </div>
