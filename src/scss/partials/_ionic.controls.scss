@@ -63,7 +63,7 @@ ion-content {
   // }
 }
 ion-card-content {
-  color: var(--color-dark-Gray);
+  color: var(--color-deep-Gray);
   font-size: $font-size-md !important;
   padding-inline-start: 16px !important;
   padding-inline-end: 16px !important;
@@ -76,6 +76,7 @@ ion-card-content {
     margin-bottom: 16px;
     li{
       line-height: inherit;
+       font-size: $font-size-md !important;
     }
   }
 }
@@ -90,13 +91,17 @@ ion-button{
 
   
 .search-toolbar {
-  .searchbar-input.sc-ion-searchbar-md {
+  .searchbar-input {
     border: 0;
     box-shadow: none;
     padding-inline-start: 0;
+        padding-inline-end: 25px;
     color: var(--color-dark-Gray);
   }
-  .searchbar-search-icon.sc-ion-searchbar-md {
+  .searchbar-clear-button{
+    inset-inline-end: 0;
+}
+  .searchbar-search-icon{
     display: none;
   }
 }

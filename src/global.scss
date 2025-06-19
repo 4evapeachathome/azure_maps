@@ -218,7 +218,7 @@ ion-card {
       margin-bottom: 10px;
     }
     ion-text {
-      color: var(--color-dark-Gray);
+      color: var(--color-deep-Gray);
       font-size: $font-size-md;
       // display: block;
     }
@@ -240,12 +240,12 @@ ion-card {
     font-size: $font-size-xll;
   }
   h3 {
-    color: $color-dark-Gray;
+    color: $color-deep-Gray;
     font-size: $font-size-xlll;
     margin-bottom: 12px;
   }
   h4 {
-    color: $color-dark-Gray;
+    color: $color-deep-Gray;
     font-size: $font-size-xl;
     // font-weight: $font-semibold ;
     margin-bottom: 5px;
@@ -473,7 +473,7 @@ ion-item {
       .day-name {
         font-size: $font-size-md;
         margin-bottom: 2px;
-        color: $color-dark-Gray;
+        color: $color-deep-Gray;
         transition: color 0.3s ease;
       }
 
@@ -496,7 +496,7 @@ ion-item {
   .wellness-tip {
     background: var(--color-white-smoke);
     border-radius: 8px;
-    color: $color-dark-Gray;
+    color: $color-deep-Gray;
     font-size: $font-size-md;
     padding: 12px;
   }
@@ -648,7 +648,7 @@ ion-item {
           }
           p {
             font-size: $font-size-base;
-            color: $color-dark-Gray;
+            color: $color-deep-Gray;
             font-style: italic;
           }
         }
@@ -804,7 +804,7 @@ ion-item {
     width: 90%;
     ion-item {
       font-size: $font-size-md;
-      color: var(--color-dark-Gray);
+      color: var(--color-deep-Gray);
       border-radius: 16px;
       border: 1px solid var(--color-primary);
       --min-height: auto;
@@ -833,12 +833,12 @@ ion-item {
     margin-bottom: 10px;
   }
   h5 {
-    color: var(--color-dark-Gray);
+    color: var(--color-deep-Gray);
     font-size: $font-size-md !important;
     font-weight: $font-bold;
   }
   ion-text {
-    color: var(--color-dark-Gray);
+    color: var(--color-deep-Gray);
     font-size: $font-size-md !important;
     display: block;
   }
@@ -872,7 +872,7 @@ ion-item {
 }
 .legalrights-content {
   background: var(--color-white);
-  color: var(--color-dark-Gray);
+  color: var(--color-deep-Gray);
   font-size: $font-size-md;
   padding: 16px;
   border-radius: 8px;
@@ -885,7 +885,7 @@ ion-item {
     margin-bottom: 0;
   }
   p {
-    color: var(--color-dark-Gray);
+    color: var(--color-deep-Gray);
     font-size: $font-size-md;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -937,14 +937,14 @@ ion-item {
     padding-top: 0;
     padding-bottom: 0;
     h3 {
-      color: var(--color-dark-Gray);
+      color: var(--color-deep-Gray);
       font-size: $font-size-xl;
       margin: 0;
       margin-bottom: 10px;
     }
   }
   p {
-    color: var(--color-dark-Gray);
+    color: var(--color-deep-Gray);
     font-size: $font-size-md;
     margin-bottom: 0;
   }
@@ -1004,7 +1004,7 @@ ion-item {
       p {
         margin: 0;
         margin-top: 8px;
-        color: var(--color-dark-Gray);
+        color: var(--color-deep-Gray);
         font-size: $font-size-md;
       }
     }
@@ -1035,7 +1035,7 @@ ion-item {
     text-align: right;
     border-right: 3px solid var(--color-Gray84);
     a {
-      color: var(--color-dark-Gray);
+      color: var(--color-deep-Gray);
       font-size: $font-size-md !important;
       display: block;
       padding: 10px 15px;
@@ -1115,7 +1115,7 @@ ion-item {
     -ms-flex-positive: 1;
     flex-grow: 1;
     max-width: 100%;
-    color: var(--color-dark-Gray);
+    color: var(--color-deep-Gray);
     font-size: $font-size-base;
     padding: 8px;
   }
@@ -1127,7 +1127,7 @@ ion-item {
   .qs-header {
     .qs-col {
       font-size: $font-size-base;
-      color: var(--color-dark-Gray);
+      color: var(--color-deep-Gray);
       background: var(--color-white-smoke);
       font-weight: $font-bold;
     }
@@ -1140,7 +1140,7 @@ ion-item {
   }
   .qz-icon {
     font-size: $font-size-xlll; /* Adjust size as needed */
-    color: var(--color-dark-Gray); /* Default color for unselected */
+    color: var(--color-deep-Gray); /* Default color for unselected */
     cursor: pointer;
     &.selected {
       color: var(
@@ -1350,7 +1350,7 @@ ion-item {
   display: block;
 }
 .support-map-height{
-  height: calc(100% - 60px);
+  height: calc(100% - 65px);
 }
 .cmh-container {
   position: absolute;
@@ -1499,14 +1499,14 @@ ion-segment {
 
 
 ion-segment-view {
-  color: $color-dark-Gray;
-  font-size: $font-size-sm;
+  color: $color-deep-Gray;
+  font-size: $font-size-md;
   white-space: pre-wrap;
   margin: 16px 8px;
   overflow: hidden;
   overflow-y: auto;
   h4{
-    color: $color-dark-Gray;
+    color: $color-deep-Gray;
   font-size: $font-size-md;
   }
   strong {
@@ -1542,5 +1542,5 @@ ion-segment-view {
   color: var(--color-deep-Gray) !important;
 }
 .alert-message{
-   color: var(--color-dark-Gray) !important;
+   color: var(--color-deep-Gray) !important;
 }

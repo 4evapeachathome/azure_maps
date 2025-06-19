@@ -306,6 +306,10 @@ setupSearchDebounce() {
         geocodeResult = placeResponse.result; // Make sure your geocodePlace returns the full result
       }
   
+      if(this.getSelectedFilterCount() > 0){
+        this.filterOptions.forEach(option => option.selected = false);
+      this.filterSearchTerm = '';
+      }
       // Update map center
       this.center = { lat, lng };
       this.updateSearchedLocationMarker(this.center);
