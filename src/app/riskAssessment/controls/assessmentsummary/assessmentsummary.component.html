@@ -98,7 +98,7 @@
               <ion-col>
                 <ion-text>
                
-                  <strong> Your Score: </strong><span class="score highlight">{{ riskValue }}</span><br /><br />
+                  <strong> Your Score: </strong><span class="score highlight">{{ riskValue }}</span><br />
                   
                   <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
                     <strong>Level of Danger : </strong><span class="highlight">{{ levelofdanger }}</span><br />
@@ -126,7 +126,7 @@
               <ion-col>
               
                 <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
-                  <ion-text class="highlight"><strong>Please expediate action.</strong></ion-text>
+                  <ion-text><strong class="highlight">Please expediate action.</strong></ion-text>
                 </ng-container>
                 <ng-template #selfGuided>
                   <strong class="highlight">
