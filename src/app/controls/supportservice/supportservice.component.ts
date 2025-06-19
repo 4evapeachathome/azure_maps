@@ -666,6 +666,10 @@ onSearchClear() {
 
 
   applyFilters() {
+    if(this.getSelectedFilterCount() == 0){
+      this.filteredLocations = this.filteredlocationwithinradius;
+      this.updateSupportServiceMarkers();
+    }
     if (this.getSelectedFilterCount() > 0) {
       const selectedFilterKeys = this.filterOptions
         .filter(option => option.selected)
@@ -680,6 +684,7 @@ onSearchClear() {
         this.filteredLocations = filteredOrgs;
         this.updateSupportServiceMarkers();
       }
+
   
       // Update search query with selected filters as comma-separated values
       // this.searchQuery = this.filterOptions
