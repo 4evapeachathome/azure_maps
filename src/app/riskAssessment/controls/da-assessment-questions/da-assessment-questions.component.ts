@@ -163,20 +163,6 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   }
 
   async submitDangerAssessment() {
-    const alert = await this.alertController.create({
-      header: 'Confirm Submission',
-      message: 'Are you sure you want to submit the assessment?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Submission canceled');
-          }
-        },
-        {
-          text: 'OK',
-          handler: () => {
             //Validation to check all questions are answered
             this.submitted = true;
 
@@ -195,6 +181,20 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
           
             if (hasUnanswered) return;
 
+    const alert = await this.alertController.create({
+      header: 'Confirm Submission',
+      message: 'Are you sure you want to submit the assessment?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Submission canceled');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
 
             let totalScore = 0;
             const answerSummary: { question: string; answer: string; DAChild: { question: string; answer: string }[] }[] = [];

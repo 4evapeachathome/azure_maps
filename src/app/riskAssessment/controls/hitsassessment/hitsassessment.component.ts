@@ -152,6 +152,22 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
   }
 
   async submit() {
+                // Proceed with the original logic if OK is clicked
+                this.submitted = true;
+                let hasUnanswered = false;
+              
+                this.hitsQuestions.forEach(q => {
+                  const isUnanswered = !q.selected;
+                  q.showValidation = isUnanswered;
+                  if (isUnanswered) hasUnanswered = true;
+                });
+              
+                this.hasValidationError = hasUnanswered;
+              
+                if (hasUnanswered) {
+                  return; // ❌ block submission if unanswered
+                }
+                           
     // Create the alert using AlertController
     const alert = await this.alertController.create({
       header: 'Confirm Submission',
@@ -167,63 +183,36 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
         {
           text: 'OK',
           handler: () => {
-            // Proceed with the original logic if OK is clicked
-            this.submitted = true;
-  let hasUnanswered = false;
-
-  this.hitsQuestions.forEach(q => {
-    const isUnanswered = !q.selected;
-    q.showValidation = isUnanswered;
-    if (isUnanswered) hasUnanswered = true;
-  });
-
-  this.hasValidationError = hasUnanswered;
-
-  if (hasUnanswered) {
-    return; // ❌ block submission if unanswered
-  }
-                  
+     
             
             // Reset the validation error flag
             let totalScore = 0;
             const answerSummary: { question: string; answer: string | null }[] = [];
             let criticalAlert = false;
   
-            const criticalQuestions = this.hitsQuestions.filter(q => q.weight_critical_alert);
-let allCriticalsMatched = true;
-
-for (const question of this.hitsQuestions) {
-  const selected = question.selected;
-  const selectedScore = selected ? selected.score : null;
-  const selectedAnswer = selected ? selected.label : null;
-
-  if (selectedScore !== null) {
-    totalScore += selectedScore;
-  }
-
-  answerSummary.push({
-    question: question.text,
-    answer: selectedAnswer,
-  });
-
-  if (question.weight_critical_alert) {
-    if (!selected) {
-      allCriticalsMatched = false;
-    } else {
-      const matchFound = question.criticalOptions.some(
-        (opt: any) =>
-          opt.score === selected.score || opt.label === selected.label
-      );
-      if (!matchFound) {
-        allCriticalsMatched = false;
-      }
-    }
-  }
-}
-
-if (criticalQuestions.length > 0 && allCriticalsMatched) {
-  criticalAlert = true;
-}
+            for (const question of this.hitsQuestions) {
+              const selected = question.selected;
+              const selectedScore = selected ? selected.score : null;
+              const selectedAnswer = selected ? selected.label : null;
+  
+              if (selectedScore !== null) {
+                totalScore += selectedScore;
+              }
+  
+              answerSummary.push({
+                question: question.text,
+                answer: selectedAnswer
+              });
+  
+              if (!criticalAlert && question.weight_critical_alert && selected) {
+                const matchFound = question.criticalOptions.some((opt: any) =>
+                  opt.score === selected.score || opt.label === selected.label
+                );
+                if (matchFound) {
+                  criticalAlert = true;
+                }
+              }
+            }
   
             const payload = {
               data: {
