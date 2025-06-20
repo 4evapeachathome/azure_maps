@@ -28,6 +28,7 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   daQues:any;
   hasloadedDate: boolean = false;
   @Input() reloadFlag: boolean = false; 
+  submitted: boolean = false;
 
 constructor(
     private router: Router,
@@ -67,7 +68,7 @@ constructor(
       return;
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
-    
+    this.submitted = false;
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -104,21 +105,15 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   initializeAssessmentData(data: any[]) {
     return data.map(q => ({
       ...q,
-      selected: null,  // Initialize main question selection
-      DAChild: q.DAChild ? q.DAChild.map((sub:any) => ({ 
-        ...sub, 
-        selected: null // Initialize sub-question selection
-      })) : []
+      selected: null,
+      showValidation: false,
+      DAChild: Array.isArray(q.DAChild)
+        ? q.DAChild.map((sub: any) => ({
+            ...sub,
+            selected: null
+          }))
+        : []
     }));
-  }
-
-
-  get allParentQuestionsAnswered(): boolean {
-    if (!this.daAssessment) return false;
-    
-    return this.daAssessment.every((question:any) => 
-      question.selected !== null && question.selected !== undefined
-    );
   }
 
    private updateGuidedTypeLabel() {
@@ -208,6 +203,21 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
         {
           text: 'OK',
           handler: () => {
+            //Validation to check all questions are answered
+              const unanswered = this.daAssessment?.filter((q:any) => {
+              // Mark main question as invalid if not selected
+              q.showValidation = !q.selected;
+            
+              const mainUnanswered = !q.selected;     
+              return mainUnanswered 
+            });
+            
+            if (unanswered.length > 0) {
+              this.submitted = true;
+              return;
+            }
+
+
             let totalScore = 0;
             const answerSummary: { question: string; answer: string; DAChild: { question: string; answer: string }[] }[] = [];
   

@@ -61,6 +61,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   responseJson: any;
   isHitAssessment = false;
   assessmentNumber: string = '';
+  highratedQuestions:boolean = false; // Track if logins have been fetched
   hasFetchedData: boolean = false; // Track if logins have been fetched
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
   @Output() exportStarted = new EventEmitter<void>();
@@ -125,6 +126,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         
         this.responseJson= result.summary;
         this.QrcodeUrl= result.ssripasurl;
+        this.highratedQuestions = result.answeredHighratedquestion;
         const urlObj = new URL(this.QrcodeUrl);
         this.assessmentNumber = urlObj.searchParams.get('code')?.toString() || '';
         this.caseNumber = result?.caseNumber;

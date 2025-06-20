@@ -25,6 +25,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   @Input() webGuid:any;
   hasloadedDate: boolean = false;
   @Input() reloadFlag: boolean = false; // Input property to trigger reload
+  submitted: boolean = false;
 
   constructor(
       private router: Router,
@@ -65,7 +66,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       return;
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
-    
+    this.submitted = false;
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -133,6 +134,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       id: q.id,
       text: q.question_text,
       selected: null,
+      showValidation: false,
       weight_critical_alert: q.weight_critical_alert,
       options: answerOptions.map((opt: any) => ({
         score: opt.score,
@@ -167,6 +169,19 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
         {
           text: 'OK',
           handler: () => {
+
+            
+
+          const unanswered = this.ratsQuestions.filter(q => {
+            q.showValidation = !q.selected; // 🔴 Mark if unanswered
+          return !q.selected;
+           });
+
+        if (unanswered.length > 0) {
+        this.submitted = true;
+        return;
+        }
+
             let totalScore = 0;
             // const answerSummary: { questionId: number; questionText: string; selectedScore: number | null; answer: string, question: string }[] = [];
             const answerSummary: { question: string, answer: boolean }[] = [];
@@ -253,10 +268,6 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
 
     // Present the alert
     alert.present();
-  }
-
-  isAllQuestionsAnswered(): boolean {
-    return this.ratsQuestions.every(q => q.selected !== null && q.selected !== undefined);
   }
 
   goBack() {

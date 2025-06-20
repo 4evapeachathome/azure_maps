@@ -16,7 +16,7 @@ import { Utility } from 'src/shared/utility';
           imports: [CommonModule, IonicModule, FormsModule]
 })
 export class HitsassessmentComponent  implements OnInit {
-  
+  submitted:boolean = false;
   loggedInUser: any = null;
   caseNumber: string = '';
   loaded: boolean = false;
@@ -67,7 +67,7 @@ export class HitsassessmentComponent  implements OnInit {
       return;
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
-    
+    this.submitted = false;
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -132,8 +132,8 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
     this.loaded = true;
   }
   
-  isAllQuestionsAnswered(): boolean {
-    return this.hitsQuestions.every(q => q.selected !== null && q.selected !== undefined);
+  isUnanswered(question: any): boolean {
+    return this.submitted && !question.selected;
   }
 
   async submit() {
@@ -153,33 +153,50 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
           text: 'OK',
           handler: () => {
             // Proceed with the original logic if OK is clicked
+            const unanswered = this.hitsQuestions.filter(q => !q.selected);
+            if (unanswered.length > 0) {
+              this.submitted = true;
+              return;
+            }
             let totalScore = 0;
             const answerSummary: { question: string; answer: string | null }[] = [];
             let criticalAlert = false;
   
-            for (const question of this.hitsQuestions) {
-              const selected = question.selected;
-              const selectedScore = selected ? selected.score : null;
-              const selectedAnswer = selected ? selected.label : null;
-  
-              if (selectedScore !== null) {
-                totalScore += selectedScore;
-              }
-  
-              answerSummary.push({
-                question: question.text,
-                answer: selectedAnswer
-              });
-  
-              if (!criticalAlert && question.weight_critical_alert && selected) {
-                const matchFound = question.criticalOptions.some((opt: any) =>
-                  opt.score === selected.score || opt.label === selected.label
-                );
-                if (matchFound) {
-                  criticalAlert = true;
-                }
-              }
-            }
+            const criticalQuestions = this.hitsQuestions.filter(q => q.weight_critical_alert);
+let allCriticalsMatched = true;
+
+for (const question of this.hitsQuestions) {
+  const selected = question.selected;
+  const selectedScore = selected ? selected.score : null;
+  const selectedAnswer = selected ? selected.label : null;
+
+  if (selectedScore !== null) {
+    totalScore += selectedScore;
+  }
+
+  answerSummary.push({
+    question: question.text,
+    answer: selectedAnswer,
+  });
+
+  if (question.weight_critical_alert) {
+    if (!selected) {
+      allCriticalsMatched = false;
+    } else {
+      const matchFound = question.criticalOptions.some(
+        (opt: any) =>
+          opt.score === selected.score || opt.label === selected.label
+      );
+      if (!matchFound) {
+        allCriticalsMatched = false;
+      }
+    }
+  }
+}
+
+if (criticalQuestions.length > 0 && allCriticalsMatched) {
+  criticalAlert = true;
+}
   
             const payload = {
               data: {

@@ -88,7 +88,9 @@
                   <strong>Your Score: </strong><span class="score highlight">{{ riskValue }}</span><br /><br />
                   <ng-container *ngIf="guidedType ==='staff-guided'">
                     <strong>Note: </strong><br /> {{ note }}<br /><br />
+                    <ng-container *ngIf="criticalalert">
                     <strong>Caution: </strong><br /> {{ caution }}
+                    </ng-container>
                    </ng-container>  
                 </ion-text>
               </ion-col>
@@ -101,7 +103,7 @@
                   <strong> Your Score: </strong><span class="score highlight">{{ riskValue }}</span><br />
                   
                   <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
-                    <strong>Level of Danger : </strong><span class="highlight">{{ levelofdanger }}</span><br />
+                    <strong>Level of Danger : </strong><strong class="highlight">{{ levelofdanger }}</strong><br />
                   </ng-container>
                   <ng-template #selfGuided>
                     <strong class="highlight">
@@ -122,9 +124,8 @@
               </ion-col>
             </ion-row>
 
-            <ion-row class="hits-summary-text" *ngIf="isSSripa">
+            <ion-row class="hits-summary-text" *ngIf="isSSripa && highratedQuestions">
               <ion-col>
-              
                 <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
                   <ion-text><strong class="highlight">Please expediate action.</strong></ion-text>
                 </ng-container>
@@ -140,7 +141,7 @@
                <ion-col size="12" size-sm="12" size-lg="4" class="risk-item-center">
                  <div class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitsAssessment || isDanger)">
                    
-                  <app-summarypage #riskMeterRef [range]="rangevalue" [isRiskRed]="criticalalert" [riskScore]="riskValue"></app-summarypage>
+                  <app-summarypage #riskMeterRef [range]="rangevalue" [riskScore]="riskValue"></app-summarypage>
              
                 </div>
                  <div>
