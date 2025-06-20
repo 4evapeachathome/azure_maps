@@ -26,6 +26,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   hasloadedDate: boolean = false;
   @Input() reloadFlag: boolean = false; // Input property to trigger reload
   submitted: boolean = false;
+  hasValidationError: boolean = false; // Flag to track validation errors
 
   constructor(
       private router: Router,
@@ -67,6 +68,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
     this.submitted = false;
+    this.hasValidationError = false;
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -179,8 +181,11 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
 
         if (unanswered.length > 0) {
         this.submitted = true;
+        this.hasValidationError = true;
         return;
         }
+        this.hasValidationError = false;
+
 
             let totalScore = 0;
             // const answerSummary: { questionId: number; questionText: string; selectedScore: number | null; answer: string, question: string }[] = [];

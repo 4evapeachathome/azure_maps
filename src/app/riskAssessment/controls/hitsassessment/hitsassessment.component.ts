@@ -26,6 +26,7 @@ export class HitsassessmentComponent  implements OnInit {
   guidedTypeLabel: string = 'Self-Guided';
   @Input() hitsGuid:any;
   hasloadedDate: boolean = false;
+  hasValidationError: boolean = false; // Flag to track validation errors
   @Input() reloadFlag: boolean = false; // Input property to trigger reload
 
   constructor(
@@ -68,6 +69,7 @@ export class HitsassessmentComponent  implements OnInit {
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
     this.submitted = false;
+    this.hasValidationError = false;
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -155,9 +157,11 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
             // Proceed with the original logic if OK is clicked
             const unanswered = this.hitsQuestions.filter(q => !q.selected);
             if (unanswered.length > 0) {
+              this.hasValidationError = true; // Set the validation error flag
               this.submitted = true;
               return;
             }
+            this.hasValidationError = false; // Reset the validation error flag
             let totalScore = 0;
             const answerSummary: { question: string; answer: string | null }[] = [];
             let criticalAlert = false;

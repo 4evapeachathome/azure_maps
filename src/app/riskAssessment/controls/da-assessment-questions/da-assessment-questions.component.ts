@@ -29,6 +29,8 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   hasloadedDate: boolean = false;
   @Input() reloadFlag: boolean = false; 
   submitted: boolean = false;
+  hasValidationError:boolean = false;
+
 
 constructor(
     private router: Router,
@@ -69,6 +71,8 @@ constructor(
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
     this.submitted = false;
+    this.hasValidationError = false;
+
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -184,8 +188,10 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
             
             if (unanswered.length > 0) {
               this.submitted = true;
+              this.hasValidationError = true;
               return;
             }
+            this.hasValidationError = false;
 
 
             let totalScore = 0;
