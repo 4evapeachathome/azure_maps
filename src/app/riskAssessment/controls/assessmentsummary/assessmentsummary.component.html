@@ -103,7 +103,7 @@
                   <strong> Your Score: </strong><span class="score highlight">{{ riskValue }}</span><br />
                   
                   <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
-                    <strong>Level of Danger : </strong><span class="highlight">{{ levelofdanger }}</span><br />
+                    <strong>Level of Danger : </strong><strong class="highlight">{{ levelofdanger }}</strong><br />
                   </ng-container>
                   <ng-template #selfGuided>
                     <strong class="highlight">

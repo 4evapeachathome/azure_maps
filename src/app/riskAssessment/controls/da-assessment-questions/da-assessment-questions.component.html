@@ -95,7 +95,7 @@
                     </tr>
                   
                     <ng-container *ngFor="let question of paginatedQuestions; let i = index">
-                      <tr>
+                      <tr [ngClass]="{ 'unanswered': submitted && question.showValidation }">
                         <td>{{ (currentPageIndex * questionsPerPage) + i + 1 }}. {{ question.questionText }}</td>
                        <td class="thr-width-auto">
                           <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question, $event)">
@@ -111,7 +111,7 @@
                         </td>
                       </tr>
                       <ng-container *ngIf="question.selected === 'Yes'">
-                      <tr *ngFor="let sub of question.DAChild; let j = index"  class="sub-questions">
+                      <tr *ngFor="let sub of question.DAChild; let j = index" class="sub-questions">
                         <th>
                           {{ currentPageIndex * questionsPerPage + i + 1 }}{{ getCharFromCode(97 + j) }}.
                           {{ sub.questionText }}
@@ -149,7 +149,7 @@
                   <ion-button fill="outline" color="medium" (click)="goBack()"
                     >Back</ion-button
                   >
-                  <ion-button color="primary" (click)="submitDangerAssessment()" [disabled]="!allParentQuestionsAnswered"
+                  <ion-button color="primary" (click)="submitDangerAssessment()"
                     >Submit</ion-button
                   >
                 </div>

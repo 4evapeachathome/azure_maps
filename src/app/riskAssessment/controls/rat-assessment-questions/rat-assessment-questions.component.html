@@ -74,7 +74,7 @@
                       </th>
 
                     </tr>
-                    <tr *ngFor="let question of ratsQuestions;let i = index">
+                    <tr *ngFor="let question of ratsQuestions;let i = index" [ngClass]="{ 'unanswered': submitted && question.showValidation }">
                       <td>{{ i + 1 }}. {{ question.text }}</td>
                       <td class="tbody-container row-container">
 
@@ -108,7 +108,7 @@
               <ion-col size="12" size-sm="12" class="assessment-button">
                 <div class="button-group">
                   <ion-button fill="outline" color="medium" (click)="goBack()">Back</ion-button>
-                  <ion-button color="primary" [disabled]="!isAllQuestionsAnswered()"
+                  <ion-button color="primary"
                     (click)="submit()">Submit</ion-button>
                 </div>
               </ion-col>

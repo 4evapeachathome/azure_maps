@@ -86,7 +86,7 @@
                   </ng-container>
                   <ng-container *ngIf="isDaAssessment">
                   <ng-container *ngIf="(guidedType === 'staff-guided') && isDaAssessment; else selfGuided">
-                    <strong>Level of Danger : </strong> <span class="score">{{ levelofdanger }}</span><br />
+                    <strong>Level of Danger : </strong><strong class="score">{{ levelofdanger }}</strong><br />
                   </ng-container>
                   <ng-template #selfGuided>
                     <strong class="highlight">
