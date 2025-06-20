@@ -14,6 +14,7 @@ import { MenuService } from 'src/shared/menu.service';
 })
 export class HeaderComponent  implements OnInit {
   showExitButton: boolean = true;
+  @Input() isRiskAssessment: boolean = false; // Input property to determine if it's a risk assessment page
 
   constructor(private router: Router,
     private location: Location, private menuService:MenuService) { }
@@ -25,6 +26,18 @@ export class HeaderComponent  implements OnInit {
     this.router.events.subscribe(() => {
       this.checkRoute();
     });
+  }
+
+  navigateToHome() {
+    const excludedPaths = [
+      '/riskassessmentsummary','/hitsassessment', '/ratsassessment', '/dangerassessment','/ssripariskassessment', '/webassessment', '/viewresult'
+    ];
+    
+    if(excludedPaths.includes(this.location.path().split('?')[0])){
+      this.router.navigate(['/riskassessment']);
+    }else{
+      this.router.navigate(['/home']);
+    }
   }
 
   expandMenu(sectionTitle: string) {
