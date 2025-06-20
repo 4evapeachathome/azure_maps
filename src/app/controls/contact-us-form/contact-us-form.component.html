@@ -84,8 +84,8 @@
               <div #recaptcha></div>
             </div>        
             <div class="button-group">
-              <ion-button color="secondary" [disabled]="isFormEmpty()"  (click)="onClear()">Clear</ion-button>
-              <ion-button color="primary" [disabled]="!contactForm.valid || !isCaptchaVerified" (click)="onSubmit()">Submit</ion-button>
+              <ion-button color="secondary" mode="md" [disabled]="isFormEmpty()"  (click)="onClear()">Clear</ion-button>
+              <ion-button color="primary" mode="md" [disabled]="!contactForm.valid || !isCaptchaVerified" (click)="onSubmit()">Submit</ion-button>
             </div>
           </form>
         <!-- </ion-card-content> -->
