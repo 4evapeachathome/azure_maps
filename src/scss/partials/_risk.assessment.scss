@@ -103,6 +103,7 @@ height: calc(100% - 40px);
       .rafc-container{   
     padding: 8px !important;
     height: 100%;
+    font-size: $font-size-md;
       }
       ion-item{
         margin-bottom: 8px;
@@ -329,10 +330,14 @@ justify-content: center;
   .hit-assessment-scroll{
     overflow: auto;
   }
+  .dis-error{
+    display: flex;
+    justify-content: end;
+  }
   .assessment-table-container {
       width: 100%;
       background: $color-light-purple ;
-          margin-bottom: 24px;
+          margin-bottom: 6px;
           margin-top: 16px;
       td, th {
   padding: .75rem;
@@ -499,4 +504,13 @@ span, ion-radio{
   background: var(--risk-login-background);
     // color: var(--color-deep-Gray);
     // font-size: 1rem;
+}
+.unanswered{
+  color: $color-error;
+  font-weight: $font-bold ;
+  span{
+    font-size: $font-size-sm;
+       color: $color-error;
+       font-style: italic;
+  }
 }

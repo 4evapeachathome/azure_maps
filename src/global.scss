@@ -278,7 +278,7 @@ ion-card {
     margin-bottom: 24px;
   }
   .cc-content {
-    color: $color-dark-Gray;
+    color: $color-deep-Gray;
     font-size: $font-size-base;
     margin-bottom: 0;
     padding-bottom: 0;
@@ -355,7 +355,7 @@ ion-item {
   // }
 }
 .footer-note {
-  color: $color-dark-Gray;
+  color: $color-deep-Gray;
   font-size: $font-size-base;
   padding: 24px;
   .fn-highlight {
@@ -1011,7 +1011,9 @@ ion-item {
     }
   }
 }
-
+.card-content-md p {
+   font-size: $font-size-md;
+}
 .header-cont-container {
   position: relative;
 }

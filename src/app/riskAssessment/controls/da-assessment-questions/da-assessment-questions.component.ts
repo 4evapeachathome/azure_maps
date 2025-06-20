@@ -29,6 +29,8 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   hasloadedDate: boolean = false;
   @Input() reloadFlag: boolean = false; 
   submitted: boolean = false;
+  hasValidationError:boolean = false;
+
 
 constructor(
     private router: Router,
@@ -69,6 +71,8 @@ constructor(
     }
     const storedGuidedType = sessionStorage.getItem('guidedType');
     this.submitted = false;
+    this.hasValidationError = false;
+
     // If a value exists in sessionStorage, use it; otherwise, keep the default
     if (storedGuidedType) {
       this.guidedType = storedGuidedType;
@@ -121,40 +125,10 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   }
   
 
-  get paginatedQuestions() {
-    if (!this.daAssessment) return [];
-    const start = this.currentPageIndex * this.questionsPerPage;
-    return this.daAssessment.slice(start, start + this.questionsPerPage);
-  }
-  
-  get currentRangeText() {
-    if (!this.daAssessment || this.daAssessment.length === 0) {
-      return 'Question Set 0 of 0';
-    }
-    const totalQuestions = this.daAssessment.length;
-    const questionsPerSet = 5; // Each set has 5 questions
-    const totalSets = Math.ceil(totalQuestions / questionsPerSet); // Total sets by dividing by 5
-    const currentPageIndex = Math.max(0, this.currentPageIndex);
-    const currentSet = currentPageIndex + 1; // Current set number (page index starts at 0, so add 1)
-    return `Question Set ${currentSet} of ${totalSets}`;
-}
-
   getCharFromCode(code: number): string {
     return String.fromCharCode(code);
   }
 
-  nextPage() {
-    if (!this.daAssessment) return;
-    if ((this.currentPageIndex + 1) * this.questionsPerPage < this.daAssessment.length) {
-      this.currentPageIndex++;
-    }
-  }
-  
-  prevPage() {
-    if (this.currentPageIndex > 0) {
-      this.currentPageIndex--;
-    }
-  }
 
   goBack() {
     this.hasloadedDate = false;
@@ -214,8 +188,10 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
             
             if (unanswered.length > 0) {
               this.submitted = true;
+              this.hasValidationError = true;
               return;
             }
+            this.hasValidationError = false;
 
 
             let totalScore = 0;

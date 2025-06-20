@@ -65,76 +65,50 @@
                 <table class="assessment-table-container da-assessment-table quiz-slide">
                   <thead>
                     <tr>
-                      <th colspan="2">{{ currentRangeText }}</th>
-                      <th style="display: flex;justify-content: end;">
-                        <div class="header-pagination">
-                          <div class="pagination">
-                            <ion-icon 
-  name="chevron-back-outline"
-  class="nav-arrow prev" 
-  (click)="prevPage()"
-  [class.disabled]="currentPageIndex === 0"
-></ion-icon>
-
-<ion-icon 
-  name="chevron-forward-outline"
-  class="nav-arrow next" 
-  (click)="nextPage()"
-  [class.disabled]="!daAssessment || (currentPageIndex + 1) * questionsPerPage >= daAssessment.length"
-></ion-icon>
-                          </div>
-                        </div>
-                      </th>
+                      <th>Questions</th>
+                      <th style="width: 80px; text-align: center;">Yes</th>
+                      <th style="width: 80px; text-align: center;">No</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th ></th>
-                        <th style="width: 80px; text-align: center;">Yes</th>
-                            <th style="width: 80px; text-align: center;">No</th>
-                    </tr>
-                  
-                    <ng-container *ngFor="let question of paginatedQuestions; let i = index">
+                    <ng-container *ngFor="let question of daAssessment; let i = index">
                       <tr [ngClass]="{ 'unanswered': submitted && question.showValidation }">
-                        <td>{{ (currentPageIndex * questionsPerPage) + i + 1 }}. {{ question.questionText }}</td>
-                       <td class="thr-width-auto">
+                        <td>{{ i + 1 }}. {{ question.questionText }}</td>
+                        <td class="thr-width-auto">
                           <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question, $event)">
                             <ion-radio value="Yes" labelPlacement="end" mode="md"></ion-radio>
-                         
                           </ion-radio-group>
                         </td>
                         <td class="thr-width-auto">
                           <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question, $event)">
-                        
                             <ion-radio value="No" labelPlacement="end" mode="md"></ion-radio>
                           </ion-radio-group>
                         </td>
                       </tr>
+                
                       <ng-container *ngIf="question.selected === 'Yes'">
-                      <tr *ngFor="let sub of question.DAChild; let j = index" class="sub-questions">
-                        <th>
-                          {{ currentPageIndex * questionsPerPage + i + 1 }}{{ getCharFromCode(97 + j) }}.
-                          {{ sub.questionText }}
-                        </th>
-                       <td class="thr-width-auto">
-                          <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub, $event)">
-                            <ion-radio value="Yes" labelPlacement="end" mode="md"></ion-radio>
-                         
-                          </ion-radio-group>
-                        </td>
+                        <tr *ngFor="let sub of question.DAChild; let j = index"
+                            [ngClass]="{ 'unanswered': submitted && sub.showValidation }"
+                            class="sub-questions">
+                          <th>
+                            {{ i + 1 }}{{ getCharFromCode(97 + j) }}. {{ sub.questionText }}
+                          </th>
                           <td class="thr-width-auto">
-                          <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub, $event)">
-                      
-                            <ion-radio value="No" labelPlacement="end" mode="md"></ion-radio>
-                          </ion-radio-group>
-                        </td>
-                      </tr>
+                            <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub, $event)">
+                              <ion-radio value="Yes" labelPlacement="end" mode="md"></ion-radio>
+                            </ion-radio-group>
+                          </td>
+                          <td class="thr-width-auto">
+                            <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub, $event)">
+                              <ion-radio value="No" labelPlacement="end" mode="md"></ion-radio>
+                            </ion-radio-group>
+                          </td>
+                        </tr>
                       </ng-container>
                     </ng-container>
                   </tbody>
-           
                 </table>
-              
+              <ion-text class="unanswered dis-error" *ngIf="hasValidationError"><span>Kindly answer highlighted questions</span></ion-text>
               </ion-col>
             </ion-row>
              <ion-row>
@@ -146,10 +120,10 @@
             <ion-row>
               <ion-col size="12" size-sm="12" class="assessment-button">
                 <div class="button-group">
-                  <ion-button fill="outline" color="medium" (click)="goBack()"
+                  <ion-button fill="outline" color="medium" (click)="goBack()"  mode="md"
                     >Back</ion-button
                   >
-                  <ion-button color="primary" (click)="submitDangerAssessment()"
+                  <ion-button color="primary"  mode="md" (click)="submitDangerAssessment()"
                     >Submit</ion-button
                   >
                 </div>

@@ -58,7 +58,7 @@
                   </ion-note>
                 </ion-col>
                 <ion-col size="12" size-sm="12" size-lg="3">
-                  <ion-button color="primary" (click)="viewResult(assessmentNumber)" [disabled]="!assessmentNumber" class="search-btn">Search</ion-button>
+                  <ion-button color="primary"  mode="md" (click)="viewResult(assessmentNumber)" [disabled]="!assessmentNumber" class="search-btn">Search</ion-button>
                 </ion-col>
                  <ion-col size="12" size-sm="12" size-lg="3" class="radio-selected-container">
                 <ion-radio-group [(ngModel)]="guidedType" *ngIf="selectedAssessment" >
@@ -129,10 +129,10 @@
             <ion-row>
               <ion-col size="12" size-sm="12" class="assessment-button">
                 <div class="button-group">
-                  <ion-button  *ngIf="selectedAssessment" color="secondary" (click)="goBack()"
+                  <ion-button  *ngIf="selectedAssessment" color="secondary" (click)="goBack()" mode="md"
                     >Back</ion-button
                   >
-                  <ion-button color="primary" [disabled]="!selectedAssessment" (click)="goToTest()"
+                  <ion-button color="primary" [disabled]="!selectedAssessment" (click)="goToTest()"  mode="md"
                     >Go to Test</ion-button
                   >
                 </div>

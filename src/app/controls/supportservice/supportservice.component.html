@@ -230,10 +230,10 @@
                     <ion-checkbox labelPlacement="end" justify="start" alignment="start" [(ngModel)]="option.selected">{{ option.label }}</ion-checkbox>
                   </li>
                 </ol>
-                <ion-buttons class="ion-justify-content-end">
-                  <ion-button fill="solid" color="secondary"  (click)="clearFilters()">Clear</ion-button>
-                  <ion-button fill="solid" color="primary" (click)="applyFilters()">Submit</ion-button>
-                </ion-buttons>
+                <div class="ion-justify-content-end" style="display: flex;">
+                  <ion-button fill="solid" color="secondary" mode="md" size="small"  (click)="clearFilters()">Clear</ion-button>
+                  <ion-button fill="solid" color="primary" mode="md" size="small" (click)="applyFilters()">Submit</ion-button>
+                </div>
               </ion-card-content>
             </ion-card>
             </div>
