@@ -75,12 +75,12 @@
                       <tr [ngClass]="{ 'unanswered': submitted && question.showValidation }">
                         <td>{{ i + 1 }}. {{ question.questionText }}</td>
                         <td class="thr-width-auto">
-                          <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question, $event)">
+                          <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question)">
                             <ion-radio value="Yes" labelPlacement="end" mode="md"></ion-radio>
                           </ion-radio-group>
                         </td>
                         <td class="thr-width-auto">
-                          <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question, $event)">
+                          <ion-radio-group [(ngModel)]="question.selected" (ionChange)="onAnswerChange(question)">
                             <ion-radio value="No" labelPlacement="end" mode="md"></ion-radio>
                           </ion-radio-group>
                         </td>
@@ -94,12 +94,12 @@
                             {{ i + 1 }}{{ getCharFromCode(97 + j) }}. {{ sub.questionText }}
                           </th>
                           <td class="thr-width-auto">
-                            <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub, $event)">
+                            <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub)">
                               <ion-radio value="Yes" labelPlacement="end" mode="md"></ion-radio>
                             </ion-radio-group>
                           </td>
                           <td class="thr-width-auto">
-                            <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub, $event)">
+                            <ion-radio-group [(ngModel)]="sub.selected" (ionChange)="onAnswerChange(sub)">
                               <ion-radio value="No" labelPlacement="end" mode="md"></ion-radio>
                             </ion-radio-group>
                           </td>

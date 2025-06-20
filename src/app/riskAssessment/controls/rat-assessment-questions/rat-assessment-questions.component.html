@@ -78,7 +78,7 @@
                       <td>{{ i + 1 }}. {{ question.text }}</td>
                       <td class="tbody-container row-container">
 
-                        <ion-radio-group value="center" class="tbc-content" [(ngModel)]="question.selected"
+                        <ion-radio-group value="center" class="tbc-content" (ionChange)="onAnswerChange(question)" [(ngModel)]="question.selected"
                           [name]="'question_' + question.id" ngDefaultControl>
                           <!-- <ion-item *ngFor="let option of question.options"> -->
                           <!-- <ion-label>{{ option.label }}</ion-label> -->

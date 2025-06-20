@@ -86,7 +86,7 @@
                     <tr [ngClass]="{ 'unanswered': isUnanswered(question) }" *ngFor="let question of hitsQuestions; let i = index">
                       <td>{{ i + 1 }}. {{ question.text }}</td>
                       <td class="tbody-container row-container">
-                        <ion-radio-group class="tbc-content" [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>
+                        <ion-radio-group class="tbc-content" (ionChange)="onAnswerChange(question)" [(ngModel)]="question.selected" [name]="'question_' + question.id" ngDefaultControl>
                           <ion-radio
                             mode="md"
                             slot="start"
@@ -113,7 +113,7 @@
                   </tbody>
            
                 </table>
-                   <ion-text class="unanswered dis-error" *ngIf="hasValidationError"><span>Kindly answer highlighted questions</span></ion-text>
+                   <ion-text class="unanswered dis-error" *ngIf="submitted && hasValidationError"><span>Kindly answer highlighted questions</span></ion-text>
                 <!-- <div class="hits-header">
                   <h3>How often does your partner?</h3>
                   <div class="hits-scale">
