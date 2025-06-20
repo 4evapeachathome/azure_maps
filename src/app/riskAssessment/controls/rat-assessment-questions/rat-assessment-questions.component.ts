@@ -156,6 +156,15 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     this.loaded = true;
   }
 
+  onAnswerChange(question: any) {  
+    if (this.submitted) {
+      question.showValidation = !question.selected;
+  
+      const hasUnanswered = this.ratsQuestions.some(q => !q.selected);
+      this.hasValidationError = hasUnanswered;
+    }
+  }
+
   async submit() {
       const alert = await this.alertController.create({
       header: 'Confirm Submission',
@@ -173,18 +182,16 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
           handler: () => {
 
             
-
-          const unanswered = this.ratsQuestions.filter(q => {
-            q.showValidation = !q.selected; // 🔴 Mark if unanswered
-          return !q.selected;
-           });
-
-        if (unanswered.length > 0) {
-        this.submitted = true;
-        this.hasValidationError = true;
-        return;
-        }
-        this.hasValidationError = false;
+            // Validate if all questions are answered
+            const unanswered = this.ratsQuestions.filter(q => {
+              q.showValidation = !q.selected; // 🔴 Mark if unanswered
+              return !q.selected;
+            });
+          
+            this.submitted = true;
+            this.hasValidationError = unanswered.length > 0;
+          
+            if (this.hasValidationError) return;
 
 
             let totalScore = 0;

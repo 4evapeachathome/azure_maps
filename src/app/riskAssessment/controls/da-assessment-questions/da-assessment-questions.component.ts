@@ -178,20 +178,22 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
           text: 'OK',
           handler: () => {
             //Validation to check all questions are answered
-              const unanswered = this.daAssessment?.filter((q:any) => {
-              // Mark main question as invalid if not selected
-              q.showValidation = !q.selected;
-            
-              const mainUnanswered = !q.selected;     
-              return mainUnanswered 
+            this.submitted = true;
+
+            // Mark validation only on main questions
+            let hasUnanswered = false;
+          
+            this.daAssessment.forEach((q: any) => {
+              const unanswered = !q.selected;
+              q.showValidation = unanswered;
+              if (unanswered) {
+                hasUnanswered = true;
+              }
             });
-            
-            if (unanswered.length > 0) {
-              this.submitted = true;
-              this.hasValidationError = true;
-              return;
-            }
-            this.hasValidationError = false;
+          
+            this.hasValidationError = hasUnanswered;
+          
+            if (hasUnanswered) return;
 
 
             let totalScore = 0;
@@ -296,8 +298,22 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   }
 
 
-  onAnswerChange(question: any, event: any) {
-    question.selected = event.detail.value;
+  onAnswerChange(question: any) {
+  
+    // After submit, dynamically clear red highlight if user answers
+    if (this.submitted) {
+      question.showValidation = !question.selected;
+  
+      // Recalculate validation error state for the whole form
+      const hasUnanswered = this.daAssessment.some((q: any) => !q.selected);
+      this.hasValidationError = hasUnanswered;
+    }
+    if (question.selected === 'No' && Array.isArray(question.DAChild)) {
+      question.DAChild.forEach((sub: any) => {
+        sub.selected = null;
+        sub.showValidation = false;
+      });
+    }
   }
   
 

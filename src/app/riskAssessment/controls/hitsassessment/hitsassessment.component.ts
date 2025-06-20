@@ -107,6 +107,8 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
   }
 
+  
+
 
   setupHitsQuestions(questions: any[], answerOptions: any[]) {
     // Sort answer options by score to ensure correct order
@@ -120,6 +122,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
       id: q.id,
       text: q.question_text,
       selected: null,
+      showValidation: false,
       weight_critical_alert: q.weight_critical_alert,
       options: sortedOptions.map((opt: any) => ({
         score: opt.score,
@@ -136,6 +139,16 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
   
   isUnanswered(question: any): boolean {
     return this.submitted && !question.selected;
+  }
+
+  onAnswerChange(question: any) {
+    if (this.submitted) {
+      question.showValidation = !question.selected;
+  
+      // Recalculate overall form validity
+      const hasUnanswered = this.hitsQuestions.some(q => !q.selected);
+      this.hasValidationError = hasUnanswered;
+    }
   }
 
   async submit() {
@@ -155,13 +168,23 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
           text: 'OK',
           handler: () => {
             // Proceed with the original logic if OK is clicked
-            const unanswered = this.hitsQuestions.filter(q => !q.selected);
-            if (unanswered.length > 0) {
-              this.hasValidationError = true; // Set the validation error flag
-              this.submitted = true;
-              return;
-            }
-            this.hasValidationError = false; // Reset the validation error flag
+            this.submitted = true;
+  let hasUnanswered = false;
+
+  this.hitsQuestions.forEach(q => {
+    const isUnanswered = !q.selected;
+    q.showValidation = isUnanswered;
+    if (isUnanswered) hasUnanswered = true;
+  });
+
+  this.hasValidationError = hasUnanswered;
+
+  if (hasUnanswered) {
+    return; // ❌ block submission if unanswered
+  }
+                  
+            
+            // Reset the validation error flag
             let totalScore = 0;
             const answerSummary: { question: string; answer: string | null }[] = [];
             let criticalAlert = false;
