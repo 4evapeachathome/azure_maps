@@ -330,10 +330,14 @@ justify-content: center;
   .hit-assessment-scroll{
     overflow: auto;
   }
+  .dis-error{
+    display: flex;
+    justify-content: end;
+  }
   .assessment-table-container {
       width: 100%;
       background: $color-light-purple ;
-          margin-bottom: 24px;
+          margin-bottom: 6px;
           margin-top: 16px;
       td, th {
   padding: .75rem;
@@ -504,7 +508,9 @@ span, ion-radio{
 .unanswered{
   color: $color-error;
   font-weight: $font-bold ;
-  // .radio-icon{
-  //       border-color: $color-error;
-  // }
+  span{
+    font-size: $font-size-sm;
+       color: $color-error;
+       font-style: italic;
+  }
 }
