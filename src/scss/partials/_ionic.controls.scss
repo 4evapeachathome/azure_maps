@@ -151,6 +151,7 @@ ion-select{
 ion-radio{
   color: var(--color-deep-Gray);
   gap: 24px;
+   font-size: $font-size-md;
    &::part(label){
     margin-inline-start: 8px;
    }
