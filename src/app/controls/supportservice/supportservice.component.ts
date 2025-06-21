@@ -228,34 +228,58 @@ setupSearchDebounce() {
   }
 
   selectSearchResult(item: Place) {
-    if (!this.geolocationEnabled) {
-      alert('Please turn on the location services to search for nearby support centers.');
-      return;
-    }
-    this.searchQuery = item.description;
-    this.autocompleteItems = [];
-    
-    this.placesService.getDetails(
-      { placeId: item.place_id },
-      (placeDetails: any, status: string) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          const lat = placeDetails.geometry.location.lat();
-          const lng = placeDetails.geometry.location.lng();
-
-          
-          // Update map center
-          this.center = { lat, lng };
-          this.updateSearchedLocationMarker(this.center);
-          
-          // Filter and update both map markers and list
-          this.filterNearbySupportCenters(lat, lng);
-          
-          // Reset selected location
-          this.selectedLocation = null;
-        }
-      }
-    );
+  if (!this.geolocationEnabled) {
+    alert('Please turn on the location services to search for nearby support centers.');
+    return;
   }
+
+  this.searchQuery = item.description;
+  this.autocompleteItems = [];
+
+  this.placesService.getDetails(
+    { placeId: item.place_id },
+    async (placeDetails: any, status: string) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        const lat = placeDetails.geometry.location.lat();
+        const lng = placeDetails.geometry.location.lng();
+
+        // Reset filters
+        if (this.getSelectedFilterCount() > 0) {
+          this.filterOptions.forEach(option => option.selected = false);
+          this.filterSearchTerm = '';
+        }
+
+        // Update map center
+        this.center = { lat, lng };
+        this.updateSearchedLocationMarker(this.center);
+
+        // Detect state and set radius
+        if (placeDetails) {
+          this.detectStateFromResult(placeDetails);
+        } else {
+          this.currentState = '';
+          this.searchRadius = DEFAULT_DISTANCE;
+        }
+
+        // Filter and update both map markers and list
+        this.filterNearbySupportCenters(lat, lng);
+
+        // Show location card
+        this.locationcard = true;
+
+        // Reset selected location
+        this.selectedLocation = null;
+      } else {
+        const toast = await this.toastController.create({
+          message: 'Could not retrieve place details. Please try again.',
+          duration: 3000,
+          position: 'bottom'
+        });
+        await toast.present();
+      }
+    }
+  );
+}
 
   private detectStateFromResult(result: google.maps.GeocoderResult) {
     const stateComponent = result.address_components.find(comp =>

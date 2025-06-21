@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: 'uslawsbystate', loadChildren: () => import('./legalrights/legalrights.module').then(m => m.LegalrightsPageModule) },
   { path: 'federallaw', loadChildren: () => import('./federallaw/federallaw.module').then(m => m.FederallawPageModule) },
   {
-    path: 'partnerviolence',
+    path: 'abusiverelationship',
     loadChildren: () => import('./partnerviolence/partnerviolence.module').then( m => m.PartnerviolencePageModule)
   },
   {
@@ -28,11 +28,11 @@ const routes: Routes = [
     loadChildren: () => import('./typesofabuses/typesofabuses.module').then( m => m.TypesofabusesPageModule)
   },
   {
-    path: 'legalrights',
+    path: 'yourrights',
     loadChildren: () => import('./legalrightshome/legalrightshome.module').then( m => m.LegalrightshomePageModule)
   },
   {
-    path: 'sripaa',
+    path: 'ssripaa',
     loadChildren: () => import('./sripaa/sripaa.module').then( m => m.SripaaPageModule)
   },
   {
