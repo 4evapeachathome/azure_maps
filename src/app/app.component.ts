@@ -304,9 +304,7 @@ initializeToggleRef() {
   }
 
   closeMobileMenu() {
-   // debugger;
-    if (this.isMobile && this.mobileToggle?.nativeElement.checked) {
-      this.mobileToggle.nativeElement.checked = false;
+    if (this.isMobile && this.isMenuOpen) {
       this.isMenuOpen = false;
     }
   }
