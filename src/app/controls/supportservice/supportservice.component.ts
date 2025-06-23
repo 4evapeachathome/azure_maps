@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, NgZone, OnInit, Output, ViewChild } from '@angular/core';
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
@@ -133,7 +133,7 @@ export class SupportserviceComponent  implements OnInit{
   
 
 
-  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController, private sharedDataService: MenuService) { 
+  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(
       document.createElement('div')
@@ -228,58 +228,62 @@ setupSearchDebounce() {
   }
 
   selectSearchResult(item: Place) {
-  if (!this.geolocationEnabled) {
-    alert('Please turn on the location services to search for nearby support centers.');
-    return;
-  }
-
-  this.searchQuery = item.description;
-  this.autocompleteItems = [];
-
-  this.placesService.getDetails(
-    { placeId: item.place_id },
-    async (placeDetails: any, status: string) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-        const lat = placeDetails.geometry.location.lat();
-        const lng = placeDetails.geometry.location.lng();
-
-        // Reset filters
-        if (this.getSelectedFilterCount() > 0) {
-          this.filterOptions.forEach(option => option.selected = false);
-          this.filterSearchTerm = '';
-        }
-
-        // Update map center
-        this.center = { lat, lng };
-        this.updateSearchedLocationMarker(this.center);
-
-        // Detect state and set radius
-        if (placeDetails) {
-          this.detectStateFromResult(placeDetails);
-        } else {
-          this.currentState = '';
-          this.searchRadius = DEFAULT_DISTANCE;
-        }
-
-        // Filter and update both map markers and list
-        this.filterNearbySupportCenters(lat, lng);
-
-        // Show location card
-        this.locationcard = true;
-
-        // Reset selected location
-        this.selectedLocation = null;
-      } else {
-        const toast = await this.toastController.create({
-          message: 'Could not retrieve place details. Please try again.',
-          duration: 3000,
-          position: 'bottom'
-        });
-        await toast.present();
-      }
+    if (!this.geolocationEnabled) {
+      alert('Please turn on the location services to search for nearby support centers.');
+      return;
     }
-  );
-}
+  
+    this.searchQuery = item.description;
+    this.autocompleteItems = [];
+  
+    this.placesService.getDetails(
+      { placeId: item.place_id },
+      (placeDetails: any, status: string) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          this.ngZone.run(async () => {
+            const lat = placeDetails.geometry.location.lat();
+            const lng = placeDetails.geometry.location.lng();
+  
+            // Reset filters
+            if (this.getSelectedFilterCount() > 0) {
+              this.filterOptions.forEach(option => option.selected = false);
+              this.filterSearchTerm = '';
+            }
+  
+            // Update map center
+            this.center = { lat, lng };
+            this.updateSearchedLocationMarker(this.center);
+  
+            // Detect state and set radius
+            if (placeDetails) {
+              this.detectStateFromResult(placeDetails);
+            } else {
+              this.currentState = '';
+              this.searchRadius = DEFAULT_DISTANCE;
+            }
+  
+            // Filter and update both map markers and list
+            this.filterNearbySupportCenters(lat, lng);
+  
+            // Show location card
+            this.locationcard = true;
+  
+            // Reset selected location
+            this.selectedLocation = null;
+          });
+        } else {
+          this.ngZone.run(async () => {
+            const toast = await this.toastController.create({
+              message: 'Could not retrieve place details. Please try again.',
+              duration: 3000,
+              position: 'bottom'
+            });
+            await toast.present();
+          });
+        }
+      }
+    );
+  }
 
   private detectStateFromResult(result: google.maps.GeocoderResult) {
     const stateComponent = result.address_components.find(comp =>
@@ -307,7 +311,7 @@ setupSearchDebounce() {
       this.filteredLocations = [...this.organizations];
       return;
     }
-  
+    this.autocompleteItems = [];
     // Check if input is a zip code (5 digits for US)
     const isZipCode = /^\d{5}(-\d{4})?$/.test(this.searchQuery.trim());
   
@@ -808,34 +812,43 @@ onSearchClear() {
   //Get the sevices from the constants
   getServices(location: Organization): { name: string, value: string | boolean | null, isHotline?: boolean }[] {
     if (!location) return [];
-
+  
     let services: { name: string, value: string | boolean | null, isHotline?: boolean }[] = [];
-
-    // Add OrgHotline as the first service if it exists, marked as a hotline
+  
+    // Combine hotline numbers into one entry
     if (location.OrgHotline && typeof location.OrgHotline === 'string' && location.OrgHotline.trim().length > 0) {
+      const hotlineNumbers = location.OrgHotline
+        .split(';')
+        .map(number => number.trim())
+        .filter(number => number.length > 0);
+  
+      const hotlineLinks = hotlineNumbers
+        .map(number => `<a href="tel:${number}">${number}</a>`)
+        .join(', '); // Or use " | " if you prefer
+  
       services.push({
         name: 'Hotline',
-        value: location.OrgHotline,
-        isHotline: true // Flag to indicate this is the hotline for styling
+        value: hotlineLinks,
+        isHotline: true
       });
     }
-
-    // Add other services from dynamically fetched filterOptions, excluding IsHotline to avoid duplication
+  
+    // Add other services
     services = services.concat(
       this.filterOptions
-        .filter(option => option.key !== 'IsHotline') // Exclude IsHotline to avoid duplication with OrgHotline
+        .filter(option => option.key !== 'IsHotline')
         .filter(option => {
           const value = location[option.key as keyof Organization];
-          return (typeof value === 'boolean' && value === true) || 
+          return (typeof value === 'boolean' && value === true) ||
                  (typeof value === 'string' && value.trim().length > 0);
         })
         .map(option => ({
           name: option.label,
           value: location[option.key as keyof Organization] as string | boolean | null,
-          isHotline: false // Not a hotline
+          isHotline: false
         }))
     );
-
+  
     return services;
   }
 
