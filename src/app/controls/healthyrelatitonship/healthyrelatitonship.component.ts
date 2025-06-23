@@ -25,6 +25,15 @@ export class HealthyrelatitonshipComponent  implements OnInit {
     this.getHealthyRelationshipData(this.endpoint);
   }
 
+  getHeadingLevelClass(level: number): string {
+    debugger;
+    switch (level) {
+      case 1: return 'cb-headeing-1';
+      case 2: return 'cb-headeing-2';
+      case 3: return 'cb-headeing-3';
+      default: return '';
+    }
+  }
 
 
   getHealthyRelationshipData(endpoint: string) {
@@ -34,7 +43,7 @@ export class HealthyrelatitonshipComponent  implements OnInit {
         if (data) {
           this.img = data.image;
           this.title = Array.isArray(data.title) ? data.title : [];
-  
+          debugger;
           // Handle both contentBlocks and ContentBlocks for compatibility
           const blocks = data.contentBlocks || data.ContentBlocks;
           if (blocks) {

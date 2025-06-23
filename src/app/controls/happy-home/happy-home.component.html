@@ -3,52 +3,61 @@
    <ion-card-content class="ic-content">
     <ion-grid>
    <ion-row>
-    <ion-col size="12" size-sm="6" >
+    <ion-col size="12" size-sm="6">
       <ion-grid>
-        <ion-row>
-         <ion-col>
-          <ng-container *ngFor="let item of bannerTitle.multilinerichtextbox[0]?.children">
-            <ng-container [ngSwitch]="item.type">
-              <ion-text
-  class="cb-header"
-  [ngClass]="[
-    item.bold ? 'cb-header-highlight' : '',
-    getHeadingLevelClass(bannerTitle.multilinerichtextbox[0]?.level ?? 0)
-  ]">
-  <strong *ngIf="item.bold">{{ item.text }}</strong>
-  <span *ngIf="!item.bold">{{ item.text }}</span>
-</ion-text>
+        
+        <!-- Heading Row: Render only if the first block is of type 'heading' -->
+        <ion-row *ngIf="bannerTitle?.multilinerichtextbox?.[0]?.type === 'heading'">
+          <ion-col>
+            <ng-container *ngFor="let item of bannerTitle.multilinerichtextbox[0].children">
+              <ng-container [ngSwitch]="item.type">
+                <ion-text
+                  class="cb-header"
+                  *ngSwitchCase="'text'"
+                  [ngClass]="[
+                    item.bold ? 'cb-header-highlight' : '',
+                    getHeadingLevelClass(bannerTitle.multilinerichtextbox[0].level ?? 0)
+                  ]">
+                  <strong *ngIf="item.bold">{{ item.text }}</strong>
+                  <span *ngIf="!item.bold">{{ item.text }}</span>
+                </ion-text>
+              </ng-container>
             </ng-container>
-          </ng-container>
           </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <div *ngFor="let paragraph of bannerTitle?.multilinerichtextbox?.slice(1)">
-                <!-- <p class="paragraph-class"> -->
-                  <ng-container *ngFor="let item of paragraph.children">
-                    <ng-container [ngSwitch]="item.type">
-                      <ion-text class="cb-content" *ngSwitchCase="'text'" [ngClass]="{'cb-content-highlight': item.bold}">
-                        <strong *ngIf="item.bold">{{ item.text }}</strong>
-                        <span *ngIf="!item.bold">{{ item.text }}</span>
-                      </ion-text>
-                    </ng-container>
-                  </ng-container>
-                <!-- </p> -->
-              </div>
-             </ion-col>
-             </ion-row>
-             <ion-row>
-              <ion-col>
-                <ion-button color="primary" (click)="expandMenu('Peace at Home')" [routerLink]="['/peaceathome']" size="small" >Read More</ion-button>
-               </ion-col>
-               </ion-row>
-          </ion-grid>
+        </ion-row>
     
-   
-  
-
-</ion-col>
+        <!-- Paragraph Row(s): Include all paragraphs (including first block if it's not a heading) -->
+        <ion-row *ngFor="let block of bannerTitle?.multilinerichtextbox">
+          <ion-col *ngIf="block.type === 'paragraph'">
+            <ng-container *ngFor="let item of block.children">
+              <ng-container [ngSwitch]="item.type">
+                <ion-text
+                  class="cb-content"
+                  *ngSwitchCase="'text'"
+                  [ngClass]="{ 'cb-content-highlight': item.bold }">
+                  <strong *ngIf="item.bold">{{ item.text }}</strong>
+                  <span *ngIf="!item.bold">{{ item.text }}</span>
+                </ion-text>
+              </ng-container>
+            </ng-container>
+          </ion-col>
+        </ion-row>
+    
+        <!-- Read More Button -->
+        <ion-row>
+          <ion-col>
+            <ion-button
+              color="primary"
+              (click)="expandMenu('Peace at Home')"
+              [routerLink]="['/peaceathome']"
+              size="small">
+              Read More
+            </ion-button>
+          </ion-col>
+        </ion-row>
+    
+      </ion-grid>
+    </ion-col>
 <ion-col size="12" size-sm="6"  class="img-container ">
   <ion-img [src]="peaceathomeImg" alt="Happy Home Image" class="hb-img"></ion-img>  
 </ion-col> 

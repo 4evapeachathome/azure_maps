@@ -17,6 +17,8 @@ partnerviolenceimg: string='';
  contentBlocks: any[] = [];
   titleContent: any;
   titleparaContent: any;
+  headingBlock: any;
+paragraphBlock: any;
   @Output() loaded = new EventEmitter<void>();
   paragraphContent: any;
   constructor(private apiService:ApiService) { }
@@ -25,23 +27,34 @@ partnerviolenceimg: string='';
     this.getPartnerViolenceTitle();
   }
 
-  getPartnerViolenceTitle(){
+  getPartnerViolenceTitle() {
     this.apiService.getPartnerViolenceTitle().subscribe(
       (response) => {
         if (response && response.image && response.title && response.ContentBlocks) {
           this.partnerviolenceimg = response.image;
           this.titleContent = response.title;
-          this.titleparaContent= response.titleContent;
           this.contentBlocks = response.ContentBlocks;
-        this.paragraphContent = response.title[1]?.children[0]?.text || '';
+          this.titleparaContent= response.titleContent;
+          // Extract heading and paragraph dynamically
+          this.headingBlock = response.title.find((block: any) => block.type === 'heading');
+          this.paragraphBlock = response.title.find((block: any) => block.type === 'paragraph');
         }
-        this.loaded.emit(); // Emit loaded event after content is loaded
+        this.loaded.emit();
       },
       (error) => {
         console.error('Error fetching partner violence content:', error);
-        this.loaded.emit(); // Emit loaded event even if there's an error
+        this.loaded.emit();
       }
     );
+  }
+
+  getHeadingLevelClass(level: number): string {
+    switch (level) {
+      case 1: return 'cb-headeing-1';
+      case 2: return 'cb-headeing-2';
+      case 3: return 'cb-headeing-3';
+      default: return '';
+    }
   }
 
 }

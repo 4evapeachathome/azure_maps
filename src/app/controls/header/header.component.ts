@@ -30,7 +30,7 @@ export class HeaderComponent  implements OnInit {
 
   navigateToHome() {
     const excludedPaths = [
-      '/riskassessmentsummary','/hitsassessment', '/ratsassessment', '/dangerassessment','/ssripariskassessment', '/webassessment', '/viewresult'
+      '/riskassessmentsummary','/hitsassessment', '/ratsassessment', '/dangerassessment','/ssripariskassessment', '/webassessment', '/viewresult','/riskassessment'
     ];
     
     if(excludedPaths.includes(this.location.path().split('?')[0])){
