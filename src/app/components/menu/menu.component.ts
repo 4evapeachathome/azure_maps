@@ -92,6 +92,8 @@ export class MenuComponent implements OnInit {
   });
 }
 
+
+
 collapseAllSections(): void {
   this.processedMenu.forEach(item => item.expanded = false);
 }
@@ -275,8 +277,7 @@ collapseAllSections(): void {
 
   
   hasTooltip(title: string): boolean {
-    // All items have tooltips now, so this can be removed or return true
-    return true;
+    return title === '/quiz' || title === '/ssripaa';
   }
 
 

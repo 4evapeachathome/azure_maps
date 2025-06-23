@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, AfterViewChecked } from '@angular/core';
 import { AlertController, IonicModule, Platform } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
@@ -109,7 +109,7 @@ interface PlaceDetails {
   standalone: true,
   imports: [IonicModule, MenuComponent, HeaderComponent,FormsModule, CommonModule,RouterModule]
 })
-export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
+export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
   isMobile!: boolean;
   private sessionAlert: HTMLIonAlertElement | null = null;
   organizations: Organization[] = [];
@@ -121,7 +121,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   showSessionWarning = false;
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
-  private hasHandledReload = false;
+  private initializedToggle: boolean = false;
   private riskRoutes = ['riskassessment', 'setpassword', 'riskassessmentsummary','login','hitsassessment', 'ratsassessment', 'dangerassessment','ssripariskassessment', 'webassessment', 'viewresult'];
 
   constructor(
@@ -142,39 +142,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   
         this.isRiskAssessment = this.riskRoutes.includes(currentPath);
         this.isRouteCheckComplete = true;
-  
-        // // Store or clear last risk URL based on current route
-        // if (this.isRiskAssessment) {
-        //   localStorage.setItem('lastRiskAssessmentUrl', url);
-        // } else {
-        //   localStorage.removeItem('lastRiskAssessmentUrl');
-        // }
-  
-        // // Handle page reload only once
-        // if (!this.hasHandledReload) {
-        //   this.hasHandledReload = true;
-  
-        //   const navigationEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-        //   const isReload = navigationEntries.length > 0 && navigationEntries[0].type === "reload";
-  
-        //   if (isReload) {
-        //     const lastRiskUrl = localStorage.getItem('lastRiskAssessmentUrl');
-  
-        //     if (
-        //       lastRiskUrl &&
-        //       this.riskRoutes.includes(lastRiskUrl.split('/')[1]) &&
-        //       this.isValidSession()
-        //     ) {
-        //       if (url !== lastRiskUrl) {
-        //         this.router.navigateByUrl(lastRiskUrl);
-        //       }
-        //     } else {
-        //       if (url !== '/home') {
-        //         this.router.navigate(['/home']);
-        //       }
-        //     }
-        //   }
-        // }
       });
   }
 
@@ -200,6 +167,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     this.router.navigate(['/login']);
   }
   ngOnInit() {
+    this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
+    this.isMenuOpen = !this.isMobile;
     this.loadInitialData();
   
     if (Capacitor.isNativePlatform()) {
@@ -209,7 +178,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       });
     }
   
-    this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
   
     this.sessionActivityService.sessionWarning$.subscribe(() => {
       if (this.shouldShowSessionAlert()) {
@@ -230,7 +198,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
 
     this.router.events.subscribe(() => {
       const currentPath = this.location.path();
-      const stillValid = ['/riskassessment', '/hitsassessment','/ssripariskassessment' ,'/riskassessmentsummary', '/webassessment', '/dangerassessment']
+      const stillValid = ['/riskassessment', '/hitsassessment','/ssripariskassessment' ,'/riskassessmentsummary', '/webassessment', '/dangerassessment','/viewresult']
         .some(route => currentPath.startsWith(route));
     
       if (!stillValid && this.sessionAlert) {
@@ -238,6 +206,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
         this.sessionAlert = null;
       }
     });
+
+    this.closeMobileMenu();
   }
 
 
@@ -285,19 +255,25 @@ async presentSessionAlert() {
 }
 
 
-  ngAfterViewInit() {
-    const toggleRef = this.isMobile ? this.mobileToggle : this.desktopToggle;
-  
-    if (toggleRef) {
-      // Set initial value
-      this.isMenuOpen = toggleRef.nativeElement.checked;
-  
-      // Listen to changes
-      toggleRef.nativeElement.addEventListener('change', () => {
-        this.isMenuOpen = toggleRef.nativeElement.checked;
-      });
-    }
+ngAfterViewChecked() {
+  if (this.isRouteCheckComplete && !this.initializedToggle) {
+    this.initializedToggle = true;
+    
+    // defer until DOM updates (allow ViewChild refs to be ready)
+    setTimeout(() => this.initializeToggleRef(), 0);
   }
+}
+
+initializeToggleRef() {
+  const toggleRef = this.isMobile ? this.mobileToggle : this.desktopToggle;
+  debugger;
+  if (toggleRef) {
+    toggleRef.nativeElement.addEventListener('change', () => {
+      this.isMenuOpen = toggleRef.nativeElement.checked;
+    });
+  }
+}
+  
 
   loadInitialData() {
     this.apiService.getServiceFilterOptions().subscribe(response => {
@@ -328,9 +304,7 @@ async presentSessionAlert() {
   }
 
   closeMobileMenu() {
-   // debugger;
-    if (this.isMobile && this.mobileToggle?.nativeElement.checked) {
-      this.mobileToggle.nativeElement.checked = false;
+    if (this.isMobile && this.isMenuOpen) {
       this.isMenuOpen = false;
     }
   }

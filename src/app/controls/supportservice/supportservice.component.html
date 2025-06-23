@@ -110,12 +110,12 @@
                             Services
                           </ion-button>
                           
-                          <ion-button fill="clear" size="small" class="action-button" (click)="openSupport(location.OrgWebUrl)">
+                          <ion-button fill="clear" size="small" class="action-button" [disabled]="location.OrgWebUrl?.toLowerCase() === 'dnk'" (click)="openSupport(location.OrgWebUrl)">
                             <ion-icon name="people-outline"></ion-icon>
                             Website
                           </ion-button>
                           
-                          <ion-button fill="clear" size="small" class="action-button" (click)="openPhone(location.PhoneNumber)">
+                          <ion-button fill="clear" size="small"  class="action-button" [disabled]="location.PhoneNumber?.toLowerCase() === 'dnk'" (click)="openPhone(location.PhoneNumber)">
                             <ion-icon name="call-outline"></ion-icon>
                             Phone
                           </ion-button>
@@ -161,12 +161,12 @@
                       Services
                     </ion-button>
                     
-                    <ion-button fill="clear" size="small" class="action-button" (click)="openSupport(selectedLocation.OrgWebUrl)">
+                    <ion-button fill="clear" size="small" class="action-button" [disabled]="selectedLocation.OrgWebUrl?.toLowerCase() === 'dnk'" (click)="openSupport(selectedLocation.OrgWebUrl)">
                       <ion-icon name="people-outline"></ion-icon>
                       Website
                     </ion-button>
                     
-                    <ion-button fill="clear" size="small" class="action-button" (click)="openPhone(selectedLocation.PhoneNumber)">
+                    <ion-button fill="clear" size="small" class="action-button" [disabled]="selectedLocation.PhoneNumber?.toLowerCase() === 'dnk'" (click)="openPhone(selectedLocation.PhoneNumber)">
                       <ion-icon name="call-outline"></ion-icon>
                       Phone
                     </ion-button>
@@ -193,7 +193,7 @@
                         <li *ngFor="let service of getServices(selectedLocation)">
                           <span [ngClass]="{'underlined': service.isHotline}">{{ service.name }}</span>
                           <ng-container *ngIf="typeof service.value === 'string' && service.value">
-                            - <a href="tel:{{ service.value }}">{{ service.value }}</a>
+                            - <span [innerHTML]="service.value"></span>
                           </ng-container>
                         </li>
                       </ol>
