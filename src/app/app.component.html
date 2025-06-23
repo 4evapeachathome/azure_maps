@@ -31,6 +31,7 @@
             </div>
             <app-menu class="h-100"
               [fields]="['title', 'link']"
+              (menuItemClicked)="closeMobileMenu()"
               [populate]="['parentMenu']"
               [sort]="['createdAt:asc']"
               [isMenuOpen]="isMenuOpen"
