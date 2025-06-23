@@ -6,7 +6,7 @@
     <!-- First Row: Single Component -->
     <ion-row class="comp-space">
       <ion-col size="12">
-       <pathome-partnerviolencecontent></pathome-partnerviolencecontent>
+       <pathome-partnerviolencecontent (loaded)="onChildLoaded()"></pathome-partnerviolencecontent>
       </ion-col>
     </ion-row>
 
@@ -21,7 +21,7 @@
     <!-- Third Row: Full-Width Slide Component -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-abusesgallery></pathome-abusesgallery>
+        <pathome-abusesgallery (loaded)="onChildLoaded()"></pathome-abusesgallery>
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">

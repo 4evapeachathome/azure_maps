@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { QRCodeComponent } from 'angularx-qrcode';
@@ -21,7 +21,8 @@ export class SsriparesultsComponent  implements OnInit {
   @ViewChild('resultContent', { static: false }) resultContent!: ElementRef;
   @ViewChild('qrCodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
   qrcodeUrl: string = '';
-
+  @Output() hideloader = new EventEmitter<void>();
+  @Output() showloader = new EventEmitter<void>();
   highSeverityTriggered = false;
 
   constructor() {}
@@ -41,6 +42,7 @@ export class SsriparesultsComponent  implements OnInit {
   async exportToPDF() {
     try {
       // Generate basic export content
+      this.showloader.emit();
       const container = document.createElement('div');
       container.style.padding = '20px';
       container.style.fontFamily = 'Arial';
@@ -101,6 +103,15 @@ export class SsriparesultsComponent  implements OnInit {
     topSection.appendChild(leftContent);
     topSection.appendChild(rightContent);
     container.appendChild(topSection);
+
+              // Warning message
+              if (this.highSeverityTriggered) {
+                const warning = document.createElement('div');
+                warning.innerHTML = `<strong style="color: red; margin-top: 0px; margin-bottom:10px; display: block;">
+                  Take action immediately; talk to your service providers for assistance.
+                </strong>`;
+                container.appendChild(warning);
+              }
   
       // Table
       const table = document.createElement('table');
@@ -131,14 +142,7 @@ export class SsriparesultsComponent  implements OnInit {
         </tbody>
       `;
       container.appendChild(table);
-      // Warning message
-      if (this.highSeverityTriggered) {
-        const warning = document.createElement('div');
-        warning.innerHTML = `<strong style="color: red; margin-top: 20px; display: block;">
-          Take action immediately; talk to your service providers for assistance.
-        </strong>`;
-        container.appendChild(warning);
-      }
+
   
       // Append to body off-screen
       container.style.position = 'absolute';
@@ -158,10 +162,11 @@ export class SsriparesultsComponent  implements OnInit {
   
       // Clean up
       document.body.removeChild(container);
+      this.hideloader.emit();
       return Promise.resolve();
     } catch (error) {
       console.error('PDF export failed:', error);
-      
+      this.hideloader.emit();
       // Optionally show an alert or toast
       alert('Failed to export PDF. Please try again.');
       return Promise.reject(error);

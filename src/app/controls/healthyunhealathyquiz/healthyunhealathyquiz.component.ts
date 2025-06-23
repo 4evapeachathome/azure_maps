@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -36,6 +36,7 @@ export class HealthyunhealathyquizComponent  implements OnInit {
   quizSubheading = '';
   questions: any[] = [];
   currentIndex = 0;
+  @Output() loaded = new EventEmitter<void>();
   showAnswers: boolean[] = [];
 
   constructor(private apiService: ApiService) { }
@@ -55,6 +56,10 @@ export class HealthyunhealathyquizComponent  implements OnInit {
         }));
         this.showAnswers = new Array(this.questions.length).fill(false);
       }
+      this.loaded.emit(); // Emit loaded event after quiz is loaded
+    }, (error) => {
+      console.error('Error loading quiz:', error);
+      this.loaded.emit(); // Emit loaded event even if there's an error
     });
   }
 

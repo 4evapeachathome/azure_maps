@@ -64,12 +64,40 @@ export class SripaaPage implements OnInit,AfterViewInit {
     await this.showLoader();
   }
   
-  async retakeAssessment(){
-    await this.showLoader();
-    this.loadSSripaData();
+  async retakeAssessment() {
+    await this.showLoader(); // Start the loader
+    this.hidewhenshowingresults = false; // Set to show the assessment component
     sessionStorage.removeItem('hasYesAnswer');
-    this.hidewhenshowingresults= false;
-    this.hideLoader();
+    sessionStorage.removeItem('ssripa_result');
+
+    // Reload data and wait for it to complete
+    await this.loadSSripaDataAsync();
+    // Delay loader dismissal until the child component is likely rendered
+    await new Promise(resolve => setTimeout(resolve, 500)); // Adjust delay as needed
+    this.hideLoader(); // Dismiss loader only when content is visible
+  }
+
+  async loadSSripaDataAsync() {
+    return new Promise<void>((resolve) => {
+      try {
+        const url = this.ssripGuidUrl;
+        this.apiService.generateGuid(url).subscribe({
+          next: (response) => {
+            this.sripaData = response?.guid;
+            resolve(); // Resolve when data is loaded
+          },
+          error: (err) => {
+            console.error('API Error:', err);
+            this.sripaData = null; // Fallback in case of error
+            resolve(); // Resolve even on error to proceed
+          }
+        });
+      } catch (err) {
+        console.error('Error:', err);
+        this.sripaData = null; // Fallback
+        resolve(); // Resolve to avoid hanging
+      }
+    });
   }
 
    loadSSripaData() {
@@ -100,7 +128,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
     idleCallback(() => {
       setTimeout(() => {
         this.hideLoader();
-      }, 500);
+      }, 2000);
     });
   }
 
@@ -148,6 +176,12 @@ export class SripaaPage implements OnInit,AfterViewInit {
         {
           text: 'OK',
           handler: async () => {
+            // Dismiss the alert first
+            await alert.dismiss();
+  
+            // Start the loader after the alert is dismissed
+            await this.showLoader();
+  
             // Proceed with the original logic if OK is clicked
             if (this.sripaCompRef) {
               try {
@@ -178,6 +212,10 @@ export class SripaaPage implements OnInit,AfterViewInit {
                 console.error('Failed to load results from child component:', error);
               }
             }
+  
+            // Delay loader dismissal to allow UI update
+            await new Promise(resolve => setTimeout(resolve, 500)); // Adjust delay as needed
+            await this.hideLoader(); // Dismiss loader after results are processed
           }
         }
       ]
@@ -190,13 +228,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
   
 
   async exportCurrentTabAsPDF() {
-    try {
-      // Show loader
-      await this.showLoader();
-      
-      // Add slight delay to ensure loader is visible before heavy work starts
-      await new Promise(resolve => setTimeout(resolve, 50));
-      
+    try {      
       if (this.selectedTab === 'results') {
         await this.resultsRef?.exportToPDF();
       } else if (this.selectedTab === 'actionplan') {
@@ -204,10 +236,6 @@ export class SripaaPage implements OnInit,AfterViewInit {
       }
     } catch (error) {
       console.error('Export failed:', error);
-      // Optionally show error to user
-    } finally {
-      // Always hide loader when done
-      await this.hideLoader();
     }
   }
 

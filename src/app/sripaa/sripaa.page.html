@@ -36,6 +36,8 @@
             <div [ngClass]="{ 'sripaa-summary-display': selectedTab !== 'results' }" >
               <pathome-ssriparesults
                 #resultsRef
+                (hideloader)="hideLoader()"
+                (showloader)="showLoader()"
                 [quizTitle]="quizTitle"
                 [myAngularxQrCode]="resultUrl"
                 [sripa]="sripa"
@@ -46,6 +48,8 @@
             <div [ngClass]="{ 'sripaa-summary-display': selectedTab !== 'actionplan' }">
               <pathome-ssripaactionplan
                 #actionPlanRef
+                (hideloader)="hideLoader()"
+                (showloader)="showLoader()"
                 [quizTitle]="quizTitle"
                 [sripa]="sripa"
                 [selectedOptions]="selectedOptions">
