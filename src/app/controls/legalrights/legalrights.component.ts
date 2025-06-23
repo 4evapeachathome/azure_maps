@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
@@ -18,6 +18,7 @@ export class LegalrightsComponent  implements OnInit {
   contentBlocks: any;
   title: any;
   @Input() endpoint:string = '';
+  @Output() loaded = new EventEmitter<void>();
   constructor(private apiService:ApiService,private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
@@ -44,12 +45,14 @@ export class LegalrightsComponent  implements OnInit {
               webImage: block.webImage,
               validWebImageIndex: hasWebImage ? validImageCount++ : -1 // Increment only for valid webImage
             };
+            this.loaded.emit(); // Emit loaded event after content is loaded
             return blockData;
           });
         }
       },
       (error) => {
         console.error('Error fetching legal rights data:', error);
+        this.loaded.emit(); // Emit loaded event even if there's an error
       }
     );
   }

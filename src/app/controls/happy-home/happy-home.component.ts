@@ -9,6 +9,7 @@ interface RichTextBox {
   type: string;
   text: string;
   bold?: boolean;
+  level?: number;
   children: RichTextBox[];
 }
 
@@ -42,6 +43,15 @@ export class HappyHomeComponent  implements OnInit {
 
   expandMenu(sectionTitle: string) {
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
+  }
+
+  getHeadingLevelClass(level: number): string {
+    switch (level) {
+      case 1: return 'cb-headeing-1';
+      case 2: return 'cb-headeing-2';
+      case 3: return 'cb-headeing-3';
+      default: return '';
+    }
   }
 
   fetchHappyHomeData(): void {

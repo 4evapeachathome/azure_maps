@@ -6,7 +6,7 @@
     <!-- First Row: Single Component -->
     <ion-row >
       <ion-col>
-        <pathome-legalrights [endpoint]="legalrightsbannercontent"></pathome-legalrights>
+        <pathome-legalrights (loaded)="onChildLoaded()" [endpoint]="legalrightsbannercontent"></pathome-legalrights>
       </ion-col>
     </ion-row>
     <ion-row class="comp-space">

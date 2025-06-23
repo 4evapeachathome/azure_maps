@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
 import { CommonModule } from '@angular/common';
@@ -17,6 +17,7 @@ partnerviolenceimg: string='';
  contentBlocks: any[] = [];
   titleContent: any;
   titleparaContent: any;
+  @Output() loaded = new EventEmitter<void>();
   paragraphContent: any;
   constructor(private apiService:ApiService) { }
 
@@ -34,9 +35,11 @@ partnerviolenceimg: string='';
           this.contentBlocks = response.ContentBlocks;
         this.paragraphContent = response.title[1]?.children[0]?.text || '';
         }
+        this.loaded.emit(); // Emit loaded event after content is loaded
       },
       (error) => {
         console.error('Error fetching partner violence content:', error);
+        this.loaded.emit(); // Emit loaded event even if there's an error
       }
     );
   }

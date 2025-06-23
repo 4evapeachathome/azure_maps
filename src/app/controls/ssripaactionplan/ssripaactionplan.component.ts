@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -17,6 +17,8 @@ export class SsripaactionplanComponent  implements OnInit {
   @Input() quizTitle: string = '';
   @Input() selectedOptions: string[] = [];
   myAngularxQrCode: string = 'https://http://localhost:8100/login'; // QR code content
+  @Output() hideloader = new EventEmitter<void>();
+  @Output() showloader = new EventEmitter<void>();
   constructor() { }
 
 
@@ -74,6 +76,7 @@ export class SsripaactionplanComponent  implements OnInit {
   async exportAsPDF() {
     try {
       // Create container with proper styling
+      this.showloader.emit();
       const container = document.createElement('div');
       container.style.cssText = `
         position: absolute;
@@ -200,13 +203,15 @@ export class SsripaactionplanComponent  implements OnInit {
           );
         }
       }
-  
+      this.hideloader.emit();
       pdf.save('SSRIPA Action Plan.pdf');
     } catch (error: any) {
       console.error('PDF export failed:', error);
+      this.hideloader.emit();
       alert(`PDF export failed: ${error.message || 'Unknown error'}`);
     } finally {
       // Clean up
+      this.hideloader.emit();
       const elements = document.querySelectorAll('div[style*="left: -9999px"]');
       elements.forEach(el => el.remove());
     }
