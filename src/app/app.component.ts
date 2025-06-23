@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, AfterViewChecked } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, AfterViewChecked, HostListener } from '@angular/core';
 import { AlertController, IonicModule, Platform } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
@@ -119,6 +119,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
   isRiskAssessment = false;
   isRouteCheckComplete = false;
   showSessionWarning = false;
+  private lastWidth: number = window.innerWidth;
+  private lastHeight: number = window.innerHeight;
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
   private initializedToggle: boolean = false;
@@ -154,6 +156,22 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
       secure: true,
     });
   }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: UIEvent) {
+    const currentWidth = window.innerWidth;
+    const currentHeight = window.innerHeight;
+
+    // Only reload if the size really changed
+    if (this.lastWidth !== currentWidth || this.lastHeight !== currentHeight) {
+      this.lastWidth = currentWidth;
+      this.lastHeight = currentHeight;
+
+      // Reload the page
+      location.reload();
+    }
+  }
+
   async logout() {
     if (this.sessionAlert) {
       await this.sessionAlert.dismiss();
@@ -266,7 +284,7 @@ ngAfterViewChecked() {
 
 initializeToggleRef() {
   const toggleRef = this.isMobile ? this.mobileToggle : this.desktopToggle;
-  debugger;
+  //debugger;
   if (toggleRef) {
     toggleRef.nativeElement.addEventListener('change', () => {
       this.isMenuOpen = toggleRef.nativeElement.checked;
