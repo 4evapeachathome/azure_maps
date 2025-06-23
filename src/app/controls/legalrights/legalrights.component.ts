@@ -25,7 +25,14 @@ export class LegalrightsComponent  implements OnInit {
     this.getLegalRightsData(this.endpoint);
   }
 
-
+  getHeadingLevelClass(level: number): string {
+    switch (level) {
+      case 1: return 'cb-headeing-1';
+      case 2: return 'cb-headeing-2';
+      case 3: return 'cb-headeing-3';
+      default: return '';
+    }
+  }
 
   getLegalRightsData(endpoint: string) {
     this.apiService.getLegalRightsData(endpoint).subscribe(
