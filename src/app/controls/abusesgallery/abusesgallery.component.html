@@ -5,7 +5,7 @@
 
 <ul>
   <li *ngFor="let item of abuseGallery">
-    <ion-img [src]="item.webImageUrl" alt="{{ item.caption }}" (click)="navigateToPeaceAtHome()" />
+    <ion-img [src]="item.webImageUrl" alt="{{ item.caption }}" (click)="navigateAbuse(item?.navigateTo)" />
     <p>{{ item.caption }}</p>
   </li>
 </ul>

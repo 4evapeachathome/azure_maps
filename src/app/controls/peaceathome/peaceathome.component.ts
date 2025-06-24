@@ -15,7 +15,8 @@ export class PeaceathomeComponent  implements OnInit {
  peaceathomeImg: string='';
  contentBlocks: any[] = [];
   titleContent: any;
-  paragraphContent: any;
+  headingBlock: any;
+  paragraphBlock: any;
    @Output() loaded = new EventEmitter<void>();
   constructor(private apiService:ApiService) { }
 
@@ -23,22 +24,33 @@ export class PeaceathomeComponent  implements OnInit {
     this.getPeaceAtHome();
   }
 
-  getPeaceAtHome(){
+  getHeadingLevelClass(level: number): string {
+    switch (level) {
+      case 1: return 'cb-headeing-1';
+      case 2: return 'cb-headeing-2';
+      case 3: return 'cb-headeing-3';
+      default: return '';
+    }
+  }
+
+  getPeaceAtHome() {
     this.apiService.getPeaceAtHome().subscribe(
       (response) => {
         if (response && response.image && response.title && response.ContentBlocks) {
           this.peaceathomeImg = response.image;
           this.titleContent = response.title;
           this.contentBlocks = response.ContentBlocks;
-        this.paragraphContent = response.title[1]?.children[0]?.text || '';
-        this.loaded.emit();
-
+  
+          // Dynamically extract heading & paragraph blocks
+          this.headingBlock = response.title.find((block: any) => block.type === 'heading');
+          this.paragraphBlock = response.title.find((block: any) => block.type === 'paragraph');
+  
+          this.loaded.emit();
         }
       },
       (error) => {
         console.error('Error fetching peace at home:', error);
         this.loaded.emit();
-
       }
     );
   }

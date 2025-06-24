@@ -23,9 +23,11 @@ export class AbusesgalleryComponent  implements OnInit {
     this.loadTypesOfAbuse();
   }
 
-  navigateToPeaceAtHome() {
-    this.router.navigate(['/typesofabuse']); // Adjust the route path as needed
-  }
+  navigateAbuse(section: string): void {
+  this.router.navigate(['/typesofabuse'], {
+    queryParams: { section }
+  });
+}
 
   loadTypesOfAbuse() {
     this.apiService.getTypesOfAbuse().subscribe(

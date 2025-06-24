@@ -227,12 +227,7 @@ setupSearchDebounce() {
     }
   }
 
-  selectSearchResult(item: Place) {
-    if (!this.geolocationEnabled) {
-      alert('Please turn on the location services to search for nearby support centers.');
-      return;
-    }
-  
+  selectSearchResult(item: Place) {  
     this.searchQuery = item.description;
     this.autocompleteItems = [];
   
@@ -303,10 +298,6 @@ setupSearchDebounce() {
   }
 
   async onSearch() {
-    if (!this.geolocationEnabled) {
-      alert('Please turn on the location services to search for nearby support centers.');
-      return;
-    }
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       this.filteredLocations = [...this.organizations];
       return;
@@ -460,6 +451,7 @@ setupSearchDebounce() {
           url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
           scaledSize: new google.maps.Size(30, 30)
         },
+        title: location.OrgName,
         label: this.zoom >= 15 ? {
           text: location.OrgName,
           fontSize: '12px',
@@ -494,11 +486,6 @@ onSearchClear() {
 }
 
   onSearchInput(event: any) {
-        // Prevent search if geolocation is false
-        if (!this.geolocationEnabled) {
-          alert('Please turn on the location services to search for nearby support centers.');
-          return;
-        }
     this.locationcard = false;
     this.selectedLocation = null;
     this.filterOpen = false;

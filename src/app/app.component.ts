@@ -119,8 +119,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
   isRiskAssessment = false;
   isRouteCheckComplete = false;
   showSessionWarning = false;
-  private lastWidth: number = window.innerWidth;
-  private lastHeight: number = window.innerHeight;
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
   private initializedToggle: boolean = false;
@@ -155,21 +153,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
       sameSite: 'Strict',
       secure: true,
     });
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: UIEvent) {
-    const currentWidth = window.innerWidth;
-    const currentHeight = window.innerHeight;
-
-    // Only reload if the size really changed
-    if (this.lastWidth !== currentWidth || this.lastHeight !== currentHeight) {
-      this.lastWidth = currentWidth;
-      this.lastHeight = currentHeight;
-
-      // Reload the page
-      location.reload();
-    }
   }
 
   async logout() {

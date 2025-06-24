@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { LoadingController } from '@ionic/angular';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
@@ -24,11 +26,23 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
 
   @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
 
-  constructor(private menuService:MenuService,private loadingController: LoadingController) { }
+  constructor(private menuService:MenuService,private loadingController: LoadingController,private route:ActivatedRoute,private router: Router,
+    private location: Location) { }
 
   async ngOnInit() {
-    // Only show loader if not pre-rendered
     await this.showLoader();
+    this.route.queryParams.subscribe(params => {
+      const section = params['section'];
+      if (section) {
+        setTimeout(() => {
+          this.scrollToSection(section);
+  
+          // Remove the query param from the URL after scrolling
+          this.location.replaceState(this.router.url.split('?')[0]);
+        }, 300); // Allow DOM to render before scrolling
+      }
+    });
+   
   }
 
   async ngAfterViewInit() {
@@ -73,6 +87,7 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
   }
 
   scrollToSection(sectionId: string) {
+    debugger;
     this.activeSection = sectionId;
     const element = document.getElementById(sectionId);
     if (element) {

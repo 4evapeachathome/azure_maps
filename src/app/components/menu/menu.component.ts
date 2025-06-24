@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, CUSTOM_ELEMENTS_SCHEMA, NgZone } from '@angular/core';
+import { Component, OnInit, Input, CUSTOM_ELEMENTS_SCHEMA, NgZone, Output, EventEmitter } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -32,6 +32,7 @@ export class MenuComponent implements OnInit {
   @Input() populate: string[] = ['parentMenu'];
   @Input() sort: string[] = ['createdAt:asc'];
   @Input() isSidebarExpanded: boolean = true;
+  @Output() menuItemClicked: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   menuItems: MenuItem[] = [];
   processedMenu: MenuItem[] = [];
@@ -204,21 +205,16 @@ collapseAllSections(): void {
   toggleItem(item: MenuItem, event: Event) {
     event.stopPropagation();
   
-    // Show additional menus when clicking "Peace at Home"
     if (item.title === 'Peace at Home' && !this.showAdditionalMenus) {
       this.showAdditionalMenus = true;
       this.processedMenu = this.buildMenuTree(this.menuItems);
-    } 
-    // Always reset additional menus when clicking Home
-    else if (item.title === 'Home') {
+    } else if (item.title === 'Home') {
       this.showAdditionalMenus = false;
       this.processedMenu = this.buildMenuTree(this.menuItems);
       this.collapseAllItems(this.processedMenu);
-    } 
-    else {
-      // For any other main menu click, collapse all other root menus
+    } else {
       if (!item.parentMenu) {
-        this.showAdditionalMenus = false; // reset additional menus on other main menus
+        this.showAdditionalMenus = false;
         this.processedMenu.forEach(rootItem => {
           if (rootItem !== item) {
             rootItem.expanded = false;
@@ -232,28 +228,24 @@ collapseAllSections(): void {
   
     this.menuService.lastExpandedSection = item.title;
   
-    // Expand clicked root-level menu if it has children
-    // if (!item.parentMenu && item.children && item.children.length > 0) {
-    //   if (!item.expanded) {
-    //     item.expanded = true;
-    //   }
-    // } 
     if (!item.parentMenu && item.children && item.children.length > 0) {
-      item.expanded = !item.expanded; // Toggle the expanded state
-    }
-    // Expand non-root items with children if not already expanded
-    // else if (item.children && item.children.length > 0) {
-    //   if (!item.expanded) {
-    //     item.expanded = true;
-    //   }
-    // }
-    else if (item.children && item.children.length > 0) {
       item.expanded = !item.expanded;
+    } else if (item.children && item.children.length > 0) {
+      item.expanded = !item.expanded;
+    }
+  
+    // 🔥 Emit for leaf node
+    if (this.isLeafNode(item)) {
+      this.menuItemClicked.emit(true);
     }
   
     if (item.link) {
       this.router.navigate([item.link]);
     }
+  }
+  
+  isLeafNode(item: MenuItem): boolean {
+    return !item.children || item.children.length === 0;
   }
 
   private collapseAllItems(items: MenuItem[]) {
