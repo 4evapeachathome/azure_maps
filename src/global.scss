@@ -168,6 +168,7 @@ ion-card {
 }
 .link-content {
   display: contents;
+  cursor: pointer;
 }
 .menu-content {
   box-shadow: none !important;
@@ -991,7 +992,7 @@ ion-item {
       border: 1px solid var(--color-Gray64);
       display: flex;
       flex-direction: column;
-
+cursor: pointer;
       border-radius: 8px;
       margin: 8px;
       padding: 8px;
@@ -1381,6 +1382,7 @@ ion-footer {
       text-decoration: underline;
       color: $color-Gray34;
     }
+    
   }
 
   ion-text {
@@ -1396,7 +1398,10 @@ ion-footer {
     a {
       color: $color-white;
       font-size: $font-size-md-small;
-      text-decoration: none;     
+      text-decoration: none;  
+       &:hover {
+      text-decoration: underline;
+    }   
     }
   }
   ul {
@@ -1417,6 +1422,9 @@ ion-footer {
         font-size: $font-size-md-small;
         text-decoration: none;
         font-weight: normal;
+          &:hover {
+      text-decoration: underline;
+    }   
       }
     }
   }
