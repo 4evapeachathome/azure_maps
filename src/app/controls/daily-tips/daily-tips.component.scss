@@ -38,3 +38,20 @@
   }
 }
 
+.day-item {
+  transition: background-color 0.3s; /* Smooth transition for enabled days */
+}
+
+.day-item.day-disabled .day-name,
+.day-item.day-disabled .day-number {
+  color: #D3D3D3; /* Light grey text for day name and number */
+  cursor: not-allowed;
+}
+
+.day-item.day-disabled {
+  pointer-events: none; /* Disable all interactions, including hover */
+}
+
+.day-item:hover:not(.day-disabled) {
+  background-color: #e0e0e0; /* Highlight color for enabled days on hover */
+}
