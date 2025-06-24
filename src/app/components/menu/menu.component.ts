@@ -45,9 +45,9 @@ export class MenuComponent implements OnInit {
 
   // Define the titles of menus to hide initially
   private initiallyHiddenMenuTitles = [
-    'No Peace at Home',
-    'Support Service',
-    'Your Rights'
+    '/nopeaceathome',
+    '/yourrights',
+    '/supportservice'
   ];
 
   constructor(
@@ -103,7 +103,7 @@ collapseAllSections(): void {
   
     this.processedMenu.forEach(item => {
       if (!item.parentMenu && item.children?.length) {
-        item.expanded = item.title === title;
+        item.expanded = item.link === title;
       }
     });
   }
@@ -186,9 +186,9 @@ collapseAllSections(): void {
       return a.order === null ? 1 : -1; // Null orders come last
     });
 
-    const filteredItems = sortedRootItems.filter(item => {
+    const filteredItems = sortedRootItems.filter((item:any) => {
       if (
-        this.initiallyHiddenMenuTitles.includes(item.title) &&
+        this.initiallyHiddenMenuTitles.includes(item.link) &&
         !this.menuService.hasAppLoadedOnce
       ) {
         return false; // Hide on first load only

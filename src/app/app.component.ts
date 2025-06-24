@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, AfterViewChecked, HostListener } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, AfterViewChecked, HostListener, ChangeDetectorRef } from '@angular/core';
 import { AlertController, IonicModule, Platform } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
@@ -109,7 +109,7 @@ interface PlaceDetails {
   standalone: true,
   imports: [IonicModule, MenuComponent, HeaderComponent,FormsModule, CommonModule,RouterModule]
 })
-export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
+export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMobile!: boolean;
   private sessionAlert: HTMLIonAlertElement | null = null;
   organizations: Organization[] = [];
@@ -131,6 +131,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
     private platform: Platform,
     private location:Location,
     private router: Router,
+    private cdr: ChangeDetectorRef,
     private apiService: ApiService,
     private sharedDataService: MenuService
   ) {
@@ -153,6 +154,10 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
       sameSite: 'Strict',
       secure: true,
     });
+  }
+
+  expandMenu(sectionTitle: string) {
+    this.sharedDataService.toggleAdditionalMenus(true, sectionTitle);
   }
 
   async logout() {
@@ -199,6 +204,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
 
     this.router.events.subscribe(() => {
       const currentPath = this.location.path();
+      this.expandMenu(currentPath);
       const stillValid = ['/riskassessment', '/hitsassessment','/ssripariskassessment' ,'/riskassessmentsummary', '/webassessment', '/dangerassessment','/viewresult']
         .some(route => currentPath.startsWith(route));
     
@@ -207,8 +213,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewChecked  {
         this.sessionAlert = null;
       }
     });
-
-    this.closeMobileMenu();
   }
 
 
@@ -256,13 +260,18 @@ async presentSessionAlert() {
 }
 
 
-ngAfterViewChecked() {
-  if (this.isRouteCheckComplete && !this.initializedToggle) {
-    this.initializedToggle = true;
-    
-    // defer until DOM updates (allow ViewChild refs to be ready)
-    setTimeout(() => this.initializeToggleRef(), 0);
-  }
+ngAfterViewInit() {
+  this.platform.ready().then(() => {
+    this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
+    this.isMenuOpen = !this.isMobile;
+
+    this.cdr.detectChanges();
+
+    if (this.isRouteCheckComplete && !this.initializedToggle) {
+      this.initializedToggle = true;
+      setTimeout(() => this.initializeToggleRef(), 0);
+    }
+  });
 }
 
 initializeToggleRef() {
@@ -284,11 +293,13 @@ initializeToggleRef() {
 
     this.apiService.getAllSupportServices(this.endPoint).subscribe((response: OrganizationResponse) => {
       const seenNames = new Set<string>();
+      debugger;
       this.organizations = response.data.filter(org => {
         if (seenNames.has(org.OrgName)) return false;
         seenNames.add(org.OrgName);
         return true;
       });
+      debugger;
       this.sharedDataService.setOrganizations(this.organizations);
     });
 

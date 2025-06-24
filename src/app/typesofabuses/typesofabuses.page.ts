@@ -39,7 +39,7 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
   
           // Remove the query param from the URL after scrolling
           this.location.replaceState(this.router.url.split('?')[0]);
-        }, 300); // Allow DOM to render before scrolling
+        }, 500); // Allow DOM to render before scrolling
       }
     });
    

@@ -143,9 +143,7 @@ export class DailyTipsComponent implements OnInit {
         date.toDateString() === new Date().toDateString()
     );
     return currentDayIndex !== -1 && 
-           (index === currentDayIndex || 
-            index === currentDayIndex - 1 || 
-            index === currentDayIndex + 1);
+           (index === currentDayIndex);
 }
 
   selectDay(index: number) {
@@ -156,9 +154,7 @@ export class DailyTipsComponent implements OnInit {
 
     // Check if the clicked index is within the allowed range (current day, day before, or day after)
     const isValidDay = currentDayIndex !== -1 && 
-                      (index === currentDayIndex || 
-                       index === currentDayIndex - 1 || 
-                       index === currentDayIndex + 1);
+                      (index === currentDayIndex);
 
     if (isValidDay && this.selectedDay !== index) {
         this.selectedDay = index;
@@ -215,9 +211,7 @@ isDisabledDay(index: number): boolean {
       );
       return currentDayIndex !== -1 && 
              !(
-               index === currentDayIndex || 
-               index === currentDayIndex - 1 || 
-               index === currentDayIndex + 1
+               index === currentDayIndex
              );
   }
   // Disable all days if not the current week

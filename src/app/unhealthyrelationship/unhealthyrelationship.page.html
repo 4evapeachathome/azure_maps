@@ -35,8 +35,8 @@
         </ion-row>
         <ion-row class="comp-space">
       <ion-col size="12" size-sm="12" class="ion-text-center button-gap">
-        <ion-button [routerLink]="['/abusiverelationship']" (click)="expandMenu('Abusive Relationship')" color="secondary" size="small">Explore the Next Chapter.....</ion-button>
-       <ion-button [routerLink]="['/quiz']" color="primary" size="small">Are you ready for a Quiz?</ion-button> 
+        <ion-button [routerLink]="['/abusiverelationship']" (click)="expandMenu('/abusiverelationship')" color="secondary" size="small">Explore the Next Chapter.....</ion-button>
+       <ion-button [routerLink]="['/quiz']" color="primary" (click)="expandMenu('/quiz')" size="small">Are you ready for a Quiz?</ion-button> 
       </ion-col>
      
         </ion-row>

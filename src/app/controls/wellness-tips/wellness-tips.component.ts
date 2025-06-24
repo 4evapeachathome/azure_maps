@@ -45,6 +45,11 @@ export class WellnessTipsComponent  implements OnInit {
           this.HealthTipImageUrl = firstTip.image;
           this.allTips = firstTip.description;
           this.HealthytipSubtitle= firstTip.subtitle;
+          if (this.allTips && this.allTips.length > 0) {
+            this.generateRandomTip();
+          } else {
+            this.setDefaultTip();
+          }
         } else {
           this.setDefaultTip();
         }
@@ -60,24 +65,24 @@ export class WellnessTipsComponent  implements OnInit {
     );
   }
 
-  // generateRandomTip() {
-  //   if (this.allTips.length === 1) {
-  //     this.currentTip = this.allTips[0].Description;
-  //     return;
-  //   }
+  generateRandomTip() {
+    if (this.allTips.length === 1) {
+      this.currentTip = this.allTips[0].Description;
+      return;
+    }
 
-  //   let randomIndex: number;
-  //   do {
-  //     randomIndex = Math.floor(Math.random() * this.allTips.length);
-  //   } while (randomIndex === this.previousTipIndex);
+    let randomIndex: number;
+    do {
+      randomIndex = Math.floor(Math.random() * this.allTips.length);
+    } while (randomIndex === this.previousTipIndex);
     
-  //   const randomTip = this.allTips[randomIndex];
-  //   this.currentTip = randomTip.Description;
-  //   this.previousTipIndex = randomIndex;
+    const randomTip = this.allTips[randomIndex];
+    this.currentTip = randomTip.Description;
+    this.previousTipIndex = randomIndex;
 
     
-  //   localStorage.setItem(this.storageKey, randomIndex.toString());
-  // }
+    localStorage.setItem(this.storageKey, randomIndex.toString());
+  }
 
   setDefaultTip() {
     const peaceTip = getConstant('DAILY_PEACE_TIPS', 'DEFAULT_TIP');
