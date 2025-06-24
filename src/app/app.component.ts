@@ -261,14 +261,23 @@ async presentSessionAlert() {
 
 
 ngAfterViewInit() {
+  console.log('ngAfterViewInit called');
+
   this.platform.ready().then(() => {
+    console.log('Platform ready');
+
     this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
+    console.log('Platform isMobile:', this.isMobile);
+
     this.isMenuOpen = !this.isMobile;
+    console.log('Initial isMenuOpen set to:', this.isMenuOpen);
 
     this.cdr.detectChanges();
 
     if (this.isRouteCheckComplete && !this.initializedToggle) {
       this.initializedToggle = true;
+
+      console.log('Calling initializeToggleRef from ngAfterViewInit...');
       setTimeout(() => this.initializeToggleRef(), 0);
     }
   });
@@ -276,11 +285,17 @@ ngAfterViewInit() {
 
 initializeToggleRef() {
   const toggleRef = this.isMobile ? this.mobileToggle : this.desktopToggle;
-  //debugger;
+  console.log('ToggleRef resolved:', toggleRef);
+
   if (toggleRef) {
+    console.log('ToggleRef.checked at init:', toggleRef.nativeElement.checked);
+
     toggleRef.nativeElement.addEventListener('change', () => {
       this.isMenuOpen = toggleRef.nativeElement.checked;
+      console.log('Menu toggled, isMenuOpen is now:', this.isMenuOpen);
     });
+  } else {
+    console.warn('ToggleRef is undefined — input element may not be rendered yet.');
   }
 }
   
@@ -293,13 +308,11 @@ initializeToggleRef() {
 
     this.apiService.getAllSupportServices(this.endPoint).subscribe((response: OrganizationResponse) => {
       const seenNames = new Set<string>();
-      debugger;
       this.organizations = response.data.filter(org => {
         if (seenNames.has(org.OrgName)) return false;
         seenNames.add(org.OrgName);
         return true;
       });
-      debugger;
       this.sharedDataService.setOrganizations(this.organizations);
     });
 
