@@ -168,6 +168,7 @@ ion-card {
 }
 .link-content {
   display: contents;
+  cursor: pointer;
 }
 .menu-content {
   box-shadow: none !important;
@@ -991,7 +992,7 @@ ion-item {
       border: 1px solid var(--color-Gray64);
       display: flex;
       flex-direction: column;
-
+cursor: pointer;
       border-radius: 8px;
       margin: 8px;
       padding: 8px;
@@ -1369,50 +1370,61 @@ ion-item {
 }
 ion-footer {
   background-color: $color-dark-Gray;
-  --color: $color-Gray64;
-  font-size: $font-size-md;
+  --color: $color-Gray34;
+  font-size: $font-size-md-small;
+  padding-bottom: 8px;
+    padding-top: 8px;
   // margin-top: 16px;
   box-shadow: none;
   a {
     cursor: pointer;
     &.active {
       text-decoration: underline;
-      color: $color-Gray64;
+      color: $color-Gray34;
     }
+    
   }
 
   ion-text {
-    color: $color-Gray64;
-    font-size: $font-size-md;
+    color: $color-Gray34;
+    font-size: $font-size-md-small;
   }
   h5 {
-    font-size: $font-size-base;
-    color: $color-Gray64;
+    font-size: $font-size-md-small;
+    color: $color-white;
     margin: 0;
-    padding: 0;
-    font-weight: $font-regular;
+    padding: 0;   
+    margin-bottom: 8px;
     a {
-      color: $color-Gray64;
-      font-size: $font-size-md;
-      text-decoration: none;
+      color: $color-white;
+      font-size: $font-size-md-small;
+      text-decoration: none;  
+       &:hover {
+      text-decoration: underline;
+    }   
     }
   }
   ul {
     padding: 0;
     margin: 0;
-    color: $color-Gray64;
-    font-size: $font-size-md;
+    list-style: none;
+    color: $color-Gray34;
+    font-size: $font-size-md-small;
     display: inline-block;
     vertical-align: top;
-    margin-right: 50px;
+    margin-right: 60px;
     li {
       padding: 4px 0;
-      margin-left: 26px;
+      margin-left: 0;
       cursor: pointer;
       a {
-        color: $color-Gray64;
-        font-size: $font-size-md;
+        color: $color-Gray34;
+        font-size: $font-size-md-small;
         text-decoration: none;
+        font-weight: normal;
+          &:hover {
+      text-decoration: underline;
+    }   
       }
     }
   }
