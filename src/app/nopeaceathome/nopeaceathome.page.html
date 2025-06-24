@@ -13,7 +13,7 @@
     <!-- Second Row: Three Components in Flex Display -->
     <ion-row class="comp-space">
       <ion-col size="12">
-        <pathome-home-slider (loaded)="onChildLoaded()" [routerLink]="['/unhealthyrelationship']" [routerLinkTitle]="'Unhealthy Relationship'" [endpoint]="nopeaceathomeslider" [showButton]="true" [paramName]="'nopeaceathome'"></pathome-home-slider>
+        <pathome-home-slider (loaded)="onChildLoaded()" [routerLink]="['/unhealthyrelationship']" [routerLinkTitle]="'/unhealthyrelationship'" [endpoint]="nopeaceathomeslider" [showButton]="true" [paramName]="'nopeaceathome'"></pathome-home-slider>
       </ion-col>
     </ion-row>
 
@@ -47,7 +47,7 @@
     </ion-row>
     <ion-row class="comp-space">
       <ion-col class="ion-text-center">
-        <ion-button color="secondary" [routerLink]="['/unhealthyrelationship']" (click)="expandMenu('Unhealthy Relationship')" size="small">Explore the Next Chapter.....</ion-button>
+        <ion-button color="secondary" [routerLink]="['/unhealthyrelationship']" (click)="expandMenu('/unhealthyrelationship')" size="small">Explore the Next Chapter.....</ion-button>
         </ion-col>
         </ion-row>
   </ion-grid>

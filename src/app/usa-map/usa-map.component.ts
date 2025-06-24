@@ -416,6 +416,16 @@ export class UsaMapComponent {
     return this.stateAbbreviations[stateId.toLowerCase()] || stateId.toUpperCase();
   }
 
+  getStateTitle(stateName: string): string | null {
+    if (!stateName) return null;
+    // Normalize state name to match stateAbbreviations keys (lowercase, hyphenated)
+    const normalizedName = stateName
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z-]/g, ''); // Remove any special characters
+    return this.stateAbbreviations[normalizedName] || null;
+  }
+
   private lineLabelStates: string[] = ['ri', 'hi'];
 
   needsLineLabel(stateId?: string): boolean {

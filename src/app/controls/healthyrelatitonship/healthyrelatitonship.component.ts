@@ -26,7 +26,6 @@ export class HealthyrelatitonshipComponent  implements OnInit {
   }
 
   getHeadingLevelClass(level: number): string {
-    debugger;
     switch (level) {
       case 1: return 'cb-headeing-1';
       case 2: return 'cb-headeing-2';
@@ -43,7 +42,6 @@ export class HealthyrelatitonshipComponent  implements OnInit {
         if (data) {
           this.img = data.image;
           this.title = Array.isArray(data.title) ? data.title : [];
-          debugger;
           // Handle both contentBlocks and ContentBlocks for compatibility
           const blocks = data.contentBlocks || data.ContentBlocks;
           if (blocks) {

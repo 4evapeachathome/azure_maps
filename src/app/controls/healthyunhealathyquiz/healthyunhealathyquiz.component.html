@@ -172,15 +172,15 @@
       <div class="qs-row answer-row" *ngIf="showAnswers[i]">
         <div class="qs-col"><strong>A:</strong> {{ q.answer }}</div>
       </div>
-      <div class="qs-row" *ngIf="isCorrectAnswer(i)">
-        <div class="qs-col ta-center">
-          <span style="font-size: 24px;">👏</span>
+      <div class="qs-row answer-row" *ngIf="isCorrectAnswer(i)">
+        <div class="qs-col">
+          <div class="qs-col"><strong>A:</strong>Congratulations, you got that right!!</div>
         </div>
       </div>
       
 
       <div class="qs-row completion-message" *ngIf="i === questions.length - 1 && q.selected">
-        <div class="qs-col ta-center">
+        <div class="qs-col">
           <p style="font-weight: bold; color: var(--ion-color-primary); margin-top: 20px;">
             Well done! Now you know what healthy and unhealthy relationships mean.
           </p>

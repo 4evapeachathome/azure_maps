@@ -100,7 +100,7 @@
                           <p>{{location.ServiceHours}}</p>
                         </div>
                         <ion-buttons class="ab-containers">
-                          <ion-button fill="clear" size="small" class="action-button" (click)="openGoogleMaps(location.OrgLatitude,location.OrgLongitude)">
+                          <ion-button fill="clear" size="small" class="action-button" [disabled]="!isValidCoordinate(location.OrgLatitude, location.OrgLongitude)"  (click)="openGoogleMaps(location.OrgLatitude,location.OrgLongitude,location)">
                             <ion-icon name="navigate-outline"></ion-icon>
                             Direction
                           </ion-button>
@@ -150,7 +150,7 @@
              -->
                 <div class="scrollable-content">
                 <ion-buttons class="ab-containers">
-                    <ion-button fill="clear" size="small" class="action-button" (click)="openGoogleMaps(selectedLocation.OrgLatitude, selectedLocation.OrgLongitude)">
+                    <ion-button fill="clear" size="small" class="action-button" [disabled]="!isValidCoordinate(selectedLocation.OrgLatitude, selectedLocation.OrgLongitude)" (click)="openGoogleMaps(selectedLocation.OrgLatitude, selectedLocation.OrgLongitude,selectedLocation)">
                       <ion-icon name="navigate-outline"></ion-icon>
                       Direction
                     </ion-button>

@@ -30,8 +30,8 @@ export interface Organization {
   OrgCity: string;
   OrgZipCode: string;
   OrgHotline: string;
-  OrgLatitude: number;
-  OrgLongitude: number;
+  OrgLatitude: string;
+  OrgLongitude: string;
   ServiceHours: string;
   AboutOrg: AboutOrgItem[];
   IsHotline: boolean | null;
@@ -201,7 +201,18 @@ setupSearchDebounce() {
       document.createElement('div')
     );
   }
+
+  isValidCoordinate(lat: string | null, lng: string | null): boolean {
+  if (lat === null || lng === null) return false;
   
+  const trimmedLat = lat.trim();
+  const trimmedLng = lng.trim();
+  
+  if (trimmedLat === '' || trimmedLng === '') return false;
+  
+  // Rest of validation...
+  return true;
+}
 
   createGoogleMapsSize(width: number, height: number): google.maps.Size {
     return new google.maps.Size(width, height);
@@ -428,7 +439,7 @@ setupSearchDebounce() {
     this.filteredLocations = this.organizations.filter(location => {
       const distance = this.calculateDistance(
         lat, lng, 
-        location.OrgLatitude, location.OrgLongitude
+        location.OrgLatitude && location.OrgLongitude ? parseFloat(location.OrgLatitude) : 0, location.OrgLongitude && location.OrgLatitude ? parseFloat(location.OrgLongitude) : 0
       );
       return distance <= this.searchRadius;
     });
@@ -844,50 +855,54 @@ onSearchClear() {
   }
 
   
-  async openGoogleMaps(latitude: number, longitude: number) {
-    // Ensure latitude and longitude are numbers
+  async openGoogleMaps(latitude: string, longitude: string, location: Organization) {
     const lat = Number(latitude);
     const lng = Number(longitude);
-
+  
+    // Combine address for label (excluding "DNK" and trimming spaces)
+    const addressParts = [
+      location.OrgAddress?.trim(),
+      location.OrgCity?.trim(),
+      location.OrgZipCode?.trim()
+    ].filter(part => part && part !== 'DNK');
+  
+    const placeLabel = encodeURIComponent(addressParts.join(', ') || 'Location');
+  
     if (this.platform.is('android')) {
-      // Android: Try to open Google Maps app
-      const googleMapsUrl = `geo:${lat},${lng}?q=${lat},${lng}`;
-      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-
+      const googleMapsUrl = `geo:${lat},${lng}?q=${lat},${lng}(${placeLabel})`;
+      const webUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}(${placeLabel})`;
+  
       try {
         const result: CanOpenURLResult = await AppLauncher.canOpenUrl({ url: 'com.google.android.apps.maps' });
         if (result.value) {
-          // Google Maps app is available, launch it
           await AppLauncher.openUrl({ url: googleMapsUrl });
         } else {
-          // Fallback to browser if Google Maps app is not installed
           window.open(webUrl, '_blank');
         }
       } catch (error) {
-        console.error('Error checking Google Maps app availability:', error);
-        window.open(webUrl, '_blank'); // Fallback to browser on error
+        console.error('Android map open failed, fallback to browser:', error);
+        window.open(webUrl, '_blank');
       }
+  
     } else if (this.platform.is('ios')) {
-      // iOS: Try to open Apple Maps app
-      const appleMapsUrl = `maps://?q=${lat},${lng}&ll=${lat},${lng}`;
-      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-
+      const appleMapsUrl = `maps://?q=${placeLabel}&ll=${lat},${lng}`;
+      const webUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}(${placeLabel})`;
+  
       try {
         const result: CanOpenURLResult = await AppLauncher.canOpenUrl({ url: 'maps://' });
         if (result.value) {
-          // Apple Maps is available, launch it
           await AppLauncher.openUrl({ url: appleMapsUrl });
         } else {
-          // Fallback to browser if Apple Maps is not available
           window.open(webUrl, '_blank');
         }
       } catch (error) {
-        console.error('Error checking Apple Maps availability:', error);
-        window.open(webUrl, '_blank'); // Fallback to browser on error
+        console.error('iOS map open failed, fallback to browser:', error);
+        window.open(webUrl, '_blank');
       }
+  
     } else {
-      // Web or other platforms: Open in browser
-      const webUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+      // Web fallback
+      const webUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}(${placeLabel})`;
       window.open(webUrl, '_blank');
     }
   }

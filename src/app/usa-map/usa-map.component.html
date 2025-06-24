@@ -308,6 +308,9 @@
                             </div>
                           </ion-col>
                           <ion-col class="state-map-side" size="12" size-sm="4">
+                            <div class="state-name-label" *ngIf="selectedState">
+                              <h3>{{ selectedState.name }} - {{ getStateTitle(selectedState.name) || '' }}</h3>
+                            </div>
                             <div class="selected-state-map">
                               <svg [attr.viewBox]="getStateViewBox()">
                                 <path [attr.d]="getSelectedStatePath()" class="active" [ngClass]="{

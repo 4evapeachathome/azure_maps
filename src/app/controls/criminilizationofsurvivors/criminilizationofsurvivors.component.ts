@@ -27,7 +27,6 @@ export class CriminilizationofsurvivorsComponent  implements OnInit {
     this.apiService.getCriminalizationOfSurvivors().subscribe(
       (data) => {
         if (data) {
-         // debugger;
           this.contentBlocks = data.contentBlock;
           this.webImages = data.imageList;
 

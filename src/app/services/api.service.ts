@@ -253,8 +253,11 @@ export class ApiService {
   getWellnessTip(): Observable<any> {
     const endpoint = APIEndpoints.healthtips;
     const options = {
-      fields: ['title', 'subtitle','description'],
+      fields: ['title', 'subtitle'],
       populate: {
+        description: {
+          fields: ['Description']
+        },
         webImage: {
           fields: ['url'] 
         }
@@ -530,7 +533,7 @@ getAllSupportServices(endpoint: string): Observable<any> {
     ],
     pagination: {
       page: 1,
-      pageSize: 10000 
+      pageSize: 10000
     }
   }, environment.apitoken).pipe(
     catchError((error: any) => {
@@ -539,6 +542,7 @@ getAllSupportServices(endpoint: string): Observable<any> {
     })
   );
 }
+
 
 
 
