@@ -93,4 +93,9 @@ export class HealthyunhealathyquizComponent  implements OnInit {
     return answerkey === true;
   }
 
+  isCorrectAnswer(index: number): boolean {
+    return this.questions[index].selected &&
+           this.showAnswers[index] === false;
+  }
+
 }

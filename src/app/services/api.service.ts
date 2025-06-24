@@ -253,11 +253,8 @@ export class ApiService {
   getWellnessTip(): Observable<any> {
     const endpoint = APIEndpoints.healthtips;
     const options = {
-      fields: ['title', 'subtitle'],
+      fields: ['title', 'subtitle','description'],
       populate: {
-        description: {
-          fields: ['Description']
-        },
         webImage: {
           fields: ['url'] 
         }
@@ -699,7 +696,7 @@ getPartnerViolenceTitle(): Observable<any> {
     const options = {
       populate: {
         AbuseGallery: {
-          fields: ['caption'], // Ensure 'caption' is fetched
+          fields: ['caption','navigateTo'], // Ensure 'caption' is fetched
           populate: {
             webImage: { fields: ['url'] }, // Fetch only the 'url' field
             mobileImage: { fields: ['url'] }
