@@ -205,10 +205,10 @@ collapseAllSections(): void {
   toggleItem(item: MenuItem, event: Event) {
     event.stopPropagation();
   
-    if (item.title === 'Peace at Home' && !this.showAdditionalMenus) {
+    if (item.link === '/peaceathome' && !this.showAdditionalMenus) {
       this.showAdditionalMenus = true;
       this.processedMenu = this.buildMenuTree(this.menuItems);
-    } else if (item.title === 'Home') {
+    } else if (item.link === '/home') {
       this.showAdditionalMenus = false;
       this.processedMenu = this.buildMenuTree(this.menuItems);
       this.collapseAllItems(this.processedMenu);
