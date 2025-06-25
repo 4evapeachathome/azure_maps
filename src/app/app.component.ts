@@ -135,6 +135,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     'riskassessmentsummary', 'webassessment',
     'dangerassessment', 'viewresult'
   ];
+  private uploadIntervalId: any;
+
   constructor(
     private sessionActivityService: SessionActivityService,
     private alertController: AlertController,
@@ -232,6 +234,14 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
         this.sessionAlert = null;
       }
     });
+
+    // Schedule uploadLogFile to run every 24 hours (86,400,000 ms)
+    this.uploadIntervalId = setInterval(() => {
+      this.apiService.uploadLogFile();
+    }, 24 * 60 * 60 * 1000);
+
+    // Optionally, upload immediately on startup
+    this.apiService.uploadLogFile();
   }
 
 
@@ -353,5 +363,8 @@ initializeToggleRef() {
   }
 
   ngOnDestroy() {
+    if (this.uploadIntervalId) {
+      clearInterval(this.uploadIntervalId);
+    }
   }
 }

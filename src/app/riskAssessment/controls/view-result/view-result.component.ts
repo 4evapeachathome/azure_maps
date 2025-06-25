@@ -10,6 +10,7 @@ import { ASSESSMENT_TYPE } from 'src/shared/constants';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast } from 'src/shared/utility';
+import { LoggerServiceService } from 'src/shared/logger-service.service';
 
 
 @Component({
@@ -59,7 +60,8 @@ export class ViewResultComponent  implements OnInit {
 
   constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute,
         private menuService: MenuService,
-        private toastController: ToastController
+        private toastController: ToastController,
+        private loggerService: LoggerServiceService
   ) { }
 
   ngOnInit() {
@@ -243,8 +245,18 @@ export class ViewResultComponent  implements OnInit {
           this.router.navigate(['/login']);
         }
   
-      } catch (error) {
-        console.error('HITS Assessment fetch error:', error);
+      } catch (error: any) {
+        console.error('HITS Assessment fetch error:',error, error?.message);
+        this.loggerService.logActivity({
+          dateTime: new Date().toISOString(),
+          requestedBy: 'currentUser', // Replace with actual user info if available
+          activityType: 'API_ERROR',
+          response: JSON.stringify('Error:' + error?.message)
+        }).then((event: any) => {
+          if(event) {
+            this.apiService.uploadLogFile();
+          }
+        });
       }
     }
   

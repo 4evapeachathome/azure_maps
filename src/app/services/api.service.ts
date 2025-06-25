@@ -4,6 +4,7 @@ import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from 'src/environments/environment';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { LoggerServiceService } from 'src/shared/logger-service.service';
 
 interface QueryOptions {
   fields?: string[];
@@ -34,7 +35,7 @@ interface StateLawsResponse {
   providedIn: 'root'
 })
 export class ApiService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private loggerService: LoggerServiceService) {}
 
   private createHeaders(token?: string): HttpHeaders {
     let headers = new HttpHeaders();
@@ -1543,11 +1544,44 @@ getAssessmentResponse(url: string): Observable<any> {
         error?.error?.error?.message || // Strapi v4/v5 structure
         error?.error?.message ||        // Some other possible nesting
         'An error occurred while fetching the Qrcode';
+
+      this.loggerService.logActivity({
+        dateTime: new Date().toISOString(),
+        requestedBy: 'currentUser', // Replace with actual user info if available
+        activityType: 'API_ERROR',
+        response: JSON.stringify(error)
+      });
     
       return throwError(() => new Error(backendMessage));
     })
   );
 }
 
+  getSomething(): Observable<any> {
+    return this.http.get('your-api-url').pipe(
+      catchError(error => {
+        this.loggerService.logActivity({
+          dateTime: new Date().toISOString(),
+          requestedBy: 'currentUser', // Replace with actual user info if available
+          activityType: 'API_ERROR',
+          response: JSON.stringify(error)
+        });
+        return throwError(error);
+      })
+    );
+  }
+
+  // Upload log file to Azure Blob Storage Call this method (e.g., via a scheduled job or manually)
+  uploadLogFile() {
+    // Usage example in a component or service
+    const blobBaseUrl = 'https://nsfdvsa.blob.core.windows.net/nsf-log/';
+    const sasToken = `Bearer ${environment.apitoken}`;
+    this.loggerService.uploadCurrentLogFileToAzure(blobBaseUrl, sasToken)
+      .then(() => {
+        console.log('Logs uploaded to Azure Blob Storage');
+        this.loggerService.clearCurrentLogFile(); // Optionally clear after upload
+      })
+      .catch(err => console.error('Failed to upload logs', err));
+  }
 
 }
