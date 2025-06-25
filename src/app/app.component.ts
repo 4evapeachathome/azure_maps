@@ -284,7 +284,8 @@ ngAfterViewInit() {
   this.platform.ready().then(() => {
     console.log('Platform ready');
 
-    this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
+    this.isMobile = window.innerWidth <= 768;
+    console.log('Inner width:', window.innerWidth);
     console.log('Platform isMobile:', this.isMobile);
 
     this.isMenuOpen = !this.isMobile;

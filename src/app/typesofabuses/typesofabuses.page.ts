@@ -23,6 +23,9 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
   immigrantabuse:string=APIEndpoints.immigrantabuse;
   systemabuse:string=APIEndpoints.systemabuse;
   loading: HTMLIonLoadingElement | null = null;
+  private totalComponents = 11; // Number of child components with API calls
+  private loadedComponents = 0;
+  private loaderDismissed = false;
 
   @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
 
@@ -45,16 +48,15 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
    
   }
 
-  async ngAfterViewInit() {
-    const idleCallback = window['requestIdleCallback'] || function (cb: any) {
-      setTimeout(cb, 1000);
-    };
-
-    idleCallback(() => {
-      setTimeout(() => {
+  ngAfterViewInit() {
+    setTimeout(() => {
+      if (!this.loaderDismissed) {
+        console.log('Fallback timeout triggered: dismissing loader');
         this.hideLoader();
-      }, 500);
-    });
+      } else {
+        console.log('Fallback timeout ignored: loader already dismissed');
+      }
+    }, 10000); // 10 seconds max
   }
 
   async showLoader() {
@@ -64,23 +66,37 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
-
-    // Force dismiss after 10 seconds just in case
-    setTimeout(() => {
-      this.hideLoader();
-    }, 5000);
+    console.log('Loader presented');
   }
 
   async hideLoader() {
-    if (this.loading) {
+    if (this.loading && !this.loaderDismissed) {
       try {
         await this.loading.dismiss();
+        console.log('Loader dismissed');
       } catch (e) {
-        console.warn('Loader already dismissed or not yet created');
+        console.warn('Loader already dismissed or error dismissing:', e);
       }
+      this.loaderDismissed = true;
       this.loading = null;
     }
   }
+
+ async onChildLoaded() {
+  if (this.loaderDismissed) {
+    console.log(`Ignoring extra load event after loader dismissed`);
+    return;
+  }
+
+  this.loadedComponents++;
+
+  console.log(`Component loaded (${this.loadedComponents}/${this.totalComponents})`);
+
+  if (this.loadedComponents >= this.totalComponents) {
+    console.log(`All components loaded, hiding loader...`);
+    await this.hideLoader(); // <- important
+  }
+}
 
   expandMenu(sectionTitle: string) {
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
