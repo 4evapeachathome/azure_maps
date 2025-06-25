@@ -4,7 +4,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
 import { Location } from '@angular/common';
 import { HeaderComponent } from "./controls/header/header.component";
-import { filter, Subscription } from 'rxjs';
+import { BehaviorSubject, filter, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { StatusBar, Style } from '@capacitor/status-bar';
@@ -118,12 +118,23 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   @ViewChild('desktopToggle', { static: false }) desktopToggle!: ElementRef<HTMLInputElement>;
   isRiskAssessment = false;
   isRouteCheckComplete = false;
+  routeReady$ = new BehaviorSubject<boolean>(false);
   showSessionWarning = false;
   isMenuOpen = true;
   public readonly endPoint : string = APIEndpoints.supportService;
   private initializedToggle: boolean = false;
-  private riskRoutes = ['riskassessment', 'setpassword', 'riskassessmentsummary','login','hitsassessment', 'ratsassessment', 'dangerassessment','ssripariskassessment', 'webassessment', 'viewresult'];
-
+  private readonly riskRoutes = [
+    'riskassessment', 'setpassword', 'riskassessmentsummary', 'login',
+    'hitsassessment', 'dangerassessment',
+    'ssripariskassessment', 'webassessment', 'viewresult'
+  ];
+  
+  /** These routes should keep session alert active (subset of risk routes) */
+  private readonly sessionAlertRoutes = [
+    'riskassessment', 'hitsassessment', 'ssripariskassessment',
+    'riskassessmentsummary', 'webassessment',
+    'dangerassessment', 'viewresult'
+  ];
   constructor(
     private sessionActivityService: SessionActivityService,
     private alertController: AlertController,
@@ -135,15 +146,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     private apiService: ApiService,
     private sharedDataService: MenuService
   ) {
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        const url = event.urlAfterRedirects;
-        const currentPath = url.split('/')[1]?.split('?')[0];
-  
-        this.isRiskAssessment = this.riskRoutes.includes(currentPath);
-        this.isRouteCheckComplete = true;
-      });
   }
 
   stayLoggedIn() {
@@ -172,11 +174,12 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   
     this.router.navigate(['/login']);
   }
+  
+  
   ngOnInit() {
-    this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
-    this.isMenuOpen = !this.isMobile;
     this.loadInitialData();
   
+    // Set up native platform status bar if needed
     if (Capacitor.isNativePlatform()) {
       this.platform.ready().then(() => {
         StatusBar.setOverlaysWebView({ overlay: false });
@@ -184,37 +187,52 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       });
     }
   
+    // Listen to router navigation changes
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        const url = event.urlAfterRedirects;
+        const currentPath = url.split('/')[1]?.split('?')[0]; // Without leading slash
   
+        console.log('Router NavigationEnd:', currentPath);
+  
+        // Check if current route is a risk assessment route
+        this.isRiskAssessment = this.riskRoutes.includes(currentPath);
+  
+        // Signal that route check is complete
+        this.routeReady$.next(true);
+  
+        // Expand/collapse menu logic based on current path
+        this.expandMenu(currentPath);
+  
+        // Check whether session alert should stay active
+        const stillValid = this.sessionAlertRoutes.includes(currentPath);
+        if (!stillValid && this.sessionAlert) {
+          console.log('Dismissing session alert due to route:', currentPath);
+          this.sessionAlert.dismiss();
+          this.sessionAlert = null;
+        }
+      });
+  
+    // Session warning alert logic
     this.sessionActivityService.sessionWarning$.subscribe(() => {
       if (this.shouldShowSessionAlert()) {
         this.presentSessionAlert();
       }
     });
   
+    // Session expiration logic
     this.sessionActivityService.sessionExpired$.subscribe(() => {
       if (this.isUserLoggedIn()) {
         this.logout();
       }
-
+  
       if (this.sessionAlert) {
         this.sessionAlert.dismiss();
         this.sessionAlert = null;
       }
     });
-
-    this.router.events.subscribe(() => {
-      const currentPath = this.location.path();
-      this.expandMenu(currentPath);
-      const stillValid = ['/riskassessment', '/hitsassessment','/ssripariskassessment' ,'/riskassessmentsummary', '/webassessment', '/dangerassessment','/viewresult']
-        .some(route => currentPath.startsWith(route));
-    
-      if (!stillValid && this.sessionAlert) {
-        this.sessionAlert.dismiss();
-        this.sessionAlert = null;
-      }
-    });
   }
-
 
 
 private isUserLoggedIn(): boolean {

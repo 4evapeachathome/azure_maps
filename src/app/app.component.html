@@ -8,7 +8,7 @@
       <div class="d-flex-ion pos-relative flex-grow-1">
         
         <!-- Case 1: Risk Assessment (No Menu) -->
-        <ng-container *ngIf="isRiskAssessment && isRouteCheckComplete">
+        <ng-container *ngIf="(routeReady$ | async) && isRiskAssessment">
           <ion-router-outlet
             id="main-content"
             class="slider-content"
@@ -16,7 +16,7 @@
         </ng-container>
 
         <!-- Case 2: Default Layout (With Menu) -->
-        <ng-container *ngIf="!isRiskAssessment && isRouteCheckComplete">
+        <ng-container *ngIf="(routeReady$ | async) && !isRiskAssessment">
           <input #desktopToggle [(ngModel)]="isMenuOpen"  type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="!isMobile" checked />
           <input #mobileToggle [(ngModel)]="isMenuOpen" type="checkbox" id="sidebar-toggle" class="sidebar-toggle" *ngIf="isMobile" />
 
