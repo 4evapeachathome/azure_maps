@@ -30,9 +30,12 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
   @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
 
   constructor(private menuService:MenuService,private loadingController: LoadingController,private route:ActivatedRoute,private router: Router,
-    private location: Location) { }
+    private location: Location) {
+      this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+     }
 
     async ngOnInit() {
+      this.activeSection = '';
       await this.showLoader();
       this.route.queryParams.subscribe(params => {
         const section = params['section'];
@@ -40,7 +43,7 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
           setTimeout(() => {
             this.scrollToSection(section);
             this.location.replaceState(this.router.url.split('?')[0]);
-          }, 1000); // Slightly shorter might work better on mobile
+          }, 1500); // Slightly shorter might work better on mobile
         }
       });
     }
@@ -51,7 +54,7 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
         this.hideLoader();
       } else {
       }
-    }, 15000); // 10 seconds max
+    }, 10000); // 10 seconds max
   }
 
   async showLoader() {
@@ -75,6 +78,10 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
     }
   }
 
+  ionViewWillLeave() {
+    this.activeSection = '';
+  }
+
  async onChildLoaded() {
   if (this.loaderDismissed) {
     return;
@@ -92,16 +99,14 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
-  scrollToSection(sectionId: string, attempt: number = 1) {
-    const element = document.getElementById(sectionId);
+  scrollToSection(sectionId: string) { 
     this.activeSection = sectionId;
-    if (element && this.content) {
-      const yOffset = element.getBoundingClientRect().top + window.scrollY;
-      this.content.scrollToPoint(0, yOffset - 100, 500);
-    } else if (attempt <= 5) {
-      setTimeout(() => this.scrollToSection(sectionId, attempt + 1), 300);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
+  
   }
 
 
