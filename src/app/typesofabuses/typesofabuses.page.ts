@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { LoadingController } from '@ionic/angular';
+import { IonContent, LoadingController } from '@ionic/angular';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 
@@ -26,27 +26,24 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
   private totalComponents = 11; // Number of child components with API calls
   private loadedComponents = 0;
   private loaderDismissed = false;
-
+  @ViewChild(IonContent, { static: false }) content!: IonContent;
   @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
 
   constructor(private menuService:MenuService,private loadingController: LoadingController,private route:ActivatedRoute,private router: Router,
     private location: Location) { }
 
-  async ngOnInit() {
-    await this.showLoader();
-    this.route.queryParams.subscribe(params => {
-      const section = params['section'];
-      if (section) {
-        setTimeout(() => {
-          this.scrollToSection(section);
-  
-          // Remove the query param from the URL after scrolling
-          this.location.replaceState(this.router.url.split('?')[0]);
-        }, 1500); // Allow DOM to render before scrolling
-      }
-    });
-   
-  }
+    async ngOnInit() {
+      await this.showLoader();
+      this.route.queryParams.subscribe(params => {
+        const section = params['section'];
+        if (section) {
+          setTimeout(() => {
+            this.scrollToSection(section);
+            this.location.replaceState(this.router.url.split('?')[0]);
+          }, 1000); // Slightly shorter might work better on mobile
+        }
+      });
+    }
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -54,7 +51,7 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
         this.hideLoader();
       } else {
       }
-    }, 10000); // 10 seconds max
+    }, 15000); // 10 seconds max
   }
 
   async showLoader() {
@@ -95,11 +92,14 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
-  scrollToSection(sectionId: string) {
-    this.activeSection = sectionId;
+  scrollToSection(sectionId: string, attempt: number = 1) {
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.activeSection = sectionId;
+    if (element && this.content) {
+      const yOffset = element.getBoundingClientRect().top + window.scrollY;
+      this.content.scrollToPoint(0, yOffset - 100, 500);
+    } else if (attempt <= 5) {
+      setTimeout(() => this.scrollToSection(sectionId, attempt + 1), 300);
     }
   }
   }

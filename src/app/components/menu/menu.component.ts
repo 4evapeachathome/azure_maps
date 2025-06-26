@@ -269,7 +269,7 @@ collapseAllSections(): void {
 
   
   hasTooltip(title: string): boolean {
-    return title === '/quiz' || title === '/ssripaa';
+    return title === '/quiz' || title === '/ssripa';
   }
 
 
