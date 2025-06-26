@@ -34,7 +34,6 @@ export class SummarypageComponent implements OnInit {
 
   ngOnInit() {
     this.loaded = true;
-  //  debugger;
   }
 
   

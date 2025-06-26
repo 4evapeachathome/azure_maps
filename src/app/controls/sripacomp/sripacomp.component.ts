@@ -49,7 +49,7 @@ ngOnInit() {
 loadQuiz(): void {
   this.apiService.getSripaa().subscribe((quiz) => {
     if (quiz) {
-     // debugger;
+     
       this.quizTitle = 'Signs of Self-Recognition in Intimate Partner Abuse - SSRIPA'; // Or a suitable fallback
       this.sripa = quiz || [];
       this.rating = quiz.rating || '';

@@ -162,9 +162,7 @@ export class DailyTipsComponent implements OnInit {
         this.currentDate = new Date(this.weekDates[index]);
         this.generateRandomTip();
     } else if (!isValidDay) {
-        console.log(`Day ${index} is disabled and cannot be selected.`);
     } else {
-        console.log(`Day ${index} is already selected. No new tip generated.`);
     }
 }
 

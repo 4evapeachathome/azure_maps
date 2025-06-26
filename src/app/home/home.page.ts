@@ -28,10 +28,8 @@ export class HomePage implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       if (!this.loaderDismissed) {
-        console.log('Fallback timeout triggered: dismissing loader');
         this.hideLoader();
       } else {
-        console.log('Fallback timeout ignored: loader already dismissed');
       }
     }, 10000); // 10 seconds max
   }
@@ -43,16 +41,13 @@ export class HomePage implements OnInit, AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
-    console.log('Loader presented');
   }
 
   async hideLoader() {
     if (this.loading && !this.loaderDismissed) {
       try {
         await this.loading.dismiss();
-        console.log('Loader dismissed');
       } catch (e) {
-        console.warn('Loader already dismissed or error dismissing:', e);
       }
       this.loaderDismissed = true;
       this.loading = null;
@@ -61,16 +56,13 @@ export class HomePage implements OnInit, AfterViewInit {
 
  async onChildLoaded() {
   if (this.loaderDismissed) {
-    console.log(`Ignoring extra load event after loader dismissed`);
     return;
   }
 
   this.loadedComponents++;
 
-  console.log(`Component loaded (${this.loadedComponents}/${this.totalComponents})`);
 
   if (this.loadedComponents >= this.totalComponents) {
-    console.log(`All components loaded, hiding loader...`);
     await this.hideLoader(); // <- important
   }
 }

@@ -42,7 +42,6 @@ constructor(private loadingController: LoadingController, private apiService:Api
       
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
-       //   debugger;
           this.sripaData = response?.guid;
           this.hideLoader();
         },

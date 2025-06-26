@@ -24,7 +24,6 @@ export class UnhealthyrelationexampleComponent  implements OnInit {
   loadunhealthyrelationexampledate() {
     this.apiService.getunhealthyrelationexample().subscribe( 
       (res: any) => {
-   //   debugger;
       if(res){
         this.title = res.Title;
         this.description = res.Description;

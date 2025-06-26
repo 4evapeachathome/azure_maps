@@ -170,7 +170,6 @@ export class SripaaPage implements OnInit,AfterViewInit {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Confirmation canceled');
           }
         },
         {

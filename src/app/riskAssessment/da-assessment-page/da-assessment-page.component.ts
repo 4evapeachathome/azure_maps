@@ -44,7 +44,6 @@ export class DaAssessmentPageComponent  implements OnInit,AfterViewInit {
       
       this.apiService.generateGuid(url).subscribe({
         next: (response) => {
-       //   debugger;
           this.daData = response?.guid;
           this.hideLoader();
         },

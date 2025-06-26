@@ -177,7 +177,6 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Submission canceled');
           }
         },
         {
@@ -236,7 +235,6 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                   hitsurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
                   caseNumber: res?.data?.CaseNumber
                 }));
-                console.log('Assessment saved:', res);
                 this.hasloadedDate = false; // Reset the flag to allow reloading
                 this.router.navigate(['/riskassessmentsummary']);
               },
