@@ -23,6 +23,9 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
   immigrantabuse:string=APIEndpoints.immigrantabuse;
   systemabuse:string=APIEndpoints.systemabuse;
   loading: HTMLIonLoadingElement | null = null;
+  private totalComponents = 11; // Number of child components with API calls
+  private loadedComponents = 0;
+  private loaderDismissed = false;
 
   @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
 
@@ -39,22 +42,19 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
   
           // Remove the query param from the URL after scrolling
           this.location.replaceState(this.router.url.split('?')[0]);
-        }, 500); // Allow DOM to render before scrolling
+        }, 1500); // Allow DOM to render before scrolling
       }
     });
    
   }
 
-  async ngAfterViewInit() {
-    const idleCallback = window['requestIdleCallback'] || function (cb: any) {
-      setTimeout(cb, 1000);
-    };
-
-    idleCallback(() => {
-      setTimeout(() => {
+  ngAfterViewInit() {
+    setTimeout(() => {
+      if (!this.loaderDismissed) {
         this.hideLoader();
-      }, 500);
-    });
+      } else {
+      }
+    }, 10000); // 10 seconds max
   }
 
   async showLoader() {
@@ -64,30 +64,38 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
-
-    // Force dismiss after 10 seconds just in case
-    setTimeout(() => {
-      this.hideLoader();
-    }, 5000);
   }
 
   async hideLoader() {
-    if (this.loading) {
+    if (this.loading && !this.loaderDismissed) {
       try {
         await this.loading.dismiss();
       } catch (e) {
-        console.warn('Loader already dismissed or not yet created');
+        console.warn('Loader already dismissed or error dismissing:', e);
       }
+      this.loaderDismissed = true;
       this.loading = null;
     }
   }
+
+ async onChildLoaded() {
+  if (this.loaderDismissed) {
+    return;
+  }
+
+  this.loadedComponents++;
+
+
+  if (this.loadedComponents >= this.totalComponents) {
+    await this.hideLoader(); // <- important
+  }
+}
 
   expandMenu(sectionTitle: string) {
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
   scrollToSection(sectionId: string) {
-    debugger;
     this.activeSection = sectionId;
     const element = document.getElementById(sectionId);
     if (element) {

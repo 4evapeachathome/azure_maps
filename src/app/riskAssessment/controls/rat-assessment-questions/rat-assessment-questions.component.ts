@@ -185,7 +185,6 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Submission canceled');
           }
         },
         {

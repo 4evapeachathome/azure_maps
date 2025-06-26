@@ -202,17 +202,18 @@ setupSearchDebounce() {
     );
   }
 
-  isValidCoordinate(lat: string | null, lng: string | null): boolean {
-  if (lat === null || lng === null) return false;
-  
-  const trimmedLat = lat.trim();
-  const trimmedLng = lng.trim();
-  
-  if (trimmedLat === '' || trimmedLng === '') return false;
-  
-  // Rest of validation...
-  return true;
-}
+  isValidCoordinate(location: any): boolean {
+    if (!location) return false;
+    
+    const addressParts = [
+      location.OrgAddress?.trim(),
+      location.OrgCity?.trim(),
+      location.OrgZipCode?.trim()
+    ].filter(part => part && part !== 'DNK' && part !== '');
+    
+    const fullAddress = addressParts.join(', ');
+    return fullAddress.length > 0;
+  }
 
   createGoogleMapsSize(width: number, height: number): google.maps.Size {
     return new google.maps.Size(width, height);
@@ -249,6 +250,7 @@ setupSearchDebounce() {
           this.ngZone.run(async () => {
             const lat = placeDetails.geometry.location.lat();
             const lng = placeDetails.geometry.location.lng();
+            
   
             // Reset filters
             if (this.getSelectedFilterCount() > 0) {
@@ -456,7 +458,7 @@ setupSearchDebounce() {
 
   updateSupportServiceMarkers() {
     this.supportServiceMarkers = (this.filteredLocations ?? []).map((location, index) => ({
-      position: { lat: location.OrgLatitude, lng: location.OrgLongitude },
+      position: { lat: location.OrgLatitude ? parseFloat(location.OrgLatitude) : 0, lng:  location.OrgLongitude ? parseFloat(location.OrgLongitude) : 0 },
       options: {
         icon: {
           url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
@@ -766,46 +768,67 @@ onSearchClear() {
   
   getAboutText(location: Organization): string {
     if (!location.AboutOrg || location.AboutOrg.length === 0) return '';
-
+  
     let aboutText = '';
     let hasAddress = false;
-
-    // Process AboutOrg to build the text, checking for an address
-    location.AboutOrg.forEach(item => {
+    let skipNextParagraphJoin = false;
+  
+    // Loop through AboutOrg paragraphs
+    location.AboutOrg.forEach((item, index) => {
+      let paragraphText = '';
+  
       if (item.children && item.children.length > 0) {
         item.children.forEach(child => {
           if (child.text) {
+            const cleanText = child.text.trim();
+  
             if (child.bold) {
-              aboutText += `<strong>${child.text.trim()}</strong>`;
+              paragraphText += `<strong>${cleanText}</strong>`;
+              // Check if it's the "Address:" label
+              if (cleanText.toLowerCase().includes('address:')) {
+                hasAddress = true;
+                skipNextParagraphJoin = true; // Flag to join next paragraph directly
+              }
             } else {
-              aboutText += child.text.trim();
+              if (skipNextParagraphJoin) {
+                // Append directly after label
+                paragraphText += ` ${cleanText}`;
+                skipNextParagraphJoin = false;
+              } else {
+                paragraphText += cleanText;
+              }
             }
-            // Check if this text contains an address (e.g., "Address:" followed by text)
-            if (child.text.toLowerCase().includes('address:')) {
-              hasAddress = true;
-            }
-            aboutText += '\n'; // Add a newline for paragraph breaks
           }
         });
+  
+        // Add paragraphText with newline only if not joining to previous
+        if (!skipNextParagraphJoin && paragraphText.trim() !== '') {
+          aboutText += paragraphText + '\n';
+        } else if (skipNextParagraphJoin) {
+          // If it's being joined, don't add newline now
+          aboutText += paragraphText;
+        }
       }
     });
-
+  
+    // Fallback if Address wasn't in AboutOrg
     if (!hasAddress) {
       const addressParts = [
-        location.OrgAddress.trim(),
-        location.OrgCity.trim(),
-        `${location.OrgZipCode.trim()}}`
-      ].filter(part => part && part !== 'DNK'); // Exclude "DNK" placeholders
+        location.OrgAddress?.trim(),
+        location.OrgCity?.trim(),
+        location.OrgZipCode?.trim()
+      ].filter(part => part && part !== 'DNK');
+  
       const address = addressParts.join(', ');
       if (address) {
-        aboutText += `\n\n<strong>Address:</strong>\n${address}`;
+        aboutText += `\n<strong>Address:</strong> ${address}`;
       }
-    } else {
-      aboutText = aboutText.replace(/\n\n/g, '\n').trim(); // Ensure proper spacing
     }
-
-    return aboutText.trim().replace(/\n\s*\n/g, '\n'); // Clean up extra newlines
+  
+    // Cleanup extra line breaks
+    return aboutText.trim().replace(/\n\s*\n/g, '\n');
   }
+
 
   //Get the sevices from the constants
   getServices(location: Organization): { name: string, value: string | boolean | null, isHotline?: boolean }[] {
@@ -854,6 +877,36 @@ onSearchClear() {
     this.segment = segmentValue;
   }
 
+  async openGoogleMapsByAddress(location: Organization) {
+    // Construct address string, ignore 'DNK' or empty parts
+    const addressParts = [
+      location.OrgAddress?.trim(),
+      location.OrgCity?.trim(),
+      location.OrgZipCode?.trim()
+    ].filter(part => part && part !== 'DNK');
+  
+    const fullAddress = encodeURIComponent(addressParts.join(', '));
+  
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${fullAddress}`;
+  
+    // Platform-specific logic
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      try {
+        const result: CanOpenURLResult = await AppLauncher.canOpenUrl({ url: 'com.google.android.apps.maps' });
+        if (result.value) {
+          await AppLauncher.openUrl({ url: `geo:0,0?q=${fullAddress}` });
+        } else {
+          window.open(googleMapsUrl, '_blank');
+        }
+      } catch (err) {
+        console.error('Map app check failed:', err);
+        window.open(googleMapsUrl, '_blank');
+      }
+    } else {
+      // Web fallback
+      window.open(googleMapsUrl, '_blank');
+    }
+  }
   
   async openGoogleMaps(latitude: string, longitude: string, location: Organization) {
     const lat = Number(latitude);
@@ -912,10 +965,15 @@ onSearchClear() {
     this.segment = 'services';
   }
 
-  openSupport(supportUrl:string) {
-    // Opens support website in a new tab
-    window.open(supportUrl, '_blank');
+openSupport(supportUrl: string): void {
+  // Ensure the URL has a protocol
+  let url = supportUrl.trim();
+  if (!url.match(/^https?:\/\//i)) {
+    url = `https://${url}`;
   }
+  // Opens support website in a new tab
+  window.open(url, '_blank');
+}
 
   async openPhone(phoneNumber: string) {
     // Ensure phoneNumber is a string and clean it (remove spaces, dashes, etc.)

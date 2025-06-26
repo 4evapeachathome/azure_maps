@@ -194,7 +194,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
         const url = event.urlAfterRedirects;
         const currentPath = url.split('/')[1]?.split('?')[0]; // Without leading slash
   
-        console.log('Router NavigationEnd:', currentPath);
   
         // Check if current route is a risk assessment route
         this.isRiskAssessment = this.riskRoutes.includes(currentPath);
@@ -208,7 +207,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
         // Check whether session alert should stay active
         const stillValid = this.sessionAlertRoutes.includes(currentPath);
         if (!stillValid && this.sessionAlert) {
-          console.log('Dismissing session alert due to route:', currentPath);
           this.sessionAlert.dismiss();
           this.sessionAlert = null;
         }
@@ -279,23 +277,18 @@ async presentSessionAlert() {
 
 
 ngAfterViewInit() {
-  console.log('ngAfterViewInit called');
 
   this.platform.ready().then(() => {
-    console.log('Platform ready');
 
-    this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
-    console.log('Platform isMobile:', this.isMobile);
+    this.isMobile = window.innerWidth <= 768;
 
     this.isMenuOpen = !this.isMobile;
-    console.log('Initial isMenuOpen set to:', this.isMenuOpen);
 
     this.cdr.detectChanges();
 
     if (this.isRouteCheckComplete && !this.initializedToggle) {
       this.initializedToggle = true;
 
-      console.log('Calling initializeToggleRef from ngAfterViewInit...');
       setTimeout(() => this.initializeToggleRef(), 0);
     }
   });
@@ -303,17 +296,13 @@ ngAfterViewInit() {
 
 initializeToggleRef() {
   const toggleRef = this.isMobile ? this.mobileToggle : this.desktopToggle;
-  console.log('ToggleRef resolved:', toggleRef);
 
   if (toggleRef) {
-    console.log('ToggleRef.checked at init:', toggleRef.nativeElement.checked);
 
     toggleRef.nativeElement.addEventListener('change', () => {
       this.isMenuOpen = toggleRef.nativeElement.checked;
-      console.log('Menu toggled, isMenuOpen is now:', this.isMenuOpen);
     });
   } else {
-    console.warn('ToggleRef is undefined — input element may not be rendered yet.');
   }
 }
   

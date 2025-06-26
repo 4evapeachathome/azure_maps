@@ -249,7 +249,6 @@ export class AssessmentPageComponent  implements OnInit {
           console.warn('No matching route found for selected assessment.');
       }
     } else {
-      console.log('Please select an assessment type');
     }
   }
 

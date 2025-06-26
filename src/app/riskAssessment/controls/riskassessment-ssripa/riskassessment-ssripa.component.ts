@@ -136,7 +136,6 @@ hasloadedDate: boolean = false;
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Submission canceled');
           }
         },
         {

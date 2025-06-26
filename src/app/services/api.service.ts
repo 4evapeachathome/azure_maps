@@ -886,7 +886,6 @@ getCriminalizationOfSurvivors(): Observable<any> {
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
       const resData = res.data?.[0];
-    //  debugger;
       if (resData?.webImage?.length) {
         resData.imageList = resData.webImage.map((img: any) => ({
           ...img,
@@ -917,7 +916,7 @@ getQuizzes(): Observable<any> {
       const quiz = res.data?.[0];
       if (!quiz) return null;
       const sortedQuestions = [...(quiz.questions || [])].sort((a, b) => a.id - b.id);
-     // debugger;
+     
       return {
         id: quiz.id,
         title: quiz.title,
@@ -981,7 +980,7 @@ getSripaa(): Observable<any> {
 
   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
     map((res: any) => {
-     // debugger;
+     
       // Check if response has data
       if (!res.data || !Array.isArray(res.data)) {
         return [];
@@ -1051,7 +1050,7 @@ postHitsAssessmentResponse(payload: any): Observable<any> {
 //   return this.getWithQuery(endpoint, options, environment.apitoken).pipe(
 //     map((res: any) => {
 //       if (!res.data || res.data.length === 0) return [];
-//      // debugger;
+//      
 //       const decryptField = (encryptedValue: any): string | null => {
 //         if (!encryptedValue) return null;
 //         try {
@@ -1097,7 +1096,6 @@ login(username: string, password: string): Observable<any> {
 
   return this.http.post(`${APIEndpoints.loginbyemail}`, payload).pipe(
     map((res: any) => {
-      debugger;
       if (!res.data || res.data.length === 0) return null;
       const decrypt = (val: string) => {
         const bytes = CryptoJS.AES.decrypt(val, environment.secretKey);
@@ -1176,7 +1174,7 @@ getUserLoginById(uid: number | string): Observable<any> {
     map((res: any) => {
       const item = res?.data;
       if (!item) return null;
-     // debugger;
+     
       const decryptField = (encryptedValue: any): string | null => {
         if (!encryptedValue) return null;
 

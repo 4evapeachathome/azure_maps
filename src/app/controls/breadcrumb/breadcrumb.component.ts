@@ -170,7 +170,6 @@ export class BreadcrumbComponent implements OnInit, OnChanges {
     if (changes['selectedState']) {
       this.selectedState = changes['selectedState'].currentValue;
       this.tempSelectedState = this.selectedState ? { ...this.selectedState } : null;
-      console.log('ngOnChanges: selectedState=', this.selectedState, 'tempSelectedState=', this.tempSelectedState);
       if (this.selectedState) {
         this.clearLastState();
         this.updateBreadcrumbWithState();
@@ -266,7 +265,6 @@ export class BreadcrumbComponent implements OnInit, OnChanges {
     if (state) {
       this.selectedState = { ...state };
       this.tempSelectedState = { ...state };
-      console.log('onStateSelect: selectedState=', this.selectedState, 'tempSelectedState=', this.tempSelectedState);
       this.stateSelected.emit(state);
       this.updateBreadcrumbWithState();
     }

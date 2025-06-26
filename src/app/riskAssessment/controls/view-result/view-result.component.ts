@@ -171,7 +171,6 @@ export class ViewResultComponent  implements OnInit {
   CheckAssessmenttypeAuthorize(response:any) : boolean{
     const userAssessmentTypes = this.loggedInUser.assessment_type || [];
     const responseAssessmentType = response?.assessment_type;
-    debugger;
     return userAssessmentTypes.some(
       (type:any) => type?.documentId === responseAssessmentType?.documentId
     );

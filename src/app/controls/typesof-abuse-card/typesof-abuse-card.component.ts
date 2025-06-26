@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -30,6 +30,7 @@ export class TypesofAbuseCardComponent  implements OnInit {
   @Input() buttonPosition: 'left' | 'right' = 'right'; 
   @Input() endpoint: string = '';
   @Input() paramName: string = '';
+  @Output() loaded = new EventEmitter<void>();
 
   constructor(private apiService: ApiService) {}
 
@@ -44,9 +45,11 @@ export class TypesofAbuseCardComponent  implements OnInit {
         if (res && res[paramName]) {
           this.physicalAbuse = res[paramName];
         }
+        this.loaded.emit(); // Emit loaded event after data is fetched
       },
       (error) => {
         console.error('Error fetching physical abuse data:', error);
+        this.loaded.emit();
       }
     );
   }
