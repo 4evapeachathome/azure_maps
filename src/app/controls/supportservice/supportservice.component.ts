@@ -767,31 +767,28 @@ onSearchClear() {
 
   
   getAboutText(location: Organization): string {
-    if (!location.AboutOrg || location.AboutOrg.length === 0) return '';
-  
-    let aboutText = '';
-    let hasAddress = false;
-    let skipNextParagraphJoin = false;
-  
-    // Loop through AboutOrg paragraphs
+  let aboutText = '';
+  let hasAddress = false;
+  let skipNextParagraphJoin = false;
+
+  // Only process AboutOrg if it's not null or empty
+  if (location.AboutOrg && location.AboutOrg.length > 0) {
     location.AboutOrg.forEach((item, index) => {
       let paragraphText = '';
-  
+
       if (item.children && item.children.length > 0) {
         item.children.forEach(child => {
           if (child.text) {
             const cleanText = child.text.trim();
-  
+
             if (child.bold) {
               paragraphText += `<strong>${cleanText}</strong>`;
-              // Check if it's the "Address:" label
               if (cleanText.toLowerCase().includes('address:')) {
                 hasAddress = true;
-                skipNextParagraphJoin = true; // Flag to join next paragraph directly
+                skipNextParagraphJoin = true;
               }
             } else {
               if (skipNextParagraphJoin) {
-                // Append directly after label
                 paragraphText += ` ${cleanText}`;
                 skipNextParagraphJoin = false;
               } else {
@@ -800,35 +797,32 @@ onSearchClear() {
             }
           }
         });
-  
-        // Add paragraphText with newline only if not joining to previous
+
         if (!skipNextParagraphJoin && paragraphText.trim() !== '') {
           aboutText += paragraphText + '\n';
         } else if (skipNextParagraphJoin) {
-          // If it's being joined, don't add newline now
           aboutText += paragraphText;
         }
       }
     });
-  
-    // Fallback if Address wasn't in AboutOrg
-    if (!hasAddress) {
-      const addressParts = [
-        location.OrgAddress?.trim(),
-        location.OrgCity?.trim(),
-        location.OrgZipCode?.trim()
-      ].filter(part => part && part !== 'DNK');
-  
-      const address = addressParts.join(', ');
-      if (address) {
-        aboutText += `\n<strong>Address:</strong> ${address}`;
-      }
-    }
-  
-    // Cleanup extra line breaks
-    return aboutText.trim().replace(/\n\s*\n/g, '\n');
   }
 
+  // Always try to append address from fallback values if no address was found in AboutOrg
+  if (!hasAddress) {
+    const addressParts = [
+      location.OrgAddress?.trim(),
+      location.OrgCity?.trim(),
+      location.OrgZipCode?.trim()
+    ].filter(part => part && part !== 'DNK');
+
+    const address = addressParts.join(', ');
+    if (address) {
+      aboutText += `${aboutText ? '\n' : ''}<strong>Address:</strong> ${address}`;
+    }
+  }
+
+  return aboutText.trim().replace(/\n\s*\n/g, '\n');
+}
 
   //Get the sevices from the constants
   getServices(location: Organization): { name: string, value: string | boolean | null, isHotline?: boolean }[] {
