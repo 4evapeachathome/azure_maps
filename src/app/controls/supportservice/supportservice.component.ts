@@ -3,15 +3,14 @@ import { Component, EventEmitter, NgZone, OnInit, Output, ViewChild } from '@ang
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { APIEndpoints } from 'src/shared/endpoints';
 import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 import { MenuService } from 'src/shared/menu.service';
+import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
 
 declare var google: any;
 
@@ -133,7 +132,7 @@ export class SupportserviceComponent  implements OnInit{
   
 
 
-  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
+  constructor(private rateLimiter: GoogleApiRateLimiterService,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(
       document.createElement('div')
@@ -221,6 +220,17 @@ setupSearchDebounce() {
 
   updateSearchResults(searchText: string) {
     if (searchText.length > 2) {
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+       alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+    this.rateLimiter.recordRequest();
+
       this.autocompleteService.getPlacePredictions(
         {
           input: searchText,
@@ -242,6 +252,16 @@ setupSearchDebounce() {
   selectSearchResult(item: Place) {  
     this.searchQuery = item.description;
     this.autocompleteItems = [];
+
+     if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
   
     this.placesService.getDetails(
       { placeId: item.place_id },
@@ -374,6 +394,16 @@ setupSearchDebounce() {
   private async geocodeZipCode(zipCode: string): Promise<{ lat: number; lng: number; result: any }> {
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+
       geocoder.geocode(
         {
           componentRestrictions: {
@@ -400,6 +430,16 @@ setupSearchDebounce() {
   private async geocodePlace(query: string): Promise<{ lat: number; lng: number; result: any }> {
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+
       geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
         if (status === 'OK' && results[0]) {
           const location = results[0].geometry.location;
