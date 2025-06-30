@@ -63,15 +63,28 @@ export class SsripaactionplanComponent  implements OnInit {
   }
   
   renderText(child: any): string {
-    let text = child.text || '';
-    if (child.bold) {
-      text = `<strong>${text}</strong>`;
+  let text = child.text || '';
+
+  // Handle links
+  if (child.type === 'link' && child.url && child.children) {
+    let url = child.url.trim();
+
+    // Add protocol if missing
+    if (!url.match(/^https?:\/\//i)) {
+      url = 'https://' + url;
     }
-    if (child.type === 'text' && text.includes('http')) {
-      text = `<a href="${text}" target="_blank">${text}</a>`;
-    }
-    return text;
+
+    const innerText = child.children.map((c: any) => this.renderText(c)).join('');
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${innerText}</a>`;
   }
+
+  // Handle bold
+  if (child.bold) {
+    text = `<strong>${text}</strong>`;
+  }
+
+  return text;
+}
 
   async exportAsPDF() {
     try {

@@ -3,15 +3,14 @@ import { Component, EventEmitter, NgZone, OnInit, Output, ViewChild } from '@ang
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { APIEndpoints } from 'src/shared/endpoints';
 import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 import { MenuService } from 'src/shared/menu.service';
+import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
 
 declare var google: any;
 
@@ -133,7 +132,7 @@ export class SupportserviceComponent  implements OnInit{
   
 
 
-  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
+  constructor(private rateLimiter: GoogleApiRateLimiterService,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(
       document.createElement('div')
@@ -221,6 +220,17 @@ setupSearchDebounce() {
 
   updateSearchResults(searchText: string) {
     if (searchText.length > 2) {
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+       alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+    this.rateLimiter.recordRequest();
+
       this.autocompleteService.getPlacePredictions(
         {
           input: searchText,
@@ -242,6 +252,16 @@ setupSearchDebounce() {
   selectSearchResult(item: Place) {  
     this.searchQuery = item.description;
     this.autocompleteItems = [];
+
+     if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
   
     this.placesService.getDetails(
       { placeId: item.place_id },
@@ -374,6 +394,16 @@ setupSearchDebounce() {
   private async geocodeZipCode(zipCode: string): Promise<{ lat: number; lng: number; result: any }> {
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+
       geocoder.geocode(
         {
           componentRestrictions: {
@@ -400,6 +430,16 @@ setupSearchDebounce() {
   private async geocodePlace(query: string): Promise<{ lat: number; lng: number; result: any }> {
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+
       geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
         if (status === 'OK' && results[0]) {
           const location = results[0].geometry.location;
@@ -767,31 +807,28 @@ onSearchClear() {
 
   
   getAboutText(location: Organization): string {
-    if (!location.AboutOrg || location.AboutOrg.length === 0) return '';
-  
-    let aboutText = '';
-    let hasAddress = false;
-    let skipNextParagraphJoin = false;
-  
-    // Loop through AboutOrg paragraphs
+  let aboutText = '';
+  let hasAddress = false;
+  let skipNextParagraphJoin = false;
+
+  // Only process AboutOrg if it's not null or empty
+  if (location.AboutOrg && location.AboutOrg.length > 0) {
     location.AboutOrg.forEach((item, index) => {
       let paragraphText = '';
-  
+
       if (item.children && item.children.length > 0) {
         item.children.forEach(child => {
           if (child.text) {
             const cleanText = child.text.trim();
-  
+
             if (child.bold) {
               paragraphText += `<strong>${cleanText}</strong>`;
-              // Check if it's the "Address:" label
               if (cleanText.toLowerCase().includes('address:')) {
                 hasAddress = true;
-                skipNextParagraphJoin = true; // Flag to join next paragraph directly
+                skipNextParagraphJoin = true;
               }
             } else {
               if (skipNextParagraphJoin) {
-                // Append directly after label
                 paragraphText += ` ${cleanText}`;
                 skipNextParagraphJoin = false;
               } else {
@@ -800,35 +837,32 @@ onSearchClear() {
             }
           }
         });
-  
-        // Add paragraphText with newline only if not joining to previous
+
         if (!skipNextParagraphJoin && paragraphText.trim() !== '') {
           aboutText += paragraphText + '\n';
         } else if (skipNextParagraphJoin) {
-          // If it's being joined, don't add newline now
           aboutText += paragraphText;
         }
       }
     });
-  
-    // Fallback if Address wasn't in AboutOrg
-    if (!hasAddress) {
-      const addressParts = [
-        location.OrgAddress?.trim(),
-        location.OrgCity?.trim(),
-        location.OrgZipCode?.trim()
-      ].filter(part => part && part !== 'DNK');
-  
-      const address = addressParts.join(', ');
-      if (address) {
-        aboutText += `\n<strong>Address:</strong> ${address}`;
-      }
-    }
-  
-    // Cleanup extra line breaks
-    return aboutText.trim().replace(/\n\s*\n/g, '\n');
   }
 
+  // Always try to append address from fallback values if no address was found in AboutOrg
+  if (!hasAddress) {
+    const addressParts = [
+      location.OrgAddress?.trim(),
+      location.OrgCity?.trim(),
+      location.OrgZipCode?.trim()
+    ].filter(part => part && part !== 'DNK');
+
+    const address = addressParts.join(', ');
+    if (address) {
+      aboutText += `${aboutText ? '\n' : ''}<strong>Address:</strong> ${address}`;
+    }
+  }
+
+  return aboutText.trim().replace(/\n\s*\n/g, '\n');
+}
 
   //Get the sevices from the constants
   getServices(location: Organization): { name: string, value: string | boolean | null, isHotline?: boolean }[] {

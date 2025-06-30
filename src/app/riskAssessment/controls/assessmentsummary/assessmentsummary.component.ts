@@ -31,7 +31,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   loggedInUser:any = null;
   loaded: boolean = false;
   riskValue!: number; // Dynamic risk value (0-100)
-  riskLevelsTitle: string = 'Risk Levels';
+  riskLevelsTitle: string = 'Risk Meter';
   stressCurveLabel: string = 'Stress Curve';
   @ViewChild('qrcodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
   @ViewChild('riskMeterRef') summaryPage!: SummarypageComponent;

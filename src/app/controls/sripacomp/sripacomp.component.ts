@@ -120,15 +120,27 @@ renderRichText(blocks: any[]): string {
 
 renderText(child: any): string {
   let text = child.text || '';
+
+  // Handle links
+  if (child.type === 'link' && child.url && child.children) {
+    let url = child.url.trim();
+
+    // Add protocol if missing
+    if (!url.match(/^https?:\/\//i)) {
+      url = 'https://' + url;
+    }
+
+    const innerText = child.children.map((c: any) => this.renderText(c)).join('');
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${innerText}</a>`;
+  }
+
+  // Handle bold
   if (child.bold) {
     text = `<strong>${text}</strong>`;
   }
-  if (child.type === 'text' && text.includes('http')) {
-    text = `<a href="${text}" target="_blank">${text}</a>`;
-  }
+
   return text;
 }
-
 capitalizeFirstLetter(str: string | null) {
   if (!str) return null;
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
