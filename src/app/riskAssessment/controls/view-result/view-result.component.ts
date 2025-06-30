@@ -10,6 +10,8 @@ import { ASSESSMENT_TYPE } from 'src/shared/constants';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast } from 'src/shared/utility';
+import { LoggingService } from 'src/app/services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 
 @Component({
@@ -56,11 +58,16 @@ export class ViewResultComponent  implements OnInit {
   isDataLoaded = false;
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
   @ViewChild('qrcodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
+  device: any;
 
   constructor(private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute,
         private menuService: MenuService,
-        private toastController: ToastController
-  ) { }
+        private toastController: ToastController,
+        private loggingService: LoggingService,
+        private deviceService: DeviceDetectorService
+  ) {
+      this.device = this.deviceService.getDeviceInfo();
+  }
 
   ngOnInit() {
     this.isDataLoaded = false;
@@ -114,12 +121,12 @@ export class ViewResultComponent  implements OnInit {
       this.selectedAssessment = this.ASSESSMENT_TYPE.HITS;
       this.isHitAssessment = true;
       const url =APIEndpoints.getHitsAssessmentByGuid + code;
-      this.GetAssessmentResponsebycode(url);
+      this.GetAssessmentResponsebycode(url, code);
     } else if(code && code.toLowerCase().includes('da-')) {
       this.selectedAssessment = this.ASSESSMENT_TYPE.DA;
       this.isDaAssessment = true;
       const url =APIEndpoints.getDaAssessmentByGuid + code;
-      this.GetAssessmentResponsebycode(url);
+      this.GetAssessmentResponsebycode(url, code);
     } else if(code && code.toLowerCase().includes('dai-')) {
       this.selectedAssessment = 'dai';
     } else if(code && code.toLowerCase().includes('cts-')) {
@@ -128,7 +135,7 @@ export class ViewResultComponent  implements OnInit {
       this.selectedAssessment = this.ASSESSMENT_TYPE.SSRIPA;
       this.isSSripa = true;
       const url =APIEndpoints.getSSripaAssessmentByGuid + code;
-      this.GetAssessmentResponsebycode(url);
+      this.GetAssessmentResponsebycode(url, code);
       
     } else {
       this.selectedAssessment = '';
@@ -160,6 +167,16 @@ export class ViewResultComponent  implements OnInit {
       error: (error: any) => {
         const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
         this.showToast(errorMsg, 3000, 'top');
+        let requestUrl = APIEndpoints.ratResult + code;
+        this.loggingService.handleApiError(
+          'Fetch WEB Assessment', // activity type
+          'fetchRatResults', // function in which error occured
+          requestUrl, // request URL
+          code, // request parameter
+          error?.message, // error message
+          error?.status, // error status,
+          this.device // device information
+        );
       }
     })
   }
@@ -171,13 +188,12 @@ export class ViewResultComponent  implements OnInit {
   CheckAssessmenttypeAuthorize(response:any) : boolean{
     const userAssessmentTypes = this.loggedInUser.assessment_type || [];
     const responseAssessmentType = response?.assessment_type;
-    debugger;
     return userAssessmentTypes.some(
       (type:any) => type?.documentId === responseAssessmentType?.documentId
     );
   }
 
-  async GetAssessmentResponsebycode(url: string) {
+  async GetAssessmentResponsebycode(url: string, code: string) {
     if (url && this.isDaAssessment) {
       try {
         const res: any = await new Promise((resolve, reject) => {
@@ -208,8 +224,17 @@ export class ViewResultComponent  implements OnInit {
           this.router.navigate(['/login']);
         }
   
-      } catch (error) {
+      } catch (error: any) {
         console.error('DA Assessment fetch error:', error);
+        this.loggingService.handleApiError(
+          'Fetch DA Assessment', // activity type
+          'GetAssessmentResponsebycode', // function in which error occured
+          url, // request URL
+          code, // request parameter
+          error?.message, // error message
+          error?.status, // error status,
+          this.device // device information
+        );
       }
     }
   
@@ -243,8 +268,17 @@ export class ViewResultComponent  implements OnInit {
           this.router.navigate(['/login']);
         }
   
-      } catch (error) {
+      } catch (error: any) {
         console.error('HITS Assessment fetch error:', error);
+        await this.loggingService.handleApiError(
+          'Fetch HITS Assessment', // activity type
+          'GetAssessmentResponsebycode', // function in which error occured
+          url, // request URL
+          code, // request parameter
+          error?.message, // error message
+          error?.status, // error status,
+          this.device // device information
+        );
       }
     }
   
@@ -271,8 +305,18 @@ export class ViewResultComponent  implements OnInit {
 
   
         },
-        (error) => console.error('SSRIPA Assessment fetch error:', error)
-      );
+        (error) => {
+          console.error('SSRIPA Assessment fetch error:', error);
+          this.loggingService.handleApiError(
+            'Fetch SSripa Assessment', // activity type
+            'GetAssessmentResponsebycode', // function in which error occured
+            url, // request URL
+            code, // request parameter
+            error?.message, // error message
+            error?.status, // error status,
+            this.device // device information
+          );
+        });
     }
   }
 

@@ -1229,7 +1229,7 @@ forgetPassword(payload: any): Observable<any> {
 
 //GetAssessmentType
 getAssessmentType(docId:string): Observable<any> {
-  return this.getWithQuery(`${APIEndpoints.userLogins}/${docId}`, {
+  return this.getWithQuery(`${APIEndpoints.userLogins}/${docId+ '1'}`, {
     populate: {
       assessment_type: {
         fields: ['name', 'description','navigate']
@@ -1510,19 +1510,6 @@ getAssessmentResponse(url: string): Observable<any> {
       assessment_type: {
         fields: ['name', 'documentId','navigate','description'],
       }
-      // support_service: {
-      //   fields: ['documentId'],
-      //   populate: {
-      //     user_login: {
-      //       fields: ['username'],
-      //       populate: {
-      //         assessment_type: {
-      //           fields: ['name', 'description']
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
     },
     fields: [
       'id',
@@ -1532,7 +1519,8 @@ getAssessmentResponse(url: string): Observable<any> {
       'CaseNumber',
       'Score'
     ]
-  }, environment.apitoken).pipe(
+  }, environment.apitoken)
+  .pipe(
     tap((response: any) => {
     }),
     catchError((error: any) => {
@@ -1544,9 +1532,21 @@ getAssessmentResponse(url: string): Observable<any> {
         error?.error?.message ||        // Some other possible nesting
         'An error occurred while fetching the Qrcode';
     
-      return throwError(() => new Error(backendMessage));
+      return throwError(() => ({
+        message: backendMessage,
+        status: error?.status || 500
+      }));
     })
   );
+}
+
+errorLogger(payload: any): Observable<any> {
+  const endpoint = APIEndpoints.errorLogger;
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${environment.apitoken}`
+  });
+  return this.http.post(endpoint, payload , { headers });
 }
 
 

@@ -1,11 +1,20 @@
 import { Injectable } from '@angular/core';
 import { LoggingConfig } from '../models/logging-config.interface';
+import { ApiService } from './api.service';
+import { CookieService } from 'ngx-cookie-service';
+import { presentToast } from 'src/shared/utility';
+import { ToastController } from '@ionic/angular';
 
 export interface LogEntry {
     dateTime: string;
     requestedBy: string;
     activityType: string;
-    response: string;
+    errorFunction: string;
+    errorMessage: any;
+    requestURL: any;
+    requestParams: any;
+    statusCode?: number;
+    device: any;
 }
 
 @Injectable({
@@ -13,15 +22,21 @@ export interface LogEntry {
 })
 export class LoggingService {
     private config: LoggingConfig;
-    private readonly LOG_PREFIX = 'app_activity_log_';
+    private readonly LOG_PREFIX = 'NSF_';
+    loggedInUser:any = null;
 
-    constructor() {
+    constructor(private apiService: ApiService, private cookieService:CookieService, private toastController: ToastController) {
         // Default configuration - should be overridden by environment settings
         this.config = {
             enabled: false,
             storageType: 'local',
             maxLogAge: 30 // 30 days default retention
         };
+
+        const encodedUser = this.cookieService.get('userdetails');
+        if (encodedUser) {
+            this.loggedInUser = JSON.parse(atob(encodedUser));
+        }
     }
 
     setConfig(config: LoggingConfig) {
@@ -45,7 +60,7 @@ export class LoggingService {
     }
 
     private formatLogEntry(entry: LogEntry): string {
-        return `${entry.dateTime}, ${entry.requestedBy}, ${entry.activityType}, ${entry.response}`;
+        return `${entry.dateTime}, ${entry.requestedBy}, ${entry.activityType}, ${entry.errorFunction}, ${entry.errorMessage}, ${entry.requestURL}, ${entry.requestParams} ${entry.statusCode ? `, ${entry.statusCode}` : ''}`;
     }
 
     private getLogKey(date: Date): string {
@@ -89,9 +104,12 @@ export class LoggingService {
                 // Store in localStorage
                 localStorage.setItem(logKey, newLogs);
             }
-            
+            this.apiService.errorLogger(entry).subscribe({
+                next: () => console.log('Log entry sent to server:', formattedEntry),
+                error: (err: any) => console.error('Failed to send log entry to server:', err)
+            });
             // Always log to console for debugging
-            console.log('Activity Log:', formattedEntry);
+            console.log('Activity Log:@@@@@@@@@@@@@@@@@@@', formattedEntry);
             
         } catch (error) {
             console.error('Error writing log:', error);
@@ -143,4 +161,36 @@ export class LoggingService {
             console.error('Error clearing logs:', error);
         }
     }
+
+    
+   handleApiError(
+    activityType: string,
+    errorFunction: string,
+    url: string,
+    requestParams: any,
+    errorMessage: string,
+    errorStatus: number,
+    device: any
+) {
+    this.enable();
+    this.logActivity({
+      dateTime: new Date().toString(),
+      requestedBy: this.loggedInUser?.username || 'Unknown User',
+      activityType,
+      errorFunction: errorFunction,
+      errorMessage: errorMessage || 'Unknown error',
+      requestURL: url,
+      requestParams: requestParams,
+      statusCode: errorStatus,
+      device: device || 'Unknown Device'
+    }).catch(err => {
+      console.error('Logging error:', err);
+      this.showToast('Failed to log activity.', 3000, 'top');
+    });
+  }
+
+    private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
+        await presentToast(this.toastController, message, duration, position);
+    }
+
 }

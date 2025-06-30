@@ -46,6 +46,7 @@
     "jspdf": "^3.0.1",
     "ngx-captcha": "^13.0.0",
     "ngx-cookie-service": "^19.1.2",
+    "ngx-device-detector": "^10.0.2",
     "ngx-gauge": "^11.0.0",
     "ngx-qrcode": "^0.1.0-rc.1",
     "rxjs": "~7.8.0",

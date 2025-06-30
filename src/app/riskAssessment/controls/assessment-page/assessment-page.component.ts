@@ -4,7 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { ASSESSMENT_TYPE } from 'src/shared/constants';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
@@ -35,6 +37,7 @@ export class AssessmentPageComponent  implements OnInit {
   hasloadedDate = false; // To track if data has been loaded
   navigate: string = ''; // To store the navigate value from the selected assessment
   isInvalidCode: boolean = false; // Flag to indicate if the code is invalid
+  device: any;
 
   constructor(
     private menuService: MenuService,
@@ -42,8 +45,12 @@ export class AssessmentPageComponent  implements OnInit {
     private cookieService: CookieService,
     private apiService: ApiService,
     private alertController: AlertController,
-    private toastController: ToastController
-  ) { }
+    private toastController: ToastController,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService
+  ) {
+    this.device = this.deviceService.getDeviceInfo();
+  }
 
   ngOnInit() {
     if (!this.hasloadedDate) {
@@ -73,6 +80,15 @@ export class AssessmentPageComponent  implements OnInit {
             error: (error: any) => {
               console.error('Failed to fetch assessment types:', error);
               this.assessmentTypes = [];
+              this.loggingService.handleApiError(
+                'Fetch Assessment Types for dropdown', // activity type
+                'getAssessmentType', // function in which error occured
+                APIEndpoints.userLogins, // request URL
+                this.loggedInUser.documentId, // request parameter
+                error?.message, // error message
+                error?.status, // error status
+                this.device // device information
+              );
             }
           });
         }
