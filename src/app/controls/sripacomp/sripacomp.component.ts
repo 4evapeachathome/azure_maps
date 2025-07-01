@@ -6,6 +6,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { FormsModule } from '@angular/forms';
 import { Utility } from 'src/shared/utility';
 import { Observable } from 'rxjs';
+import { PageTitleService } from 'src/app/services/page-title.service';
 
 
 @Component({
@@ -40,7 +41,7 @@ showresults: boolean = false;
 hasYesAnswer: boolean = false;
 @Input() ssripaGuid:any; // Track if any 'yes' answer is selected
 
-constructor(private apiService: ApiService) {}
+constructor(private apiService: ApiService, private analytics:PageTitleService) {}
 
 ngOnInit() {
   this.loadQuiz();
@@ -176,6 +177,8 @@ submitAssessmentResponse(): Observable<any> {
       assessment_type:null,
     }
   };
+
+   this.analytics.trackAssessmentSubmit('SSRIPA_Education_Module');
 
   // ✅ Return the Observable instead of subscribing
   return this.apiService.postSsripaAssessmentResponse(payload);

@@ -16,6 +16,7 @@ import { environment } from 'src/environments/environment';
 import { FormsModule } from '@angular/forms';
 import { SessionActivityService } from './guards/session-activity.service';
 import { CookieService } from 'ngx-cookie-service';
+import { PageTitleService } from './services/page-title.service';
 
 
 export interface OrganizationResponse {
@@ -144,7 +145,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private apiService: ApiService,
-    private sharedDataService: MenuService
+    private sharedDataService: MenuService,
+    private pageService: PageTitleService,
   ) {
   }
 
@@ -167,6 +169,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       await this.sessionAlert.dismiss();
       this.sessionAlert = null;
     }
+    this.pageService.trackLogout();
   
     this.cookieService.delete('username');
     this.cookieService.delete('loginTime');
@@ -193,10 +196,18 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       .subscribe((event: NavigationEnd) => {
         const url = event.urlAfterRedirects;
         const currentPath = url.split('/')[1]?.split('?')[0]; // Without leading slash
-  
-  
+        
+      
         // Check if current route is a risk assessment route
         this.isRiskAssessment = this.riskRoutes.includes(currentPath);
+
+          //tracking page view with Google Analytics
+        const pageTitle = this.pageService.getPageTitle(url);
+
+      const deviceType = window.innerWidth <= 768 ? 'mobile' : 'desktop';
+
+      this.pageService.trackPageView(url, pageTitle, this.isRiskAssessment ? 'Risk Assessment' : 'Education', deviceType);
+  
   
         // Signal that route check is complete
         this.routeReady$.next(true);

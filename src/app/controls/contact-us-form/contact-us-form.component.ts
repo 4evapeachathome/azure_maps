@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { NgxCaptchaModule } from 'ngx-captcha';
 import { ApiService } from 'src/app/services/api.service';
+import { PageTitleService } from 'src/app/services/page-title.service';
 import { getConstant } from 'src/shared/constants';
 import { presentToast, validateEmail } from 'src/shared/utility';
 
@@ -32,7 +33,7 @@ export class ContactUsFormComponent  implements OnInit {
   @Output() showloadeder = new EventEmitter<void>();
  
 
-  constructor(private apiService: ApiService,private toastController: ToastController,private ngZone: NgZone) { }
+  constructor(private apiService: ApiService,private toastController: ToastController,private ngZone: NgZone,private analytics:PageTitleService) { }
 
   ngOnInit() {
     this.renderReCaptcha();
@@ -59,6 +60,7 @@ export class ContactUsFormComponent  implements OnInit {
           
           // Check if response contains data and id
           if (response?.data?.id) {
+            this.analytics.trackFormSubmit('ContactUs');
             const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
             await presentToast(this.toastController, successMessage);
             this.onClear();
