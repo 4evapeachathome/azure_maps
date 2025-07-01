@@ -5,7 +5,7 @@
   <ion-grid class="p-b-0 sm-cont-margin contact-max-height">
     <ion-row>
       <ion-col>
-        <pathome-contact-us-form (showloadeder)="initiateLoader()" (loaded)="onChildLoaded()"></pathome-contact-us-form>
+        <pathome-contact-us-form (showloadeder)="showLoader()" (loaded)="hideLoader()"></pathome-contact-us-form>
       </ion-col>
     </ion-row>
   </ion-grid>

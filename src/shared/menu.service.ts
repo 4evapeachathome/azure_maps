@@ -179,6 +179,14 @@ setDataLoaded(loaded: boolean) {
   this.dataLoadedSubject.next(loaded);
 }
 
+// menu.service.ts
+private menuLoadedSubject = new BehaviorSubject<boolean>(false);
+menuLoaded$ = this.menuLoadedSubject.asObservable();
+
+setMenuLoaded(loaded: boolean) {
+  this.menuLoadedSubject.next(loaded);
+}
+
     
   async logout() {
     const alert = await this.alertController.create({
