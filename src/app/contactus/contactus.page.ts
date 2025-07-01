@@ -19,7 +19,7 @@ export class ContactusPage implements OnInit,AfterViewInit {
 
 
   async ngOnInit() {
-
+   this.showLoader();
   }
 
   async initiateLoader(){
@@ -32,7 +32,7 @@ export class ContactusPage implements OnInit,AfterViewInit {
         this.hideLoader();
       } else {
       }
-    }, 10000); // 10 seconds max
+    }, 3500); // 10 seconds max
   }
 
   async showLoader() {

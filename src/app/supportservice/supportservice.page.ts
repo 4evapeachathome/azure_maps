@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { SupportserviceComponent } from '../controls/supportservice/supportservice.component';
 import { LoadingController } from '@ionic/angular';
+import { filter, firstValueFrom, take } from 'rxjs';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-supportservice',
@@ -12,12 +14,19 @@ export class SupportservicePage implements OnInit,AfterViewInit {
   loading: HTMLIonLoadingElement | null = null;
   @ViewChild(SupportserviceComponent) supportServiceComponent!: SupportserviceComponent;
 
-  constructor(private loadingController: LoadingController) { }
+  constructor(private loadingController: LoadingController,private sharedDataService:MenuService) { }
 
-  async ngOnInit() {
-    // Only show loader if not pre-rendered
-    await this.showLoader();
-  }
+ngOnInit() {
+  this.sharedDataService.dataLoaded$
+    .pipe(
+      filter(loaded => loaded), // Wait until AppComponent says data is ready
+      take(1)
+    )
+    .subscribe(() => {
+      this.supportServiceComponent.loadFilterSupportSeviceData(); // ✅ Safe now
+    });
+}
+
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {
@@ -27,7 +36,7 @@ export class SupportservicePage implements OnInit,AfterViewInit {
     idleCallback(() => {
       setTimeout(() => {
         this.hideLoader();
-      }, 500);
+      }, 2000);
     });
   }
 
@@ -42,8 +51,12 @@ export class SupportservicePage implements OnInit,AfterViewInit {
     // Force dismiss after 10 seconds just in case
     setTimeout(() => {
       this.hideLoader();
-    }, 5000);
+    }, 3500);
   }
+
+  onChildDataLoaded() {
+  this.hideLoader(); // ✅ Hide loading spinner
+}
 
   async hideLoader() {
     if (this.loading) {
@@ -56,11 +69,23 @@ export class SupportservicePage implements OnInit,AfterViewInit {
     }
   }
 
+    expandMenu(sectionTitle: string) {
+    this.sharedDataService.toggleAdditionalMenus(true, sectionTitle);
+  }
 
-  ionViewWillEnter() {
-    if (this.supportServiceComponent) {
+async ionViewWillEnter() {
+  await this.showLoader();
+  this.supportServiceComponent.initializeGoogleMapsServices();
+  this.supportServiceComponent.setupSearchDebounce();
+
+  this.sharedDataService.dataLoaded$
+    .pipe(filter(loaded => loaded), take(1))
+    .subscribe(() => {
+      // ✅ Now API data is available, safe to:
+      this.supportServiceComponent.getCurrentPosition(); // Fetch lat/lng using shared data
       this.supportServiceComponent.loadFilterSupportSeviceData();
-    }    
+      this.hideLoader();
+    });
 }
 
 
