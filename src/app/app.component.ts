@@ -4,7 +4,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
 import { Location } from '@angular/common';
 import { HeaderComponent } from "./controls/header/header.component";
-import { BehaviorSubject, filter, Subscription } from 'rxjs';
+import { BehaviorSubject, filter, forkJoin, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { StatusBar, Style } from '@capacitor/status-bar';
@@ -308,32 +308,34 @@ initializeToggleRef() {
   
 
   loadInitialData() {
-    this.apiService.getServiceFilterOptions().subscribe(response => {
-      this.filterOptions = response.data || [];
-      this.sharedDataService.setFilterOptions(this.filterOptions);
-    });
-
-    this.apiService.getAllSupportServices(this.endPoint).subscribe((response: OrganizationResponse) => {
+  forkJoin([
+    this.apiService.getServiceFilterOptions(),
+    this.apiService.getAllSupportServices(this.endPoint),
+    this.apiService.getSupportServiceDistances()
+  ]).subscribe({
+    next: ([filtersResponse, orgsResponse, distances]: [any, OrganizationResponse, any]) => {
+      // Set data into shared service
+      this.sharedDataService.setFilterOptions(filtersResponse.data || []);
+      
       const seenNames = new Set<string>();
-      this.organizations = response.data.filter(org => {
+      const uniqueOrgs = orgsResponse.data.filter(org => {
         if (seenNames.has(org.OrgName)) return false;
         seenNames.add(org.OrgName);
         return true;
       });
-      this.sharedDataService.setOrganizations(this.organizations);
-    });
+      this.sharedDataService.setOrganizations(uniqueOrgs);
 
-    this.apiService.getSupportServiceDistances().subscribe({
-      next: (distances) => {
-        this.sharedDataService.setStateDistances(distances); // Updated to use menuService
-      },
-      error: (error) => {
-        console.error('Failed to fetch support service distances:', error);
-        this.sharedDataService.setStateDistances({}); // Fallback to empty object
-      }
-    });
-   
-  }
+      this.sharedDataService.setStateDistances(distances);
+      
+      // ✅ Notify that data loading is complete
+      this.sharedDataService.setDataLoaded(true);
+    },
+    error: (error:any) => {
+      console.error("Error loading initial data", error);
+      this.sharedDataService.setDataLoaded(true); // Still emit true to unblock UI
+    }
+  });
+}
 
   closeMobileMenu() {
     if (this.isMobile && this.isMenuOpen) {

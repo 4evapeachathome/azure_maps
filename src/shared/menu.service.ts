@@ -172,6 +172,13 @@ clearMenuItems(): void {
       return this.stateDistancesSubject.getValue();
     }
 
+    private dataLoadedSubject = new BehaviorSubject<boolean>(false);
+dataLoaded$ = this.dataLoadedSubject.asObservable();
+
+setDataLoaded(loaded: boolean) {
+  this.dataLoadedSubject.next(loaded);
+}
+
     
   async logout() {
     const alert = await this.alertController.create({
