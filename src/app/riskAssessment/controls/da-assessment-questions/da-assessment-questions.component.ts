@@ -2,8 +2,11 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { PageTitleService } from 'src/app/services/page-title.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { Utility } from 'src/shared/utility';
 
@@ -31,7 +34,7 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   @Input() reloadFlag: boolean = false; 
   submitted: boolean = false;
   hasValidationError:boolean = false;
-
+  device: any;
 
 constructor(
     private router: Router,
@@ -39,8 +42,12 @@ constructor(
     private menuService: MenuService,
     private analytics: PageTitleService,
     private cookieService: CookieService,
-    private alertController: AlertController
-  ) { }
+    private alertController: AlertController,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService
+  ) {
+    this.device = this.deviceService.getDeviceInfo();
+  }
 
   ngOnInit() {
     if (!this.hasloadedDate) {
@@ -102,7 +109,16 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
           }
         },
         error: (err:any) => {
-          console.error('Failed to load HITS data from API:', err);
+          console.error('Failed to load DA data from API:', err);
+          this.loggingService.handleApiError(
+            'Failed to load DA assessment questions', // activity type
+            'loadInitialData', // function in which error occured
+            APIEndpoints.daAssessmentQuestions, // request URL
+            this.loggedInUser.documentId, // request parameter
+            err?.message, // error message
+            err?.status, // error status
+            this.device // device information
+          );
         }
       });
     }
@@ -288,6 +304,15 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
               },
               error: (err) => {
                 console.error('Failed to save assessment', err);
+                this.loggingService.handleApiError(
+                  'Failed to save assessment DA assessment', // activity type
+                  'submitDangerAssessment', // function in which error occured
+                  APIEndpoints.daAssessmentResponse, // request URL
+                  this.loggedInUser.documentId, // request parameter
+                  err?.message, // error message
+                  err?.status, // error status
+                  this.device // device information
+                );
               }
             });
           }

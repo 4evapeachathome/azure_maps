@@ -109,7 +109,7 @@ export class LoggingService {
                 error: (err: any) => console.error('Failed to send log entry to server:', err)
             });
             // Always log to console for debugging
-            console.log('Activity Log:@@@@@@@@@@@@@@@@@@@', formattedEntry);
+            console.log('Activity Log:@@@@@@@@@@@@@@@@@@@', entry);
             
         } catch (error) {
             console.error('Error writing log:', error);

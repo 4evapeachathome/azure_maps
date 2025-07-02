@@ -87,5 +87,6 @@ export const APIEndpoints = {
     getHitsAssessmentByGuid :`${environment.apiHost}/api/hits-assessment-responses/by-guid?AssessmentGuid=`,
     getSSripaAssessmentByGuid :`${environment.apiHost}/api/ssripa-assessment-responses/by-guid?AssessmentGuid=`,
 
-    errorLogger: `${environment.apiHost}/api/error-logger`
+    errorLogger: `${environment.apiHost}/api/error-logger`,
+    saveSSripaAssessment: `${environment.apiHost}/api/ssripa-assessment-responses`
   }

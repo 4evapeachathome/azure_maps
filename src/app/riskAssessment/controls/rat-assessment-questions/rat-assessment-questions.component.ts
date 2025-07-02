@@ -2,9 +2,12 @@ import { ChangeDetectorRef, Component, Input, OnInit, SimpleChanges } from '@ang
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { PageTitleService } from 'src/app/services/page-title.service';
 import { getConstant } from 'src/shared/constants';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast, Utility } from 'src/shared/utility';
 
@@ -28,6 +31,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   @Input() reloadFlag: boolean = false; // Input property to trigger reload
   submitted: boolean = false;
   hasValidationError: boolean = false; // Flag to track validation errors
+  device: any;
 
   constructor(
       private router: Router,
@@ -37,7 +41,11 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       private alertController: AlertController,
       private analytics: PageTitleService,
       private toastController: ToastController,
-      private cdRef:ChangeDetectorRef) { }
+      private cdRef:ChangeDetectorRef,
+      private loggingService: LoggingService,
+      private deviceService: DeviceDetectorService) {
+        this.device = this.deviceService.getDeviceInfo();
+      }
 
   ngOnInit() {
     if (!this.hasloadedDate) {
@@ -112,7 +120,16 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
           this.setupRatsQuestions(questions, answerOptions);
         },
         error: (err: any) => {
-          console.error('Failed to load HITS data from API:', err);
+          console.error('Failed to load WEB data from API:', err);
+          this.loggingService.handleApiError(
+            'Failed to load WEB assessment questions and answers', // activity type
+            'loadinitialData', // function in which error occured
+            APIEndpoints.ratsAssessmentQuestions +' For answer API:' + APIEndpoints.ratScaleOptions, // request URL
+            this.loggedInUser.documentId, // request parameter
+            err?.message, // error message
+            err?.status, // error status
+            this.device // device information
+          );
         }
       });
     }
@@ -274,6 +291,15 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
               error: (error: any) => {
                 const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
                 presentToast(this.toastController, errorMessage);
+                this.loggingService.handleApiError(
+                  'Failed to load WEB assessment questions and answers', // activity type
+                  'submit', // function in which error occured
+                  APIEndpoints.saveRatAssessment, // request URL
+                  this.loggedInUser.documentId, // request parameter
+                  error?.message, // error message
+                  error?.status, // error status
+                  this.device // device information
+                );
               }
             });
           }

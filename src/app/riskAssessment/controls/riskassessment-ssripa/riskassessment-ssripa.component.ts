@@ -4,8 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { PageTitleService } from 'src/app/services/page-title.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { Utility } from 'src/shared/utility';
 
@@ -32,12 +35,18 @@ selectedOptions: string[] = [];
 showresults: boolean = false;
 @Input() sripaGuid: any;
 hasloadedDate: boolean = false;
+device: any;
 
   constructor(private router: Router,
       private apiService: ApiService,
       private menuService: MenuService,
       private cookieService: CookieService,
-      private alertController: AlertController,private analytics:PageTitleService) { }
+      private alertController: AlertController,
+      private analytics:PageTitleService,
+      private loggingService: LoggingService,
+      private deviceService: DeviceDetectorService) {
+        this.device = this.deviceService.getDeviceInfo();
+      }
 
       ngOnInit() {
         if (!this.hasloadedDate) {
@@ -87,15 +96,42 @@ hasloadedDate: boolean = false;
       this.showAnswers = new Array(this.sripa.length).fill(false);
       this.selectedOptions = new Array(this.sripa.length).fill(null);
     } else {
-      this.apiService.getSripaa().subscribe((quiz) => {
-        if (quiz) {
-          this.quizTitle = 'Signs of Self-Recognition in Intimate Partner Abuse - SSRIPA';
-          this.sripa = quiz || [];
-          this.showAnswers = new Array(this.sripa.length).fill(false);
-          this.selectedOptions = new Array(this.sripa.length).fill(null);
-          this.menuService.setSsripaData(this.sripa); // Update BehaviorSubject
-        }
-      });
+      try {
+        this.apiService.getSripaa().subscribe({
+          next: (quiz) => {
+            if (quiz) {
+              this.quizTitle = 'Signs of Self-Recognition in Intimate Partner Abuse - SSRIPA';
+              this.sripa = quiz || [];
+              this.showAnswers = new Array(this.sripa.length).fill(false);
+              this.selectedOptions = new Array(this.sripa.length).fill(null);
+              this.menuService.setSsripaData(this.sripa); // Update BehaviorSubject
+            }
+          },
+          error: (err) => {
+            console.error('Failed to load SSRIPA quiz:', err);
+            this.loggingService.handleApiError(
+              'Failed to load SSRIPA quiz:', // activity type
+              'loadQuiz', // function in which error occured
+              APIEndpoints.ssripaQuestions, // request URL
+              this.loggedInUser.documentId, // request parameter
+              err?.message, // error message
+              err?.status, // error status
+              this.device // device information
+            );
+          }
+        });
+      } catch (error:any) {
+        console.error('Unexpected error while loading SSRIPA quiz:', error);
+        this.loggingService.handleApiError(
+          'Failed to load SSRIPA quiz:', // activity type
+          'loadQuiz', // function in which error occured
+          APIEndpoints.ssripaQuestions, // request URL
+          this.loggedInUser.documentId, // request parameter
+          error?.message, // error message
+          error?.status, // error status
+          this.device // device information
+        );
+      }
     }
   }
 
@@ -181,6 +217,15 @@ hasloadedDate: boolean = false;
               },
               error: (err) => {
                 console.error('Failed to submit assessment response:', err);
+                this.loggingService.handleApiError(
+                  'Failed to submit SSRIPA assessment response', // activity type
+                  'loadQuiz', // function in which error occured
+                  APIEndpoints.saveSSripaAssessment, // request URL
+                  this.loggedInUser.documentId, // request parameter
+                  err?.message, // error message
+                  err?.status, // error status
+                  this.device // device information
+                );
               }
             });
           }

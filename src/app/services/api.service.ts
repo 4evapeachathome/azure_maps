@@ -1003,14 +1003,24 @@ getSripaa(): Observable<any> {
     }),
     catchError(error => {
       console.error('Error fetching ssripa-questions data', error);
-      return throwError(error);
+
+      // Extract message from backend response
+      const backendMessage =
+        error?.error?.error?.message || // Strapi v4/v5 structure
+        error?.error?.message ||        // Some other possible nesting
+        'Error fetching ssripa-questions data.';
+    
+      return throwError(() => ({
+        message: backendMessage,
+        status: error?.status || 500
+      }));
     })
   );
 }
 
 
 postSsripaAssessmentResponse(payload: any): Observable<any> {
-  const endpoint = `${environment.apiHost}/api/ssripa-assessment-responses`;
+  const endpoint = APIEndpoints.saveSSripaAssessment;
   const headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${environment.apitoken}`
@@ -1227,7 +1237,7 @@ forgetPassword(payload: any): Observable<any> {
 
 //GetAssessmentType
 getAssessmentType(docId:string): Observable<any> {
-  return this.getWithQuery(`${APIEndpoints.userLogins}/${docId+ '1'}`, {
+  return this.getWithQuery(`${APIEndpoints.userLogins}/${docId}`, {
     populate: {
       assessment_type: {
         fields: ['name', 'description','navigate']
@@ -1237,7 +1247,18 @@ getAssessmentType(docId:string): Observable<any> {
   }, environment.apitoken).pipe(
     catchError((error: any) => {
       console.error('Error fetching Hits result API:', error);
-      return throwError(() => new Error('An error occurred while fetching Hits result API. Please try again later.'));
+
+      // Extract message from backend response
+      const backendMessage =
+        error?.error?.error?.message || // Strapi v4/v5 structure
+        error?.error?.message ||        // Some other possible nesting
+        'An error occurred while fetching Hits result API. Please try again later.';
+    
+      return throwError(() => ({
+        message: backendMessage,
+        status: error?.status || 500
+      }));
+
     })
   );
 }
@@ -1305,8 +1326,16 @@ getHitsAssessmentQuestions(): Observable<any> {
       };
     }),
     catchError(error => {
-      console.error('Error fetching data from one or more endpoints', error);
-      return throwError(error);
+      // Extract message from backend response
+      const backendMessage =
+        error?.error?.error?.message || // Strapi v4/v5 structure
+        error?.error?.message ||        // Some other possible nesting
+        'Error fetching data from one or more endpoints';
+    
+      return throwError(() => ({
+        message: backendMessage,
+        status: error?.status || 500
+      }));
     })
   );
 }
@@ -1460,7 +1489,16 @@ getRatsAssessmentQuestions(): Observable<any> {
     }, environment.apitoken).pipe(
       catchError((error: any) => {
         console.error('Error fetching DA Assessment Questions API:', error);
-        return throwError(() => new Error('An error occurred while fetching DA Assessment Questions API. Please try again later.'));
+        // Extract message from backend response
+        const backendMessage =
+          error?.error?.error?.message || // Strapi v4/v5 structure
+          error?.error?.message ||        // Some other possible nesting
+          'An error occurred while fetching DA Assessment Questions API. Please try again later.';
+      
+        return throwError(() => ({
+          message: backendMessage,
+          status: error?.status || 500
+        }));
       })
     );
   }

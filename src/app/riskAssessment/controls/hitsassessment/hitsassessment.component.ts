@@ -4,8 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { PageTitleService } from 'src/app/services/page-title.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
 import { Utility } from 'src/shared/utility';
 
@@ -29,6 +32,7 @@ export class HitsassessmentComponent  implements OnInit {
   hasloadedDate: boolean = false;
   hasValidationError: boolean = false; // Flag to track validation errors
   @Input() reloadFlag: boolean = false; // Input property to trigger reload
+  device: any;
 
   constructor(
     private router: Router,
@@ -36,8 +40,12 @@ export class HitsassessmentComponent  implements OnInit {
     private menuService: MenuService,
     private cookieService: CookieService,
     private alertController: AlertController,
-    private analytics: PageTitleService
-  ) { }
+    private analytics: PageTitleService,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService
+  ) {
+      this.device = this.deviceService.getDeviceInfo();
+  }
 
    ngOnInit() {
      if (!this.hasloadedDate) {
@@ -100,6 +108,15 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
         },
         error: (err:any) => {
           console.error('Failed to load HITS data from API:', err);
+          this.loggingService.handleApiError(
+            'Failed to load HITS data from API', // activity type
+            'loadinitialData', // function in which error occured
+            APIEndpoints.hitsAssessmentQuestions +' ,For answer API:' + APIEndpoints.scaleOptions, // request URL
+            this.loggedInUser.documentId, // request parameter
+            err?.message, // error message
+            err?.status, // error status
+            this.device // device information
+          );
         }
       });
     }}
@@ -243,6 +260,15 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
               },
               error: (err) => {
                 console.error('Failed to save assessment', err);
+                this.loggingService.handleApiError(
+                  'Failed to save HITS assessment', // activity type
+                  'submit', // function in which error occured
+                  APIEndpoints.saveHitsAssessment, // request URL
+                  this.loggedInUser.documentId, // request parameter
+                  err?.message, // error message
+                  err?.status, // error status
+                  this.device // device information
+                );
               }
             });
           }
