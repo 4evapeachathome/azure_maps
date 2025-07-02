@@ -39,6 +39,7 @@ selectedOptions: string[] = [];
 finalAnswerHtml: string = '';
 showresults: boolean = false;
 hasYesAnswer: boolean = false;
+@Output() quizLoaded = new EventEmitter<void>();
 @Input() ssripaGuid:any; // Track if any 'yes' answer is selected
 
 constructor(private apiService: ApiService, private analytics:PageTitleService) {}
@@ -58,6 +59,7 @@ loadQuiz(): void {
       this.showAnswers = new Array(this.sripa.length).fill(false);
       this.selectedOptions = new Array(this.sripa.length).fill(null);
     }
+    this.quizLoaded.emit();
   });
 }
 

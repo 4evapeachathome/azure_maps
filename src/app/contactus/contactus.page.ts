@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
 import { LoadingController } from '@ionic/angular';
+import { MenuService } from 'src/shared/menu.service';
+import { filter, take } from 'rxjs';
 
 @Component({
   selector: 'app-contactus',
@@ -11,29 +13,26 @@ import { LoadingController } from '@ionic/angular';
 export class ContactusPage implements OnInit,AfterViewInit {
   @ViewChild(ContactUsFormComponent) contactUs!: ContactUsFormComponent;
   loading: HTMLIonLoadingElement | null = null;
-  private totalComponents = 1; // Number of child components with API calls
-  private loadedComponents = 0;
-  private loaderDismissed = false;
-
-  constructor(private loadingController: LoadingController) { }
 
 
-  async ngOnInit() {
-   this.showLoader();
-  }
+  constructor(private loadingController: LoadingController, private menuService:MenuService) { }
 
-  async initiateLoader(){
-    await this.showLoader();
-  }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      if (!this.loaderDismissed) {
-        this.hideLoader();
-      } else {
-      }
-    }, 3500); // 10 seconds max
-  }
+   async ngOnInit() {
+        // Set up navigation event subscription
+        this.showLoader();
+      }    
+
+ ngAfterViewInit(): void {
+  this.menuService.menuLoaded$
+    .pipe(
+      filter((loaded) => loaded),
+      take(1) // Only react to the first true value
+    )
+    .subscribe(() => {
+      this.hideLoader();
+    });
+}
 
   async showLoader() {
     this.loading = await this.loadingController.create({
@@ -42,35 +41,26 @@ export class ContactusPage implements OnInit,AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
+
+    // Force dismiss after 10 seconds just in case
+    setTimeout(() => {
+      this.hideLoader();
+    }, 3000);
   }
 
   async hideLoader() {
-    if (this.loading && !this.loaderDismissed) {
+    if (this.loading) {
       try {
         await this.loading.dismiss();
       } catch (e) {
+        console.warn('Loader already dismissed or not yet created');
       }
-      this.loaderDismissed = true;
       this.loading = null;
     }
   }
 
- async onChildLoaded() {
-  if (this.loaderDismissed) {
-    return;
-  }
-
-  this.loadedComponents++;
-
-
-  if (this.loadedComponents >= this.totalComponents) {
-    await this.hideLoader(); // <- important
-  }}
-
   ionViewWillEnter() {
-    if (this.contactUs) {
-      this.contactUs.renderReCaptcha();
-    }    
+ 
 }
 
 

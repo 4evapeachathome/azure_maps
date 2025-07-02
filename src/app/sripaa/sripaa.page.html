@@ -4,7 +4,7 @@
       <!-- Show Quiz Component -->
       <ion-row class="comp-space" *ngIf="!hidewhenshowingresults">
         <ion-col>
-          <pathome-sripacomp [ssripaGuid]="sripaData" (hasYesAnswerChanged)="hasYesAnswer = $event"></pathome-sripacomp>
+          <pathome-sripacomp (quizLoaded)="onChildLoaded()" [ssripaGuid]="sripaData" (hasYesAnswerChanged)="hasYesAnswer = $event"></pathome-sripacomp>
         </ion-col>
       </ion-row>
       

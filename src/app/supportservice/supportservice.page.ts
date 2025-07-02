@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { SupportserviceComponent } from '../controls/supportservice/supportservice.component';
 import { LoadingController } from '@ionic/angular';
-import { filter, firstValueFrom, take } from 'rxjs';
+import { combineLatest, filter, firstValueFrom, take } from 'rxjs';
 import { MenuService } from 'src/shared/menu.service';
 
 @Component({
@@ -17,77 +17,69 @@ export class SupportservicePage implements OnInit,AfterViewInit {
   constructor(private loadingController: LoadingController,private sharedDataService:MenuService) { }
 
 ngOnInit() {
-  this.sharedDataService.dataLoaded$
-    .pipe(
-      filter(loaded => loaded), // Wait until AppComponent says data is ready
-      take(1)
-    )
-    .subscribe(() => {
-      this.supportServiceComponent.loadFilterSupportSeviceData(); // ✅ Safe now
-    });
 }
 
 
   async ngAfterViewInit() {
-    const idleCallback = window['requestIdleCallback'] || function (cb: any) {
-      setTimeout(cb, 1000);
-    };
-
-    idleCallback(() => {
-      setTimeout(() => {
-        this.hideLoader();
-      }, 2000);
-    });
   }
 
   async showLoader() {
-    this.loading = await this.loadingController.create({
-      message: 'Loading...',
-      spinner: 'crescent',
-      backdropDismiss: false,
-    });
-    await this.loading.present();
+  this.loading = await this.loadingController.create({
+    message: 'Loading...',
+    spinner: 'crescent',
+    backdropDismiss: false,
+  });
+  await this.loading.present();
 
-    // Force dismiss after 10 seconds just in case
-    setTimeout(() => {
+  // Optional force dismiss backup
+  setTimeout(() => {
+    if (this.loading) {
+      console.warn('[Loader] ⏱ Timeout hit – forcing loader hide');
       this.hideLoader();
-    }, 3500);
-  }
-
-  onChildDataLoaded() {
-  this.hideLoader(); // ✅ Hide loading spinner
+    }
+  }, 10000);
 }
 
-  async hideLoader() {
-    if (this.loading) {
-      try {
-        await this.loading.dismiss();
-      } catch (e) {
-        console.warn('Loader already dismissed or not yet created');
-      }
-      this.loading = null;
+async hideLoader() {
+  if (this.loading) {
+    try {
+      await this.loading.dismiss();
+    } catch (e) {
+      console.warn('[Loader] ❌ Loader dismiss failed or already dismissed');
     }
+    this.loading = null;
   }
+}
 
     expandMenu(sectionTitle: string) {
     this.sharedDataService.toggleAdditionalMenus(true, sectionTitle);
   }
 
 async ionViewWillEnter() {
-  await this.showLoader();
-  this.supportServiceComponent.initializeGoogleMapsServices();
-  this.supportServiceComponent.setupSearchDebounce();
 
-  this.sharedDataService.dataLoaded$
-    .pipe(filter(loaded => loaded), take(1))
-    .subscribe(() => {
-      // ✅ Now API data is available, safe to:
-      this.supportServiceComponent.getCurrentPosition(); // Fetch lat/lng using shared data
-      this.supportServiceComponent.loadFilterSupportSeviceData();
-      this.hideLoader();
-    });
+  await this.showLoader(); // 👈 Show loader early
+
+
+  combineLatest([
+    this.sharedDataService.dataLoaded$,
+    this.sharedDataService.menuLoaded$
+  ])
+  .pipe(
+    filter(([dataLoaded, menuLoaded]) => {
+      return dataLoaded && menuLoaded;
+    }),
+    take(1)
+  )
+  .subscribe(() => {
+
+    this.supportServiceComponent.initializeGoogleMapsServices();
+    this.supportServiceComponent.setupSearchDebounce();
+    this.supportServiceComponent.getCurrentPosition();
+    this.supportServiceComponent.loadFilterSupportSeviceData();
+
+    this.hideLoader(); // 👈 Hide loader only when everything is ready
+  });
 }
-
 
 ionViewDidLeave() {
   if (this.supportServiceComponent) {
