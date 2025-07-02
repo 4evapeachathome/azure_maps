@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { PageTitleService } from 'src/app/services/page-title.service';
 
    //Hits Assessment
    interface HitsAssessmentData {
@@ -23,7 +24,8 @@ export class MenuService {
   constructor(
     private alertController: AlertController,
     private cookieService: CookieService,
-    private router: Router
+    private router: Router,
+    private analytics: PageTitleService // Replace with actual analytics service type
   ) {}
   
   private readonly storageKey = 'menuItems';
@@ -179,6 +181,14 @@ setDataLoaded(loaded: boolean) {
   this.dataLoadedSubject.next(loaded);
 }
 
+// menu.service.ts
+private menuLoadedSubject = new BehaviorSubject<boolean>(false);
+menuLoaded$ = this.menuLoadedSubject.asObservable();
+
+setMenuLoaded(loaded: boolean) {
+  this.menuLoadedSubject.next(loaded);
+}
+
     
   async logout() {
     const alert = await this.alertController.create({
@@ -193,6 +203,9 @@ setDataLoaded(loaded: boolean) {
         {
           text: 'Logout',
           handler: () => {
+
+            // Tracking logout event with Google Analytics
+           this.analytics.trackLogout();
             // this.guidedType = 'staff-guided';
             this.cookieService.delete('username');
             this.cookieService.delete('loginTime');

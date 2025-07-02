@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { PageTitleService } from 'src/app/services/page-title.service';
 import { MenuService } from 'src/shared/menu.service';
 import { Utility } from 'src/shared/utility';
 
@@ -36,7 +37,7 @@ hasloadedDate: boolean = false;
       private apiService: ApiService,
       private menuService: MenuService,
       private cookieService: CookieService,
-      private alertController: AlertController) { }
+      private alertController: AlertController,private analytics:PageTitleService) { }
 
       ngOnInit() {
         if (!this.hasloadedDate) {
@@ -168,6 +169,7 @@ hasloadedDate: boolean = false;
             // Subscribe to the Observable and log the response
             this.apiService.postSsripaAssessmentResponse(payload).subscribe({
               next: (response) => {
+                   this.analytics.trackAssessmentSubmit('SSRIPA_Risk_Module');
                 sessionStorage.setItem('ssripaAssessmentResult', JSON.stringify({
                   summary: respondedQuestions,
                   ssripasurl: `${window.location.origin}/viewresult?code=${response.data.AssessmentGuid}`,

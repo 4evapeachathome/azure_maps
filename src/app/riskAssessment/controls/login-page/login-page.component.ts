@@ -8,6 +8,7 @@ import { ApiService } from 'src/app/services/api.service';
 import { presentToast, Utility } from 'src/shared/utility';
 import { __await } from 'tslib';
 import { firstValueFrom } from 'rxjs';
+import { PageTitleService } from 'src/app/services/page-title.service';
 @Component({
   selector: 'login-page',
   templateUrl: './login-page.component.html',
@@ -34,6 +35,7 @@ export class LoginPageComponent  implements OnInit {
     private fb: FormBuilder,
     private apiService: ApiService,
     private cookieService: CookieService,
+    private analytics:PageTitleService,
     private router: Router,
     private toastController: ToastController,
     private ngZone: NgZone
@@ -137,6 +139,8 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
         await this.showToast(res.message || 'Reset email sent, please check your inbox.', 3000, 'top');
         this.loginForm.patchValue({ password: '' });
         this.loginForm.get('password')?.setErrors(null);
+        //Google Analytics tracking for forgot password event
+        this.analytics.trackForgotPassword();
         this.stoploader.emit();
       },
       error: async (err: any) => {
@@ -207,9 +211,14 @@ async onSubmit() {
   const processedUsername = username?.trim()?.toLowerCase();
 
   try {
+    
     const user = await this.apiService.login(processedUsername, password).toPromise();
 
+
     await this.handleSuccessfulLogin(user.username, user);
+    
+    // Tracking login event with Google Analytics   
+    this.analytics.trackLogin();
 
     let url = sessionStorage.getItem('redirectUrl');
     if (url?.includes('code')) {

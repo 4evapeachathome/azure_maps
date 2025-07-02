@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { PageTitleService } from 'src/app/services/page-title.service';
 import { ASSESSMENT_TYPE } from 'src/shared/constants';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
@@ -41,6 +42,7 @@ export class AssessmentPageComponent  implements OnInit {
     private router: Router,
     private cookieService: CookieService,
     private apiService: ApiService,
+    private analytics : PageTitleService,
     private alertController: AlertController,
     private toastController: ToastController
   ) { }
@@ -224,6 +226,7 @@ export class AssessmentPageComponent  implements OnInit {
       this.assessmentNumber = '';
       sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.navigate?.toLowerCase().trim();
+      this.analytics.trackAssessmentStart(this.navigate?.trim());
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':

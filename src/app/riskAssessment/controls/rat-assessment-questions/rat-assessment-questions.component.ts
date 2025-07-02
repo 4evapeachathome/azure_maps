@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { PageTitleService } from 'src/app/services/page-title.service';
 import { getConstant } from 'src/shared/constants';
 import { MenuService } from 'src/shared/menu.service';
 import { presentToast, Utility } from 'src/shared/utility';
@@ -34,6 +35,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
       private menuService: MenuService,
       private cookieService: CookieService,
       private alertController: AlertController,
+      private analytics: PageTitleService,
       private toastController: ToastController,
       private cdRef:ChangeDetectorRef) { }
 
@@ -253,6 +255,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
             ).subscribe({
               next: (res: any) => {
                 if (res?.data) {
+                  this.analytics.trackAssessmentSubmit('WEB');
                   sessionStorage.setItem('ratsAssessmentResult', JSON.stringify(result));
                   const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
                   presentToast(this.toastController, successMessage);

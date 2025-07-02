@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { PageTitleService } from 'src/app/services/page-title.service';
 import { MenuService } from 'src/shared/menu.service';
 import { Utility } from 'src/shared/utility';
 
@@ -36,6 +37,7 @@ constructor(
     private router: Router,
     private apiService: ApiService,
     private menuService: MenuService,
+    private analytics: PageTitleService,
     private cookieService: CookieService,
     private alertController: AlertController
   ) { }
@@ -273,6 +275,7 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
   
             this.apiService.saveDaAssessmentResponse(payload).subscribe({
               next: (res) => {
+                this.analytics.trackAssessmentSubmit('DA');
                 sessionStorage.setItem('daAssessmentResult', JSON.stringify({
                   totalScore,
                   summary: answerSummary,
