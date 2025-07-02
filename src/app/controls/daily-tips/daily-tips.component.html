@@ -14,27 +14,26 @@
         <ion-row>
         <ion-col>
           <div class="calendar-strip">
-            <!-- <ion-button fill="clear" class="nav-button" (click)="navigateWeek('prev')">
+            <ion-button fill="clear" class="nav-button" (click)="navigateWeek('prev')">
               <ion-icon name="arrow-back-outline"></ion-icon>
-            </ion-button> -->
+            </ion-button>
         
             <div class="calendar-wrapper">
               <div class="weekdays" [class.slide-left]="slideDirection === 'left'" [class.slide-right]="slideDirection === 'right'">
-                  <div *ngFor="let date of weekDates; let i = index" 
-                       class="day-item" 
-                       [class.selected]="selectedDay === i"
-                       [class.current]="isCurrentDay(i)"
-                       [ngClass]="{'day-disabled': isDisabledDay(i)}"
-                       (click)="isValidDay(i) ? selectDay(i) : null">
-                      <div class="day-name">{{ weekDays[i] }}</div>
-                      <div class="day-number">{{ date | date:'d' }}</div>
-                  </div>
+                <div *ngFor="let date of weekDates; let i = index" 
+                     class="day-item" 
+                     [class.selected]="selectedDay === i"
+                     [class.current]="isCurrentDay(i)"
+                     (click)="selectDay(i)">
+                  <div class="day-name">{{ weekDays[i] }}</div>
+                  <div class="day-number">{{ date | date:'d' }}</div>
+                </div>
               </div>
-          </div>
+            </div>
         
-            <!-- <ion-button fill="clear" class="nav-button" (click)="navigateWeek('next')">
+            <ion-button fill="clear" class="nav-button" (click)="navigateWeek('next')">
               <ion-icon name="arrow-forward-outline"></ion-icon>
-            </ion-button> -->
+            </ion-button>
           </div>
         </ion-col>
         </ion-row>

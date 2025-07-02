@@ -24,6 +24,23 @@
   <!-- Api key for captcha -->
   <script src="https://www.google.com/recaptcha/api.js?render=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" async defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gauge.js/1.3.7/gauge.min.js"></script>
+  <!-- Google Analytics -->
+  <script>
+  // Prevent GA from loading in native Capacitor apps
+  if (!window.Capacitor || (window.Capacitor && !window.Capacitor.isNativePlatform?.())) {
+    const gtagScript = document.createElement('script');
+    gtagScript.async = true;
+    gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-FV13E3TVET';
+    document.head.appendChild(gtagScript);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    window.gtag = gtag;
+
+    gtag('js', new Date());
+    gtag('config', 'G-FV13E3TVET');
+  }
+</script>
 
 </head>
 

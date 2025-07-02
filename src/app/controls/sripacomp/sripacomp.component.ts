@@ -6,6 +6,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { FormsModule } from '@angular/forms';
 import { Utility } from 'src/shared/utility';
 import { Observable } from 'rxjs';
+import { PageTitleService } from 'src/app/services/page-title.service';
 
 
 @Component({
@@ -38,9 +39,10 @@ selectedOptions: string[] = [];
 finalAnswerHtml: string = '';
 showresults: boolean = false;
 hasYesAnswer: boolean = false;
+@Output() quizLoaded = new EventEmitter<void>();
 @Input() ssripaGuid:any; // Track if any 'yes' answer is selected
 
-constructor(private apiService: ApiService) {}
+constructor(private apiService: ApiService, private analytics:PageTitleService) {}
 
 ngOnInit() {
   this.loadQuiz();
@@ -49,7 +51,7 @@ ngOnInit() {
 loadQuiz(): void {
   this.apiService.getSripaa().subscribe((quiz) => {
     if (quiz) {
-     // debugger;
+     
       this.quizTitle = 'Signs of Self-Recognition in Intimate Partner Abuse - SSRIPA'; // Or a suitable fallback
       this.sripa = quiz || [];
       this.rating = quiz.rating || '';
@@ -57,6 +59,7 @@ loadQuiz(): void {
       this.showAnswers = new Array(this.sripa.length).fill(false);
       this.selectedOptions = new Array(this.sripa.length).fill(null);
     }
+    this.quizLoaded.emit();
   });
 }
 
@@ -120,15 +123,27 @@ renderRichText(blocks: any[]): string {
 
 renderText(child: any): string {
   let text = child.text || '';
+
+  // Handle links
+  if (child.type === 'link' && child.url && child.children) {
+    let url = child.url.trim();
+
+    // Add protocol if missing
+    if (!url.match(/^https?:\/\//i)) {
+      url = 'https://' + url;
+    }
+
+    const innerText = child.children.map((c: any) => this.renderText(c)).join('');
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${innerText}</a>`;
+  }
+
+  // Handle bold
   if (child.bold) {
     text = `<strong>${text}</strong>`;
   }
-  if (child.type === 'text' && text.includes('http')) {
-    text = `<a href="${text}" target="_blank">${text}</a>`;
-  }
+
   return text;
 }
-
 capitalizeFirstLetter(str: string | null) {
   if (!str) return null;
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -164,6 +179,8 @@ submitAssessmentResponse(): Observable<any> {
       assessment_type:null,
     }
   };
+
+   this.analytics.trackAssessmentSubmit('SSRIPA_Education_Module');
 
   // ✅ Return the Observable instead of subscribing
   return this.apiService.postSsripaAssessmentResponse(payload);

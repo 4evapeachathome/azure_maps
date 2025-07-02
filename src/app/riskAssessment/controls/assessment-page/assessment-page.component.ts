@@ -7,6 +7,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
 import { LoggingService } from 'src/app/services/logging.service';
+import { PageTitleService } from 'src/app/services/page-title.service';
 import { ASSESSMENT_TYPE } from 'src/shared/constants';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
@@ -44,6 +45,7 @@ export class AssessmentPageComponent  implements OnInit {
     private router: Router,
     private cookieService: CookieService,
     private apiService: ApiService,
+    private analytics : PageTitleService,
     private alertController: AlertController,
     private toastController: ToastController,
     private loggingService: LoggingService,
@@ -240,6 +242,7 @@ export class AssessmentPageComponent  implements OnInit {
       this.assessmentNumber = '';
       sessionStorage.setItem('guidedType', this.guidedType);
       const assessmentName = this.navigate?.toLowerCase().trim();
+      this.analytics.trackAssessmentStart(this.navigate?.trim());
       switch (assessmentName) {
         case 'hits':
         case 'hits assessment':
@@ -265,7 +268,6 @@ export class AssessmentPageComponent  implements OnInit {
           console.warn('No matching route found for selected assessment.');
       }
     } else {
-      console.log('Please select an assessment type');
     }
   }
 

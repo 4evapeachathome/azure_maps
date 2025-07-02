@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, CUSTOM_ELEMENTS_SCHEMA, NgZone, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, CUSTOM_ELEMENTS_SCHEMA, NgZone, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -27,7 +27,7 @@ interface MenuItem {
   imports: [CommonModule, RouterModule, IonicModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent implements OnInit,AfterViewInit {
   @Input() fields: string[] = ['title', 'link'];
   @Input() populate: string[] = ['parentMenu'];
   @Input() sort: string[] = ['createdAt:asc'];
@@ -93,6 +93,12 @@ export class MenuComponent implements OnInit {
   });
 }
 
+  ngAfterViewInit(): void {
+    // Delay emission to wait for DOM to settle
+    setTimeout(() => {
+      this.menuService.setMenuLoaded(true); // ✅ Notify only after DOM renders
+    }, 30);
+  }
 
 
 collapseAllSections(): void {
@@ -186,10 +192,12 @@ collapseAllSections(): void {
       return a.order === null ? 1 : -1; // Null orders come last
     });
 
+    const currentRoute = this.router.url.split('?')[0];
     const filteredItems = sortedRootItems.filter((item:any) => {
+      const isCurrentRoute = item.link === currentRoute;
       if (
         this.initiallyHiddenMenuTitles.includes(item.link) &&
-        !this.menuService.hasAppLoadedOnce
+        !this.menuService.hasAppLoadedOnce && !isCurrentRoute
       ) {
         return false; // Hide on first load only
       }
@@ -269,7 +277,7 @@ collapseAllSections(): void {
 
   
   hasTooltip(title: string): boolean {
-    return title === '/quiz' || title === '/ssripaa';
+    return title === '/quiz' || title === '/ssripa';
   }
 
 

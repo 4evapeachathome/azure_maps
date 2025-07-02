@@ -24,7 +24,6 @@ export class AssessmentTableComponent  implements OnInit {
 
   ngOnInit() {
     // this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-    console.log('selectedAssessment####', this.selectedAssessment);
     this.assessmentNumber = this.activatedRoute.snapshot.queryParamMap.get('code') || '';
 
     if(this.activatedRoute.snapshot.queryParamMap.get('code')) {
@@ -36,7 +35,7 @@ export class AssessmentTableComponent  implements OnInit {
         this.assessmentNumber = this.ratAssessmentResult.asssessmentNumber;
       }
     }
-   // debugger;
+   
     this.checkSelectedAssessment(this.assessmentNumber);
   }
 
@@ -57,7 +56,6 @@ export class AssessmentTableComponent  implements OnInit {
     this.apiService.getRatsResult(code).subscribe({
       next: (response: any) => {
         if (response) {
-          console.log('response!!!!!', response);
           this.responseJson = response.assessmentSummary;
           this.showToast(response?.message || 'Assessment summary fetch successfully.', 3000, 'top');
         }

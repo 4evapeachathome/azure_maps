@@ -3,15 +3,14 @@ import { Component, EventEmitter, NgZone, OnInit, Output, ViewChild } from '@ang
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { APIEndpoints } from 'src/shared/endpoints';
 import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 import { MenuService } from 'src/shared/menu.service';
+import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
 
 declare var google: any;
 
@@ -133,7 +132,7 @@ export class SupportserviceComponent  implements OnInit{
   
 
 
-  constructor(private http: HttpClient,private platform: Platform,private apiService:ApiService, private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
+  constructor(private rateLimiter: GoogleApiRateLimiterService,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(
       document.createElement('div')
@@ -143,10 +142,6 @@ export class SupportserviceComponent  implements OnInit{
  
 
   ngOnInit() {
-    this.initializeGoogleMapsServices();   
-    this.loadFilterSupportSeviceData();
-    this.setupSearchDebounce();
-    this.getCurrentPosition();
   }
 
   ngAfterViewInit() {
@@ -202,17 +197,18 @@ setupSearchDebounce() {
     );
   }
 
-  isValidCoordinate(lat: string | null, lng: string | null): boolean {
-  if (lat === null || lng === null) return false;
-  
-  const trimmedLat = lat.trim();
-  const trimmedLng = lng.trim();
-  
-  if (trimmedLat === '' || trimmedLng === '') return false;
-  
-  // Rest of validation...
-  return true;
-}
+  isValidCoordinate(location: any): boolean {
+    if (!location) return false;
+    
+    const addressParts = [
+      location.OrgAddress?.trim(),
+      location.OrgCity?.trim(),
+      location.OrgZipCode?.trim()
+    ].filter(part => part && part !== 'DNK' && part !== '');
+    
+    const fullAddress = addressParts.join(', ');
+    return fullAddress.length > 0;
+  }
 
   createGoogleMapsSize(width: number, height: number): google.maps.Size {
     return new google.maps.Size(width, height);
@@ -220,6 +216,17 @@ setupSearchDebounce() {
 
   updateSearchResults(searchText: string) {
     if (searchText.length > 2) {
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+       alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+    this.rateLimiter.recordRequest();
+
       this.autocompleteService.getPlacePredictions(
         {
           input: searchText,
@@ -241,6 +248,16 @@ setupSearchDebounce() {
   selectSearchResult(item: Place) {  
     this.searchQuery = item.description;
     this.autocompleteItems = [];
+
+     if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
   
     this.placesService.getDetails(
       { placeId: item.place_id },
@@ -249,6 +266,7 @@ setupSearchDebounce() {
           this.ngZone.run(async () => {
             const lat = placeDetails.geometry.location.lat();
             const lng = placeDetails.geometry.location.lng();
+            
   
             // Reset filters
             if (this.getSelectedFilterCount() > 0) {
@@ -372,6 +390,16 @@ setupSearchDebounce() {
   private async geocodeZipCode(zipCode: string): Promise<{ lat: number; lng: number; result: any }> {
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+
       geocoder.geocode(
         {
           componentRestrictions: {
@@ -398,6 +426,16 @@ setupSearchDebounce() {
   private async geocodePlace(query: string): Promise<{ lat: number; lng: number; result: any }> {
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
+ if (!this.rateLimiter.canMakeRequest()) {
+      console.warn('Rate limit exceeded. Please try again later.');
+      alert(
+      'Rate limit exceeded. Please try again later.'
+    );
+      return;
+    }
+
+    this.rateLimiter.recordRequest();
+
       geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
         if (status === 'OK' && results[0]) {
           const location = results[0].geometry.location;
@@ -456,7 +494,7 @@ setupSearchDebounce() {
 
   updateSupportServiceMarkers() {
     this.supportServiceMarkers = (this.filteredLocations ?? []).map((location, index) => ({
-      position: { lat: location.OrgLatitude, lng: location.OrgLongitude },
+      position: { lat: location.OrgLatitude ? parseFloat(location.OrgLatitude) : 0, lng:  location.OrgLongitude ? parseFloat(location.OrgLongitude) : 0 },
       options: {
         icon: {
           url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
@@ -765,47 +803,62 @@ onSearchClear() {
 
   
   getAboutText(location: Organization): string {
-    if (!location.AboutOrg || location.AboutOrg.length === 0) return '';
+  let aboutText = '';
+  let hasAddress = false;
+  let skipNextParagraphJoin = false;
 
-    let aboutText = '';
-    let hasAddress = false;
+  // Only process AboutOrg if it's not null or empty
+  if (location.AboutOrg && location.AboutOrg.length > 0) {
+    location.AboutOrg.forEach((item, index) => {
+      let paragraphText = '';
 
-    // Process AboutOrg to build the text, checking for an address
-    location.AboutOrg.forEach(item => {
       if (item.children && item.children.length > 0) {
         item.children.forEach(child => {
           if (child.text) {
+            const cleanText = child.text.trim();
+
             if (child.bold) {
-              aboutText += `<strong>${child.text.trim()}</strong>`;
+              paragraphText += `<strong>${cleanText}</strong>`;
+              if (cleanText.toLowerCase().includes('address:')) {
+                hasAddress = true;
+                skipNextParagraphJoin = true;
+              }
             } else {
-              aboutText += child.text.trim();
+              if (skipNextParagraphJoin) {
+                paragraphText += ` ${cleanText}`;
+                skipNextParagraphJoin = false;
+              } else {
+                paragraphText += cleanText;
+              }
             }
-            // Check if this text contains an address (e.g., "Address:" followed by text)
-            if (child.text.toLowerCase().includes('address:')) {
-              hasAddress = true;
-            }
-            aboutText += '\n'; // Add a newline for paragraph breaks
           }
         });
+
+        if (!skipNextParagraphJoin && paragraphText.trim() !== '') {
+          aboutText += paragraphText + '\n';
+        } else if (skipNextParagraphJoin) {
+          aboutText += paragraphText;
+        }
       }
     });
-
-    if (!hasAddress) {
-      const addressParts = [
-        location.OrgAddress.trim(),
-        location.OrgCity.trim(),
-        `${location.OrgZipCode.trim()}}`
-      ].filter(part => part && part !== 'DNK'); // Exclude "DNK" placeholders
-      const address = addressParts.join(', ');
-      if (address) {
-        aboutText += `\n\n<strong>Address:</strong>\n${address}`;
-      }
-    } else {
-      aboutText = aboutText.replace(/\n\n/g, '\n').trim(); // Ensure proper spacing
-    }
-
-    return aboutText.trim().replace(/\n\s*\n/g, '\n'); // Clean up extra newlines
   }
+
+  // Always try to append address from fallback values if no address was found in AboutOrg
+  if (!hasAddress) {
+    const addressParts = [
+      location.OrgAddress?.trim(),
+      location.OrgCity?.trim(),
+      location.OrgZipCode?.trim()
+    ].filter(part => part && part !== 'DNK');
+
+    const address = addressParts.join(', ');
+    if (address) {
+      aboutText += `${aboutText ? '\n' : ''}<strong>Address:</strong> ${address}`;
+    }
+  }
+
+  return aboutText.trim().replace(/\n\s*\n/g, '\n');
+}
 
   //Get the sevices from the constants
   getServices(location: Organization): { name: string, value: string | boolean | null, isHotline?: boolean }[] {
@@ -854,6 +907,36 @@ onSearchClear() {
     this.segment = segmentValue;
   }
 
+  async openGoogleMapsByAddress(location: Organization) {
+    // Construct address string, ignore 'DNK' or empty parts
+    const addressParts = [
+      location.OrgAddress?.trim(),
+      location.OrgCity?.trim(),
+      location.OrgZipCode?.trim()
+    ].filter(part => part && part !== 'DNK');
+  
+    const fullAddress = encodeURIComponent(addressParts.join(', '));
+  
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${fullAddress}`;
+  
+    // Platform-specific logic
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      try {
+        const result: CanOpenURLResult = await AppLauncher.canOpenUrl({ url: 'com.google.android.apps.maps' });
+        if (result.value) {
+          await AppLauncher.openUrl({ url: `geo:0,0?q=${fullAddress}` });
+        } else {
+          window.open(googleMapsUrl, '_blank');
+        }
+      } catch (err) {
+        console.error('Map app check failed:', err);
+        window.open(googleMapsUrl, '_blank');
+      }
+    } else {
+      // Web fallback
+      window.open(googleMapsUrl, '_blank');
+    }
+  }
   
   async openGoogleMaps(latitude: string, longitude: string, location: Organization) {
     const lat = Number(latitude);
@@ -912,10 +995,15 @@ onSearchClear() {
     this.segment = 'services';
   }
 
-  openSupport(supportUrl:string) {
-    // Opens support website in a new tab
-    window.open(supportUrl, '_blank');
+openSupport(supportUrl: string): void {
+  // Ensure the URL has a protocol
+  let url = supportUrl.trim();
+  if (!url.match(/^https?:\/\//i)) {
+    url = `https://${url}`;
   }
+  // Opens support website in a new tab
+  window.open(url, '_blank');
+}
 
   async openPhone(phoneNumber: string) {
     // Ensure phoneNumber is a string and clean it (remove spaces, dashes, etc.)

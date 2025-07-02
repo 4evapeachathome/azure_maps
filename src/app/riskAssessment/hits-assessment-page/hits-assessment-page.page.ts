@@ -45,7 +45,6 @@ export class HitsAssessmentPagePage implements OnInit,AfterViewInit {
         next: (response) => {
           this.hitsData = response?.guid;
           // Optionally notify child or update state
-          console.log('Hits data loaded:', this.hitsData); // Debugging
         },
         error: (err) => {
           console.error('API Error:', err);

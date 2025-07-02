@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -23,7 +23,6 @@ import { getConstant } from 'src/shared/constants';
 export class DailyTipsComponent implements OnInit {
   currentDate: Date;
   allTips: any[] = [];
-  @Output() loaded = new EventEmitter<void>();
   quotes: string = '';
   dailyPeaceTitle: string = '';
   weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -37,7 +36,7 @@ export class DailyTipsComponent implements OnInit {
   private previousTipIndex: number | null = null;
   private storageKey: string = 'previousDailyTipIndex';
 
-  constructor(private apiService: ApiService,private cdr: ChangeDetectorRef) {
+  constructor(private apiService: ApiService) {
     this.userDateTime = new Date();
     this.currentDate = new Date(this.userDateTime); // Initialize with current date
     this.selectedDay = this.userDateTime.getDay();
@@ -88,14 +87,10 @@ export class DailyTipsComponent implements OnInit {
         } else {
           this.setDefaultTip();
         }
-        this.loaded.emit();
-
       },
       (error) => {
         console.error('Error fetching daily tip:', error);
         this.setDefaultTip();
-        this.loaded.emit();
-
       }
     );
   }
@@ -126,6 +121,29 @@ export class DailyTipsComponent implements OnInit {
     localStorage.setItem(this.storageKey, randomIndex.toString());
   }
 
+  navigateWeek(direction: 'prev' | 'next') {
+    this.slideDirection = direction === 'next' ? 'left' : 'right';
+    this.currentWeekOffset += direction === 'next' ? 1 : -1;
+
+    // Reset selection when moving away from current week
+    if (this.currentWeekOffset !== 0) {
+      this.selectedDay = 0;
+    } else {
+      // If returning to current week, select current day
+      this.selectedDay = this.userDateTime.getDay();
+    }
+
+    setTimeout(() => {
+      this.calculateWeekDates();
+      this.fetchDailyTipData();
+
+      // Remove the slide class after animation
+      setTimeout(() => {
+        this.slideDirection = null;
+      }, 300);
+    }, 50);
+  }
+
   isCurrentDay(index: number): boolean {
     if (this.currentWeekOffset !== 0) return false;
 
@@ -138,84 +156,14 @@ export class DailyTipsComponent implements OnInit {
     );
   }
 
-  isValidDay(index: number): boolean {
-    const currentDayIndex = this.weekDates.findIndex(date => 
-        date.toDateString() === new Date().toDateString()
-    );
-    return currentDayIndex !== -1 && 
-           (index === currentDayIndex);
-}
-
   selectDay(index: number) {
-    // Find the index of the current day in weekDates
-    const currentDayIndex = this.weekDates.findIndex(date => 
-        date.toDateString() === new Date().toDateString()
-    );
-
-    // Check if the clicked index is within the allowed range (current day, day before, or day after)
-    const isValidDay = currentDayIndex !== -1 && 
-                      (index === currentDayIndex);
-
-    if (isValidDay && this.selectedDay !== index) {
-        this.selectedDay = index;
-        // Update currentDate to the selected day's date
-        this.currentDate = new Date(this.weekDates[index]);
-        this.generateRandomTip();
-    } else if (!isValidDay) {
-        console.log(`Day ${index} is disabled and cannot be selected.`);
+    if (this.selectedDay !== index) {
+      this.selectedDay = index;
+      // Update currentDate to the selected day's date
+      this.currentDate = new Date(this.weekDates[index]);
+      this.generateRandomTip();
     } else {
-        console.log(`Day ${index} is already selected. No new tip generated.`);
+      console.log(`Day ${index} is already selected. No new tip generated.`);
     }
-}
-
-// navigateWeek(direction: 'prev' | 'next') {
-//   this.slideDirection = direction === 'next' ? 'left' : 'right';
-//   this.currentWeekOffset += direction === 'next' ? 1 : -1;
-
-//   // Preserve relative selected day unless returning to current week
-//   const currentDayOfWeek = this.userDateTime.getDay(); // 0 = Sunday, 1 = Monday, etc.
-//   if (this.currentWeekOffset !== 0) {
-//       // Maintain the relative day position from the last selection
-//       this.selectedDay = Math.min(Math.max(this.selectedDay, 0), 6); // Ensure within 0-6
-//   } else {
-//       // Return to current day when back to current week
-//       this.selectedDay = currentDayOfWeek;
-//   }
-
-//   setTimeout(() => {
-//       this.calculateWeekDates();
-//       this.fetchDailyTipData();
-
-//       // Re-evaluate disabled state after dates are recalculated
-//       this.cdr.detectChanges(); // Force change detection for CSS to apply
-
-//       // Remove the slide class after animation
-//       setTimeout(() => {
-//           this.slideDirection = null;
-//       }, 300);
-//   }, 50);
-// }
-
-isDisabledDay(index: number): boolean {
-  const currentDate = new Date(); // June 24, 2025, 11:14 AM IST
-  const weekStart = new Date(this.weekDates[0]);
-  const weekEnd = new Date(this.weekDates[this.weekDates.length - 1]);
-  weekEnd.setDate(weekEnd.getDate() + 1); // Include the last day in range
-
-  // Check if current date is within this week's range
-  const isCurrentWeek = currentDate >= weekStart && currentDate < weekEnd;
-
-  if (isCurrentWeek) {
-      const currentDayIndex = this.weekDates.findIndex(date => 
-          date.toDateString() === currentDate.toDateString()
-      );
-      return currentDayIndex !== -1 && 
-             !(
-               index === currentDayIndex
-             );
   }
-  // Disable all days if not the current week
-  return true;
-}
-
 }

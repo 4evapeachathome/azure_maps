@@ -31,6 +31,9 @@ export class SripaaPage implements OnInit,AfterViewInit {
   sripa: any[] = [];
   selectedOptions: string[] = [];
   hasYesAnswer = false;
+  private totalComponents = 1; // Number of child components with API calls
+private loadedComponents = 0;
+private loaderDismissed = false;
 
   constructor(
     private menuService: MenuService,
@@ -40,6 +43,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
   ) {}
 
   async ngOnInit() {
+    await this.showLoader();
     const saved = sessionStorage.getItem('ssripa_result');
     if (saved) {
       const parsed = JSON.parse(saved);
@@ -61,7 +65,6 @@ export class SripaaPage implements OnInit,AfterViewInit {
     this.loadSSripaData();
     const storedHasYes = sessionStorage.getItem('hasYesAnswer');
     this.hasYesAnswer = storedHasYes ? JSON.parse(storedHasYes) : false;
-    await this.showLoader();
   }
   
   async retakeAssessment() {
@@ -120,16 +123,13 @@ export class SripaaPage implements OnInit,AfterViewInit {
   }
 
 
-  async ngAfterViewInit() {
-    const idleCallback = window['requestIdleCallback'] || function (cb: any) {
-      setTimeout(cb, 1000);
-    };
-
-    idleCallback(() => {
-      setTimeout(() => {
+   ngAfterViewInit() {
+    setTimeout(() => {
+      if (!this.loaderDismissed) {
         this.hideLoader();
-      }, 2000);
-    });
+      } else {
+      }
+    }, 10000); // 10 seconds max
   }
 
   async showLoader() {
@@ -139,22 +139,31 @@ export class SripaaPage implements OnInit,AfterViewInit {
       backdropDismiss: false,
     });
     await this.loading.present();
-
-    setTimeout(() => {
-      this.hideLoader();
-    }, 5000);
   }
 
   async hideLoader() {
-    if (this.loading) {
+    if (this.loading && !this.loaderDismissed) {
       try {
         await this.loading.dismiss();
       } catch (e) {
-        console.warn('Loader already dismissed or not yet created');
       }
+      this.loaderDismissed = true;
       this.loading = null;
     }
   }
+
+ async onChildLoaded() {
+  if (this.loaderDismissed) {
+    return;
+  }
+
+  this.loadedComponents++;
+
+
+  if (this.loadedComponents >= this.totalComponents) {
+    await this.hideLoader(); // <- important
+  }
+}
 
   expandMenu(sectionTitle: string) {
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
@@ -170,7 +179,6 @@ export class SripaaPage implements OnInit,AfterViewInit {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Confirmation canceled');
           }
         },
         {

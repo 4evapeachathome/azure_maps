@@ -31,7 +31,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   loggedInUser:any = null;
   loaded: boolean = false;
   riskValue!: number; // Dynamic risk value (0-100)
-  riskLevelsTitle: string = 'Risk Levels';
+  riskLevelsTitle: string = 'Risk Meter';
   stressCurveLabel: string = 'Stress Curve';
   @ViewChild('qrcodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
   @ViewChild('riskMeterRef') summaryPage!: SummarypageComponent;
@@ -118,7 +118,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
-    // debugger;
+    
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
       if (resultStr) {
@@ -531,7 +531,7 @@ getCharFromCode(code: number): string {
     this.apiService.getDAresultcalculation().subscribe({
       next: (response: any) => {
         if (response && response.data) {
-          // debugger;
+          
           this.daResult = response.data;
   
   
@@ -553,7 +553,6 @@ getCharFromCode(code: number): string {
         console.error('Error in subscription:', error);
       },
       complete: () => {
-        console.log('Hit results fetch completed');
       },
     });
   }
@@ -589,7 +588,6 @@ getCharFromCode(code: number): string {
         console.error('Error in subscription:', error);
       },
       complete: () => {
-        console.log('Hit results fetch completed');
       },
     });
   }

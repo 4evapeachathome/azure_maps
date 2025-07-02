@@ -4,7 +4,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
 import { Location } from '@angular/common';
 import { HeaderComponent } from "./controls/header/header.component";
-import { BehaviorSubject, filter, Subscription } from 'rxjs';
+import { BehaviorSubject, filter, forkJoin, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { StatusBar, Style } from '@capacitor/status-bar';
@@ -16,6 +16,7 @@ import { environment } from 'src/environments/environment';
 import { FormsModule } from '@angular/forms';
 import { SessionActivityService } from './guards/session-activity.service';
 import { CookieService } from 'ngx-cookie-service';
+import { PageTitleService } from './services/page-title.service';
 
 
 export interface OrganizationResponse {
@@ -144,7 +145,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private apiService: ApiService,
-    private sharedDataService: MenuService
+    private sharedDataService: MenuService,
+    private pageService: PageTitleService,
   ) {
   }
 
@@ -167,6 +169,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       await this.sessionAlert.dismiss();
       this.sessionAlert = null;
     }
+    this.pageService.trackLogout();
   
     this.cookieService.delete('username');
     this.cookieService.delete('loginTime');
@@ -193,11 +196,18 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       .subscribe((event: NavigationEnd) => {
         const url = event.urlAfterRedirects;
         const currentPath = url.split('/')[1]?.split('?')[0]; // Without leading slash
-  
-        console.log('Router NavigationEnd:', currentPath);
-  
+        
+      
         // Check if current route is a risk assessment route
         this.isRiskAssessment = this.riskRoutes.includes(currentPath);
+
+          //tracking page view with Google Analytics
+        const pageTitle = this.pageService.getPageTitle(url);
+
+      const deviceType = window.innerWidth <= 768 ? 'mobile' : 'desktop';
+
+      this.pageService.trackPageView(url, pageTitle, this.isRiskAssessment ? 'Risk Assessment' : 'Education', deviceType);
+  
   
         // Signal that route check is complete
         this.routeReady$.next(true);
@@ -208,7 +218,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
         // Check whether session alert should stay active
         const stillValid = this.sessionAlertRoutes.includes(currentPath);
         if (!stillValid && this.sessionAlert) {
-          console.log('Dismissing session alert due to route:', currentPath);
           this.sessionAlert.dismiss();
           this.sessionAlert = null;
         }
@@ -279,23 +288,18 @@ async presentSessionAlert() {
 
 
 ngAfterViewInit() {
-  console.log('ngAfterViewInit called');
 
   this.platform.ready().then(() => {
-    console.log('Platform ready');
 
-    this.isMobile = this.platform.is('mobile') || this.platform.is('mobileweb');
-    console.log('Platform isMobile:', this.isMobile);
+    this.isMobile = window.innerWidth <= 768;
 
     this.isMenuOpen = !this.isMobile;
-    console.log('Initial isMenuOpen set to:', this.isMenuOpen);
 
     this.cdr.detectChanges();
 
     if (this.isRouteCheckComplete && !this.initializedToggle) {
       this.initializedToggle = true;
 
-      console.log('Calling initializeToggleRef from ngAfterViewInit...');
       setTimeout(() => this.initializeToggleRef(), 0);
     }
   });
@@ -303,48 +307,46 @@ ngAfterViewInit() {
 
 initializeToggleRef() {
   const toggleRef = this.isMobile ? this.mobileToggle : this.desktopToggle;
-  console.log('ToggleRef resolved:', toggleRef);
 
   if (toggleRef) {
-    console.log('ToggleRef.checked at init:', toggleRef.nativeElement.checked);
 
     toggleRef.nativeElement.addEventListener('change', () => {
       this.isMenuOpen = toggleRef.nativeElement.checked;
-      console.log('Menu toggled, isMenuOpen is now:', this.isMenuOpen);
     });
   } else {
-    console.warn('ToggleRef is undefined — input element may not be rendered yet.');
   }
 }
   
 
   loadInitialData() {
-    this.apiService.getServiceFilterOptions().subscribe(response => {
-      this.filterOptions = response.data || [];
-      this.sharedDataService.setFilterOptions(this.filterOptions);
-    });
-
-    this.apiService.getAllSupportServices(this.endPoint).subscribe((response: OrganizationResponse) => {
+  forkJoin([
+    this.apiService.getServiceFilterOptions(),
+    this.apiService.getAllSupportServices(this.endPoint),
+    this.apiService.getSupportServiceDistances()
+  ]).subscribe({
+    next: ([filtersResponse, orgsResponse, distances]: [any, OrganizationResponse, any]) => {
+      // Set data into shared service
+      this.sharedDataService.setFilterOptions(filtersResponse.data || []);
+      
       const seenNames = new Set<string>();
-      this.organizations = response.data.filter(org => {
+      const uniqueOrgs = orgsResponse.data.filter(org => {
         if (seenNames.has(org.OrgName)) return false;
         seenNames.add(org.OrgName);
         return true;
       });
-      this.sharedDataService.setOrganizations(this.organizations);
-    });
+      this.sharedDataService.setOrganizations(uniqueOrgs);
 
-    this.apiService.getSupportServiceDistances().subscribe({
-      next: (distances) => {
-        this.sharedDataService.setStateDistances(distances); // Updated to use menuService
-      },
-      error: (error) => {
-        console.error('Failed to fetch support service distances:', error);
-        this.sharedDataService.setStateDistances({}); // Fallback to empty object
-      }
-    });
-   
-  }
+      this.sharedDataService.setStateDistances(distances);
+      
+      // ✅ Notify that data loading is complete
+      this.sharedDataService.setDataLoaded(true);
+    },
+    error: (error:any) => {
+      console.error("Error loading initial data", error);
+      this.sharedDataService.setDataLoaded(true); // Still emit true to unblock UI
+    }
+  });
+}
 
   closeMobileMenu() {
     if (this.isMobile && this.isMenuOpen) {

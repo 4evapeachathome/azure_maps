@@ -32,7 +32,7 @@ const routes: Routes = [
     loadChildren: () => import('./legalrightshome/legalrightshome.module').then( m => m.LegalrightshomePageModule)
   },
   {
-    path: 'ssripaa',
+    path: 'ssripa',
     loadChildren: () => import('./sripaa/sripaa.module').then( m => m.SripaaPageModule)
   },
   {

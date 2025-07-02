@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
@@ -16,6 +16,7 @@ img: any;
   contentBlocks: any[] = [];
   title: any[] = [];
   paragraphContent: any;
+   @Output() loaded = new EventEmitter<void>();
 
   constructor(private apiService:ApiService) { }
 
@@ -41,9 +42,11 @@ img: any;
           this.img = data.image;
           this.title = Array.isArray(data.title) ? data.title : [];
         }
+        this.loaded.emit(); // Emit loaded event after data is fetched
       },
       (error) => {
         console.error('Error fetching api data:', error);
+        this.loaded.emit(); 
       }
     );
   }

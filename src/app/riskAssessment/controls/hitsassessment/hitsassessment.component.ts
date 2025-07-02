@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
+import { PageTitleService } from 'src/app/services/page-title.service';
 import { MenuService } from 'src/shared/menu.service';
 import { Utility } from 'src/shared/utility';
 
@@ -34,7 +35,8 @@ export class HitsassessmentComponent  implements OnInit {
     private apiService: ApiService,
     private menuService: MenuService,
     private cookieService: CookieService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private analytics: PageTitleService
   ) { }
 
    ngOnInit() {
@@ -177,7 +179,6 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Submission canceled');
           }
         },
         {
@@ -229,6 +230,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
   
             this.apiService.postHitsAssessmentResponse(payload).subscribe({
               next: (res) => {
+                this.analytics.trackAssessmentSubmit('HITS');
                 sessionStorage.setItem('hitsAssessmentResult', JSON.stringify({
                   totalScore,
                   summary: answerSummary,
@@ -236,7 +238,6 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
                   hitsurl: `${window.location.origin}/viewresult?code=${res.data.AssessmentGuid}`,
                   caseNumber: res?.data?.CaseNumber
                 }));
-                console.log('Assessment saved:', res);
                 this.hasloadedDate = false; // Reset the flag to allow reloading
                 this.router.navigate(['/riskassessmentsummary']);
               },

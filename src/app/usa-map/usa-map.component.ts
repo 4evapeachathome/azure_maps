@@ -58,7 +58,7 @@
 //   }
 
 //   get filteredStates() {
-//    // debugger;
+//    
 //     return this.usaMap?.locations?.filter(state => 
 //       !['Washington, DC'].includes(state.name)
 //     ) || [];
@@ -144,7 +144,7 @@
 //  getUSLawsbystateData() {
 //     this.apiService.getStateLaws().subscribe(
 //       (response: StateLaw[]) => {
-//        // debugger;
+//        
 //         this.stateLaws = response;
 //       },
 //       (error) => {
@@ -257,7 +257,7 @@
 //   };
 
 //   getStateCenter(pathData: string, stateId?: string): Point {
-//    // debugger;
+//    
 //     const coordinates = this.extractCoordinates(pathData);
 //     if (coordinates.length === 0) return { x: 0, y: 0 };
 
