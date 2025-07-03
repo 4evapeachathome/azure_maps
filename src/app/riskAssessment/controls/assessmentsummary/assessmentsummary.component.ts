@@ -70,6 +70,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   levelofdanger:string=''; // Track if logins have been fetched
   isDanger: boolean = false; // Track if logins have been fetched
   isWeb: boolean = false;
+  selecteddescription: string | null = null; // To store the selected assessment description
 
   constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController,   private menuService: MenuService) { }
 
@@ -118,6 +119,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
+    this.selecteddescription = sessionStorage.getItem('selectedAssessmentDescription') || null;
+    debugger;
     
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');

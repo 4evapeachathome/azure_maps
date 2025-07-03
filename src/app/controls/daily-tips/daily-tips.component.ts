@@ -121,28 +121,30 @@ export class DailyTipsComponent implements OnInit {
     localStorage.setItem(this.storageKey, randomIndex.toString());
   }
 
-  navigateWeek(direction: 'prev' | 'next') {
-    this.slideDirection = direction === 'next' ? 'left' : 'right';
-    this.currentWeekOffset += direction === 'next' ? 1 : -1;
+ navigateWeek(direction: 'prev' | 'next') {
+  if (direction === 'next' && this.currentWeekOffset >= 0) {
+    return; // Prevent going into future weeks
+  }
 
-    // Reset selection when moving away from current week
-    if (this.currentWeekOffset !== 0) {
-      this.selectedDay = 0;
-    } else {
-      // If returning to current week, select current day
-      this.selectedDay = this.userDateTime.getDay();
-    }
+  this.slideDirection = direction === 'next' ? 'left' : 'right';
+  this.currentWeekOffset += direction === 'next' ? 1 : -1;
+
+  // Reset selection when moving away from current week
+  if (this.currentWeekOffset !== 0) {
+    this.selectedDay = 0;
+  } else {
+    this.selectedDay = this.userDateTime.getDay();
+  }
+
+  setTimeout(() => {
+    this.calculateWeekDates();
+    this.fetchDailyTipData();
 
     setTimeout(() => {
-      this.calculateWeekDates();
-      this.fetchDailyTipData();
-
-      // Remove the slide class after animation
-      setTimeout(() => {
-        this.slideDirection = null;
-      }, 300);
-    }, 50);
-  }
+      this.slideDirection = null;
+    }, 300);
+  }, 50);
+}
 
   isCurrentDay(index: number): boolean {
     if (this.currentWeekOffset !== 0) return false;
