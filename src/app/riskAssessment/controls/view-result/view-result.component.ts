@@ -57,6 +57,7 @@ export class ViewResultComponent  implements OnInit {
   responseJson: any;
   isDataLoaded = false;
   ASSESSMENT_TYPE = ASSESSMENT_TYPE;
+  selecteddescription: any | null = null; // To store the selected assessment description
   @ViewChild('qrcodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
   device: any;
 
@@ -86,6 +87,11 @@ export class ViewResultComponent  implements OnInit {
     }
 
     this.assessmentNumber = this.activatedRoute.snapshot.queryParamMap.get('code') || '';
+
+    this.selecteddescription = this.loggedInUser.assessment_type?.find(
+    (type: any) => this.assessmentNumber?.toLowerCase().includes(type.navigate?.toLowerCase())
+    ) || null;
+      debugger;
     if(this.assessmentNumber) {
       this.checkSelectedAssessment(this.assessmentNumber);
     } else {

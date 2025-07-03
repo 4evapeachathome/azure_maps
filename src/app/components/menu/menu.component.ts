@@ -248,7 +248,12 @@ collapseAllSections(): void {
     }
   
     if (item.link) {
-      this.router.navigate([item.link]);
+      if(item.link === '/riskassessment'){
+        window.open(item.link, '_blank');
+      }else{
+        this.router.navigate([item.link]);
+      }
+      
     }
   }
   

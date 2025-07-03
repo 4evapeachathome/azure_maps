@@ -29,15 +29,16 @@ export class HeaderComponent  implements OnInit {
   }
 
   navigateToHome() {
-    const excludedPaths = [
-      '/riskassessmentsummary','/hitsassessment', '/ratsassessment', '/dangerassessment','/ssripariskassessment', '/webassessment', '/viewresult','/riskassessment'
-    ];
+    this.router.navigate(['/home']);
+    // const excludedPaths = [
+    //   '/riskassessmentsummary','/hitsassessment', '/ratsassessment', '/dangerassessment','/ssripariskassessment', '/webassessment', '/viewresult','/riskassessment'
+    // ];
     
-    if(excludedPaths.includes(this.location.path().split('?')[0])){
-      this.router.navigate(['/riskassessment']);
-    }else{
-      this.router.navigate(['/home']);
-    }
+    // if(excludedPaths.includes(this.location.path().split('?')[0])){
+    //   this.router.navigate(['/riskassessment']);
+    // }else{
+    //   this.router.navigate(['/home']);
+    // }
   }
 
   expandMenu(sectionTitle: string) {

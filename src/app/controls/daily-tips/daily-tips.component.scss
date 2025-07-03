@@ -55,3 +55,8 @@
 .day-item:hover:not(.day-disabled) {
   background-color: #e0e0e0; /* Highlight color for enabled days on hover */
 }
+
+ion-button[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
