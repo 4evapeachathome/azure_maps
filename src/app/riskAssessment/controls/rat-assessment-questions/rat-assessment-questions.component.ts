@@ -121,12 +121,14 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
         },
         error: (err: any) => {
           console.error('Failed to load WEB data from API:', err);
+          const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
+
           this.loggingService.handleApiError(
             'Failed to load WEB assessment questions and answers', // activity type
             'loadinitialData', // function in which error occured
             APIEndpoints.ratsAssessmentQuestions +' For answer API:' + APIEndpoints.ratScaleOptions, // request URL
             this.loggedInUser.documentId, // request parameter
-            err?.message, // error message
+            errorMessage, // error message
             err?.status, // error status
             this.device // device information
           );
@@ -178,12 +180,13 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
 
   } catch (err: any) {
     console.error('Error in setupRatsQuestions:', err);
+    const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
     this.loggingService.handleApiError(
       'Failed to setup RATS questions',      // activityType
       'setupRatsQuestions',                  // errorFunction
       '',                                    // url (not an API call)
       '',   // requestParams
-      err?.message || 'Unknown error',       // errorMessage
+      errorMessage,       // errorMessage
       0,                                     // errorStatus (0 = local error)
       this.device                            // device
     );
@@ -307,12 +310,14 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
               error: (error: any) => {
                 const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
                 presentToast(this.toastController, errorMessage);
+                const errorMsg = error?.error?.error?.message || error?.error?.message || error?.message || 'Failed to submit assessment response';
+
                 this.loggingService.handleApiError(
                   'Failed to load WEB assessment questions and answers', // activity type
                   'submit', // function in which error occured
                   APIEndpoints.saveRatAssessment, // request URL
                   this.loggedInUser.documentId, // request parameter
-                  error?.message, // error message
+                  errorMsg, // error message
                   error?.status, // error status
                   this.device // device information
                 );

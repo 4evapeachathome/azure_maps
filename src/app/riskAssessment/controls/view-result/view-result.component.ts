@@ -171,7 +171,8 @@ export class ViewResultComponent  implements OnInit {
         }
       },
       error: (error: any) => {
-        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
+
+        const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch assessment result';
         this.showToast(errorMsg, 3000, 'top');
         let requestUrl = APIEndpoints.ratResult + code;
         this.loggingService.handleApiError(
@@ -179,7 +180,7 @@ export class ViewResultComponent  implements OnInit {
           'fetchRatResults', // function in which error occured
           requestUrl, // request URL
           code, // request parameter
-          error?.message, // error message
+          errorMsg, // error message
           error?.status, // error status,
           this.device // device information
         );
@@ -232,12 +233,13 @@ export class ViewResultComponent  implements OnInit {
   
       } catch (error: any) {
         console.error('DA Assessment fetch error:', error);
+        const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch DA assessment result';
         this.loggingService.handleApiError(
           'Fetch DA Assessment', // activity type
           'GetAssessmentResponsebycode', // function in which error occured
           url, // request URL
           code, // request parameter
-          error?.message, // error message
+          errorMsg, // error message
           error?.status, // error status,
           this.device // device information
         );
@@ -276,12 +278,13 @@ export class ViewResultComponent  implements OnInit {
   
       } catch (error: any) {
         console.error('HITS Assessment fetch error:', error);
+        const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch HITS assessment result';
         await this.loggingService.handleApiError(
           'Fetch HITS Assessment', // activity type
           'GetAssessmentResponsebycode', // function in which error occured
           url, // request URL
           code, // request parameter
-          error?.message, // error message
+          errorMsg, // error message
           error?.status, // error status,
           this.device // device information
         );
@@ -313,12 +316,13 @@ export class ViewResultComponent  implements OnInit {
         },
         (error) => {
           console.error('SSRIPA Assessment fetch error:', error);
+          const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch SSRIPA assessment result';
           this.loggingService.handleApiError(
             'Fetch SSripa Assessment', // activity type
             'GetAssessmentResponsebycode', // function in which error occured
             url, // request URL
             code, // request parameter
-            error?.message, // error message
+            errorMsg, // error message
             error?.status, // error status,
             this.device // device information
           );
@@ -351,6 +355,7 @@ async fetchHitResults(): Promise<void> {
       error: (error: any) => {
         this.errorMessage = error;
         console.error('Error in fetchHitResults:', error);
+        const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch HITS results';
 
         // Log the error using your centralized logging service
         this.loggingService.handleApiError(
@@ -358,7 +363,7 @@ async fetchHitResults(): Promise<void> {
           'fetchHitResults',                                 // errorFunction
           APIEndpoints.hitsresultcalculation || '',          // url
           '',              // requestParams
-          error?.message || 'Unknown error',                 // errorMessage
+          errorMsg,                 // errorMessage
           error?.status || 0,                                // errorStatus
           this.device                                        // device info
         );
@@ -390,14 +395,14 @@ async fetchDaResults(): Promise<void> {
       error: (error: any) => {
         this.errorMessage = error;
         console.error('Error in fetchDaResults:', error);
-
+        const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch DA Results';
         // Error logging
         this.loggingService.handleApiError(
           'Failed to fetch DA Results',                     // activityType
           'fetchDaResults',                                 // errorFunction
           APIEndpoints.daAssessmentResult || '',           // url (if defined as constant)
           '',              // requestParams
-          error?.message || 'Unknown error',                // errorMessage
+          errorMsg,                // errorMessage
           error?.status || 0,                               // errorStatus
           this.device                                       // device
         );

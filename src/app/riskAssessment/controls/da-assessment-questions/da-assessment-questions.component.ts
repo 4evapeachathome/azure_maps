@@ -110,12 +110,15 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
         },
         error: (err:any) => {
           console.error('Failed to load DA data from API:', err);
+         const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
+
+
           this.loggingService.handleApiError(
             'Failed to load DA assessment questions', // activity type
             'loadInitialData', // function in which error occured
             APIEndpoints.daAssessmentQuestions, // request URL
             this.loggedInUser.documentId, // request parameter
-            err?.message, // error message
+            errorMessage, // error message
             err?.status, // error status
             this.device // device information
           );
@@ -139,12 +142,13 @@ initializeAssessmentData(data: any[]) {
     }));
   } catch (err: any) {
     console.error('Error in initializeAssessmentData:', err);
+             const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
     this.loggingService.handleApiError(
       'Failed to initialize assessment data', // activityType
       'initializeAssessmentData',             // errorFunction
       '',                                     // url (not an API call)
       '',    // requestParams
-      err?.message || 'Unknown error',        // errorMessage
+      errorMessage,        // errorMessage
       0,                                      // errorStatus (0 for local error)
       this.device                             // device info
     );
@@ -318,12 +322,13 @@ initializeAssessmentData(data: any[]) {
               },
               error: (err) => {
                 console.error('Failed to save assessment', err);
+                const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
                 this.loggingService.handleApiError(
                   'Failed to save assessment DA assessment', // activity type
                   'submitDangerAssessment', // function in which error occured
                   APIEndpoints.daAssessmentResponse, // request URL
                   this.loggedInUser.documentId, // request parameter
-                  err?.message, // error message
+                  errorMessage, // error message
                   err?.status, // error status
                   this.device // device information
                 );

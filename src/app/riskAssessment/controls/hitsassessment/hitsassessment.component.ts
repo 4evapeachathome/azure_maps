@@ -108,12 +108,14 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
         },
         error: (err:any) => {
           console.error('Failed to load HITS data from API:', err);
+          const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
+
           this.loggingService.handleApiError(
             'Failed to load HITS data from API', // activity type
             'loadinitialData', // function in which error occured
             APIEndpoints.hitsAssessmentQuestions +' ,For answer API:' + APIEndpoints.scaleOptions, // request URL
             this.loggedInUser.documentId, // request parameter
-            err?.message, // error message
+            errorMessage, // error message
             err?.status, // error status
             this.device // device information
           );
@@ -157,12 +159,13 @@ setupHitsQuestions(questions: any[], answerOptions: any[]) {
     this.loaded = true;
   } catch (err:any) {
     console.error('Error in setupHitsQuestions:', err);
+    const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
     this.loggingService.handleApiError(
       'Failed to setup HITS questions', // activity type
       'setupHitsQuestions', // function
       '', // request URL (empty since it's not an API call)
       '', // request parameter
-      err.message, // error message
+      errorMessage, // error message
       0, // error status (null for non-API errors)
       this.device // device information
     );
@@ -274,12 +277,13 @@ setupHitsQuestions(questions: any[], answerOptions: any[]) {
               },
               error: (err) => {
                 console.error('Failed to save assessment', err);
+                const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
                 this.loggingService.handleApiError(
                   'Failed to save HITS assessment', // activity type
                   'submit', // function in which error occured
                   APIEndpoints.saveHitsAssessment, // request URL
                   this.loggedInUser.documentId, // request parameter
-                  err?.message, // error message
+                  errorMessage, // error message
                   err?.status, // error status
                   this.device // device information
                 );

@@ -578,13 +578,15 @@ getCharFromCode(code: number): string {
     error: (error: any) => {
       this.errorMessage = error;
       console.error('Error in fetchDaResults:', error);
+      const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
+
 
       this.loggingService.handleApiError(
         'Failed to fetch DA results',
         'fetchDaResults',
         APIEndpoints.daAssessmentResult || '',
         '',
-        error?.message || 'Unknown error',
+        errorMessage,
         error?.status || 0,
         this.device
       );
@@ -621,13 +623,15 @@ getCharFromCode(code: number): string {
     error: (error: any) => {
       this.errorMessage = error;
       console.error('Error in fetchHitResults:', error);
+      const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
+
 
       this.loggingService.handleApiError(
         'Failed to fetch HITS results',
         'fetchHitResults',
         APIEndpoints.hitsresultcalculation || '',
         '',
-        error?.message || 'Unknown error',
+        errorMessage,
         error?.status || 0,
         this.device
       );
@@ -662,20 +666,20 @@ getCharFromCode(code: number): string {
       }
     },
     error: (error: any) => {
-      const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
       console.error('Error in fetchWebResults:', error);
+      const errorMessage = error?.error?.error?.message || error?.error?.message || error?.message || 'Unknown error';
 
       this.loggingService.handleApiError(
         'Failed to fetch RAT assessment result',
         'fetchWebResults',
         APIEndpoints.ratResult + code || '',
         code || '',
-        errorMsg,
+        errorMessage,
         error?.status || 0,
         this.device
       );
 
-      this.showToast(errorMsg, 3000, 'top');
+      this.showToast(errorMessage, 3000, 'top');
     }
   });
 }

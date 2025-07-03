@@ -54,12 +54,13 @@ export class DaAssessmentPageComponent  implements OnInit,AfterViewInit {
       },
       error: (err) => {
         console.error('API Error in loadDaData:', err);
+        const errorMsg = err?.error?.error?.message || err?.message || 'Failed to generate DA GUID';
         this.loggingService.handleApiError(
           'Failed to generate DA GUID',
           'loadDaData',
           url,
           '',
-          err?.message || 'Unknown error',
+          errorMsg,
           err?.status || 0,
           this.device
         );
@@ -71,12 +72,13 @@ export class DaAssessmentPageComponent  implements OnInit,AfterViewInit {
     });
   } catch (err: any) {
     console.error('Unexpected error in loadDaData:', err);
+    const errorMsg = err?.error?.error?.message || err?.message || 'Unexpected error';
     this.loggingService.handleApiError(
       'Unexpected error in loadDaData',
       'loadDaData',
       this.daGuidUrl || '',
       '',
-      err?.message || 'Unexpected error',
+      errorMsg,
       0,
       this.device
     );

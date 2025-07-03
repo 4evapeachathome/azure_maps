@@ -133,13 +133,14 @@ export class SetPasswordComponent implements OnInit {
     }
   } catch (err: any) {
     console.error('Error in renderReCaptcha:', err);
+    const errorMessage = err?.error?.error?.message || err?.message || 'Failed to render reCAPTCHA';
 
     this.loggingService.handleApiError(
       'Failed to render reCAPTCHA on Setpassword',                // activityType
       'renderReCaptcha',                           // errorFunction
       '',                                          // No API URL involved
       '',    // requestParams
-      err?.message || 'Unknown error',             // errorMessage
+      errorMessage,             // errorMessage
       0,                                           // errorStatus
       this.device                                  // device info
     );

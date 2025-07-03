@@ -103,12 +103,13 @@ renderReCaptcha() {
     }
   } catch (err: any) {
     console.error('Error in renderReCaptcha:', err);
+    const errorMessage = err?.error?.error?.message || err?.error?.message || err?.message || 'Unknown error';
     this.loggingService.handleApiError(
       'Failed to render reCAPTCHA for loginPage',
       'renderReCaptcha',
       '',
       '',
-      err?.message || 'Unknown error',
+      errorMessage,
       0,
       this.device
     );
@@ -265,13 +266,14 @@ async onSubmit() {
     await presentToast(this.toastController, 'Login successful!', 3000, 'top');
   } catch (error: any) {
     console.error('Login failed:', error);
+    const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
     this.stoploader.emit();
     this.loggingService.handleApiError(
       'Login failed',
       'onSubmit',
       APIEndpoints.loginbyemail || '',
       '',
-      error?.message || 'Unknown login error',
+      errorMessage,
       error?.status || 0,
       this.device
     );
