@@ -69,8 +69,18 @@ export class AssessmentPageComponent  implements OnInit {
         if (this.loggedInUser?.documentId) {
           this.apiService.getAssessmentType(this.loggedInUser.documentId).subscribe({
             next: (response: any) => {
-              
-              this.assessmentTypes = response?.data?.assessment_type || [];
+          const newAssessmentType = response?.data?.assessment_type || [];
+
+          // ✅ Replace old assessment_type with new one
+          this.loggedInUser.assessment_type = newAssessmentType;
+
+          // ✅ Save updated user object back to cookie
+          const updatedEncoded = btoa(JSON.stringify(this.loggedInUser));
+          this.cookieService.set('userdetails', updatedEncoded);
+
+          // Optional: update local variable too
+          this.assessmentTypes = newAssessmentType;
+          debugger;
             },
             error: (error: any) => {
               console.error('Failed to fetch assessment types:', error);
@@ -102,24 +112,27 @@ export class AssessmentPageComponent  implements OnInit {
   }
 
   onAssessmentChange() {
-    sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
-    let selectedAssessmentDocId = this.assessmentTypes.filter((x: any) => {
-      if(x.name?.toLowerCase() == this.selectedAssessment?.toLowerCase()) {
-        return x;
-      }
-    });
-    sessionStorage.setItem('selectedAssessmentDocId', selectedAssessmentDocId[0].documentId);
-    let selectedAssessmentId = this.assessmentTypes.filter((type: any) => {
-      if (type.name?.toLowerCase() == this.selectedAssessment?.toLowerCase()) {
-            return type;
-        }
-    });
-    sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentId[0].id || '') as any);
+  sessionStorage.setItem('selectedAssessment', this.selectedAssessment || '');
 
-    // Extract and store the navigate value
-    this.navigate = selectedAssessmentId[0]?.navigate || '';
+  // Find selected assessment object by name
+  const selectedAssessmentObj = this.assessmentTypes.find(
+    (x: any) => x.name?.toLowerCase() === this.selectedAssessment?.toLowerCase()
+  );
 
-    this.updateGuidedTypeLabel();
+  if (selectedAssessmentObj) {
+    sessionStorage.setItem('selectedAssessmentDocId', selectedAssessmentObj.documentId || '');
+    sessionStorage.setItem('selectedAssessmentId', (selectedAssessmentObj.id || '').toString());
+    sessionStorage.setItem('selectedAssessmentDescription', selectedAssessmentObj.description || '');
+    this.navigate = selectedAssessmentObj.navigate || '';
+  } else {
+    // Clear all if not found
+    sessionStorage.setItem('selectedAssessmentDocId', '');
+    sessionStorage.setItem('selectedAssessmentId', '');
+    sessionStorage.setItem('selectedAssessmentDescription', '');
+    this.navigate = '';
+  }
+
+  this.updateGuidedTypeLabel();
 }
 
   getSelectedAssessmentDescription(): string {
