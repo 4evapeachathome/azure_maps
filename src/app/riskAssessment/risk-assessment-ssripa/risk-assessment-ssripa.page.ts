@@ -5,6 +5,8 @@ import { filter, Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { RiskassessmentSSripaComponent } from '../controls/riskassessment-ssripa/riskassessment-ssripa.component';
+import { LoggingService } from 'src/app/services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-risk-assessment-ssripa',
@@ -17,7 +19,12 @@ export class RiskAssessmentSSripaPage implements OnInit,AfterViewInit {
  ssripGuidUrl :string = APIEndpoints.ssripGuidUrl; 
  reloadData: boolean = false; // Subscription to track navigation events
  sripaData:any;// Replace with your actual API URL
-constructor(private loadingController: LoadingController, private apiService:ApiService,private router: Router) { }
+ device:any
+constructor(private loadingController: LoadingController,
+  private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService, private apiService:ApiService,private router: Router) { 
+      this.device = this.deviceService.getDeviceInfo();
+    }
 
   async ngOnInit() {
   }
@@ -35,31 +42,49 @@ constructor(private loadingController: LoadingController, private apiService:Api
       this.reloadData = true;
     }, 0);
   }
+ 
+
   loadSSripaData() {
-    try {
-      // Replace with your actual API URL
-      const url = this.ssripGuidUrl;
-      
-      this.apiService.generateGuid(url).subscribe({
-        next: (response) => {
-          this.sripaData = response?.guid;
-          this.hideLoader();
-        },
-        error: (err) => {
-          console.error('API Error:', err);
-          this.hideLoader();
-          // Handle error (show toast, etc.)
-        },
-        complete: () => {
-          // Ensure loader is dismissed after data is fetched
-          this.hideLoader();
-        }
-      });
-    } catch (err) {
-      console.error('Error:', err);
-      this.hideLoader();
-    }
+  try {
+    const url = this.ssripGuidUrl;
+
+    this.apiService.generateGuid(url).subscribe({
+      next: (response) => {
+        this.sripaData = response?.guid;
+        this.hideLoader();
+      },
+      error: (err) => {
+        console.error('API Error in loadSSripaData:', err);
+        this.loggingService.handleApiError(
+          'Failed to generate SSRIPA GUID',
+          'loadSSripaData',
+          url,
+          '',
+          err?.message || 'Unknown error',
+          err?.status || 0,
+          this.device
+        );
+        this.hideLoader();
+      },
+      complete: () => {
+        this.hideLoader();
+      }
+    });
+  } catch (err: any) {
+    console.error('Unexpected error in loadSSripaData:', err);
+    this.loggingService.handleApiError(
+      'Unexpected error in loadSSripaData',
+      'loadSSripaData',
+      this.ssripGuidUrl || '',
+      '',
+      err?.message || 'Unexpected error',
+      0,
+      this.device
+    );
+    this.hideLoader();
   }
+}
+
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {

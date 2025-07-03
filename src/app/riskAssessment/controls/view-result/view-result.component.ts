@@ -345,11 +345,24 @@ async fetchHitResults(): Promise<void> {
       error: (error: any) => {
         this.errorMessage = error;
         console.error('Error in fetchHitResults:', error);
+
+        // Log the error using your centralized logging service
+        this.loggingService.handleApiError(
+          'Failed to fetch HITS results',                    // activityType
+          'fetchHitResults',                                 // errorFunction
+          APIEndpoints.hitsresultcalculation || '',          // url
+          '',              // requestParams
+          error?.message || 'Unknown error',                 // errorMessage
+          error?.status || 0,                                // errorStatus
+          this.device                                        // device info
+        );
+
         reject(error);
       },
     });
   });
 }
+
 
 async fetchDaResults(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -371,6 +384,18 @@ async fetchDaResults(): Promise<void> {
       error: (error: any) => {
         this.errorMessage = error;
         console.error('Error in fetchDaResults:', error);
+
+        // Error logging
+        this.loggingService.handleApiError(
+          'Failed to fetch DA Results',                     // activityType
+          'fetchDaResults',                                 // errorFunction
+          APIEndpoints.daAssessmentResult || '',           // url (if defined as constant)
+          '',              // requestParams
+          error?.message || 'Unknown error',                // errorMessage
+          error?.status || 0,                               // errorStatus
+          this.device                                       // device
+        );
+
         reject(error);
       },
     });

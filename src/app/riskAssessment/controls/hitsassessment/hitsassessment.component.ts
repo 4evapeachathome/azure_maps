@@ -129,13 +129,14 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
   
 
 
-  setupHitsQuestions(questions: any[], answerOptions: any[]) {
+setupHitsQuestions(questions: any[], answerOptions: any[]) {
+  try {
     // Sort answer options by score to ensure correct order
     const sortedOptions = answerOptions.sort((a, b) => a.score - b.score);
-  
+
     // Map the sorted options to the scale format (e.g., "1. NEVER", "2. RARELY", etc.)
     this.scaleOptions = sortedOptions.map(opt => `${opt.score}. ${opt.label}`);
-  
+
     // Map questions to the hitsQuestions format
     this.hitsQuestions = questions.map((q: any) => ({
       id: q.id,
@@ -152,9 +153,22 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
         label: opt.label
       }))
     }));
-  
+
     this.loaded = true;
+  } catch (err:any) {
+    console.error('Error in setupHitsQuestions:', err);
+    this.loggingService.handleApiError(
+      'Failed to setup HITS questions', // activity type
+      'setupHitsQuestions', // function
+      '', // request URL (empty since it's not an API call)
+      '', // request parameter
+      err.message, // error message
+      0, // error status (null for non-API errors)
+      this.device // device information
+    );
+    throw err; // Optionally rethrow to allow further handling
   }
+}
   
   isUnanswered(question: any): boolean {
     return this.submitted && !question.selected;

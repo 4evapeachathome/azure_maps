@@ -3,8 +3,11 @@ import { Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, Sim
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { filter } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { presentToast } from 'src/shared/utility';
 
 @Component({
@@ -28,7 +31,7 @@ export class SetPasswordComponent implements OnInit {
     private hasFetchedLogins: boolean = false;
      @Output() startloader = new EventEmitter<void>();
       @Output() stoploader = new EventEmitter<Error>();
-
+  device:any;
   resolvedData: any;
   previousUrl: string = '';
   currentUrl: string = '';
@@ -39,8 +42,11 @@ export class SetPasswordComponent implements OnInit {
     private router: Router,
     private ngZone: NgZone,
     private route: ActivatedRoute,
+  private deviceService: DeviceDetectorService,
+  private loggingService: LoggingService,
     private toastController: ToastController,
   ) {
+    this.device = this.deviceService.getDeviceInfo();
     this.userForm = this.fb.group(
       {
         username: ['', Validators.required],
@@ -99,7 +105,8 @@ export class SetPasswordComponent implements OnInit {
     await presentToast(this.toastController, message, duration, position);
   }
 
-  renderReCaptcha() {
+ renderReCaptcha() {
+  try {
     if (
       typeof window !== 'undefined' &&
       (window as any).grecaptcha &&
@@ -121,10 +128,23 @@ export class SetPasswordComponent implements OnInit {
         }
       });
     } else {
-      // If grecaptcha or render is not available, try again in 500ms
+      // Retry if grecaptcha not yet ready
       setTimeout(() => this.renderReCaptcha(), 500);
     }
+  } catch (err: any) {
+    console.error('Error in renderReCaptcha:', err);
+
+    this.loggingService.handleApiError(
+      'Failed to render reCAPTCHA on Setpassword',                // activityType
+      'renderReCaptcha',                           // errorFunction
+      '',                                          // No API URL involved
+      '',    // requestParams
+      err?.message || 'Unknown error',             // errorMessage
+      0,                                           // errorStatus
+      this.device                                  // device info
+    );
   }
+}
 
   // getUserLogins() {
   //   this.apiService.getUserLogins().subscribe({
@@ -190,39 +210,55 @@ export class SetPasswordComponent implements OnInit {
   //     },
   //   });
   // }
-  private async handlePasswordUpdate() {
-    const { username, password, newPassword } = this.userForm.value;
-    const processedUsername = username.trim().toLowerCase();
-    let newPass = newPassword.trim();
-    let tempPass = password.trim();
-    if (!username || !tempPass || !newPass) {
-      await this.showToast('All fields are required', 3000, 'top');
-      this.stoploader.emit();
-      return;
-    }
-    this.apiService.changePassword(processedUsername, tempPass, newPass).subscribe({
-      next: async (res: any) => {
-        await this.showToast(res?.message || 'Password updated successfully', 2500, 'top');
-        this.hasFetchedLogins = false;
-        this.stoploader.emit();
-        this.router.navigate(['/login']);
-        this.userForm.reset();
-        this.resetCaptcha();
-      },
-      error: async (err: any) => {
-        this.stoploader.emit();
-        const message =
-          err?.message ||
-          err?.error?.message ||
-          err?.error?.error?.message ||
-          'Failed to update password';
-  
-        await this.showToast(message, 3000, 'top');
-        //this.userForm.reset();
-        this.resetCaptcha();
-      },
-    });
+
+private async handlePasswordUpdate() {
+  const { username, password, newPassword } = this.userForm.value;
+  const processedUsername = username?.trim().toLowerCase();
+  const newPass = newPassword?.trim();
+  const tempPass = password?.trim();
+
+  if (!processedUsername || !tempPass || !newPass) {
+    await this.showToast('All fields are required', 3000, 'top');
+    this.stoploader.emit();
+    return;
   }
+
+  this.apiService.changePassword(processedUsername, tempPass, newPass).subscribe({
+    next: async (res: any) => {
+      await this.showToast(res?.message || 'Password updated successfully', 2500, 'top');
+      this.hasFetchedLogins = false;
+      this.stoploader.emit();
+      this.router.navigate(['/login']);
+      this.userForm.reset();
+      this.resetCaptcha();
+    },
+    error: async (err: any) => {
+      this.stoploader.emit();
+
+      const message =
+        err?.error?.message ||
+        err?.error?.error?.message ||
+        err?.message ||
+        'Failed to update password';
+
+      console.error('Error in handlePasswordUpdate:', err);
+
+      this.loggingService.handleApiError(
+        'Failed to update password for' + this.flowType,                  // activityType
+        'handlePasswordUpdate',                       // errorFunction
+        APIEndpoints.changePassword || '',            // request URL (if defined)
+        '',                            // requestParams (username)
+        message,                                      // errorMessage
+        err?.status || 0,                             // errorStatus
+        this.device                                   // device info
+      );
+
+      await this.showToast(message, 3000, 'top');
+      this.resetCaptcha();
+    },
+  });
+}
+
 
   resetCaptcha() {
     this.isCaptchaVerified = false;

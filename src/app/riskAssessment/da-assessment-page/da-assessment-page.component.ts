@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { filter, Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
@@ -15,10 +17,14 @@ export class DaAssessmentPageComponent  implements OnInit,AfterViewInit {
   daGuidUrl :string = APIEndpoints.daGuidUrl; // Replace with your actual API URL
   loading: HTMLIonLoadingElement | null = null;
   reloadData: boolean = false; // Subscription to track navigation events
-  constructor(private apiService:ApiService,private loadingController: LoadingController, private router:Router) { }
+  constructor(private apiService:ApiService,private loadingController: LoadingController,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService , private router:Router) { 
+    this.device = this.deviceService.getDeviceInfo();
+  }
   daData: any; // This will hold the data fetched from the API
   isInitialLoad: boolean = true; // Track if it's the initial load
-
+  device:any;
 
      async ngOnInit() {
     }
@@ -38,30 +44,46 @@ export class DaAssessmentPageComponent  implements OnInit,AfterViewInit {
     }
 
   loadDaData() {
-    try {
-      // Replace with your actual API URL
-      const url = this.daGuidUrl; // Assuming daGuidUrl is defined somewhere in your component
-      
-      this.apiService.generateGuid(url).subscribe({
-        next: (response) => {
-          this.daData = response?.guid;
-          this.hideLoader();
-        },
-        error: (err) => {
-          console.error('API Error:', err);
-          this.hideLoader();
-          // Handle error (show toast, etc.)
-        },
-        complete: () => {
-          // Ensure loader is dismissed after data is fetched
-          this.hideLoader();
-        }
-      });
-    } catch (err) {
-      console.error('Error:', err);
-      this.hideLoader();
-    }
+  try {
+    const url = this.daGuidUrl;
+
+    this.apiService.generateGuid(url).subscribe({
+      next: (response) => {
+        this.daData = response?.guid;
+        this.hideLoader();
+      },
+      error: (err) => {
+        console.error('API Error in loadDaData:', err);
+        this.loggingService.handleApiError(
+          'Failed to generate DA GUID',
+          'loadDaData',
+          url,
+          '',
+          err?.message || 'Unknown error',
+          err?.status || 0,
+          this.device
+        );
+        this.hideLoader();
+      },
+      complete: () => {
+        this.hideLoader();
+      }
+    });
+  } catch (err: any) {
+    console.error('Unexpected error in loadDaData:', err);
+    this.loggingService.handleApiError(
+      'Unexpected error in loadDaData',
+      'loadDaData',
+      this.daGuidUrl || '',
+      '',
+      err?.message || 'Unexpected error',
+      0,
+      this.device
+    );
+    this.hideLoader();
   }
+}
+
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {

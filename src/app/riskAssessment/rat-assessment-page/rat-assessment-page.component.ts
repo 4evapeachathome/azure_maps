@@ -1,6 +1,8 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
@@ -15,8 +17,11 @@ export class RatAssessmentPageComponent implements OnInit, AfterViewInit {
   webData: any;
   webGuidUrl: string = APIEndpoints.webGuidUrl; // Replace with your actual API URL
   reloadData:boolean = false; 
+  device:any;
 
-  constructor(private loadingController: LoadingController, private apiService:ApiService, private cdRef:ChangeDetectorRef) { }
+  constructor(private loadingController: LoadingController, private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService,
+     private apiService:ApiService, private cdRef:ChangeDetectorRef) { }
 
   ionViewWillEnter() {
     // Show loader
@@ -42,28 +47,47 @@ export class RatAssessmentPageComponent implements OnInit, AfterViewInit {
     
   }
 
-  loadWebData() {
-    try {
-      const url = this.webGuidUrl;
-      this.apiService.generateGuid(url).subscribe({
-        next: (response) => {
-          this.webData = response?.guid;
-          this.hideLoader();
-        },
-        error: (err) => {
-          console.error('API Error:', err);
-          this.hideLoader(); // Dismiss loader on error
-        },
-        complete: () => {
-          // Ensure loader is dismissed after data is fetched
-          this.hideLoader();
-        }
-      });
-    } catch (err) {
-      console.error('Error:', err);
-      this.hideLoader();
-    }
+ loadWebData() {
+  try {
+    const url = this.webGuidUrl;
+
+    this.apiService.generateGuid(url).subscribe({
+      next: (response) => {
+        this.webData = response?.guid;
+        this.hideLoader();
+      },
+      error: (err) => {
+        console.error('API Error in loadWebData:', err);
+        this.loggingService.handleApiError(
+          'Failed to generate Web GUID',
+          'loadWebData',
+          url,
+           '',
+          err?.message || 'Unknown error',
+          err?.status || 0,
+          this.device
+        );
+        this.hideLoader();
+      },
+      complete: () => {
+        this.hideLoader();
+      }
+    });
+  } catch (err: any) {
+    console.error('Unexpected error in loadWebData:', err);
+    this.loggingService.handleApiError(
+      'Unexpected error in loadWebData',
+      'loadWebData',
+      this.webGuidUrl || '',
+      '',
+      err?.message || 'Unexpected error',
+      0,
+      this.device
+    );
+    this.hideLoader();
   }
+}
+
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {

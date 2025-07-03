@@ -124,7 +124,8 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
     }
   }
 
-  initializeAssessmentData(data: any[]) {
+initializeAssessmentData(data: any[]) {
+  try {
     return data.map(q => ({
       ...q,
       selected: null,
@@ -136,7 +137,20 @@ if (cachedHits && cachedHits.data && cachedHits.data.length > 0) {
           }))
         : []
     }));
+  } catch (err: any) {
+    console.error('Error in initializeAssessmentData:', err);
+    this.loggingService.handleApiError(
+      'Failed to initialize assessment data', // activityType
+      'initializeAssessmentData',             // errorFunction
+      '',                                     // url (not an API call)
+      '',    // requestParams
+      err?.message || 'Unknown error',        // errorMessage
+      0,                                      // errorStatus (0 for local error)
+      this.device                             // device info
+    );
+    throw err; // optionally rethrow to propagate the error
   }
+}
 
    private updateGuidedTypeLabel() {
     this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';

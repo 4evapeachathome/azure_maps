@@ -15,6 +15,9 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ASSESSMENT_TYPE } from 'src/shared/constants';
 import { MenuService } from 'src/shared/menu.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { LoggingService } from 'src/app/services/logging.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 
 @Component({
@@ -70,8 +73,11 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   levelofdanger:string=''; // Track if logins have been fetched
   isDanger: boolean = false; // Track if logins have been fetched
   isWeb: boolean = false;
+  device:any;
 
-  constructor(private cdRef:ChangeDetectorRef,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController,   private menuService: MenuService) { }
+  constructor(private cdRef:ChangeDetectorRef, private loggingService: LoggingService,private deviceService: DeviceDetectorService,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController,   private menuService: MenuService) { 
+    this.device = this.deviceService.getDeviceInfo();
+  }
 
   ngOnInit() {
     if (!this.hasFetchedData) {
@@ -528,69 +534,84 @@ getCharFromCode(code: number): string {
   }
   
   fetchDaResults() {
-    this.apiService.getDAresultcalculation().subscribe({
-      next: (response: any) => {
-        if (response && response.data) {
-          
-          this.daResult = response.data;
-  
-  
-          this.rangevalue = this.daResult?.map((option:any) => ({
-            min: option.min,
-            max: option.max,
-            color: option.color,
-            label: option.label
-          }));
-        } else {
-          this.hitResults = [];
-          this.thresholdValues = {};
-          this.note = '';
-          this.caution = '';
-        }
-      },
-      error: (error: any) => {
-        this.errorMessage = error;
-        console.error('Error in subscription:', error);
-      },
-      complete: () => {
-      },
-    });
-  }
+  this.apiService.getDAresultcalculation().subscribe({
+    next: (response: any) => {
+      if (response && response.data) {
+        this.daResult = response.data;
+        this.rangevalue = this.daResult?.map((option: any) => ({
+          min: option.min,
+          max: option.max,
+          color: option.color,
+          label: option.label
+        }));
+      } else {
+        this.hitResults = [];
+        this.thresholdValues = {};
+        this.note = '';
+        this.caution = '';
+      }
+    },
+    error: (error: any) => {
+      this.errorMessage = error;
+      console.error('Error in fetchDaResults:', error);
+
+      this.loggingService.handleApiError(
+        'Failed to fetch DA results',
+        'fetchDaResults',
+        APIEndpoints.daAssessmentResult || '',
+        '',
+        error?.message || 'Unknown error',
+        error?.status || 0,
+        this.device
+      );
+    },
+    complete: () => {},
+  });
+}
+
 
 
   fetchHitResults() {
-    this.apiService.getHitsResultCalculation().subscribe({
-      next: (response: any) => {
-        if (response && response.data) {
-          
-          this.hitResults = response.data;
-  
-          // Extract and store Note and Caution (assumes only one item in hitResults)
-          const hitData = this.hitResults[0];
-          this.note = hitData?.Note || '';
-          this.caution = hitData?.Caution || '';
-  
-          this.rangevalue = hitData?.AnswerOption.map((option:any) => ({
-            min: option.min,
-            max: option.max,
-            color: option.color,
-            label: option.label
-          }));
-        } else {
-          this.hitResults = [];
-          this.thresholdValues = {};
-          this.note = '';
-          this.caution = '';
-        }
-      },
-      error: (error: any) => {
-        this.errorMessage = error;
-        console.error('Error in subscription:', error);
-      },
-      complete: () => {
-      },
-    });
-  }
+  this.apiService.getHitsResultCalculation().subscribe({
+    next: (response: any) => {
+      if (response && response.data) {
+        this.hitResults = response.data;
+
+        const hitData = this.hitResults[0];
+        this.note = hitData?.Note || '';
+        this.caution = hitData?.Caution || '';
+
+        this.rangevalue = hitData?.AnswerOption.map((option: any) => ({
+          min: option.min,
+          max: option.max,
+          color: option.color,
+          label: option.label
+        }));
+      } else {
+        this.hitResults = [];
+        this.thresholdValues = {};
+        this.note = '';
+        this.caution = '';
+      }
+    },
+    error: (error: any) => {
+      this.errorMessage = error;
+      console.error('Error in fetchHitResults:', error);
+
+      this.loggingService.handleApiError(
+        'Failed to fetch HITS results',
+        'fetchHitResults',
+        APIEndpoints.hitsresultcalculation || '',
+        '',
+        error?.message || 'Unknown error',
+        error?.status || 0,
+        this.device
+      );
+    },
+    complete: () => {},
+  });
+}
+
 
   
   checkSelectedAssessment(code: string) {
@@ -608,20 +629,33 @@ getCharFromCode(code: number): string {
   
 
   fetchWebResults(code: string) {
-    this.apiService.getRatsResult(code).subscribe({
-      next: (response: any) => {
-        if (response) {
-          this.responseJson = response.assessmentSummary;
-          this.riskValue = this.ratAssessmentResult?.assessmentScore;
-          this.caseNumber = response?.caseNumber;
-        }
-      },
-      error: (error: any) => {
-        const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
-        this.showToast(errorMsg, 3000, 'top');
+  this.apiService.getRatsResult(code).subscribe({
+    next: (response: any) => {
+      if (response) {
+        this.responseJson = response.assessmentSummary;
+        this.riskValue = this.ratAssessmentResult?.assessmentScore;
+        this.caseNumber = response?.caseNumber;
       }
-    })
-  }
+    },
+    error: (error: any) => {
+      const errorMsg = error?.error?.message || error?.message || 'Failed to fetch assessment result';
+      console.error('Error in fetchWebResults:', error);
+
+      this.loggingService.handleApiError(
+        'Failed to fetch RAT assessment result',
+        'fetchWebResults',
+        APIEndpoints.ratResult + code || '',
+        code || '',
+        errorMsg,
+        error?.status || 0,
+        this.device
+      );
+
+      this.showToast(errorMsg, 3000, 'top');
+    }
+  });
+}
+
 
   private async showToast(message: string, duration = 2500, position: 'top' | 'bottom' | 'middle' = 'top') {
     await presentToast(this.toastController, message, duration, position);

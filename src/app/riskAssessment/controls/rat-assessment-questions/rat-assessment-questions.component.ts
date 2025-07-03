@@ -143,6 +143,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   }
 
   setupRatsQuestions(questions: any[], answerOptions: any[]) {
+  try {
     const scaleSet = new Set<string>();
     answerOptions.forEach((opt: any) => {
       scaleSet.add(`${opt.score}. ${opt.Label}`);
@@ -150,7 +151,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
     this.cdRef.detectChanges();
 
     this.scaleOptions = [...scaleSet];
-  
+
     this.ratsQuestions = questions.map((q: any) => ({
       id: q.id,
       text: q.question_text,
@@ -166,14 +167,29 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
         label: opt.Label
       }))
     }));
+
     // Reset selected for each question
     this.ratsQuestions.forEach((q: any) => { 
-      q.selected = null; // Reset selected for each question
+      q.selected = null;
     });
+
     this.cdRef.detectChanges();
-  
     this.loaded = true;
+
+  } catch (err: any) {
+    console.error('Error in setupRatsQuestions:', err);
+    this.loggingService.handleApiError(
+      'Failed to setup RATS questions',      // activityType
+      'setupRatsQuestions',                  // errorFunction
+      '',                                    // url (not an API call)
+      '',   // requestParams
+      err?.message || 'Unknown error',       // errorMessage
+      0,                                     // errorStatus (0 = local error)
+      this.device                            // device
+    );
+    throw err; // Optional: rethrow to allow further handling
   }
+}
 
   onAnswerChange(question: any) {  
     if (this.submitted) {

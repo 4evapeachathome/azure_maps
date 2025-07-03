@@ -9,6 +9,10 @@ import { presentToast, Utility } from 'src/shared/utility';
 import { __await } from 'tslib';
 import { firstValueFrom } from 'rxjs';
 import { PageTitleService } from 'src/app/services/page-title.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { LoggingService } from 'src/app/services/logging.service';
+import { environment } from 'src/environments/environment';
+import { APIEndpoints } from 'src/shared/endpoints';
 @Component({
   selector: 'login-page',
   templateUrl: './login-page.component.html',
@@ -28,6 +32,7 @@ export class LoginPageComponent  implements OnInit {
   isCaptchaVerified: boolean = false;
   captchaToken: string = '';
   widgetId: number = -1;
+  device:any
   @Output() startloader = new EventEmitter<void>();
   @Output() stoploader = new EventEmitter<Error>();
 
@@ -37,9 +42,12 @@ export class LoginPageComponent  implements OnInit {
     private cookieService: CookieService,
     private analytics:PageTitleService,
     private router: Router,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService,
     private toastController: ToastController,
     private ngZone: NgZone
   ) {
+    this.device = this.deviceService.getDeviceInfo();
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -56,9 +64,9 @@ export class LoginPageComponent  implements OnInit {
     }
   }
 
-  renderReCaptcha() {
+renderReCaptcha() {
+  try {
     if (typeof window !== 'undefined' && !(window as any).grecaptcha) {
-      // Load the reCAPTCHA script if not already loaded
       const scriptId = 'recaptcha-script';
       if (!document.getElementById(scriptId)) {
         const script = document.createElement('script');
@@ -69,13 +77,12 @@ export class LoginPageComponent  implements OnInit {
         script.onload = () => this.renderReCaptcha();
         document.body.appendChild(script);
       } else {
-        // Wait for the script to load
         setTimeout(() => this.renderReCaptcha(), 500);
       }
       return;
     }
+
     if ((window as any).grecaptcha && typeof (window as any).grecaptcha.render === 'function') {
-    //  if (typeof window !== 'undefined' && (window as any).grecaptcha) {  
       this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
         sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
         callback: (response: string) => {
@@ -92,10 +99,22 @@ export class LoginPageComponent  implements OnInit {
         }
       });
     } else {
-      // If grecaptcha is not available or not ready, try again in 500ms
       setTimeout(() => this.renderReCaptcha(), 500);
     }
+  } catch (err: any) {
+    console.error('Error in renderReCaptcha:', err);
+    this.loggingService.handleApiError(
+      'Failed to render reCAPTCHA for loginPage',
+      'renderReCaptcha',
+      '',
+      '',
+      err?.message || 'Unknown error',
+      0,
+      this.device
+    );
   }
+}
+
 
 
   ngOnChanges(changes: SimpleChanges) {
@@ -125,32 +144,46 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
   // }
 
 
-  onForgotPassword(event: Event) {
-    this.startloader.emit();
-    event.preventDefault(); // prevent link behavior
-    const rawUsername = this.loginForm.get('username')?.value || '';
-    const username = rawUsername.trim().toLowerCase();
+ onForgotPassword(event: Event) {
+  this.startloader.emit();
+  event.preventDefault();
 
-    const updatePayload = {
-      Username: username
-    };
-    this.apiService.forgetPassword(updatePayload).subscribe({
-      next: async (res: any) => {
-        await this.showToast(res.message || 'Reset email sent, please check your inbox.', 3000, 'top');
-        this.loginForm.patchValue({ password: '' });
-        this.loginForm.get('password')?.setErrors(null);
-        //Google Analytics tracking for forgot password event
-        this.analytics.trackForgotPassword();
-        this.stoploader.emit();
-      },
-      error: async (err: any) => {
-        await this.showToast(err.error.error.message, 3000, 'top');
-        this.loginForm.patchValue({ password: '' });
-        this.loginForm.get('password')?.setErrors(null);
-        this.stoploader.emit();
-      },
-    });
-  }
+  const rawUsername = this.loginForm.get('username')?.value || '';
+  const username = rawUsername.trim().toLowerCase();
+
+  const updatePayload = { Username: username };
+
+  this.apiService.forgetPassword(updatePayload).subscribe({
+    next: async (res: any) => {
+      await this.showToast(res.message || 'Reset email sent, please check your inbox.', 3000, 'top');
+      this.loginForm.patchValue({ password: '' });
+      this.loginForm.get('password')?.setErrors(null);
+      this.analytics.trackForgotPassword();
+      this.stoploader.emit();
+    },
+    error: async (err: any) => {
+      const message = err?.error?.error?.message || 'Failed to send reset email';
+      console.error('Error in onForgotPassword:', err);
+
+      await this.showToast(message, 3000, 'top');
+      this.loginForm.patchValue({ password: '' });
+      this.loginForm.get('password')?.setErrors(null);
+      this.stoploader.emit();
+
+      this.loggingService.handleApiError(
+        'Failed to send forgot password email',
+        'onForgotPassword',
+         `${environment.apiHost}/api/user-logins/forgot-password` || '',
+        '',
+        message,
+        err?.status || 0,
+        this.device
+      );
+
+      
+    },
+  });
+}
   
 //   async onSubmit() {
 //     if (this.loginForm.invalid) {
@@ -206,18 +239,15 @@ async onSubmit() {
     this.resetCaptcha();
     return;
   }
+
   this.startloader.emit();
   const { username, password } = this.loginForm.value;
   const processedUsername = username?.trim()?.toLowerCase();
 
   try {
-    
     const user = await this.apiService.login(processedUsername, password).toPromise();
 
-
     await this.handleSuccessfulLogin(user.username, user);
-    
-    // Tracking login event with Google Analytics   
     this.analytics.trackLogin();
 
     let url = sessionStorage.getItem('redirectUrl');
@@ -235,14 +265,21 @@ async onSubmit() {
     await presentToast(this.toastController, 'Login successful!', 3000, 'top');
   } catch (error: any) {
     console.error('Login failed:', error);
-  
-    if (error?.message) {
-      await presentToast(this.toastController, error.message, 3000, 'top');
-    } else {
-      await presentToast(this.toastController, 'Login failed', 3000, 'top');
-    }
+    this.stoploader.emit();
+    this.loggingService.handleApiError(
+      'Login failed',
+      'onSubmit',
+      APIEndpoints.loginbyemail || '',
+      '',
+      error?.message || 'Unknown login error',
+      error?.status || 0,
+      this.device
+    );
+
+    await presentToast(this.toastController, error?.message || 'Login failed', 3000, 'top');
   }
 }
+
 
   private async handleSuccessfulLogin(username: string, user: any) {
     // Safely encode Unicode strings for btoa

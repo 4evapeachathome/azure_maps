@@ -5,6 +5,8 @@ import { filter, Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { HitsassessmentComponent } from '../controls/hitsassessment/hitsassessment.component';
+import { LoggingService } from 'src/app/services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-hits-assessment-page',
@@ -19,7 +21,11 @@ export class HitsAssessmentPagePage implements OnInit,AfterViewInit {
   hitsGuidUrl: string = APIEndpoints.hitsGuidUrl; // Replace with your actual API URL
   isInitialLoad: boolean = true; // Track if it's the initial load
   reloadData:boolean = false; // Subscription to track navigation events
-  constructor(private loadingController: LoadingController, private apiService:ApiService, private router:Router) { }
+  device:any;
+  constructor(private loadingController: LoadingController, private loggingService: LoggingService,private deviceService: DeviceDetectorService,  
+     private apiService:ApiService, private router:Router) { 
+    this.device = this.deviceService.getDeviceInfo();
+     }
 
   async ngOnInit() {
   }
@@ -39,27 +45,45 @@ export class HitsAssessmentPagePage implements OnInit,AfterViewInit {
   }
 
   loadHitsData() {
-    try {
-      const url = this.hitsGuidUrl;
-      this.apiService.generateGuid(url).subscribe({
-        next: (response) => {
-          this.hitsData = response?.guid;
-          // Optionally notify child or update state
-        },
-        error: (err) => {
-          console.error('API Error:', err);
-          this.hideLoader(); // Dismiss loader on error
-        },
-        complete: () => {
-          // Ensure loader is dismissed after data is fetched
-          this.hideLoader();
-        }
-      });
-    } catch (err) {
-      console.error('Error:', err);
-      this.hideLoader();
-    }
+  try {
+    const url = this.hitsGuidUrl;
+
+    this.apiService.generateGuid(url).subscribe({
+      next: (response) => {
+        this.hitsData = response?.guid;
+      },
+      error: (err) => {
+        console.error('API Error in loadHitsData:', err);
+        this.loggingService.handleApiError(
+          'Failed to generate HITS GUID',
+          'loadHitsData',
+          url,
+          '',
+          err?.message || 'Unknown error',
+          err?.status || 0,
+          this.device
+        );
+        this.hideLoader();
+      },
+      complete: () => {
+        this.hideLoader();
+      }
+    });
+  } catch (err: any) {
+    console.error('Unexpected error in loadHitsData:', err);
+    this.loggingService.handleApiError(
+      'Unexpected error in loadHitsData',
+      'loadHitsData',
+      this.hitsGuidUrl || '',
+      '',
+      err?.message || 'Unexpected error',
+      0,
+      this.device
+    );
+    this.hideLoader();
   }
+}
+
 
   async ngAfterViewInit() {
     const idleCallback = window['requestIdleCallback'] || function (cb: any) {
