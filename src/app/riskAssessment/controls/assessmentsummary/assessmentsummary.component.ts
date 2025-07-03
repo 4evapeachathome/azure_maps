@@ -74,6 +74,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   isDanger: boolean = false; // Track if logins have been fetched
   isWeb: boolean = false;
   device:any;
+  selecteddescription: string | null = null;
 
   constructor(private cdRef:ChangeDetectorRef, private loggingService: LoggingService,private deviceService: DeviceDetectorService,private cookieService:CookieService,private router:Router,private apiService:ApiService, private alertController:AlertController, private activatedRoute: ActivatedRoute, private toastController: ToastController,   private menuService: MenuService) { 
     this.device = this.deviceService.getDeviceInfo();
@@ -124,6 +125,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isSSripa = sessionStorage.getItem('isSSripa') === 'true';
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
+    this.selecteddescription = sessionStorage.getItem('selectedAssessmentDescription') || null;
+
     
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
@@ -265,14 +268,16 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       if (sessionStorage.getItem('isHits') === 'true') {
         resultInfo.innerHTML = `<p style="white-space: nowrap;">Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
       } else if (this.isWeb) {
-        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>
-          ${this.guidedType === 'staff-guided' ? `
-          <p><strong>Status:</strong> ${this.riskValue >= 20 ? 'Positive' : 'Negative'}</p>` : ''}`;
+        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
       } else if (sessionStorage.getItem('isSSripa') === 'true') {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
       } else if (sessionStorage.getItem('isDanger') === 'true') {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
       }
+
+      const description = `<p style="margin-top: 8;">${this.selecteddescription || ''}</p>`;
+      resultInfo.innerHTML = resultInfo.innerHTML + description;
+
       leftSection.appendChild(resultInfo);
 
       mainRow.appendChild(leftSection);
@@ -281,11 +286,15 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       const rightSection = document.createElement('div');
       rightSection.style.display = 'flex';
       rightSection.style.flexDirection = 'column';
+      rightSection.style.minWidth = '220px';
+      rightSection.style.alignSelf = 'center';
       rightSection.style.alignItems = 'center';  // Center align QR code
 
       const qrSpan = document.createElement('span');
       qrSpan.style.display = 'inline-block';
       qrSpan.style.textAlign = 'center';
+      qrSpan.style.padding = '16px';
+
 
       const qrLabel = document.createElement('p');
       qrLabel.innerText = 'Here is your QR Code.';
@@ -298,6 +307,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         qrImg.src = qrCanvas.toDataURL('image/png');
         qrImg.style.width = '128px';
         qrImg.style.height = '128px';
+        qrImg.style.margin = '8px';
         qrSpan.appendChild(qrImg);
 
         const fixedUrl = this.QrcodeUrl.replace(/\\/g, '/');
@@ -317,7 +327,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       const scoreRiskRow = document.createElement('div');
       scoreRiskRow.style.display = 'flex';
       scoreRiskRow.style.justifyContent = 'space-between';
-      scoreRiskRow.style.alignItems = 'flex-start';
+      scoreRiskRow.style.alignItems = 'center';
       scoreRiskRow.style.margin = '20px 0';
 
       // Add score info to the new row
@@ -338,6 +348,12 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
             `<p><strong>Level of Danger:</strong> ${this.levelofdanger || ''}</p>` : ''}
           ${this.guidedType === 'self-guided' ? 
               `<p><strong>Please talk to your service provider about what the Danger Assessment means in your situation.</p>` : ''}
+        `;
+      }
+      if(this.isWeb){
+        scoreInfo.innerHTML = `
+           ${this.guidedType === 'staff-guided' ? `
+          <p><strong>Status:</strong> ${this.riskValue >= 20 ? 'Positive' : 'Negative'}</p>` : ''}
         `;
       }
       if (sessionStorage.getItem('isSSripa') === 'true') {
@@ -430,6 +446,14 @@ table.innerHTML = `
 `;
 containerElement.appendChild(table);
         document.body.appendChild(containerElement);
+        const spacerTop = document.createElement('div');
+spacerTop.style.height = '10px';
+containerElement.insertBefore(spacerTop, table);
+
+const spacerBottom = document.createElement('div');
+spacerBottom.style.height = '30px';
+containerElement.appendChild(spacerBottom);
+
 
         const canvas = await html2canvas(containerElement, {
           scale: 2,
