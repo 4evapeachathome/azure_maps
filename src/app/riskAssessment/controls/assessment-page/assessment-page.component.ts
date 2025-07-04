@@ -87,7 +87,6 @@ export class AssessmentPageComponent  implements OnInit {
 
           // Optional: update local variable too
           this.assessmentTypes = newAssessmentType;
-          debugger;
             },
             error: (error: any) => {
               console.error('Failed to fetch assessment types:', error);

@@ -49,7 +49,11 @@
             </ion-row>
 
   
-           
+            <ion-row class="ion-margin-bottom">
+              <ion-col size="12" size-sm="12" size-lg="12">
+                <ion-text class="text-line-height">{{ selecteddescription }}</ion-text>
+              </ion-col>
+            </ion-row> 
 
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="8">
@@ -61,14 +65,9 @@
             </ion-row>
  <ion-row>
               <ion-col size="12" size-sm="12" size-lg="8" style="margin-bottom: 16px;">
-                <ion-row class="ion-margin-bottom">
                 <ion-text>
                   Thanks for taking <strong>{{ selectedAssessment }} </strong>.
                   </ion-text>
-                </ion-row>  
-                <ion-row>
-                    <ion-text class="text-line-height">{{ selecteddescription }}</ion-text>
-                </ion-row>  
               </ion-col>
                <ion-col size="12" size-sm="12" size-lg="4" class="risk-item-center">
                   <ion-text>Here is your QR code:</ion-text>

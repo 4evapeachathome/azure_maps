@@ -91,7 +91,6 @@ export class ViewResultComponent  implements OnInit {
     this.selecteddescription = this.loggedInUser.assessment_type?.find(
     (type: any) => this.assessmentNumber?.toLowerCase().includes(type.navigate?.toLowerCase())
     ) || null;
-      debugger;
     if(this.assessmentNumber) {
       this.checkSelectedAssessment(this.assessmentNumber);
     } else {
