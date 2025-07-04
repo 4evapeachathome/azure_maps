@@ -90,12 +90,19 @@ export class PageTitleService {
     });
   }
 
-  trackAssessmentSubmit(name: string) {
-    this.safeTrack('submit_assessment', {
-      event_category: 'Assessment',
-      event_label: name
-    });
+  trackAssessmentSubmit(name: string, answeredCount?: number) {
+  const params: any = {
+    event_category: 'Assessment',
+    event_label: name
+  };
+
+  // Only include number_answered if it’s provided
+  if (answeredCount !== undefined) {
+    params.number_answered = answeredCount;
   }
+
+  this.safeTrack('submit_assessment', params);
+}
 
   trackPdfDownload(module: string) {
     this.safeTrack('download_pdf', {

@@ -11,6 +11,7 @@ import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 import { MenuService } from 'src/shared/menu.service';
 import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
+import { HttpClient } from '@angular/common/http';
 
 declare var google: any;
 
@@ -132,7 +133,7 @@ export class SupportserviceComponent  implements OnInit{
   
 
 
-  constructor(private rateLimiter: GoogleApiRateLimiterService,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
+  constructor(private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(
       document.createElement('div')
@@ -553,29 +554,30 @@ onSearchClear() {
 
   async getCurrentPosition() {
     try {
-      const coordinates = await Geolocation.getCurrentPosition();
-      this.latitude = coordinates.coords.latitude;
-      this.longitude = coordinates.coords.longitude;
-      this.geolocationEnabled = true;
-      this.locationcard = true;
+       this.http.get('https://ipapi.co/json/').subscribe((data: any) => {
+    this.latitude = data.latitude;
+    this.longitude = data.longitude;
+    this.geolocationEnabled = true;
+    debugger;
+    this.locationcard = true;
+    if (this.latitude !== undefined && this.longitude !== undefined) {
       this.center = { lat: this.latitude, lng: this.longitude };
-  
-      await this.reverseGeocodeForState({ lat: this.latitude, lng: this.longitude });
-  
-      this.updateSearchedLocationMarker({ lat: this.latitude, lng: this.longitude });
-      this.filterNearbySupportCenters(this.latitude,this.longitude);
+    }
 
-    } catch (error: any) { // Explicitly type the error
-      if (error.code === error.PERMISSION_DENIED) {
-        console.log('Location access denied by user.');
-        this.handleLocationPermissionDenied();
-      } else if (error.code === error.POSITION_UNAVAILABLE) {
-        console.log('Location information is unavailable.');
-      } else if (error.code === error.TIMEOUT) {
-        console.log('The request to get user location timed out.');
-      } else {
-        console.log('An unknown error occurred:', error.message);
-      }
+    this.reverseGeocodeForState(this.center);
+    this.updateSearchedLocationMarker(this.center);
+    if (this.latitude !== undefined && this.longitude !== undefined) {
+      this.filterNearbySupportCenters(this.latitude, this.longitude);
+    }
+  });
+
+    } catch (error: any) { 
+        const toast = await this.toastController.create({
+          message: 'Could not retrieve your location. Try again later.',
+          duration: 3000,
+          position: 'bottom'
+        });
+        await toast.present();
     }
   }
 

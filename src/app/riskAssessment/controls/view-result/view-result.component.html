@@ -37,6 +37,13 @@
               </ion-col>
             </ion-row>
 
+            <ion-row class="ion-margin-bottom">
+              <ion-col size="12" size-sm="12" size-lg="12">
+                <ion-text class="text-line-height">{{ selecteddescription?.description || '' }}</ion-text>
+              </ion-col>
+            </ion-row> 
+
+
 <ion-row>
               <ion-col size="12" size-sm="12" size-lg="8">
                    <ion-text class="case-number" disabled="true">Case Number : <span>{{' ' + caseNumber || '<>' }}</span></ion-text>
@@ -48,14 +55,9 @@
 
             <ion-row>
               <ion-col size="12" size-sm="12" size-lg="9" style="margin-bottom: 16px;">
-                <ion-row class="ion-margin-bottom">
                 <ion-text>
                   Thanks for taking <strong>{{ selectedAssessment }} </strong>.
                   </ion-text>
-                </ion-row>  
-                <ion-row>
-                    <ion-text class="text-line-height">{{ selecteddescription?.description || '' }}</ion-text>
-                </ion-row>  
               </ion-col>
               
                <ion-col size="12" size-sm="12" size-lg="3" class="risk-item-center">
@@ -78,28 +80,28 @@
              <ion-row>
               <ion-col size="12" size-sm="12" size-lg="9">
                 
-  <ion-row class="assessment-summary-text" *ngIf="isDataLoaded && (isDaAssessment || isHitAssessment || isSSripa)">
+  <ion-row class="assessment-summary-text" *ngIf="isDataLoaded && (isDaAssessment || isHitAssessment || isSSripa || isRatAssessment)">
                 <ion-col size="12" size-sm="12" class="p-0">
               
               <ion-row class="hits-summary-text" *ngIf="isDaAssessment || isHitAssessment">
                 <ion-col >
                   <strong> Your score : </strong><span class="score">{{ score }}</span><br /><br />
-                  <ng-container *ngIf="isHitAssessment && guidedType === 'staff-guided'" >
+                  <ng-container *ngIf="isHitAssessment" >
                     <strong>Note:</strong><br /> {{ note }}<br /><br />
                     <ng-container *ngIf="hitsCriticalAlert">
                       <strong>Caution:</strong> <br />{{ caution }}
                     </ng-container>                    
                   </ng-container>
+                  <!-- <ng-container *ngIf="isDaAssessment"> -->
                   <ng-container *ngIf="isDaAssessment">
-                  <ng-container *ngIf="(guidedType === 'staff-guided') && isDaAssessment; else selfGuided">
                     <strong>Level of Danger : </strong><strong class="score">{{ levelofdanger }}</strong><br />
                   </ng-container>
-                  <ng-template #selfGuided>
+                  <!-- <ng-template #selfGuided>
                     <strong class="highlight">
                       Please talk to your service provider about what the Danger Assessment means in your situation.
                     </strong><br />
-                  </ng-template>
-                </ng-container>
+                  </ng-template> -->
+                <!-- </ng-container> -->
                 </ion-col>
 
 
@@ -107,32 +109,32 @@
               <ion-row class="hits-summary-text" *ngIf="isSSripa && highratedQuestions">
                 <ion-col>
                 
-                  <ng-container *ngIf="guidedType === 'staff-guided'; else selfGuided">
+                  <ng-container>
                     <ion-text ><span class="score">Please expediate action.</span></ion-text>
                   </ng-container>
-                  <ng-template #selfGuided>
+                  <!-- <ng-template #selfGuided>
                   <span class="score">
                       Take action immediately; talk to your service providers for assistance.
                    </span><br />
-                  </ng-template>
+                  </ng-template> -->
                 </ion-col>
               </ion-row>
-<ion-row class="assessment-summary-text" *ngIf="isRatAssessment">
+              <ion-row class="assessment-summary-text" *ngIf="isRatAssessment && isDataLoaded">
               <ion-col *ngFor="let item of AssessmentResultList">               
 
                    <ion-row>
                     <ion-col size="12" size-sm="12">
-                        <ion-text >
+                        <ion-text style="font-weight: bold;">
             
-                  Your score:<span class="score">{{ item.assessmentScore }}</span><br /><br />
-                  <div class="result" *ngIf="guidedType?.toLowerCase() == 'staff-guided'">
+                  Your score:<span class="score">{{ item.assessmentScore }}</span><br />
+                  <div class="result">
                     <strong>Status: <span class="highlight">{{item.assessmentScore >= 20 ?
                     'Positive' : 'Negative'}}</span></strong>
                     </div>
                     </ion-text>
                     </ion-col>
                   </ion-row>
-
+<!-- 
                 
                   <ion-row *ngIf="qCodeValue !== ''"> 
                   <ion-col size="12" size-sm="12" >
@@ -144,14 +146,14 @@
                    <ion-text>Code: {{assessmentNumber}}</ion-text>
                       </div>
                   </ion-col>
-                </ion-row> 
-                
+                </ion-row>  -->
+<!--                 
                   <ion-row>
                     <ion-col size="12" size-sm="12">
                        
                        <div class="summary">Summary:</div>
                     </ion-col>
-                  </ion-row>
+                  </ion-row> -->
                   
                
 
@@ -172,7 +174,7 @@
                   
               </ion-col>
                <ion-col size="12" size-sm="12" size-lg="3" class="risk-item-center">
-                 <div class="risk-meter" *ngIf="guidedType ==='staff-guided' && (isHitAssessment || isDaAssessment)">
+                 <div class="risk-meter" *ngIf="isHitAssessment || isDaAssessment">
                    
                    <app-summarypage  [range]="rangevalue" [riskScore]="score"></app-summarypage>
              
@@ -213,31 +215,6 @@
             </table>
                 </ion-col>
             </ion-row>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-           
-        
-          
-
-            
-
-         
-
           </ion-grid>
         </ion-card>
       </ion-col>

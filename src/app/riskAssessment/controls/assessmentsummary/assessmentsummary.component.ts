@@ -120,7 +120,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
     this.isHitsAssessment = sessionStorage.getItem('isHits') === 'true';
     this.selectedAssessment = sessionStorage.getItem('selectedAssessment') || null;
     this.selecteddescription = sessionStorage.getItem('selectedAssessmentDescription') || null;
-    debugger;
     
     if(this.isSSripa) {
       const resultStr = sessionStorage.getItem('ssripaAssessmentResult');
@@ -236,6 +235,10 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       title.style.fontWeight = 'bold';
       container.appendChild(title);
 
+      const descriptionDiv = document.createElement('div');
+descriptionDiv.innerHTML = `<p style="margin-top: 8px;">${this.selecteddescription || ''}</p>`;
+container.appendChild(descriptionDiv);
+
       // 3. Create row for Case Number, result info, and QR code
       const mainRow = document.createElement('div');
       mainRow.style.display = 'flex';
@@ -268,10 +271,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
       } else if (sessionStorage.getItem('isDanger') === 'true') {
         resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
       }
-
-      const description = `<p style="margin-top: 8;">${this.selecteddescription || ''}</p>`;
-      resultInfo.innerHTML = resultInfo.innerHTML + description;
-
       leftSection.appendChild(resultInfo);
 
       mainRow.appendChild(leftSection);
@@ -344,12 +343,12 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
               `<p><strong>Please talk to your service provider about what the Danger Assessment means in your situation.</p>` : ''}
         `;
       }
-      if(this.isWeb){
-        scoreInfo.innerHTML = `
-           ${this.guidedType === 'staff-guided' ? `
-          <p><strong>Status:</strong> ${this.riskValue >= 20 ? 'Positive' : 'Negative'}</p>` : ''}
-        `;
-      }
+    if (this.isWeb) {
+  scoreInfo.innerHTML = `
+    ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
+    ${this.guidedType === 'staff-guided' ? `<p><strong>Status:</strong> ${this.riskValue >= 20 ? 'Positive' : 'Negative'}</p>` : ''}
+  `;
+  }
       if (sessionStorage.getItem('isSSripa') === 'true') {
         scoreInfo.innerHTML = `
           ${this.guidedType === 'staff-guided' ? 
@@ -359,11 +358,6 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
         `;
       }
 
-      if(this.isWeb) {
-        scoreInfo.innerHTML = `
-          ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
-        `;
-      }
 
       scoreRiskRow.appendChild(scoreInfo);
 

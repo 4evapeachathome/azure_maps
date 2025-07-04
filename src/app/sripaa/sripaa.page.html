@@ -4,7 +4,7 @@
       <!-- Show Quiz Component -->
       <ion-row class="comp-space" *ngIf="!hidewhenshowingresults">
         <ion-col>
-          <pathome-sripacomp (quizLoaded)="onChildLoaded()" [ssripaGuid]="sripaData" (hasYesAnswerChanged)="hasYesAnswer = $event"></pathome-sripacomp>
+          <pathome-sripacomp (showResultsChanged)="onShowResultsChanged($event)" (quizLoaded)="onChildLoaded()" [ssripaGuid]="sripaData" (hasYesAnswerChanged)="hasYesAnswer = $event"></pathome-sripacomp>
         </ion-col>
       </ion-row>
       
@@ -36,6 +36,7 @@
             <div [ngClass]="{ 'sripaa-summary-display': selectedTab !== 'results' }" >
               <pathome-ssriparesults
                 #resultsRef
+                (initialized)="onResultsInitialized()"
                 (hideloader)="hideLoader()"
                 (showloader)="showLoader()"
                 [quizTitle]="quizTitle"
@@ -76,7 +77,7 @@
             Explore the Next Chapter.....
           </ion-button>
 
-          <ion-button color="primary" size="small" (click)="showResults()" *ngIf="sripaCompRef?.showresults">
+          <ion-button color="primary" size="small" (click)="showResults()" *ngIf="showSubmit && !hidewhenshowingresults">
             Submit
           </ion-button>
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { SripacompComponent } from '../controls/sripacomp/sripacomp.component';
 import { MenuService } from 'src/shared/menu.service';
 import { AlertController, LoadingController } from '@ionic/angular';
@@ -34,11 +34,13 @@ export class SripaaPage implements OnInit,AfterViewInit {
   private totalComponents = 1; // Number of child components with API calls
 private loadedComponents = 0;
 private loaderDismissed = false;
+showSubmit: boolean = false; // Flag to control visibility of the submit button
 
   constructor(
     private menuService: MenuService,
     private loadingController: LoadingController,
     private alertController: AlertController,
+    private cdRef:ChangeDetectorRef,
     private apiService: ApiService
   ) {}
 
@@ -72,6 +74,8 @@ private loaderDismissed = false;
     this.hidewhenshowingresults = false; // Set to show the assessment component
     sessionStorage.removeItem('hasYesAnswer');
     sessionStorage.removeItem('ssripa_result');
+   this.loadedComponents = 0;
+   this.loaderDismissed = false;
 
     // Reload data and wait for it to complete
     await this.loadSSripaDataAsync();
@@ -79,6 +83,14 @@ private loaderDismissed = false;
     await new Promise(resolve => setTimeout(resolve, 500)); // Adjust delay as needed
     this.hideLoader(); // Dismiss loader only when content is visible
   }
+
+  onResultsInitialized() {
+  this.hideLoader(); // ✅ should finally dismiss loader
+}
+
+  onShowResultsChanged(show: boolean) {
+  this.showSubmit = show;
+}
 
   async loadSSripaDataAsync() {
     return new Promise<void>((resolve) => {
@@ -129,28 +141,36 @@ private loaderDismissed = false;
         this.hideLoader();
       } else {
       }
-    }, 10000); // 10 seconds max
+    }, 5000); // 10 seconds max
   }
 
-  async showLoader() {
+async showLoader() {
+  console.log('[SripaaPage] showLoader called');
+
+  try {
     this.loading = await this.loadingController.create({
       message: 'Loading...',
       spinner: 'crescent',
       backdropDismiss: false,
     });
-    await this.loading.present();
-  }
 
-  async hideLoader() {
-    if (this.loading && !this.loaderDismissed) {
-      try {
-        await this.loading.dismiss();
-      } catch (e) {
-      }
-      this.loaderDismissed = true;
-      this.loading = null;
-    }
+    await this.loading.present();
+    this.loaderDismissed = false; // reset flag
+  } catch (e) {
   }
+}
+
+async hideLoader() {
+
+  if (this.loading && !this.loaderDismissed) {
+    try {
+      await this.loading.dismiss();
+    } catch (e) {
+    }
+    this.loaderDismissed = true;
+    this.loading = null;
+  } 
+}
 
  async onChildLoaded() {
   if (this.loaderDismissed) {
@@ -169,70 +189,59 @@ private loaderDismissed = false;
     this.menuService.toggleAdditionalMenus(true, sectionTitle);
   }
 
-  async showResults() {
-    // Create the alert using AlertController
-    const alert = await this.alertController.create({
-      header: 'Confirm',
-      message: 'Are you sure you want to submit the Assessment?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-          }
-        },
-        {
-          text: 'OK',
-          handler: async () => {
-            // Dismiss the alert first
-            await alert.dismiss();
-  
-            // Start the loader after the alert is dismissed
-            await this.showLoader();
-  
-            // Proceed with the original logic if OK is clicked
-            if (this.sripaCompRef) {
-              try {
-                const response = await firstValueFrom(this.sripaCompRef.submitAssessmentResponse());
-  
-                this.quizTitle = this.sripaCompRef.quizTitle;
-                this.sripa = this.sripaCompRef.sripa;
-                this.selectedOptions = this.sripaCompRef.selectedOptions;
-  
-                if (response) {
-                  this.resultUrl = `code=${response?.data?.AssessmentGuid || 'unknown'}`;
-                }
-  
-                sessionStorage.setItem(
-                  'ssripa_result',
-                  JSON.stringify({
-                    quizTitle: this.quizTitle,
-                    sripa: this.sripa,
-                    selectedOptions: this.selectedOptions,
-                    view: 'results',
-                    resultUrl: this.resultUrl
-                  })
-                );
-  
-                this.hidewhenshowingresults = true;
-                this.selectedTab = 'results';
-              } catch (error) {
-                console.error('Failed to load results from child component:', error);
-              }
-            }
-  
-            // Delay loader dismissal to allow UI update
-            await new Promise(resolve => setTimeout(resolve, 500)); // Adjust delay as needed
-            await this.hideLoader(); // Dismiss loader after results are processed
-          }
-        }
-      ]
-    });
-  
-    // Present the alert
-    await alert.present();
-  }
+ async showResults() {
+  const alert = await this.alertController.create({
+    header: 'Confirm',
+    message: 'Are you sure you want to submit the Assessment?',
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+      },
+      {
+        text: 'OK',
+        handler: async () => {
+          await alert.dismiss();
+          await this.showLoader();
 
+          try {
+            if (this.sripaCompRef) {
+              const response = await firstValueFrom(this.sripaCompRef.submitAssessmentResponse());
+
+              this.quizTitle = this.sripaCompRef.quizTitle;
+              this.sripa = this.sripaCompRef.sripa;
+              this.selectedOptions = this.sripaCompRef.selectedOptions;
+
+              if (response) {
+                this.resultUrl = `code=${response?.data?.AssessmentGuid || 'unknown'}`;
+              }
+
+              sessionStorage.setItem('ssripa_result', JSON.stringify({
+                quizTitle: this.quizTitle,
+                sripa: this.sripa,
+                selectedOptions: this.selectedOptions,
+                view: 'results',
+                resultUrl: this.resultUrl,
+              }));
+
+              this.hidewhenshowingresults = true;
+              this.selectedTab = 'results';
+            }
+          } catch (error) {
+            console.error('Failed to load results from child component:', error);
+          }
+
+          setTimeout(() => {
+  this.cdRef.detectChanges(); // optional, forces view update
+  this.hideLoader();          // ✅ ensure loader disappears
+}, 0);  // ✅ Only here!
+        },
+      },
+    ],
+  });
+
+  await alert.present();
+}
   
 
   async exportCurrentTabAsPDF() {

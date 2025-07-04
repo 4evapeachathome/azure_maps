@@ -151,6 +151,8 @@ hasloadedDate: boolean = false;
               };
             });
 
+            const numQuestionsAnswered = respondedQuestions.filter(r => r.answer !== '').length;
+
             const isHighSeverityYes = this.checkHighSeverityYes();
   
             const payload = {
@@ -169,7 +171,7 @@ hasloadedDate: boolean = false;
             // Subscribe to the Observable and log the response
             this.apiService.postSsripaAssessmentResponse(payload).subscribe({
               next: (response) => {
-                   this.analytics.trackAssessmentSubmit('SSRIPA_Risk_Module');
+                   this.analytics.trackAssessmentSubmit('SSRIPA_Risk_Module',numQuestionsAnswered);
                 sessionStorage.setItem('ssripaAssessmentResult', JSON.stringify({
                   summary: respondedQuestions,
                   ssripasurl: `${window.location.origin}/viewresult?code=${response.data.AssessmentGuid}`,
