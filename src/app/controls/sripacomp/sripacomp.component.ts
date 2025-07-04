@@ -41,6 +41,7 @@ showresults: boolean = false;
 hasYesAnswer: boolean = false;
 @Output() quizLoaded = new EventEmitter<void>();
 @Input() ssripaGuid:any; // Track if any 'yes' answer is selected
+@Output() showResultsChanged = new EventEmitter<boolean>();
 
 constructor(private apiService: ApiService, private analytics:PageTitleService) {}
 
@@ -73,7 +74,9 @@ renderRichTextFromText(text: string): string {
 
 selectOption(index: number, option: 'yes' | 'no'): void {
   this.selectedOptions[index] = option;
-  this.showresults = this.selectedOptions.some(opt => opt !== null);
+  const show = this.selectedOptions.some(opt => opt !== null);
+  this.showresults = show;
+  this.showResultsChanged.emit(show);
   this.hasYesAnswer = this.selectedOptions.some(opt => opt === 'yes');
   sessionStorage.setItem('hasYesAnswer', JSON.stringify(this.hasYesAnswer));
   this.hasYesAnswerChanged.emit(this.hasYesAnswer);
@@ -166,6 +169,8 @@ submitAssessmentResponse(): Observable<any> {
     };
   });
 
+  const numQuestionsAnswered = respondedQuestions.filter(r => r.answer !== '').length;
+
   const isHighSeverityYes = this.checkHighSeverityYes();
   const payload = {
     data: {
@@ -180,7 +185,7 @@ submitAssessmentResponse(): Observable<any> {
     }
   };
 
-   this.analytics.trackAssessmentSubmit('SSRIPA_Education_Module');
+   this.analytics.trackAssessmentSubmit('SSRIPA_Education_Module',numQuestionsAnswered);
 
   // ✅ Return the Observable instead of subscribing
   return this.apiService.postSsripaAssessmentResponse(payload);

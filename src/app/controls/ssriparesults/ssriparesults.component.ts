@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { QRCodeComponent } from 'angularx-qrcode';
@@ -13,8 +13,9 @@ import jsPDF from 'jspdf';
    standalone: true,
       imports: [CommonModule, IonicModule, FormsModule,QRCodeComponent]
 })
-export class SsriparesultsComponent  implements OnInit {
+export class SsriparesultsComponent  implements OnInit,AfterViewInit {
   @Input() quizTitle: string = '';
+  @Output() initialized = new EventEmitter<void>();
   @Input() sripa: any[] = [];
   @Input() selectedOptions: string[] = [];
   @Input() myAngularxQrCode: string = ''; // QR code content
@@ -38,6 +39,10 @@ export class SsriparesultsComponent  implements OnInit {
       this.checkHighSeverity();
     }
   }
+
+ ngAfterViewInit() {
+  this.initialized.emit();
+}
 
   async exportToPDF() {
     try {
