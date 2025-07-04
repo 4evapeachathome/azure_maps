@@ -56,7 +56,7 @@ constructor(private loadingController: LoadingController,
       error: (err) => {
         console.error('API Error in loadSSripaData:', err);
         const errorMsg = err?.error?.error?.message || err?.message || 'Failed to generate SSRIPA GUID';
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Failed to generate SSRIPA GUID',
           'loadSSripaData',
           url,
@@ -74,7 +74,7 @@ constructor(private loadingController: LoadingController,
   } catch (err: any) {
     console.error('Unexpected error in loadSSripaData:', err);
     const errorMsg = err?.error?.error?.message || err?.message || 'Unexpected error';
-    this.loggingService.handleApiError(
+    this.loggingService.handleApiErrorRiskAssessment(
       'Unexpected error in loadSSripaData',
       'loadSSripaData',
       this.ssripGuidUrl || '',

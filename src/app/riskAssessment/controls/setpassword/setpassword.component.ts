@@ -135,7 +135,7 @@ export class SetPasswordComponent implements OnInit {
     console.error('Error in renderReCaptcha:', err);
     const errorMessage = err?.error?.error?.message || err?.message || 'Failed to render reCAPTCHA';
 
-    this.loggingService.handleApiError(
+    this.loggingService.handleApiErrorRiskAssessment(
       'Failed to render reCAPTCHA on Setpassword',                // activityType
       'renderReCaptcha',                           // errorFunction
       '',                                          // No API URL involved
@@ -244,7 +244,7 @@ private async handlePasswordUpdate() {
 
       console.error('Error in handlePasswordUpdate:', err);
 
-      this.loggingService.handleApiError(
+      this.loggingService.handleApiErrorRiskAssessment(
         'Failed to update password for' + this.flowType,                  // activityType
         'handlePasswordUpdate',                       // errorFunction
         APIEndpoints.changePassword || '',            // request URL (if defined)

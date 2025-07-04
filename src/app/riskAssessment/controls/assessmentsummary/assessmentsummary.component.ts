@@ -576,7 +576,7 @@ getCharFromCode(code: number): string {
       const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
 
 
-      this.loggingService.handleApiError(
+      this.loggingService.handleApiErrorRiskAssessment(
         'Failed to fetch DA results',
         'fetchDaResults',
         APIEndpoints.daAssessmentResult || '',
@@ -621,7 +621,7 @@ getCharFromCode(code: number): string {
       const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
 
 
-      this.loggingService.handleApiError(
+      this.loggingService.handleApiErrorRiskAssessment(
         'Failed to fetch HITS results',
         'fetchHitResults',
         APIEndpoints.hitsresultcalculation || '',
@@ -664,7 +664,7 @@ getCharFromCode(code: number): string {
       console.error('Error in fetchWebResults:', error);
       const errorMessage = error?.error?.error?.message || error?.error?.message || error?.message || 'Unknown error';
 
-      this.loggingService.handleApiError(
+      this.loggingService.handleApiErrorRiskAssessment(
         'Failed to fetch RAT assessment result',
         'fetchWebResults',
         APIEndpoints.ratResult + code || '',

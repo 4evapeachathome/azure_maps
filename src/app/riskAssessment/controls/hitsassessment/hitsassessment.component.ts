@@ -110,7 +110,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
           console.error('Failed to load HITS data from API:', err);
           const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
 
-          this.loggingService.handleApiError(
+          this.loggingService.handleApiErrorRiskAssessment(
             'Failed to load HITS data from API', // activity type
             'loadinitialData', // function in which error occured
             APIEndpoints.hitsAssessmentQuestions +' ,For answer API:' + APIEndpoints.scaleOptions, // request URL
@@ -160,7 +160,7 @@ setupHitsQuestions(questions: any[], answerOptions: any[]) {
   } catch (err:any) {
     console.error('Error in setupHitsQuestions:', err);
     const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
-    this.loggingService.handleApiError(
+    this.loggingService.handleApiErrorRiskAssessment(
       'Failed to setup HITS questions', // activity type
       'setupHitsQuestions', // function
       '', // request URL (empty since it's not an API call)
@@ -278,7 +278,7 @@ setupHitsQuestions(questions: any[], answerOptions: any[]) {
               error: (err) => {
                 console.error('Failed to save assessment', err);
                 const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
-                this.loggingService.handleApiError(
+                this.loggingService.handleApiErrorRiskAssessment(
                   'Failed to save HITS assessment', // activity type
                   'submit', // function in which error occured
                   APIEndpoints.saveHitsAssessment, // request URL

@@ -15,6 +15,7 @@ export interface LogEntry {
     requestParams: any;
     statusCode?: number;
     device: any;
+    isEducationModule?: boolean; 
 }
 
 @Injectable({
@@ -162,8 +163,8 @@ export class LoggingService {
         }
     }
 
-    
-   handleApiError(
+    //Risk Assessment Error Handling
+   handleApiErrorRiskAssessment(
     activityType: string,
     errorFunction: string,
     url: string,
@@ -182,7 +183,36 @@ export class LoggingService {
       requestURL: url,
       requestParams: requestParams,
       statusCode: errorStatus,
-      device: device || 'Unknown Device'
+      device: device || 'Unknown Device',
+      isEducationModule:false
+    }).catch(err => {
+      console.error('Logging error:', err);
+      this.showToast('Failed to log activity.', 3000, 'top');
+    });
+  }
+
+  //Education Module Error Handling
+  handleApiErrorEducationModule(
+    activityType: string,
+    errorFunction: string,
+    url: string,
+    requestParams: any,
+    errorMessage: string,
+    errorStatus: number,
+    device: any
+) {
+    this.enable();
+    this.logActivity({
+      dateTime: new Date().toString(),
+      requestedBy: this.loggedInUser?.username || 'Unknown User',
+      activityType,
+      errorFunction: errorFunction,
+      errorMessage: errorMessage || 'Unknown error',
+      requestURL: url,
+      requestParams: requestParams,
+      statusCode: errorStatus,
+      device: device || 'Unknown Device',
+      isEducationModule:true
     }).catch(err => {
       console.error('Logging error:', err);
       this.showToast('Failed to log activity.', 3000, 'top');

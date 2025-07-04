@@ -123,7 +123,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
           console.error('Failed to load WEB data from API:', err);
           const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
 
-          this.loggingService.handleApiError(
+          this.loggingService.handleApiErrorRiskAssessment(
             'Failed to load WEB assessment questions and answers', // activity type
             'loadinitialData', // function in which error occured
             APIEndpoints.ratsAssessmentQuestions +' For answer API:' + APIEndpoints.ratScaleOptions, // request URL
@@ -181,7 +181,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   } catch (err: any) {
     console.error('Error in setupRatsQuestions:', err);
     const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
-    this.loggingService.handleApiError(
+    this.loggingService.handleApiErrorRiskAssessment(
       'Failed to setup RATS questions',      // activityType
       'setupRatsQuestions',                  // errorFunction
       '',                                    // url (not an API call)
@@ -312,7 +312,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
                 presentToast(this.toastController, errorMessage);
                 const errorMsg = error?.error?.error?.message || error?.error?.message || error?.message || 'Failed to submit assessment response';
 
-                this.loggingService.handleApiError(
+                this.loggingService.handleApiErrorRiskAssessment(
                   'Failed to load WEB assessment questions and answers', // activity type
                   'submit', // function in which error occured
                   APIEndpoints.saveRatAssessment, // request URL

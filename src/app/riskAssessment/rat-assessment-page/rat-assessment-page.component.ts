@@ -59,7 +59,7 @@ export class RatAssessmentPageComponent implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('API Error in loadWebData:', err);
         const errorMsg = err?.error?.error?.message || err?.message || 'Failed to generate Web GUID';
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Failed to generate Web GUID',
           'loadWebData',
           url,
@@ -77,7 +77,7 @@ export class RatAssessmentPageComponent implements OnInit, AfterViewInit {
   } catch (err: any) {
     console.error('Unexpected error in loadWebData:', err);
     const errorMsg = err?.error?.error?.message || err?.message || 'Unexpected error';
-    this.loggingService.handleApiError(
+    this.loggingService.handleApiErrorRiskAssessment(
       'Unexpected error in loadWebData',
       'loadWebData',
       this.webGuidUrl || '',

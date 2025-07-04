@@ -92,7 +92,7 @@ export class AssessmentPageComponent  implements OnInit {
               console.error('Failed to fetch assessment types:', error);
               this.assessmentTypes = [];
               const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
-              this.loggingService.handleApiError(
+              this.loggingService.handleApiErrorRiskAssessment(
                 'Fetch Assessment Types for dropdown', // activity type
                 'getAssessmentType', // function in which error occured
                 APIEndpoints.userLogins, // request URL
@@ -186,7 +186,7 @@ export class AssessmentPageComponent  implements OnInit {
         error: (err) => {
           console.error('Failed to load HITS data:', err);
           const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
-          this.loggingService.handleApiError(
+          this.loggingService.handleApiErrorRiskAssessment(
             'Failed to load HITS assessment questions and answers', // activity type
             'navigateWithHitsCache', // function in which error occured
             APIEndpoints.hitsAssessmentQuestions +' ,For answer API:' + APIEndpoints.scaleOptions, // request URL
@@ -227,7 +227,7 @@ export class AssessmentPageComponent  implements OnInit {
         error: (err) => {
           console.error('Failed to load SSRIPA data:', err);
           const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
-          this.loggingService.handleApiError(
+          this.loggingService.handleApiErrorRiskAssessment(
             'Failed to load SSRIPA assessment questions', // activity type
             'navigateWithSsripaCache', // function in which error occured
             APIEndpoints.ssripaQuestions, // request URL
@@ -263,7 +263,7 @@ export class AssessmentPageComponent  implements OnInit {
         error: (err) => {
           console.error('Failed to load SSRIPA data:', err);
           const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
-          this.loggingService.handleApiError(
+          this.loggingService.handleApiErrorRiskAssessment(
             'Failed to load DA assessment questions', // activity type
             'navigateWithDangerCache', // function in which error occured
             APIEndpoints.daAssessmentQuestions, // request URL
@@ -383,7 +383,7 @@ export class AssessmentPageComponent  implements OnInit {
         error: (err) => {
           console.error('Failed to load HITS data:', err);
           const errorMessage = err?.error?.error?.message || err?.message || 'Unknown';
-          this.loggingService.handleApiError(
+          this.loggingService.handleApiErrorRiskAssessment(
             'Failed to load WEB assessment questions and answers', // activity type
             'navigateWithRatsCache', // function in which error occured
             APIEndpoints.ratsAssessmentQuestions +' For answer API:' + APIEndpoints.ratScaleOptions, // request URL
@@ -441,7 +441,7 @@ export class AssessmentPageComponent  implements OnInit {
       const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
         this.showToast(String(error), 3000, 'top');
         let requestUrl = APIEndpoints.ratResult + code;
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Fetch WEB Assessment', // activity type
           'fetchRatResults', // function in which error occured
           requestUrl, // request URL
@@ -469,7 +469,7 @@ export class AssessmentPageComponent  implements OnInit {
         console.error('DA Assessment fetch error:', error);
         const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
         this.showToast(String(error), 3000, 'top');
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Fetch DA Assessment', // activity type
           'GetAssessmentResponsebycode', // function in which error occured
           url, // request URL
@@ -495,7 +495,7 @@ export class AssessmentPageComponent  implements OnInit {
         console.error('HITS Assessment fetch error:', error);
         const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
         this.showToast(String(error), 3000, 'top');
-        await this.loggingService.handleApiError(
+        await this.loggingService.handleApiErrorRiskAssessment(
           'Fetch HITS Assessment', // activity type
           'GetAssessmentResponsebycode', // function in which error occured
           url, // request URL
@@ -520,7 +520,7 @@ export class AssessmentPageComponent  implements OnInit {
           console.error('SSRIPA Assessment fetch error:', error);
           const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
           this.showToast(String(error), 3000, 'top');
-          this.loggingService.handleApiError(
+          this.loggingService.handleApiErrorRiskAssessment(
             'Fetch SSripa Assessment', // activity type
             'GetAssessmentResponsebycode', // function in which error occured
             url, // request URL

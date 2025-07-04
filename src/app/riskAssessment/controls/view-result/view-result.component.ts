@@ -174,7 +174,7 @@ export class ViewResultComponent  implements OnInit {
         const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch assessment result';
         this.showToast(errorMsg, 3000, 'top');
         let requestUrl = APIEndpoints.ratResult + code;
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Fetch WEB Assessment', // activity type
           'fetchRatResults', // function in which error occured
           requestUrl, // request URL
@@ -233,7 +233,7 @@ export class ViewResultComponent  implements OnInit {
       } catch (error: any) {
         console.error('DA Assessment fetch error:', error);
         const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch DA assessment result';
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Fetch DA Assessment', // activity type
           'GetAssessmentResponsebycode', // function in which error occured
           url, // request URL
@@ -278,7 +278,7 @@ export class ViewResultComponent  implements OnInit {
       } catch (error: any) {
         console.error('HITS Assessment fetch error:', error);
         const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch HITS assessment result';
-        await this.loggingService.handleApiError(
+        await this.loggingService.handleApiErrorRiskAssessment(
           'Fetch HITS Assessment', // activity type
           'GetAssessmentResponsebycode', // function in which error occured
           url, // request URL
@@ -316,7 +316,7 @@ export class ViewResultComponent  implements OnInit {
         (error) => {
           console.error('SSRIPA Assessment fetch error:', error);
           const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch SSRIPA assessment result';
-          this.loggingService.handleApiError(
+          this.loggingService.handleApiErrorRiskAssessment(
             'Fetch SSripa Assessment', // activity type
             'GetAssessmentResponsebycode', // function in which error occured
             url, // request URL
@@ -357,7 +357,7 @@ async fetchHitResults(): Promise<void> {
         const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch HITS results';
 
         // Log the error using your centralized logging service
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Failed to fetch HITS results',                    // activityType
           'fetchHitResults',                                 // errorFunction
           APIEndpoints.hitsresultcalculation || '',          // url
@@ -396,7 +396,7 @@ async fetchDaResults(): Promise<void> {
         console.error('Error in fetchDaResults:', error);
         const errorMsg = error?.error?.error?.message || error?.message || 'Failed to fetch DA Results';
         // Error logging
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Failed to fetch DA Results',                     // activityType
           'fetchDaResults',                                 // errorFunction
           APIEndpoints.daAssessmentResult || '',           // url (if defined as constant)

@@ -110,7 +110,7 @@ device: any;
           error: (err) => {
             console.error('Failed to load SSRIPA quiz:', err);
             const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
-            this.loggingService.handleApiError(
+            this.loggingService.handleApiErrorRiskAssessment(
               'Failed to load SSRIPA quiz:', // activity type
               'loadQuiz', // function in which error occured
               APIEndpoints.ssripaQuestions, // request URL
@@ -123,7 +123,7 @@ device: any;
         });
       } catch (error:any) {
         console.error('Unexpected error while loading SSRIPA quiz:', error);
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Failed to load SSRIPA quiz:', // activity type
           'loadQuiz', // function in which error occured
           APIEndpoints.ssripaQuestions, // request URL
@@ -221,7 +221,7 @@ device: any;
               error: (err) => {
                 console.error('Failed to submit assessment response:', err);
                 const errorMessage = err?.error?.error?.message || err?.message || 'Failed to submit assessment response';
-                this.loggingService.handleApiError(
+                this.loggingService.handleApiErrorRiskAssessment(
                   'Failed to submit SSRIPA assessment response', // activity type
                   'loadQuiz', // function in which error occured
                   APIEndpoints.saveSSripaAssessment, // request URL

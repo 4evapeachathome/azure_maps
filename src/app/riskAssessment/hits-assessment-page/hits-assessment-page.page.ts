@@ -55,7 +55,7 @@ export class HitsAssessmentPagePage implements OnInit,AfterViewInit {
       error: (err) => {
         console.error('API Error in loadHitsData:', err);
         const errorMsg = err?.error?.error?.message || err?.message || 'Failed to generate HITS GUID';
-        this.loggingService.handleApiError(
+        this.loggingService.handleApiErrorRiskAssessment(
           'Failed to generate HITS GUID',
           'loadHitsData',
           url,
@@ -73,7 +73,7 @@ export class HitsAssessmentPagePage implements OnInit,AfterViewInit {
   } catch (err: any) {
     console.error('Unexpected error in loadHitsData:', err);
     const errorMsg = err?.error?.error?.message || err?.message || 'Unexpected error';
-    this.loggingService.handleApiError(
+    this.loggingService.handleApiErrorRiskAssessment(
       'Unexpected error in loadHitsData',
       'loadHitsData',
       this.hitsGuidUrl || '',

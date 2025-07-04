@@ -104,7 +104,7 @@ renderReCaptcha() {
   } catch (err: any) {
     console.error('Error in renderReCaptcha:', err);
     const errorMessage = err?.error?.error?.message || err?.error?.message || err?.message || 'Unknown error';
-    this.loggingService.handleApiError(
+    this.loggingService.handleApiErrorRiskAssessment(
       'Failed to render reCAPTCHA for loginPage',
       'renderReCaptcha',
       '',
@@ -171,7 +171,7 @@ private async showToast(message: string, duration = 2500, position: 'top' | 'bot
       this.loginForm.get('password')?.setErrors(null);
       this.stoploader.emit();
 
-      this.loggingService.handleApiError(
+      this.loggingService.handleApiErrorRiskAssessment(
         'Failed to send forgot password email',
         'onForgotPassword',
          `${environment.apiHost}/api/user-logins/forgot-password` || '',
@@ -268,7 +268,7 @@ async onSubmit() {
     console.error('Login failed:', error);
     const errorMessage = error?.error?.error?.message || error?.message || 'Unknown error';
     this.stoploader.emit();
-    this.loggingService.handleApiError(
+    this.loggingService.handleApiErrorRiskAssessment(
       'Login failed',
       'onSubmit',
       APIEndpoints.loginbyemail || '',
