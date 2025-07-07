@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
@@ -18,6 +18,7 @@ healthyrelationcontentwithbutton = APIEndpoints.healthyrelationcontentwithbutton
 private totalComponents = 4; // Number of child components with API calls
 private loadedComponents = 0;
 private loaderDismissed = false;
+@ViewChild('smContainerRef') smContainerRef!: ElementRef;
   constructor(private menuService:MenuService,private loadingController: LoadingController) { }
 
   async ngOnInit() {
@@ -25,6 +26,10 @@ private loaderDismissed = false;
   }
 
   ngAfterViewInit() {
+    setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  }, 0);
     setTimeout(() => {
       if (!this.loaderDismissed) {
         this.hideLoader();

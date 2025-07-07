@@ -112,6 +112,7 @@ interface PlaceDetails {
 })
 export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   isMobile!: boolean;
+  sidebarHeight = 'auto';
   private sessionAlert: HTMLIonAlertElement | null = null;
   organizations: Organization[] = [];
   filterOptions: FilterOption[] = [];
@@ -181,6 +182,10 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   
   ngOnInit() {
     this.loadInitialData();
+
+     this.sharedDataService.contentHeight$.subscribe((height) => {
+      this.sidebarHeight = height > 0 ? `${height}px` : 'auto';
+    });
   
     // Set up native platform status bar if needed
     if (Capacitor.isNativePlatform()) {

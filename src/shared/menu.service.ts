@@ -39,7 +39,12 @@ export class MenuService {
   private stateDistancesSubject = new BehaviorSubject<{ [key: string]: number }>({});
  stateDistances$ = this.stateDistancesSubject.asObservable();
 
-  
+  private contentHeightSubject = new BehaviorSubject<number>(0);
+  contentHeight$ = this.contentHeightSubject.asObservable();
+
+  setContentHeight(height: number) {
+    this.contentHeightSubject.next(height);
+  }
 
   private ratsAssessmentData: RatsAssessmentData | null = null;
   private ssripaDataSubject = new BehaviorSubject<any[] | null>(null);

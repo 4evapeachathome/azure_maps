@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
@@ -18,7 +18,9 @@ export class NopeaceathomePage implements OnInit,AfterViewInit {
   loading: HTMLIonLoadingElement | null = null;
   private totalComponents = 3; // Number of child components with API calls
   private loadedComponents = 0;
+  @ViewChild('smContainerRef') smContainerRef!: ElementRef;
   private loaderDismissed = false;
+
   constructor(private menuService:MenuService,private loadingController: LoadingController) { }
 
   async ngOnInit() {
@@ -26,6 +28,11 @@ export class NopeaceathomePage implements OnInit,AfterViewInit {
   }
 
   ngAfterViewInit() {
+setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  }, 0);
+
     setTimeout(() => {
       if (!this.loaderDismissed) {
         this.hideLoader();

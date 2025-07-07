@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { APIEndpoints } from 'src/shared/endpoints';
 import { MenuService } from 'src/shared/menu.service';
@@ -16,6 +16,7 @@ public readonly unhealthyrelationcontentone :string = APIEndpoints.unhealthyrela
 public readonly unhealthyrelationcontenttwo :string = APIEndpoints.unhealthyrelationcontenttwo
 public readonly unhealthyrelationcontentthree :string = APIEndpoints.unhealthyrelationcontentthree
 loading: HTMLIonLoadingElement | null = null;
+@ViewChild('smContainerRef') smContainerRef!: ElementRef;
 private totalComponents = 5; // Number of child components with API calls
   private loadedComponents = 0;
   private loaderDismissed = false;
@@ -27,6 +28,10 @@ private totalComponents = 5; // Number of child components with API calls
   }
 
   ngAfterViewInit() {
+    setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  }, 0);
     setTimeout(() => {
       if (!this.loaderDismissed) {
         this.hideLoader();
