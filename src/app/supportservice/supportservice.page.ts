@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { SupportserviceComponent } from '../controls/supportservice/supportservice.component';
 import { LoadingController } from '@ionic/angular';
 import { combineLatest, filter, firstValueFrom, take } from 'rxjs';
@@ -12,6 +12,7 @@ import { MenuService } from 'src/shared/menu.service';
 })
 export class SupportservicePage implements OnInit,AfterViewInit {
   loading: HTMLIonLoadingElement | null = null;
+  @ViewChild('smContainerRef') smContainerRef!: ElementRef;
   @ViewChild(SupportserviceComponent) supportServiceComponent!: SupportserviceComponent;
 
   constructor(private loadingController: LoadingController,private sharedDataService:MenuService) { }
@@ -21,6 +22,10 @@ ngOnInit() {
 
 
   async ngAfterViewInit() {
+    setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.sharedDataService.setContentHeight(height);
+  }, 0);
   }
 
   async showLoader() {

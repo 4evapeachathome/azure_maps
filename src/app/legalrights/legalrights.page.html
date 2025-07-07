@@ -1,7 +1,7 @@
 
 <ion-content [fullscreen]="true">
 <div class="cmh-container" [ngClass]="{'state-selected': isStateSelected}">
-  <ion-grid class="p-b-0 sm-cont-margin container-min-height">
+  <ion-grid #smContainerRef class="p-b-0 sm-cont-margin container-min-height">
     <ion-row>
       <ion-col>
         <pathome-usa-map (stateSelected)="onStateSelected($event)"></pathome-usa-map>
