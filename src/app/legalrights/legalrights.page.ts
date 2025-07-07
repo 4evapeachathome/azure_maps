@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UsaMapComponent } from '../usa-map/usa-map.component';
 import { LoadingController } from '@ionic/angular';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-legalrights',
@@ -13,9 +14,10 @@ export class LegalrightsPage implements OnInit,AfterViewInit {
   isStateSelected: boolean = false;
   loading: HTMLIonLoadingElement | null = null;
   @ViewChild(UsaMapComponent) usaMapComponent!: UsaMapComponent;
+  @ViewChild('smContainerRef') smContainerRef!: ElementRef;
 
  
-  constructor(private loadingController: LoadingController) { }
+  constructor(private loadingController: LoadingController, private menuService:MenuService) { }
 
   async ngOnInit() {
     // Only show loader if not pre-rendered
@@ -27,16 +29,17 @@ export class LegalrightsPage implements OnInit,AfterViewInit {
   }
 
   async ngAfterViewInit() {
-    const idleCallback = window['requestIdleCallback'] || function (cb: any) {
-      setTimeout(cb, 1000);
-    };
+  // Measure height as soon as view is ready
+  setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  }, 0);
 
-    idleCallback(() => {
-      setTimeout(() => {
-        this.hideLoader();
-      }, 500);
-    });
-  }
+  // Hide loader after a slight delay (optional and tunable)
+  setTimeout(() => {
+    this.hideLoader();
+  }, 3000); // shorter than 500ms for snappier UX
+}
 
   async showLoader() {
     this.loading = await this.loadingController.create({

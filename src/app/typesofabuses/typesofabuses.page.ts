@@ -26,6 +26,7 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
   private totalComponents = 11; // Number of child components with API calls
   private loadedComponents = 0;
   private loaderDismissed = false;
+  @ViewChild('smContainerRef') smContainerRef!: ElementRef;
   @ViewChild(IonContent, { static: false }) content!: IonContent;
   @ViewChild('abuseSections', { static: false }) abuseSections!: ElementRef;
 
@@ -49,6 +50,10 @@ export class TypesofabusesPage implements OnInit,AfterViewInit {
     }
 
   ngAfterViewInit() {
+    setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  }, 0);
     setTimeout(() => {
       if (!this.loaderDismissed) {
         this.hideLoader();

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { APIEndpoints } from 'src/shared/endpoints';
@@ -17,6 +17,7 @@ export class HomePage implements OnInit, AfterViewInit {
   private totalComponents = 5; // Number of child components with API calls
   private loadedComponents = 0;
   private loaderDismissed = false;
+  @ViewChild('smContainerRef') smContainerRef!: ElementRef;
   
 
   constructor(private router: Router, private menuService:MenuService, private loadingController: LoadingController) {}
@@ -26,6 +27,10 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+  setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  }, 0);
     setTimeout(() => {
       if (!this.loaderDismissed) {
         this.hideLoader();

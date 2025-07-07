@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { MenuService } from 'src/shared/menu.service';
 
 @Component({
   selector: 'app-legalrightshome',
@@ -13,14 +14,19 @@ export class LegalrightshomePage implements OnInit,AfterViewInit {
   legalrightsbannercontent: string = APIEndpoints.legalrightsbannercontent;
   private totalComponents = 1; // Number of child components with API calls
 private loadedComponents = 0;
+@ViewChild('smContainerRef') smContainerRef!: ElementRef;
 private loaderDismissed = false;
-  constructor(private loadingController: LoadingController) { }
+  constructor(private loadingController: LoadingController,private menuService:MenuService) { }
 
   async ngOnInit() {
     await this.showLoader();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit() {setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  }, 0);
+
     setTimeout(() => {
       if (!this.loaderDismissed) {
         this.hideLoader();

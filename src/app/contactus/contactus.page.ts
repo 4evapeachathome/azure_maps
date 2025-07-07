@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ContactUsFormComponent } from '../controls/contact-us-form/contact-us-form.component';
 import { LoadingController } from '@ionic/angular';
 import { MenuService } from 'src/shared/menu.service';
@@ -13,6 +13,7 @@ import { filter, take } from 'rxjs';
 export class ContactusPage implements OnInit,AfterViewInit {
   @ViewChild(ContactUsFormComponent) contactUs!: ContactUsFormComponent;
   loading: HTMLIonLoadingElement | null = null;
+  @ViewChild('smContainerRef') smContainerRef!: ElementRef;
 
 
   constructor(private loadingController: LoadingController, private menuService:MenuService) { }
@@ -24,6 +25,12 @@ export class ContactusPage implements OnInit,AfterViewInit {
       }    
 
  ngAfterViewInit(): void {
+
+  setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  },0);
+
   this.menuService.menuLoaded$
     .pipe(
       filter((loaded) => loaded),

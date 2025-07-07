@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { SripacompComponent } from '../controls/sripacomp/sripacomp.component';
 import { MenuService } from 'src/shared/menu.service';
 import { AlertController, LoadingController } from '@ionic/angular';
@@ -37,6 +37,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
   private totalComponents = 1; // Number of child components with API calls
 private loadedComponents = 0;
 private loaderDismissed = false;
+@ViewChild('smContainerRef') smContainerRef!: ElementRef;
 showSubmit: boolean = false; // Flag to control visibility of the submit button
 
   constructor(
@@ -162,6 +163,10 @@ showSubmit: boolean = false; // Flag to control visibility of the submit button
 
 
    ngAfterViewInit() {
+    setTimeout(() => {
+    const height = this.smContainerRef?.nativeElement?.offsetHeight || 0;
+    this.menuService.setContentHeight(height);
+  }, 0);
     setTimeout(() => {
       if (!this.loaderDismissed) {
         this.hideLoader();
