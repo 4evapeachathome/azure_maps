@@ -17,6 +17,8 @@ import { FormsModule } from '@angular/forms';
 import { SessionActivityService } from './guards/session-activity.service';
 import { CookieService } from 'ngx-cookie-service';
 import { PageTitleService } from './services/page-title.service';
+import { LoggingService } from './services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 
 export interface OrganizationResponse {
@@ -129,6 +131,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     'hitsassessment', 'dangerassessment',
     'ssripariskassessment', 'webassessment', 'viewresult'
   ];
+  device:any;
   
   /** These routes should keep session alert active (subset of risk routes) */
   private readonly sessionAlertRoutes = [
@@ -143,11 +146,14 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     private platform: Platform,
     private location:Location,
     private router: Router,
+    private deviceService: DeviceDetectorService,
     private cdr: ChangeDetectorRef,
+    private loggingService: LoggingService,
     private apiService: ApiService,
     private sharedDataService: MenuService,
     private pageService: PageTitleService,
   ) {
+    this.device = this.deviceService.getDeviceInfo();
   }
 
   stayLoggedIn() {
@@ -325,9 +331,8 @@ initializeToggleRef() {
     this.apiService.getSupportServiceDistances()
   ]).subscribe({
     next: ([filtersResponse, orgsResponse, distances]: [any, OrganizationResponse, any]) => {
-      // Set data into shared service
       this.sharedDataService.setFilterOptions(filtersResponse.data || []);
-      
+
       const seenNames = new Set<string>();
       const uniqueOrgs = orgsResponse.data.filter(org => {
         if (seenNames.has(org.OrgName)) return false;
@@ -337,13 +342,25 @@ initializeToggleRef() {
       this.sharedDataService.setOrganizations(uniqueOrgs);
 
       this.sharedDataService.setStateDistances(distances);
-      
-      // ✅ Notify that data loading is complete
+
       this.sharedDataService.setDataLoaded(true);
     },
-    error: (error:any) => {
-      console.error("Error loading initial data", error);
-      this.sharedDataService.setDataLoaded(true); // Still emit true to unblock UI
+    error: (err: any) => {
+      console.error("Error loading initial data", err);
+
+      const errorMessage = err?.error?.error?.message || err?.message || 'Unknown error';
+
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to load support service initial data', // Activity Type
+        'loadInitialData',                             // Function name
+        'forkJoin: getServiceFilterOptions + getAllSupportServices + getSupportServiceDistances', // API(s)
+        '',           
+        errorMessage,                                  // Error message
+        err?.status,                                   // HTTP status code
+        this.device                                     // Device info
+      );
+
+      this.sharedDataService.setDataLoaded(true); // Unblock UI
     }
   });
 }

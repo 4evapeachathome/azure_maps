@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { MenuService } from 'src/shared/menu.service';
 
 @Component({
@@ -45,8 +47,14 @@ export class HomeSliderComponent implements OnInit {
   @Input() paramName:string = '';
   @Input() routerLink: string | string[] = [];
   @Input() routerLinkTitle!: string;
+  device:any;
  
-  constructor(private apiService:ApiService, private menuService:MenuService) { }
+  constructor(private apiService:ApiService, 
+    private loggingService: LoggingService,
+    private deviceService:DeviceDetectorService,
+    private menuService:MenuService) {
+      this.device = this.deviceService.getDeviceInfo();
+     }
 
   ngOnInit() {
     this.getHomeSlidersData(this.endpoint, this.paramName);
@@ -58,38 +66,48 @@ export class HomeSliderComponent implements OnInit {
   }
 
   getHomeSlidersData(endpoint: string, paramName: string) {
-    this.apiService.getSliders(endpoint,paramName).subscribe(
-      (response) => {
-        if (response && response.length > 0) {
-          const sliderData = response[0][paramName];
-  
-          // Set the main title
-          this.mainTitle = sliderData.title || '';
-  
-          // Map the descriptions dynamically
-          this.descriptions = sliderData.sliderContent.map((content: any) => {
-            // Ensure slidercontent is an array, and return it as is (one description per sliderContent)
-            return Array.isArray(content.slidercontent) ? content.slidercontent : [];
-          });
-          // Extract image URLs correctly
-          this.imageUrls = sliderData.sliderContent
-            .map((content: any) => content.imageUrl)
-            .filter((url: any) => !!url); // Fix: Filters out any null/undefined values
-  
-          // Set default index to show first image & text
-          this.currentIndex = 0;
-  
-        }
-        this.loaded.emit();
+  this.apiService.getSliders(endpoint, paramName).subscribe(
+    (response) => {
+      if (response && response.length > 0) {
+        const sliderData = response[0][paramName];
 
-      },
-      (error) => {
-        console.error('Error fetching home slider component:', error);
-        this.loaded.emit();
+        // Set the main title
+        this.mainTitle = sliderData.title || '';
 
+        // Map the descriptions dynamically
+        this.descriptions = sliderData.sliderContent.map((content: any) => {
+          return Array.isArray(content.slidercontent) ? content.slidercontent : [];
+        });
+
+        // Extract image URLs
+        this.imageUrls = sliderData.sliderContent
+          .map((content: any) => content.imageUrl)
+          .filter((url: any) => !!url);
+
+        // Set default index
+        this.currentIndex = 0;
       }
-    );
-  }
+
+      this.loaded.emit();
+    },
+    (error) => {
+      console.error('Error fetching home slider component:', error);
+
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to fetch home slider data',
+        'getHomeSlidersData',
+        endpoint,
+        '',
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
+
+      this.loaded.emit();
+    }
+  );
+}
+
   
   onImageLoad(index: number) {
   }

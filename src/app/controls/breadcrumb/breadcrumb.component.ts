@@ -116,6 +116,8 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IonicModule, Platform } from '@ionic/angular';
 import { MenuService } from 'src/shared/menu.service';
 import { FormsModule } from '@angular/forms';
+import { LoggingService } from 'src/app/services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 interface Breadcrumb {
   label: string;
@@ -138,13 +140,17 @@ export class BreadcrumbComponent implements OnInit, OnChanges {
   @Output() stateSelected = new EventEmitter<{ id: string; name: string }>();
   tempSelectedState: { id: string; name: string } | null = null;
   isUsLawsByStatePage: boolean = false;
+  device:any;
 
   constructor(
     private menuService: MenuService,
     private route: ActivatedRoute,
     private router: Router,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService,
     private platform: Platform
   ) {
+    this.device = this.deviceService.getDeviceInfo();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.isUsLawsByStatePage = event.urlAfterRedirects.includes('/uslawsbystate');
@@ -160,8 +166,19 @@ export class BreadcrumbComponent implements OnInit, OnChanges {
     this.route.url.subscribe(() => {
       const menuItems = this.menuService.getMenuItems();
       if (menuItems.length > 0) {
-        this.generateBreadcrumb(menuItems);
-      }
+      this.generateBreadcrumb(menuItems);
+    } else {
+      // Log if no menu items are loaded (unexpected)
+      this.loggingService.handleApiErrorEducationModule(
+        'Menu items are empty in BreadcrumbComponent',
+        'ngOnInit',
+        'MenuService.getMenuItems',
+        '',
+        'No menu items returned',
+        404,
+        this.device
+      );
+    }
       this.isUsLawsByStatePage = this.router.url.includes('/uslawsbystate');
     });
   }
@@ -201,8 +218,19 @@ export class BreadcrumbComponent implements OnInit, OnChanges {
     const currentPage = menuItems.find(item => item.link === currentUrl);
 
     if (currentPage) {
-      this.breadcrumbPath = this.getBreadcrumbHierarchy(currentPage, menuItems).reverse();
-    }
+    this.breadcrumbPath = this.getBreadcrumbHierarchy(currentPage, menuItems).reverse();
+  } else {
+    // Log if the current page is not found in the menu
+    this.loggingService.handleApiErrorEducationModule(
+      'Current page not found in menu items',
+      'generateBreadcrumb',
+      'router.url: ' + currentUrl,
+      '',
+      'Page not matched in menu items',
+      404,
+      this.device
+    );
+  }
 
     if (this.isUsLawsByStatePage && !this.selectedState) {
       // Prevent duplicates by checking if "US Laws By State" already exists
@@ -237,17 +265,31 @@ export class BreadcrumbComponent implements OnInit, OnChanges {
   }
 
   getBreadcrumbHierarchy(item: any, menuItems: any[], path: any[] = []): any[] {
-    if (!item) return path;
-    path.push({
-      title: item.title,
-      link: item.link
-    });
-    if (item.parentMenu) {
-      const parent = menuItems.find(menu => menu.id === item.parentMenu.id);
-      return this.getBreadcrumbHierarchy(parent, menuItems, path);
+  if (!item) return path;
+  path.push({
+    title: item.title,
+    link: item.link
+  });
+
+  if (item.parentMenu) {
+    const parent = menuItems.find(menu => menu.id === item.parentMenu.id);
+    if (!parent) {
+      // Log missing parent
+      this.loggingService.handleApiErrorEducationModule(
+        'Parent menu not found for breadcrumb',
+        'getBreadcrumbHierarchy',
+        `parentMenuId: ${item.parentMenu.id}`,
+        '',
+        'Parent menu not found in menuItems list',
+        404,
+        this.device
+      );
+      return path;
     }
-    return path;
+    return this.getBreadcrumbHierarchy(parent, menuItems, path);
   }
+  return path;
+}
 
   navigateTo(link: string) {
     if (link === '/uslawsbystate') {

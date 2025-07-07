@@ -8,6 +8,8 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiService } from '../services/api.service';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { LoggingService } from '../services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 
 @Component({
@@ -29,6 +31,7 @@ export class SripaaPage implements OnInit,AfterViewInit {
   // These will be passed to the results component
   quizTitle: string = '';
   sripa: any[] = [];
+  device: any;
   selectedOptions: string[] = [];
   hasYesAnswer = false;
   private totalComponents = 1; // Number of child components with API calls
@@ -40,9 +43,14 @@ showSubmit: boolean = false; // Flag to control visibility of the submit button
     private menuService: MenuService,
     private loadingController: LoadingController,
     private alertController: AlertController,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService,
     private cdRef:ChangeDetectorRef,
     private apiService: ApiService
-  ) {}
+  ) {
+    this.device = this.deviceService.getDeviceInfo();
+    // Initialize the sripaData to an empty object
+  }
 
   async ngOnInit() {
     await this.showLoader();
@@ -107,8 +115,18 @@ showSubmit: boolean = false; // Flag to control visibility of the submit button
             resolve(); // Resolve even on error to proceed
           }
         });
-      } catch (err) {
-        console.error('Error:', err);
+      } catch (error:any) {
+        console.error('Error:', error);
+         this.loggingService.handleApiErrorEducationModule(
+          'Failed to load SSRIPA EducationModule GUID',
+          'loadSSripaDataAsync',
+          this.ssripGuidUrl, // Replace with actual constant if not already
+          '',
+          error?.error?.error?.message || error?.message || 'Unknown error',
+          error?.status || 500,
+          this.device
+        );
+
         this.sripaData = null; // Fallback
         resolve(); // Resolve to avoid hanging
       }
@@ -116,23 +134,31 @@ showSubmit: boolean = false; // Flag to control visibility of the submit button
   }
 
    loadSSripaData() {
-    try {
-      // Replace with your actual API URL
-      const url = this.ssripGuidUrl;
-      
-      this.apiService.generateGuid(url).subscribe({
-        next: (response) => {
-          this.sripaData = response?.guid;
-        },
-        error: (err) => {
-          console.error('API Error:', err);
-          // Handle error (show toast, etc.)
-        }
-      });
-    } catch (err) {
-      console.error('Error:', err);
-    }
+  try {
+    const url = this.ssripGuidUrl;
+
+    this.apiService.generateGuid(url).subscribe({
+      next: (response) => {
+        this.sripaData = response?.guid;
+      },
+      error: (err) => {
+        console.error('API Error:', err);
+        this.loggingService.handleApiErrorEducationModule(
+          'Failed to load SSRIPA EducationModule GUID',
+          'loadSSripaData',
+          url,
+          '',
+          err?.error?.error?.message || err?.message || 'Unknown error',
+          err?.status || 500,
+          this.device
+        );
+      }
+    });
+  } catch (err: any) {
+    console.error('Unexpected error:', err);
+    // Optional: log unexpected errors too
   }
+}
 
 
    ngAfterViewInit() {
@@ -227,8 +253,18 @@ async hideLoader() {
               this.hidewhenshowingresults = true;
               this.selectedTab = 'results';
             }
-          } catch (error) {
+          } catch (error:any) {
             console.error('Failed to load results from child component:', error);
+
+               this.loggingService.handleApiErrorEducationModule(
+              'Failed to submit SSRIPA assessment and show results',
+              'showResults',
+              '', // No URL since it's delegated to child component
+              '',
+              error?.error?.error?.message || error?.message || 'Unknown error',
+              error?.status || 500,
+              this.device
+            );
           }
 
           setTimeout(() => {

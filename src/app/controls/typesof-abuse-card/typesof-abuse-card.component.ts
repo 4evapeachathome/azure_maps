@@ -2,7 +2,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
   selector: 'pathome-typesof-abuse-card',
@@ -29,31 +32,46 @@ export class TypesofAbuseCardComponent  implements OnInit {
   @Input() imagePosition: 'left' | 'right' = 'left';  // Controls image position
   @Input() buttonPosition: 'left' | 'right' = 'right'; 
   @Input() endpoint: string = '';
+  device:any;
   @Input() paramName: string = '';
   @Output() loaded = new EventEmitter<void>();
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private loggingService: LoggingService,
+  private deviceService:DeviceDetectorService,
+    private apiService: ApiService) {
+    this.device = this.deviceService.getDeviceInfo(); // Initialize device info
+    }
 
   ngOnInit() {
     this.loadPhysicalAbuseData(this.endpoint,this.paramName);
   }
 
-  loadPhysicalAbuseData(endPoint: string,paramName: string) {
-    this.apiService.getPhysicalAbuses(endPoint,paramName).subscribe(
-    
-      (res: any) => {
-        if (res && res[paramName]) {
-          this.physicalAbuse = res[paramName];
-        }
-        this.loaded.emit(); // Emit loaded event after data is fetched
-      },
-      (error) => {
-        console.error('Error fetching physical abuse data:', error);
-        this.loaded.emit();
+ loadPhysicalAbuseData(endPoint: string, paramName: string) {
+  this.apiService.getPhysicalAbuses(endPoint, paramName).subscribe(
+    (res: any) => {
+      if (res && res[paramName]) {
+        this.physicalAbuse = res[paramName];
       }
-    );
-  }
+      this.loaded.emit(); // Emit loaded event after data is fetched
+    },
+    (error) => {
+      console.error('Error fetching physical abuse data:', error);
 
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to load physical abuse content',
+        'loadPhysicalAbuseData',
+        endPoint, // Replace with correct endpoint constant if needed
+        '', // documentId left empty as per your request
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
+
+      this.loaded.emit();
+    }
+  );
+}
   toggleReadMore() {
     this.isExpanded = !this.isExpanded;
   }

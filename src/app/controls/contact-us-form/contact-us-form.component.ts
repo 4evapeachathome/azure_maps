@@ -4,9 +4,12 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 import { PageTitleService } from 'src/app/services/page-title.service';
 import { getConstant } from 'src/shared/constants';
+import { APIEndpoints } from 'src/shared/endpoints';
 import { presentToast, validateEmail } from 'src/shared/utility';
 
 @Component({
@@ -30,64 +33,104 @@ export class ContactUsFormComponent  implements OnInit {
     feedback: '',
   };
   @Output() loaded = new EventEmitter<void>();
+  device:any;
   @Output() showloadeder = new EventEmitter<void>();
  
 
-  constructor(private apiService: ApiService,private toastController: ToastController,private ngZone: NgZone,private analytics:PageTitleService) { }
+  constructor(private apiService: ApiService,
+    private toastController: ToastController,
+    private loggingService: LoggingService,
+    private deviceService:DeviceDetectorService,
+    private ngZone: NgZone,
+    private analytics:PageTitleService) { 
+    this.device = this.deviceService.getDeviceInfo(); 
+    }
 
   ngOnInit() {
     this.renderReCaptcha();
   }
 
+async onSubmit() {
+  if (this.validateForm()) {
+    if (!this.isCaptchaVerified || !this.captchaToken) {
+      const msg = 'Captcha verification failed';
+      this.onClear();
+      this.ContactForm.resetForm();
+      return;
+    }
 
-  async onSubmit() {
-    // Emit showloader event before submission
-    if (this.validateForm()) {
-      if (!this.isCaptchaVerified || !this.captchaToken) {
-        console.error('Please complete the captcha first');
-        this.onClear();
-        this.ContactForm.resetForm();
-        return;
-      }
-      this.showloadeder.emit(); 
-      this.formData = {
-        name: this.formData?.name?.trim(),
-        email: this.formData?.email?.trim(),
-        feedback: this.formData?.feedback?.trim()
-      };
-      this.apiService.sendContactData(this.formData).subscribe({
-        next: async (response) => {
-          
-          // Check if response contains data and id
-          if (response?.data?.id) {
-            this.analytics.trackFormSubmit('ContactUs');
-            const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
-            await presentToast(this.toastController, successMessage);
-            this.onClear();
-            this.ContactForm.resetForm();
-            this.resetCaptcha();
-            this.loaded.emit(); // Emit loaded event after successful submission
-            
-          } else {
-            console.error('Invalid response format - missing ID');
-            const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
-            await presentToast(this.toastController, errorMessage);
-            this.loaded.emit();
-          }
-        },
-        error: async (error) => {
-          console.error('Error sending contact data', error);
+    this.showloadeder.emit();
+    this.formData = {
+      name: this.formData?.name?.trim(),
+      email: this.formData?.email?.trim(),
+      feedback: this.formData?.feedback?.trim()
+    };
+
+    this.apiService.sendContactData(this.formData).subscribe({
+      next: async (response) => {
+        if (response?.data?.id) {
+          this.analytics.trackFormSubmit('ContactUs');
+          const successMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_SUCCESS');
+          await presentToast(this.toastController, successMessage);
+          this.onClear();
+          this.ContactForm.resetForm();
+          this.resetCaptcha();
+          this.loaded.emit();
+        } else {
+          const msg = 'Invalid response format - missing ID';
+          console.error(msg);
+
+          this.loggingService.handleApiErrorEducationModule(
+            'Invalid contact submission response',
+            'onSubmit',
+            APIEndpoints.contactus,
+            '',
+            msg,
+            422,
+            this.device
+          );
+
           const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
           await presentToast(this.toastController, errorMessage);
           this.loaded.emit();
         }
-      });
-    } else {
-      console.error('Form validation failed');
-      this.loaded.emit();
-    }
+      },
+      error: async (error) => {
+        console.error('Error sending contact data', error);
+
+        this.loggingService.handleApiErrorEducationModule(
+          'Failed to submit contact form',
+          'onSubmit',
+          APIEndpoints.contactus,
+          '',
+          error?.error?.error?.message || error?.message || 'Unknown error',
+          error?.status || 500,
+          this.device
+        );
+
+        const errorMessage = getConstant('TOAST_MESSAGES', 'FORM_SUBMITTED_ERROR');
+        await presentToast(this.toastController, errorMessage);
+        this.loaded.emit();
+      }
+    });
+  } else {
+    const msg = 'Form validation failed';
+    console.error(msg);
+
+    this.loggingService.handleApiErrorEducationModule(
+      'Form validation failed before submission',
+      'onSubmit',
+      'FormValidation',
+      '',
+      msg,
+      400,
+      this.device
+    );
+
+    this.loaded.emit();
   }
-  
+}
+
 
 
 
@@ -109,7 +152,8 @@ export class ContactUsFormComponent  implements OnInit {
   }
 
   //Captcha
-  renderReCaptcha() {
+ renderReCaptcha() {
+  try {
     if (typeof window !== 'undefined' && (window as any).grecaptcha) {
       this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
         sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
@@ -127,11 +171,32 @@ export class ContactUsFormComponent  implements OnInit {
         }
       });
     } else {
-      // If grecaptcha is not available, try again in 500ms
+      // If grecaptcha is not yet available, try again after delay
       setTimeout(() => this.renderReCaptcha(), 500);
-    }
-  }
 
+      this.loggingService.handleApiErrorEducationModule(
+        'reCAPTCHA not available on window object',
+        'renderReCaptcha',
+        'grecaptcha.render',
+        '',
+        'grecaptcha not defined when attempting to render captcha',
+        503,
+        this.device
+      );
+    }
+  } catch (err: any) {
+    console.error('Error while rendering reCAPTCHA:', err);
+    this.loggingService.handleApiErrorEducationModule(
+      'Failed to render reCAPTCHA',
+      'renderReCaptcha',
+      'grecaptcha.render',
+      '',
+      err?.message || 'Unknown error while rendering captcha',
+      500,
+      this.device
+    );
+  }
+}
   isFormEmpty(): boolean {
     const isFormDataEmpty = (
       !this.formData?.name?.trim() &&

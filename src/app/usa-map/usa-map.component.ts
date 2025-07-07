@@ -348,6 +348,9 @@ import usaMap from '@svg-maps/usa';
 import { ApiService } from '../services/api.service';
 import { BreadcrumbComponent } from "../controls/breadcrumb/breadcrumb.component";
 import { FormsModule } from '@angular/forms';
+import { LoggingService } from '../services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 interface Point {
   x: number;
@@ -377,12 +380,18 @@ interface StateLaw {
 export class UsaMapComponent {
   @Output() stateSelected = new EventEmitter<{ id: string; name: string; path: string }>();
   usaMap = usaMap;
+  device:any;
   @Input() selectedState: { id: string; name: string; path?: string } | null = null;
   showLawInfo = false;
   stateLaws: StateLaw[] = [];
   isMobile: boolean = false;
 
-  constructor(private apiService: ApiService, private platform: Platform) { 
+  constructor(private apiService: ApiService,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService,
+     private platform: Platform) 
+     { 
+    this.deviceService = this.device.getDeviceInfo();
     this.isMobile = this.platform.is('android') || this.platform.is('ios');
     this.getUSLawsbystateData();
   }
@@ -479,16 +488,26 @@ export class UsaMapComponent {
     return this.largeStrokeStates.includes(stateId.toLowerCase());
   }
   
-  getUSLawsbystateData() {
-    this.apiService.getStateLaws().subscribe(
-      (response: StateLaw[]) => {
-        this.stateLaws = response;
-      },
-      (error) => {
-        console.error('Error fetching state laws:', error);
-      }
-    );
-  }
+ getUSLawsbystateData() {
+  this.apiService.getStateLaws().subscribe(
+    (response: StateLaw[]) => {
+      this.stateLaws = response;
+    },
+    (error) => {
+      console.error('Error fetching state laws:', error);
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to load US state laws',
+        'getUSLawsbystateData',
+        APIEndpoints.usstatelaws || '', // Replace with your actual constant if available
+        '',
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
+    }
+  );
+}
+
 
   onStateClick(state: { id: string; name: string }) {
     const match = this.usaMap.locations.find(loc => loc.id === state.id);

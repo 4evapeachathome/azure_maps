@@ -7,6 +7,9 @@ import { FormsModule } from '@angular/forms';
 import { Utility } from 'src/shared/utility';
 import { Observable } from 'rxjs';
 import { PageTitleService } from 'src/app/services/page-title.service';
+import { LoggingService } from 'src/app/services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 
 @Component({
@@ -42,27 +45,49 @@ hasYesAnswer: boolean = false;
 @Output() quizLoaded = new EventEmitter<void>();
 @Input() ssripaGuid:any; // Track if any 'yes' answer is selected
 @Output() showResultsChanged = new EventEmitter<boolean>();
+device:any;
 
-constructor(private apiService: ApiService, private analytics:PageTitleService) {}
+constructor(private apiService: ApiService,
+  private loggingService: LoggingService,
+  private deviceService: DeviceDetectorService,
+   private analytics:PageTitleService) {
+    this.device = this.deviceService.getDeviceInfo();
+   }
 
 ngOnInit() {
   this.loadQuiz();
 }
 
 loadQuiz(): void {
-  this.apiService.getSripaa().subscribe((quiz) => {
-    if (quiz) {
-     
-      this.quizTitle = 'Signs of Self-Recognition in Intimate Partner Abuse - SSRIPA'; // Or a suitable fallback
-      this.sripa = quiz || [];
-      this.rating = quiz.rating || '';
-      //this.yesanswer = quiz.yesanswer || [];
-      this.showAnswers = new Array(this.sripa.length).fill(false);
-      this.selectedOptions = new Array(this.sripa.length).fill(null);
+  this.apiService.getSripaa().subscribe(
+    (quiz) => {
+      if (quiz) {
+        this.quizTitle = 'Signs of Self-Recognition in Intimate Partner Abuse - SSRIPA';
+        this.sripa = quiz || [];
+        this.rating = quiz.rating || '';
+        this.showAnswers = new Array(this.sripa.length).fill(false);
+        this.selectedOptions = new Array(this.sripa.length).fill(null);
+      }
+      this.quizLoaded.emit();
+    },
+    (error) => {
+      console.error('Error loading SSRIPA quiz:', error);
+
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to load SSRIPA quiz content',
+        'loadQuiz',
+        APIEndpoints.ssripaQuestions, // Replace with the actual endpoint constant if needed
+        '',
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
+
+      this.quizLoaded.emit();
     }
-    this.quizLoaded.emit();
-  });
+  );
 }
+
 
 
 

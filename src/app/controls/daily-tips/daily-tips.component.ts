@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { getConstant } from 'src/shared/constants';
+import { APIEndpoints } from 'src/shared/endpoints';
+import { LoggingService } from 'src/app/services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'pathome-daily-tips',
@@ -33,10 +36,15 @@ export class DailyTipsComponent implements OnInit {
   userDateTime: Date;
   tips: { id: number; peacetips: string }[] = [];
   currentTip: string = '';
+  device:any;
   private previousTipIndex: number | null = null;
   private storageKey: string = 'previousDailyTipIndex';
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService
+  ) {
+    this.device = this.deviceService.getDeviceInfo();
     this.userDateTime = new Date();
     this.currentDate = new Date(this.userDateTime); // Initialize with current date
     this.selectedDay = this.userDateTime.getDay();
@@ -73,27 +81,38 @@ export class DailyTipsComponent implements OnInit {
   }
 
   fetchDailyTipData() {
-    this.apiService.getDailyTip().subscribe(
-      (response) => {
-        if (response.data && response.data.length > 0) {
-          this.allTips = response.data[0].description;
-          this.dailyPeaceTitle = response.data[0].title;
+  this.apiService.getDailyTip().subscribe(
+    (response) => {
+      if (response.data && response.data.length > 0) {
+        this.allTips = response.data[0].description;
+        this.dailyPeaceTitle = response.data[0].title;
 
-          if (this.allTips && this.allTips.length > 0) {
-            this.generateRandomTip();
-          } else {
-            this.setDefaultTip();
-          }
+        if (this.allTips && this.allTips.length > 0) {
+          this.generateRandomTip();
         } else {
           this.setDefaultTip();
         }
-      },
-      (error) => {
-        console.error('Error fetching daily tip:', error);
+      } else {
         this.setDefaultTip();
       }
-    );
-  }
+    },
+    (error) => {
+      console.error('Error fetching daily tip:', error);
+
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to fetch daily peace tip',
+        'fetchDailyTipData',
+        APIEndpoints.dailytip, // Replace with actual endpoint if different
+        '',
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
+
+      this.setDefaultTip();
+    }
+  );
+}
 
   setDefaultTip() {
     const peaceTip = getConstant('HEALTH_TIPS', 'DEFAULT_TIP');

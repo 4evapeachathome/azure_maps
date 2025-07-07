@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { LoggingService } from 'src/app/services/logging.service';
 
 @Component({
   selector: 'pathome-legalrights',
@@ -17,9 +19,15 @@ export class LegalrightsComponent  implements OnInit {
   imageUrl:string = '';
   contentBlocks: any;
   title: any;
+  device:any;
   @Input() endpoint:string = '';
   @Output() loaded = new EventEmitter<void>();
-  constructor(private apiService:ApiService,private sanitizer: DomSanitizer) { }
+  constructor(private apiService:ApiService,
+    private loggingService: LoggingService,
+    private deviceService:DeviceDetectorService,
+    private sanitizer: DomSanitizer) {
+    this.device = this.deviceService.getDeviceInfo();
+     }
 
   ngOnInit() {
     this.getLegalRightsData(this.endpoint);
@@ -35,40 +43,52 @@ export class LegalrightsComponent  implements OnInit {
   }
 
   getLegalRightsData(endpoint: string) {
-    this.apiService.getLegalRightsData(endpoint).subscribe(
-      (response) => {
-        const data = response;
-        if (data) {
-          this.imageUrl = data.image || '';
-          this.title = Array.isArray(data.title) ? data.title : [];
+  this.apiService.getLegalRightsData(endpoint).subscribe(
+    (response) => {
+      const data = response;
+      if (data) {
+        this.imageUrl = data.image || '';
+        this.title = Array.isArray(data.title) ? data.title : [];
 
-          // Process contentBlocks with validWebImageIndex
-          let validImageCount = 0;
-          this.contentBlocks = (data.contentBlocks || []).map((block: any) => {
-            const hasWebImage = !!block.webImage; // Check if webImage is not null
-            const blockData = {
-              content: this.sanitizer.bypassSecurityTrustHtml(this.renderBlocks(block.content || [])),
-              image: block.image || '',
-              webImage: block.webImage,
-              validWebImageIndex: hasWebImage ? validImageCount++ : -1 // Increment only for valid webImage
-            };
-            this.loaded.emit(); // Emit loaded event after content is loaded
-            return blockData;
-          });
-        }
-      },
-      (error) => {
-        console.error('Error fetching legal rights data:', error);
-        this.loaded.emit(); // Emit loaded event even if there's an error
+        // Process contentBlocks with validWebImageIndex
+        let validImageCount = 0;
+        this.contentBlocks = (data.contentBlocks || []).map((block: any) => {
+          const hasWebImage = !!block.webImage;
+          const blockData = {
+            content: this.sanitizer.bypassSecurityTrustHtml(this.renderBlocks(block.content || [])),
+            image: block.image || '',
+            webImage: block.webImage,
+            validWebImageIndex: hasWebImage ? validImageCount++ : -1
+          };
+          this.loaded.emit(); // Emit after each block
+          return blockData;
+        });
       }
-    );
-  }
+    },
+    (error) => {
+      console.error('Error fetching legal rights data:', error);
+
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to fetch legal rights content',
+        'getLegalRightsData',
+        endpoint,
+        '',
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
+
+      this.loaded.emit(); // Still emit on error
+    }
+  );
+}
 
 
   renderBlocks(blocks: any[]): string {
-    let html = '';
-    let i = 0;
+  let html = '';
+  let i = 0;
 
+  try {
     while (i < blocks.length) {
       const block = blocks[i];
 
@@ -123,11 +143,26 @@ export class LegalrightsComponent  implements OnInit {
 
       i++;
     }
+  } catch (error) {
+    console.error('Error rendering blocks:', error);
 
-    return html;
+    this.loggingService.handleApiErrorEducationModule(
+      'Failed to render content blocks',
+      'renderBlocks',
+      '',
+       '',
+      (error as any)?.message || 'Unknown error',
+      500,
+      this.device
+    );
   }
 
+  return html;
+}
+
+
   parseChildren(children: any[]): string {
+  try {
     return children
       .map(child => {
         if (child.type === 'link' && child.url) {
@@ -147,7 +182,23 @@ export class LegalrightsComponent  implements OnInit {
         return text;
       })
       .join('');
+  } catch (error) {
+    console.error('Error parsing children:', error);
+
+    this.loggingService.handleApiErrorEducationModule(
+      'Failed to parse content block children',
+      'parseChildren(legalrights)',
+      '',
+      '',
+      (error as any)?.message || 'Unknown error',
+      500,
+      this.device
+    );
+
+    return ''; // Fallback to empty string on error
   }
+}
+
 
   
   

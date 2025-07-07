@@ -7,6 +7,9 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { MenuService } from 'src/shared/menu.service';
 import { Subscription } from 'rxjs';
+import { LoggingService } from 'src/app/services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 interface MenuItem {
   id: number;
@@ -42,6 +45,7 @@ export class MenuComponent implements OnInit,AfterViewInit {
   public subscription!: Subscription;
   currentExpandedSection: string | null = null;
   showUserName:boolean = false;
+  device:any;
 
   // Define the titles of menus to hide initially
   private initiallyHiddenMenuTitles = [
@@ -53,10 +57,12 @@ export class MenuComponent implements OnInit,AfterViewInit {
   constructor(
     private apiService: ApiService,
     private router: Router,
+    private loggingService: LoggingService,
+    private deviceService: DeviceDetectorService,
     private menuService: MenuService,
     private zone: NgZone
   ) {
-    
+    this.device = this.deviceService.getDeviceInfo();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -120,23 +126,34 @@ collapseAllSections(): void {
   }
 
   loadMenuItems() {
-    this.apiService.getMenuItems().subscribe(
-      (response: any) => {
-        if (Array.isArray(response)) {
-          this.menuItems = response;
-          this.processedMenu = this.buildMenuTree(this.menuItems);
-          this.menuService.setMenuItems(this.menuItems);
-          this.selectedId = this.router.url;
-         this.expandCurrentSection();
-        } else {
-          console.error('Invalid response format:', response);
-        }
-      },
-      (error: any) => {
-        console.error('Error fetching menu items:', error);
+  this.apiService.getMenuItems().subscribe(
+    (response: any) => {
+      if (Array.isArray(response)) {
+        this.menuItems = response;
+        this.processedMenu = this.buildMenuTree(this.menuItems);
+        this.menuService.setMenuItems(this.menuItems);
+        this.selectedId = this.router.url;
+        this.expandCurrentSection();
+      } else {
+        console.error('Invalid response format:', response);
       }
-    );
-  }
+    },
+    (error: any) => {
+      console.error('Error fetching menu items:', error);
+
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to fetch menu items',
+        'loadMenuItems',
+        APIEndpoints.menu, // Replace with actual endpoint constant or string
+        '', // Empty string for documentId
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
+    }
+  );
+}
+
 
   buildMenuTree(items: MenuItem[]): MenuItem[] {
     if (!items) {

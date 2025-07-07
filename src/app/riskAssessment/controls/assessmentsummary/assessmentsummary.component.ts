@@ -516,9 +516,18 @@ containerElement.appendChild(spacerBottom);
 
       await generatePDF(container);
       this.exportCompleted.emit();
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error generating PDF:', error);
       this.exportFailed.emit();
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to export pdf for assessment summary PDF',
+        'downloadPDF',
+        '', // Replace with actual endpoint if different
+        '',
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
     }
 }
 

@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
 
 interface RichTextChild {
   text?: string; // Optional, as not all nodes have text (e.g., a list-item may only have children)
@@ -32,8 +34,14 @@ interface IpvPartnerViolence {
 })
 export class PartnerViolenceProgressbarComponent  implements OnInit {
   @Input() levels: IpvPartnerViolence[] = [];
+  device:any;
 
-  constructor() {}
+  constructor(
+    private loggingService: LoggingService,
+    private deviceService:DeviceDetectorService,
+  ) {
+    this.device = this.deviceService.getDeviceInfo();
+  }
 
   ngOnInit() {}
 
@@ -49,18 +57,19 @@ export class PartnerViolenceProgressbarComponent  implements OnInit {
   }
 
   getDescription(level: IpvPartnerViolence): string {
+  try {
     return level.multilinerichtextbox
       .map((item) => {
         if (item.type === 'paragraph' && item.children) {
           return item.children.map((child) => child.text).join(' ');
         } else if (item.type === 'list' && item.format === 'unordered' && Array.isArray(item.children)) {
-          return `<ul>` + 
+          return `<ul>` +
             item.children
               .map((listItem) => {
                 if (listItem.children && Array.isArray(listItem.children)) {
                   return `<li>${listItem.children.map((child) => child.text).join(' ')}</li>`;
                 }
-                return ''; // Fallback in case listItem.children is undefined
+                return '';
               })
               .join('') +
             `</ul>`;
@@ -68,10 +77,27 @@ export class PartnerViolenceProgressbarComponent  implements OnInit {
         return '';
       })
       .join('');
+  } catch (error) {
+    console.error('Error generating IPV description:', error);
+
+    this.loggingService.handleApiErrorEducationModule(
+      'Failed to generate IPV description content',
+      'getDescription',
+      '',
+      '',
+      (error as any)?.message || 'Unknown error',
+      500,
+      this.device
+    );
+
+    return '';
   }
+}
+
   
 
   getListItems(level: IpvPartnerViolence): string[] {
+  try {
     const lists = level.multilinerichtextbox.filter((item) => item.type === 'list');
     return lists
       .map((list) => {
@@ -83,7 +109,23 @@ export class PartnerViolenceProgressbarComponent  implements OnInit {
         return '';
       })
       .filter((text) => text !== '');
+  } catch (error) {
+    console.error('Error extracting IPV list items:', error);
+
+    this.loggingService.handleApiErrorEducationModule(
+      'Failed to extract IPV list items',
+      'getListItems',
+      '',
+      '',
+      (error as any)?.message || 'Unknown error',
+      500,
+      this.device
+    );
+
+    return [];
   }
+}
+
 
   getProgressBarClasses(levelNumber: number): string[] {
     if (levelNumber === 1) return ['yellow'];

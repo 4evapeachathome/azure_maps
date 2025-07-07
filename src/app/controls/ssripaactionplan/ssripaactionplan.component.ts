@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { LoggingService } from 'src/app/services/logging.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'pathome-ssripaactionplan',
@@ -17,9 +19,15 @@ export class SsripaactionplanComponent  implements OnInit {
   @Input() quizTitle: string = '';
   @Input() selectedOptions: string[] = [];
   myAngularxQrCode: string = 'https://http://localhost:8100/login'; // QR code content
-  @Output() hideloader = new EventEmitter<void>();
+  @Output() hideloader = new EventEmitter<void>();  
   @Output() showloader = new EventEmitter<void>();
-  constructor() { }
+  device:any
+  constructor(
+    private loggingService: LoggingService, // Uncomment if you need to use LoggingService
+    private deviceService: DeviceDetectorService, // Uncomment if you need to use DeviceDetectorService
+  ) { 
+    this.device = this.deviceService.getDeviceInfo(); // Initialize device info
+  }
 
 
 
@@ -221,6 +229,15 @@ export class SsripaactionplanComponent  implements OnInit {
     } catch (error: any) {
       console.error('PDF export failed:', error);
       this.hideloader.emit();
+         this.loggingService.handleApiErrorEducationModule(
+            'Failed to export pdf content',
+            'exportAsPDF ssripaactionplan',
+            '', // Replace with the actual endpoint constant if needed
+            '',
+            (error as any)?.error?.error?.message || (error as any)?.message || 'Unknown error',
+            (error as any)?.status || 500,
+            this.device
+          );
       alert(`PDF export failed: ${error.message || 'Unknown error'}`);
     } finally {
       // Clean up

@@ -2,7 +2,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { ApiService } from 'src/app/services/api.service';
+import { LoggingService } from 'src/app/services/logging.service';
+import { APIEndpoints } from 'src/shared/endpoints';
 
 @Component({
   selector: 'pathome-healthyunhealathyquiz',
@@ -37,16 +40,21 @@ export class HealthyunhealathyquizComponent  implements OnInit {
   questions: any[] = [];
   currentIndex = 0;
   @Output() loaded = new EventEmitter<void>();
+  device:any;
   showAnswers: boolean[] = [];
 
-  constructor(private apiService: ApiService) { }
+  constructor(private loggingService: LoggingService,
+    private deviceService:DeviceDetectorService,private apiService: ApiService) {
+      this.device = this.deviceService.getDeviceInfo();
+     }
 
   ngOnInit() {
     this.loadQuiz();
   }
 
-  loadQuiz(): void {
-    this.apiService.getQuizzes().subscribe((quiz) => {
+ loadQuiz(): void {
+  this.apiService.getQuizzes().subscribe(
+    (quiz) => {
       if (quiz) {
         this.quizTitle = quiz.title;
         this.quizSubheading = quiz.subheading.replace('.', '.\n').replace(/\n\s+/, '\n');
@@ -57,11 +65,24 @@ export class HealthyunhealathyquizComponent  implements OnInit {
         this.showAnswers = new Array(this.questions.length).fill(false);
       }
       this.loaded.emit(); // Emit loaded event after quiz is loaded
-    }, (error) => {
+    },
+    (error) => {
       console.error('Error loading quiz:', error);
+
+      this.loggingService.handleApiErrorEducationModule(
+        'Failed to load quiz data',
+        'loadQuiz',
+        APIEndpoints.quiz, // Replace with actual endpoint constant or string
+        '',
+        error?.error?.error?.message || error?.message || 'Unknown error',
+        error?.status || 500,
+        this.device
+      );
+
       this.loaded.emit(); // Emit loaded event even if there's an error
-    });
-  }
+    }
+  );
+}
 
   selectOption(index: number, option: 'healthy' | 'unhealthy'): void {
     this.questions[index].selected = option;

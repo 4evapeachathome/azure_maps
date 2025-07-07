@@ -5,6 +5,8 @@ import { IonicModule } from '@ionic/angular';
 import { QRCodeComponent } from 'angularx-qrcode';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { LoggingService } from 'src/app/services/logging.service';
 
 @Component({
   selector: 'pathome-ssriparesults',
@@ -22,11 +24,17 @@ export class SsriparesultsComponent  implements OnInit,AfterViewInit {
   @ViewChild('resultContent', { static: false }) resultContent!: ElementRef;
   @ViewChild('qrCodeElement', { static: false }) qrCodeElement!: QRCodeComponent;
   qrcodeUrl: string = '';
+  device:any;
   @Output() hideloader = new EventEmitter<void>();
   @Output() showloader = new EventEmitter<void>();
   highSeverityTriggered = false;
 
-  constructor() {}
+  constructor(
+    private loggingService: LoggingService,
+  private deviceService:DeviceDetectorService,
+  ) {
+    this.device = this.deviceService.getDeviceInfo(); // Initialize device info
+  }
   // This component receives the quiz title, questions, and selected options as inputs
 
   ngOnInit() {
@@ -169,12 +177,21 @@ export class SsriparesultsComponent  implements OnInit,AfterViewInit {
       document.body.removeChild(container);
       this.hideloader.emit();
       return Promise.resolve();
-    } catch (error) {
-      console.error('PDF export failed:', error);
+    } catch (err) {
+      console.error('PDF export failed:', err);
       this.hideloader.emit();
+         this.loggingService.handleApiErrorEducationModule(
+      'Failed to export pdf content',
+      'exportAsPDF ssriresults', // Function name for logging
+      '', // Replace with the actual endpoint constant if needed
+      '',
+      (err as any)?.error?.error?.message || (err as any)?.message || 'Unknown error',
+      (err as any)?.status || 500,
+      this.device
+    );
       // Optionally show an alert or toast
       alert('Failed to export PDF. Please try again.');
-      return Promise.reject(error);
+      return Promise.reject(err);
     }
   }
 
