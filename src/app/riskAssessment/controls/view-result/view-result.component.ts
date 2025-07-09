@@ -24,8 +24,8 @@ export class ViewResultComponent  implements OnInit {
   caseNumber: string='';
   loggedInUser:any = null;
   loaded: boolean = false;
-  guidedType: string = 'self-guided'; // Default value
-  guidedTypeLabel: string = 'Self-Guided';
+  guidedType: string = 'self-directed'; // Default value
+  guidedTypeLabel: string = 'Self-Directed';
   answerSummary: any[] = [];
   daResult: any[] = [];
   assessmentTitle: string = 'Risk Assessment Results';
@@ -107,7 +107,7 @@ export class ViewResultComponent  implements OnInit {
   }
 
   private updateGuidedTypeLabel() {
-    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Directed';
   }
 
   checkSelectedAssessment(code: string) {

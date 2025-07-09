@@ -20,8 +20,8 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   loaded: boolean = false;
   ratsQuestions: any[] = [];
   scaleOptions: string[] = [];
-  guidedType: string = 'self-guided'; // Default value
-  guidedTypeLabel: string = 'Self-Guided';
+  guidedType: string = 'self-directed'; // Default value
+  guidedTypeLabel: string = 'Self-Directed';
   selectedAssessment: string = ''; 
   @Input() webGuid:any;
   hasloadedDate: boolean = false;
@@ -122,7 +122,7 @@ export class RatAssessmentQuestionsComponent  implements OnInit {
   }
 
   private updateGuidedTypeLabel() {
-    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Directed';
   }
 
   setupRatsQuestions(questions: any[], answerOptions: any[]) {
