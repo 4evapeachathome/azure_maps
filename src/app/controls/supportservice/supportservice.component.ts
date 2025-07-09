@@ -227,7 +227,6 @@ setupSearchDebounce() {
     }
 
     this.rateLimiter.recordRequest();
-    this.rateLimiter.recordRequest();
 
       this.autocompleteService.getPlacePredictions(
         {

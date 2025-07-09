@@ -159,6 +159,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       sameSite: 'Strict',
       secure: true,
     });
+    this.sessionActivityService.initializeTimers(); // Reset timers
   }
 
   expandMenu(sectionTitle: string) {
