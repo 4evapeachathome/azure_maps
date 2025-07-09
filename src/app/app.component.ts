@@ -159,6 +159,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       sameSite: 'Strict',
       secure: true,
     });
+    this.sessionActivityService.initializeTimers(); // Reset timers
   }
 
   expandMenu(sectionTitle: string) {
@@ -253,8 +254,14 @@ private shouldShowSessionAlert(): boolean {
 }
 
 async presentSessionAlert() {
-  // Prevent popup if already logged out
-  if (this.sessionAlert || !this.isUserLoggedIn()) return;
+  if (this.sessionAlert) {
+    return;
+  }
+
+  if (!this.isUserLoggedIn()) {
+    return;
+  }
+
 
   this.sessionAlert = await this.alertController.create({
     header: 'Session Expiring',
@@ -263,8 +270,8 @@ async presentSessionAlert() {
       {
         text: 'Stay Logged In',
         handler: () => {
-          this.sessionActivityService.resetSessionTimers();
-          this.sessionAlert?.dismiss(); // Explicit cleanup
+          this.stayLoggedIn();
+          this.sessionAlert?.dismiss();
           this.sessionAlert = null;
         }
       }

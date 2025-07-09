@@ -10,6 +10,8 @@ export class SessionActivityService {
   private expiryTime = 60 * 60 * 1000; // 60 minutes
 // private warningTime = 30 * 1000; // 40 seconds for testing
 // private expiryTime = 50 * 1000;
+private eventListenersBound = false;
+private resetTimersBound = this.resetTimers.bind(this);
   private warningTimer: any;
   private logoutTimer: any;
   public broadcast = new BroadcastChannel('session_channel');
@@ -33,11 +35,14 @@ export class SessionActivityService {
   });
 };
   }
-    public async initializeTimers() {
-      this.clearTimers();
+ 
+  
+  public async initializeTimers() {
+  this.clearTimers();
+
   try {
     const configMap = await firstValueFrom(this.sharedDataService.config$);
-    const sessionValueInMinutes = Number(configMap['sessionTimeoutValue']); // in minutes
+    const sessionValueInMinutes = Number(configMap['sessionTimeoutValue']);
     this.expiryTime = sessionValueInMinutes * 60 * 1000;
 
     if (sessionValueInMinutes >= 5) {
@@ -48,41 +53,42 @@ export class SessionActivityService {
       this.warningTime = this.expiryTime - 30 * 1000;
     }
 
-    // Safety check
     if (this.warningTime < 10000) this.warningTime = this.expiryTime - 10000;
-
-    console.log('✅ Timer Initialized:', {
-      expiry: this.expiryTime / 1000,
-      warning: this.warningTime / 1000
-    });
 
     this.startTracking();
   } catch (error) {
-    console.error('❌ Failed to initialize session timers from config:', error);
-    this.startTracking(); // Fallback
+    this.startTracking();
   }
 }
 
   private startTracking() {
-    this.ngZone.runOutsideAngular(() => {
+  this.ngZone.runOutsideAngular(() => {
+    if (!this.eventListenersBound) {
       this.activityEvents.forEach(event =>
-        window.addEventListener(event, this.resetTimers.bind(this))
+        window.addEventListener(event, this.resetTimersBound, true)
       );
-    });
+      this.eventListenersBound = true;
+    } else {
+    }
+  });
 
-    this.resetTimers(); // Initialize
-  }
+  this.resetTimers(); // Always start fresh
+}
 
   public resetSessionTimers() {
     this.resetTimers();
   }
 
-  clearTimers() {
-    clearTimeout(this.warningTimer);
-    clearTimeout(this.logoutTimer);
-  }
+ clearTimers() {
+  clearTimeout(this.warningTimer);
+  clearTimeout(this.logoutTimer);
+}
 
-  private resetTimers() {
+private getTimestamp(): string {
+  return new Date().toLocaleTimeString();
+}
+
+ private resetTimers() {
   const now = Date.now().toString();
   this.cookieService.set('loginTime', now, {
     path: '/',
@@ -92,13 +98,25 @@ export class SessionActivityService {
 
   this.clearTimers();
 
+
   this.warningTimer = setTimeout(() => {
     this.broadcast.postMessage({ type: 'sessionWarning' });
+
+    // ✅ Local trigger
+    this.ngZone.run(() => {
+      this.sessionWarning$.next();
+    });
   }, this.warningTime);
 
   this.logoutTimer = setTimeout(() => {
     this.broadcast.postMessage({ type: 'sessionExpired' });
-    this.broadcast.postMessage({ type: 'dismissAlert' }); 
+    this.broadcast.postMessage({ type: 'dismissAlert' });
+
+    // ✅ Local trigger
+    this.ngZone.run(() => {
+      this.sessionExpired$.next();
+      this.dismissPopup$.next();
+    });
   }, this.expiryTime);
 }
 }
