@@ -9,6 +9,7 @@ import { presentToast, Utility } from 'src/shared/utility';
 import { __await } from 'tslib';
 import { firstValueFrom } from 'rxjs';
 import { PageTitleService } from 'src/app/services/page-title.service';
+import { SessionActivityService } from 'src/app/guards/session-activity.service';
 @Component({
   selector: 'login-page',
   templateUrl: './login-page.component.html',
@@ -37,6 +38,7 @@ export class LoginPageComponent  implements OnInit {
     private cookieService: CookieService,
     private analytics:PageTitleService,
     private router: Router,
+    private sessionActivityService:SessionActivityService,
     private toastController: ToastController,
     private ngZone: NgZone
   ) {
@@ -216,7 +218,6 @@ async onSubmit() {
 
 
     await this.handleSuccessfulLogin(user.username, user);
-    
     // Tracking login event with Google Analytics   
     this.analytics.trackLogin();
 
@@ -268,6 +269,10 @@ async onSubmit() {
       sameSite: 'Strict',
       secure: true,
     });
+     
+    
+  await this.sessionActivityService.initializeTimers();
+
     this.stoploader.emit();
   }
 

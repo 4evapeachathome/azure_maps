@@ -4,6 +4,7 @@ import { catchError, forkJoin, map, Observable, tap, throwError } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from 'src/environments/environment';
 import { APIEndpoints } from 'src/shared/endpoints';
+import { MenuService } from 'src/shared/menu.service';
 
 interface QueryOptions {
   fields?: string[];
@@ -34,7 +35,7 @@ interface StateLawsResponse {
   providedIn: 'root'
 })
 export class ApiService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private sharedService:MenuService) {}
 
   private createHeaders(token?: string): HttpHeaders {
     let headers = new HttpHeaders();
@@ -1546,6 +1547,46 @@ getAssessmentResponse(url: string): Observable<any> {
     })
   );
 }
+
+//get configs
+getConfigs(): Observable<any> {
+  return this.getWithQuery(APIEndpoints.getConfig, {
+    fields: ['configName', 'configValue'],
+  }, environment.apitoken).pipe(
+    map((res: any) => {
+      const configMap: { [key: string]: string } = {};
+
+      const decryptField = (encryptedValue: any): string | null => {
+        if (!encryptedValue) return null;
+
+        try {
+          const bytes = CryptoJS.AES.decrypt(encryptedValue.toString().trim(), environment.secretKey);
+          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+          return decrypted || null;
+        } catch (error) {
+          console.warn('Decryption failed for:', encryptedValue, error);
+          return null;
+        }
+      };
+
+      for (const item of res.data) {
+        const key = item.configName || item?.configName;
+        const encryptedVal = item.configValue || item?.configValue;
+
+        const decryptedVal = decryptField(encryptedVal);
+        configMap[key] = decryptedVal ?? '';
+      }
+
+      this.sharedService.setConfig(configMap); // ✅ Store decrypted values
+      return configMap;
+    }),
+    catchError((error) => {
+      console.error('Error fetching getConfigs:', error);
+      return throwError(() => new Error('An error occurred while fetching config values.'));
+    })
+  );
+}
+
 
 
 }
