@@ -254,8 +254,17 @@ private shouldShowSessionAlert(): boolean {
 }
 
 async presentSessionAlert() {
-  // Prevent popup if already logged out
-  if (this.sessionAlert || !this.isUserLoggedIn()) return;
+  if (this.sessionAlert) {
+    console.log(`[${new Date().toLocaleTimeString()}] 🚫 Alert already shown`);
+    return;
+  }
+
+  if (!this.isUserLoggedIn()) {
+    console.log(`[${new Date().toLocaleTimeString()}] 🚫 User not logged in, skipping alert`);
+    return;
+  }
+
+  console.log(`[${new Date().toLocaleTimeString()}] 🔔 Showing session alert`);
 
   this.sessionAlert = await this.alertController.create({
     header: 'Session Expiring',
@@ -264,8 +273,9 @@ async presentSessionAlert() {
       {
         text: 'Stay Logged In',
         handler: () => {
-          this.sessionActivityService.resetSessionTimers();
-          this.sessionAlert?.dismiss(); // Explicit cleanup
+          console.log(`[${new Date().toLocaleTimeString()}] ✅ Stay Logged In clicked — resetting timers`);
+          this.stayLoggedIn();
+          this.sessionAlert?.dismiss();
           this.sessionAlert = null;
         }
       }
@@ -308,6 +318,7 @@ initializeToggleRef() {
 
 private subscribeToSessionEvents() {
   this.sessionActivityService.sessionWarning$.subscribe(() => {
+    console.log('[AppComponent] ⚠️ Session warning received');
     setTimeout(() => {
       if (this.shouldShowSessionAlert()) {
         this.presentSessionAlert();
@@ -316,6 +327,7 @@ private subscribeToSessionEvents() {
   });
 
   this.sessionActivityService.sessionExpired$.subscribe(() => {
+    console.log('[AppComponent] ⛔ Session expired received');
     if (this.sessionAlert) {
       this.sessionAlert.dismiss().then(() => {
         this.sessionAlert = null;
@@ -328,6 +340,7 @@ private subscribeToSessionEvents() {
   });
 
   this.sessionActivityService.dismissPopup$.subscribe(() => {
+    console.log('[AppComponent] 🔕 Dismiss alert received');
     if (this.sessionAlert) {
       this.sessionAlert.dismiss().then(() => {
         this.sessionAlert = null;

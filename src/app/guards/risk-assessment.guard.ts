@@ -7,7 +7,7 @@ import { SessionActivityService } from './session-activity.service';
   providedIn: 'root'
 })
 export class RiskAssessmentGuard implements CanActivate {
-  constructor(private router: Router,private cookieService: CookieService,private sessionActivityService:SessionActivityService) {}
+  constructor(private router: Router,private cookieService: CookieService) {}
   
   canActivate(): boolean {
     const encodedUsername = this.cookieService.get('username');
@@ -21,7 +21,6 @@ export class RiskAssessmentGuard implements CanActivate {
         const username = atob(encodedUsername);
   
         if (username && currentTime - loginTimestamp < maxSessionDuration) {
-          this.sessionActivityService.initializeTimers();
           return true;
         }
       } catch {
