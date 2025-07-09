@@ -25,7 +25,7 @@ export class AssessmentPageComponent  implements OnInit {
   selectedAssessment: string | null = null;
   caseNumber: string = '';
   loaded: boolean = false;
-  guidedType: 'self-guided' | 'staff-guided' = 'staff-guided';
+  guidedType: 'self-directed' | 'staff-guided' = 'staff-guided';
   assessmentTypes: { id: number; name: string; description: string; navigate:string, documentId: string }[] = [];
   guidedTypeLabel: string = 'Staff-Guided';
   assessmentNumber: string = '';
@@ -202,7 +202,7 @@ export class AssessmentPageComponent  implements OnInit {
 
   private updateGuidedTypeLabel() {
     // Update the label based on the selected guidedType
-    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Directed';
     
   }
 

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { SessionActivityService } from './session-activity.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RiskAssessmentGuard implements CanActivate {
-  constructor(private router: Router,private cookieService: CookieService,) {}
-
+  constructor(private router: Router,private cookieService: CookieService) {}
   
   canActivate(): boolean {
     const encodedUsername = this.cookieService.get('username');

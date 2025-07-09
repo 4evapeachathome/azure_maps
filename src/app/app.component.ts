@@ -4,7 +4,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './controls/footer/footer.component';
 import { Location } from '@angular/common';
 import { HeaderComponent } from "./controls/header/header.component";
-import { BehaviorSubject, filter, forkJoin, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, forkJoin, of, Subscription, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { StatusBar, Style } from '@capacitor/status-bar';
@@ -141,7 +141,6 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     'dangerassessment', 'viewresult'
   ];
   constructor(
-    private sessionActivityService: SessionActivityService,
     private alertController: AlertController,
     private cookieService: CookieService,
     private platform: Platform,
@@ -153,6 +152,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     private apiService: ApiService,
     private sharedDataService: MenuService,
     private pageService: PageTitleService,
+    private sessionActivityService: SessionActivityService,
   ) {
     this.device = this.deviceService.getDeviceInfo();
   }
@@ -165,6 +165,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       sameSite: 'Strict',
       secure: true,
     });
+    this.sessionActivityService.initializeTimers(); // Reset timers
   }
 
   expandMenu(sectionTitle: string) {
@@ -176,6 +177,7 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
       await this.sessionAlert.dismiss();
       this.sessionAlert = null;
     }
+    this.sessionActivityService.clearTimers();
     this.pageService.trackLogout();
   
     this.cookieService.delete('username');
@@ -186,74 +188,55 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
   
   
-  ngOnInit() {
-    this.loadInitialData();
+ ngOnInit() {
+  this.loadInitialData();
 
-     this.sharedDataService.contentHeight$.subscribe((height) => {
-      this.sidebarHeight = height > 0 ? `${height}px` : 'auto';
+  this.sharedDataService.contentHeight$.subscribe((height) => {
+    this.sidebarHeight = height > 0 ? `${height}px` : 'auto';
+  });
+
+  if (Capacitor.isNativePlatform()) {
+    this.platform.ready().then(() => {
+      StatusBar.setOverlaysWebView({ overlay: false });
+      StatusBar.setStyle({ style: Style.Dark });
     });
-  
-    // Set up native platform status bar if needed
-    if (Capacitor.isNativePlatform()) {
-      this.platform.ready().then(() => {
-        StatusBar.setOverlaysWebView({ overlay: false });
-        StatusBar.setStyle({ style: Style.Dark });
-      });
+  }
+
+ this.subscribeToSessionEvents();
+combineLatest([
+    this.sharedDataService.config$.pipe(filter(cfg => !!cfg)), // Wait until config is ready
+    of(this.cookieService.get('username')),
+    of(this.cookieService.get('loginTime'))
+  ])
+  .pipe(take(1))
+  .subscribe(([config, encodedUsername, loginTime]) => {
+    if (encodedUsername && loginTime) {
+      this.sessionActivityService.initializeTimers(); // ✅ Now safe to call
     }
-  
-    // Listen to router navigation changes
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        const url = event.urlAfterRedirects;
-        const currentPath = url.split('/')[1]?.split('?')[0]; // Without leading slash
-        
-      
-        // Check if current route is a risk assessment route
-        this.isRiskAssessment = this.riskRoutes.includes(currentPath);
+  });
 
-          //tracking page view with Google Analytics
-        const pageTitle = this.pageService.getPageTitle(url);
+  // 🔝 Router events
+  this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe((event: NavigationEnd) => {
+      const url = event.urlAfterRedirects;
+      const currentPath = url.split('/')[1]?.split('?')[0];
 
+      this.isRiskAssessment = this.riskRoutes.includes(currentPath);
+      const pageTitle = this.pageService.getPageTitle(url);
       const deviceType = window.innerWidth <= 768 ? 'mobile' : 'desktop';
 
       this.pageService.trackPageView(url, pageTitle, this.isRiskAssessment ? 'Risk Assessment' : 'Education', deviceType);
-  
-  
-        // Signal that route check is complete
-        this.routeReady$.next(true);
-  
-        // Expand/collapse menu logic based on current path
-        this.expandMenu(currentPath);
-  
-        // Check whether session alert should stay active
-        const stillValid = this.sessionAlertRoutes.includes(currentPath);
-        if (!stillValid && this.sessionAlert) {
-          this.sessionAlert.dismiss();
-          this.sessionAlert = null;
-        }
-      });
-  
-    // Session warning alert logic
-    this.sessionActivityService.sessionWarning$.subscribe(() => {
-      if (this.shouldShowSessionAlert()) {
-        this.presentSessionAlert();
-      }
-    });
-  
-    // Session expiration logic
-    this.sessionActivityService.sessionExpired$.subscribe(() => {
-      if (this.isUserLoggedIn()) {
-        this.logout();
-      }
-  
-      if (this.sessionAlert) {
+      this.routeReady$.next(true);
+      this.expandMenu(currentPath);
+
+      const stillValid = this.sessionAlertRoutes.includes(currentPath);
+      if (!stillValid && this.sessionAlert) {
         this.sessionAlert.dismiss();
         this.sessionAlert = null;
       }
     });
-  }
-
+}
 
 private isUserLoggedIn(): boolean {
   return this.cookieService.check('username') &&
@@ -277,16 +260,24 @@ private shouldShowSessionAlert(): boolean {
 }
 
 async presentSessionAlert() {
-  if (this.sessionAlert) return; // prevent duplicate popups
+  if (this.sessionAlert) {
+    return;
+  }
+
+  if (!this.isUserLoggedIn()) {
+    return;
+  }
+
 
   this.sessionAlert = await this.alertController.create({
     header: 'Session Expiring',
-    message: 'You will be logged out in 5 minutes due to inactivity.',
+    message: 'You will be logged out shortly due to inactivity.',
     buttons: [
       {
         text: 'Stay Logged In',
         handler: () => {
-          this.sessionActivityService.resetSessionTimers(); // Optionally restart timer
+          this.stayLoggedIn();
+          this.sessionAlert?.dismiss();
           this.sessionAlert = null;
         }
       }
@@ -296,7 +287,6 @@ async presentSessionAlert() {
 
   await this.sessionAlert.present();
 }
-
 
 ngAfterViewInit() {
 
@@ -327,15 +317,51 @@ initializeToggleRef() {
   } else {
   }
 }
+
+private subscribeToSessionEvents() {
+  this.sessionActivityService.sessionWarning$.subscribe(() => {
+    setTimeout(() => {
+      if (this.shouldShowSessionAlert()) {
+        this.presentSessionAlert();
+      }
+    }, 500);
+  });
+
+  this.sessionActivityService.sessionExpired$.subscribe(() => {
+    if (this.sessionAlert) {
+      this.sessionAlert.dismiss().then(() => {
+        this.sessionAlert = null;
+      });
+    }
+
+    if (this.shouldShowSessionAlert() && this.isUserLoggedIn()) {
+      this.logout();
+    }
+  });
+
+  this.sessionActivityService.dismissPopup$.subscribe(() => {
+    if (this.sessionAlert) {
+      this.sessionAlert.dismiss().then(() => {
+        this.sessionAlert = null;
+      });
+    }
+  });
+}
   
 
   loadInitialData() {
   forkJoin([
     this.apiService.getServiceFilterOptions(),
     this.apiService.getAllSupportServices(this.endPoint),
-    this.apiService.getSupportServiceDistances()
+    this.apiService.getSupportServiceDistances(),
+    this.apiService.getConfigs()
   ]).subscribe({
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<AUTO GENERATED BY CONFLICT EXTENSION<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< UI-error-logs-integration
     next: ([filtersResponse, orgsResponse, distances]: [any, OrganizationResponse, any]) => {
+====================================AUTO GENERATED BY CONFLICT EXTENSION====================================
+    next: ([filtersResponse, orgsResponse, distances, config]: [any, OrganizationResponse, any, any]) => {
+      // Set data into shared service
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AUTO GENERATED BY CONFLICT EXTENSION>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> google_analytics
       this.sharedDataService.setFilterOptions(filtersResponse.data || []);
 
       const seenNames = new Set<string>();
@@ -349,6 +375,8 @@ initializeToggleRef() {
       this.sharedDataService.setStateDistances(distances);
 
       this.sharedDataService.setDataLoaded(true);
+
+      this.loadApiKeysAndScripts();
     },
     error: (err: any) => {
       console.error("Error loading initial data", err);
@@ -370,6 +398,49 @@ initializeToggleRef() {
   });
 }
 
+async loadApiKeysAndScripts() {
+  try {
+    const configMap = await firstValueFrom(this.sharedDataService.config$); // Encrypted values
+
+    const googleMapsApiKey = configMap['googleMapsAPIKey'];
+    const recaptchaApiKey = configMap['googleCaptchaAPIKey'];
+    const googleAnalyticsId = configMap['googleAnalyticsId'];
+    // Inject Google Maps
+    const mapsScript = document.createElement('script');
+    mapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=marker,places&language=en&callback=Function.prototype&loading=async`;
+    mapsScript.async = true;
+    document.head.appendChild(mapsScript);
+
+    // Inject reCAPTCHA
+    const recaptchaScript = document.createElement('script');
+    recaptchaScript.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`;
+    recaptchaScript.async = true;
+    recaptchaScript.defer = true;
+    document.head.appendChild(recaptchaScript);
+
+    // Inject Google Analytics
+    if (!window['Capacitor'] || (window['Capacitor'] && !window['Capacitor'].isNativePlatform?.())) {
+      const gtagScript = document.createElement('script');
+      gtagScript.async = true;
+      gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`;
+      document.head.appendChild(gtagScript);
+
+      window['dataLayer'] = window['dataLayer'] || [];
+      window['gtag'] = function () { 
+        if (window['dataLayer']) {
+          window['dataLayer'].push(arguments);
+        }
+      };
+      window['gtag']('js', new Date().toString());
+      if (googleAnalyticsId) {
+        window['gtag']('config', googleAnalyticsId);
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load encrypted API keys:', error);
+  }
+}
+
   closeMobileMenu() {
     if (this.isMobile && this.isMenuOpen) {
       this.isMenuOpen = false;
@@ -377,5 +448,7 @@ initializeToggleRef() {
   }
 
   ngOnDestroy() {
-  }
+  this.sessionActivityService.clearTimers();
+  this.sessionActivityService.broadcast?.close(); // Optional, for tab cleanup
+}
 }

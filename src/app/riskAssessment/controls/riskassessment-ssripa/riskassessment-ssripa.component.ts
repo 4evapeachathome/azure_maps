@@ -23,8 +23,8 @@ export class RiskassessmentSSripaComponent  implements OnInit {
   loggedInUser: any = null;
   caseNumber: string = '';
 
-  guidedType: string = 'self-guided'; // Default value
-  guidedTypeLabel: string = 'Self-Guided';
+  guidedType: string = 'self-directed'; // Default value
+  guidedTypeLabel: string = 'Self-Directed';
 @Input() reloadFlag: boolean = false; // Input property to trigger reload
   quizTitle = '';
 sripa: any[] = [];
@@ -276,7 +276,7 @@ device: any;
   }
 
   private updateGuidedTypeLabel() {
-    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Directed';
   }
 
 

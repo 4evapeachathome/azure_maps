@@ -26,8 +26,8 @@ export class DaAssessmentQuestionsComponent  implements OnInit {
   daAssessment:any;
   hitsQuestions: any[] = [];
   scaleOptions: string[] = [];
-  guidedType: string = 'self-guided'; // Default value
-  guidedTypeLabel: string = 'Self-Guided';
+  guidedType: string = 'self-directed'; // Default value
+  guidedTypeLabel: string = 'Self-Directed';
   @Input() daGuid:any;
   daQues:any;
   hasloadedDate: boolean = false;
@@ -157,7 +157,7 @@ initializeAssessmentData(data: any[]) {
 }
 
    private updateGuidedTypeLabel() {
-    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Directed';
   }
   
 

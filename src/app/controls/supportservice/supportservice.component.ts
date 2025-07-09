@@ -12,6 +12,7 @@ import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 's
 import { MenuService } from 'src/shared/menu.service';
 import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 declare var google: any;
 
@@ -225,7 +226,6 @@ setupSearchDebounce() {
       return;
     }
 
-    this.rateLimiter.recordRequest();
     this.rateLimiter.recordRequest();
 
       this.autocompleteService.getPlacePredictions(
@@ -549,37 +549,42 @@ onSearchClear() {
   filterSearchTerm: string = '';
 
 
-
-
-
   async getCurrentPosition() {
-    try {
-       this.http.get('https://ipapi.co/json/').subscribe((data: any) => {
-    this.latitude = data.latitude;
-    this.longitude = data.longitude;
-    this.geolocationEnabled = true;
-    debugger;
-    this.locationcard = true;
-    if (this.latitude !== undefined && this.longitude !== undefined) {
-      this.center = { lat: this.latitude, lng: this.longitude };
-    }
+  try {
+    const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${environment.findLocationAPIKey}`;
 
-    this.reverseGeocodeForState(this.center);
-    this.updateSearchedLocationMarker(this.center);
-    if (this.latitude !== undefined && this.longitude !== undefined) {
-      this.filterNearbySupportCenters(this.latitude, this.longitude);
-    }
-  });
+    this.http.get(url).subscribe(async (json: any) => {
+      const lat = Number(json.latitude);
+      const lng = Number(json.longitude);
 
-    } catch (error: any) { 
-        const toast = await this.toastController.create({
-          message: 'Could not retrieve your location. Try again later.',
-          duration: 3000,
-          position: 'bottom'
-        });
-        await toast.present();
-    }
+      if (!isNaN(lat) && !isNaN(lng)) {
+        this.latitude = lat;
+        this.longitude = lng;
+        this.center = { lat, lng };
+
+        this.geolocationEnabled = true;
+        this.locationcard = true;
+
+        await this.reverseGeocodeForState(this.center);
+        this.updateSearchedLocationMarker(this.center);
+        this.filterNearbySupportCenters(lat, lng);
+      } else {
+        await this.showToast('Invalid location data received.');
+      }
+    });
+  } catch (error) {
+    await this.showToast('Could not retrieve your location. Try again later.');
   }
+}
+
+private async showToast(message: string) {
+  const toast = await this.toastController.create({
+    message,
+    duration: 3000,
+    position: 'bottom'
+  });
+  await toast.present();
+}
 
   private async reverseGeocodeForState(location: { lat: number, lng: number }) {
     try {

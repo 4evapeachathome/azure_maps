@@ -203,7 +203,7 @@ submitAssessmentResponse(): Observable<any> {
       AssessmentGuid: this.ssripaGuid,
       support_service: null,
       answeredHighratedquestion:isHighSeverityYes,
-      guidedType: 'self-guided',
+      guidedType: 'self-directed',
       CaseNumber: '', // Replace with actual case number if available
       IsAssessmentfromEducationModule: true,
       assessment_type:null,

@@ -40,8 +40,8 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
   @ViewChild('riskMeterRef') summaryPage!: SummarypageComponent;
   showbarcode: boolean = false;
   isSSripa:boolean = false;
-  guidedType: string = 'self-guided'; // Default value
-  guidedTypeLabel: string = 'Self-Guided';
+  guidedType: string = 'self-directed'; // Default value
+  guidedTypeLabel: string = 'Self-Directed';
   answerSummary: any[] = [];
   assessmentTitle: string = 'Risk Assessment Result';
   QrcodeUrl: string = ''; // QR code content
@@ -213,7 +213,7 @@ export class AssessmentsummaryComponent  implements OnInit, AfterViewInit {
 
 
   private updateGuidedTypeLabel() {
-    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Directed';
   }
 
 
@@ -258,27 +258,21 @@ container.appendChild(descriptionDiv);
       leftSection.style.display = 'flex';
       leftSection.style.flexDirection = 'column';
       leftSection.style.gap = '10px';
+      // Add result info
+      const resultInfo = document.createElement('div');
+      resultInfo.style.display = 'inline-block';
+      resultInfo.style.minWidth = '300px';  // Ensure enough space for text
+      resultInfo.style.whiteSpace = 'normal';
+
+      resultInfo.innerHTML = `<p style="white-space: nowrap;">Thank you for completing the assessment.</strong>.</p>`;
+      leftSection.appendChild(resultInfo);
 
       // Add user info (Case Number)
       const userInfo = document.createElement('div');
       userInfo.innerHTML = `<p><strong>Case Number:</strong> ${this.caseNumber || ''}</p>`;
       leftSection.appendChild(userInfo);
 
-      // Add result info
-      const resultInfo = document.createElement('div');
-      resultInfo.style.display = 'inline-block';
-      resultInfo.style.minWidth = '300px';  // Ensure enough space for text
-      resultInfo.style.whiteSpace = 'normal';
-      if (sessionStorage.getItem('isHits') === 'true') {
-        resultInfo.innerHTML = `<p style="white-space: nowrap;">Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
-      } else if (this.isWeb) {
-        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
-      } else if (sessionStorage.getItem('isSSripa') === 'true') {
-        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong> assessment.</p>`;
-      } else if (sessionStorage.getItem('isDanger') === 'true') {
-        resultInfo.innerHTML = `<p>Thanks for taking the <strong>${this.selectedAssessment}</strong>.</p>`;
-      }
-      leftSection.appendChild(resultInfo);
+      
 
       mainRow.appendChild(leftSection);
 
@@ -346,7 +340,7 @@ container.appendChild(descriptionDiv);
           ${this.riskValue ? `<p><strong>Your score:</strong> <span><strong>${this.riskValue}</span></strong></p>` : ''}
           ${this.guidedType === 'staff-guided' ? 
             `<p><strong>Level of Danger:</strong> ${this.levelofdanger || ''}</p>` : ''}
-          ${this.guidedType === 'self-guided' ? 
+          ${this.guidedType === 'self-directed' ? 
               `<p><strong>Please talk to your service provider about what the Danger Assessment means in your situation.</p>` : ''}
         `;
       }
@@ -360,7 +354,7 @@ container.appendChild(descriptionDiv);
         scoreInfo.innerHTML = `
           ${this.guidedType === 'staff-guided' ? 
             `<p><strong>Please expediate action.</strong></p>` : ''}
-          ${this.guidedType === 'self-guided' ? 
+          ${this.guidedType === 'self-directed' ? 
               `<p><strong>Take action immediately; talk to your service providers for assistance.</p>` : ''}
         `;
       }

@@ -26,8 +26,8 @@ export class HitsassessmentComponent  implements OnInit {
   loaded: boolean = false;
   hitsQuestions: any[] = [];
   scaleOptions: string[] = [];
-  guidedType: string = 'self-guided'; // Default value
-  guidedTypeLabel: string = 'Self-Guided';
+  guidedType: string = 'self-directed'; // Default value
+  guidedTypeLabel: string = 'Self-Directed';
   @Input() hitsGuid:any;
   hasloadedDate: boolean = false;
   hasValidationError: boolean = false; // Flag to track validation errors
@@ -125,7 +125,7 @@ if (cachedHits && cachedHits.questions && cachedHits.questions.length > 0) {
 
 
   private updateGuidedTypeLabel() {
-    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Guided';
+    this.guidedTypeLabel = this.guidedType === 'staff-guided' ? 'Staff-Guided' : 'Self-Directed';
   }
 
   
