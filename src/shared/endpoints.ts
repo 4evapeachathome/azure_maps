@@ -86,4 +86,8 @@ export const APIEndpoints = {
     getDaAssessmentByGuid :`${environment.apiHost}/api/da-assessment-responses/by-guid?AssessmentGuid=`,
     getHitsAssessmentByGuid :`${environment.apiHost}/api/hits-assessment-responses/by-guid?AssessmentGuid=`,
     getSSripaAssessmentByGuid :`${environment.apiHost}/api/ssripa-assessment-responses/by-guid?AssessmentGuid=`,
+
+    //Get config url
+    getConfig :`${environment.apiHost}/api/configs`,
+
   }

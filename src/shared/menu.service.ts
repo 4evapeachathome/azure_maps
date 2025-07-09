@@ -4,6 +4,7 @@ import { AlertController } from '@ionic/angular';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PageTitleService } from 'src/app/services/page-title.service';
+import { environment } from 'src/environments/environment';
 
    //Hits Assessment
    interface HitsAssessmentData {
@@ -45,6 +46,14 @@ export class MenuService {
   setContentHeight(height: number) {
     this.contentHeightSubject.next(height);
   }
+
+  //Config
+  private configSubject = new BehaviorSubject<any>(null);
+  config$ = this.configSubject.asObservable();
+
+setConfig(config: any) {
+  this.configSubject.next(config);
+}
 
   private ratsAssessmentData: RatsAssessmentData | null = null;
   private ssripaDataSubject = new BehaviorSubject<any[] | null>(null);
@@ -193,7 +202,6 @@ menuLoaded$ = this.menuLoadedSubject.asObservable();
 setMenuLoaded(loaded: boolean) {
   this.menuLoadedSubject.next(loaded);
 }
-
     
   async logout() {
     const alert = await this.alertController.create({
