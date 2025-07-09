@@ -1,13 +1,23 @@
 import { Injectable } from '@angular/core';
 import { FirebaseAnalytics } from '@capacitor-firebase/analytics';
 import { Capacitor } from '@capacitor/core';
+import { firstValueFrom } from 'rxjs';
+import { MenuService } from 'src/shared/menu.service';
 
 
 @Injectable({ providedIn: 'root' })
 export class PageTitleService {
   private isWeb = !Capacitor.isNativePlatform();
+  private gtagReady!: Promise<void>;
+private gtagReadyResolver!: () => void;
 
-  constructor() {}
+  constructor(private sharedDataService:MenuService) {
+    if (this.isWeb) {
+    this.gtagReady = new Promise((resolve) => {
+      this.gtagReadyResolver = resolve;
+    });
+  }
+  }
 
   private pageTitles: { [key: string]: string } = {
     '/home': 'Home Page',
@@ -35,22 +45,49 @@ export class PageTitleService {
     '/ssripariskassessment': 'SSRIPA Risk Assessment'
   };
 
+  async initializeGoogleAnalytics() {
+     const configMap = await firstValueFrom(this.sharedDataService.config$);
+        const gaId = configMap['googleAnalyticsId'];
+  if (!this.isWeb || !gaId) return;
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+  script.onload = () => {
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () {
+      window.dataLayer?.push(arguments);
+    };
+
+    window.gtag('js', new Date().toISOString());
+    window.gtag('config', gaId);
+
+    this.gtagReadyResolver(); // ✅ resolve readiness
+  };
+  document.head.appendChild(script);
+}
+
   getPageTitle(url: string): string {
     const cleanUrl = url.split('?')[0].split('#')[0];
     return this.pageTitles[cleanUrl] || 'Unknown Page';
   }
 
   private async safeTrack(eventName: string, params: any = {}) {
-    if (this.isWeb && typeof window !== 'undefined' && typeof window.gtag === 'function') {
+  if (this.isWeb && typeof window !== 'undefined') {
+    await this.gtagReady; // ✅ wait for gtag to be ready
+    if (typeof window.gtag === 'function') {
       window.gtag('event', eventName, params);
-    } else {
-      try {
-        await FirebaseAnalytics.logEvent({ name: eventName, params });
-      } catch (err) {
-        console.warn('Analytics skipped (native fallback failed):', eventName, params);
-      }
+      return;
     }
   }
+
+  // Fallback to native Firebase Analytics
+  try {
+    await FirebaseAnalytics.logEvent({ name: eventName, params });
+  } catch (err) {
+    console.warn('Analytics skipped (native fallback failed):', eventName, params);
+  }
+}
 
   trackPageView(path: string, title: string, module?: string, deviceType?: string) {
   this.safeTrack('page_view', {
