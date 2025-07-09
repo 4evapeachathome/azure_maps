@@ -22,7 +22,6 @@ private resetTimersBound = this.resetTimers.bind(this);
   constructor(private cookieService: CookieService, private ngZone: NgZone, private sharedDataService: MenuService) {
     this.broadcast.onmessage = (event) => {
   const { type } = event.data;
-  console.log('🔄 Broadcast received', type);
 
   this.ngZone.run(() => {
     if (type === 'sessionWarning') {
@@ -40,7 +39,6 @@ private resetTimersBound = this.resetTimers.bind(this);
   
   public async initializeTimers() {
   this.clearTimers();
-  console.log('Initializing timers');
 
   try {
     const configMap = await firstValueFrom(this.sharedDataService.config$);
@@ -57,10 +55,8 @@ private resetTimersBound = this.resetTimers.bind(this);
 
     if (this.warningTime < 10000) this.warningTime = this.expiryTime - 10000;
 
-    console.log('✅ Timers set', { expiry: this.expiryTime, warning: this.warningTime });
     this.startTracking();
   } catch (error) {
-    console.log('❌ Failed to load config, using fallback timers', error);
     this.startTracking();
   }
 }
@@ -68,13 +64,11 @@ private resetTimersBound = this.resetTimers.bind(this);
   private startTracking() {
   this.ngZone.runOutsideAngular(() => {
     if (!this.eventListenersBound) {
-      console.log('Binding user activity listeners');
       this.activityEvents.forEach(event =>
         window.addEventListener(event, this.resetTimersBound, true)
       );
       this.eventListenersBound = true;
     } else {
-      console.log('Activity listeners already bound');
     }
   });
 
@@ -86,7 +80,6 @@ private resetTimersBound = this.resetTimers.bind(this);
   }
 
  clearTimers() {
-  console.log('Clearing existing timers');
   clearTimeout(this.warningTimer);
   clearTimeout(this.logoutTimer);
 }
@@ -105,10 +98,8 @@ private getTimestamp(): string {
 
   this.clearTimers();
 
-  console.log(`[${this.getTimestamp()}] 🟢 Activity detected - Resetting timers`);
 
   this.warningTimer = setTimeout(() => {
-    console.log(`[${this.getTimestamp()}] ⚠️ Warning timer triggered`);
     this.broadcast.postMessage({ type: 'sessionWarning' });
 
     // ✅ Local trigger
@@ -118,7 +109,6 @@ private getTimestamp(): string {
   }, this.warningTime);
 
   this.logoutTimer = setTimeout(() => {
-    console.log(`[${this.getTimestamp()}] ⛔ Logout timer triggered`);
     this.broadcast.postMessage({ type: 'sessionExpired' });
     this.broadcast.postMessage({ type: 'dismissAlert' });
 
