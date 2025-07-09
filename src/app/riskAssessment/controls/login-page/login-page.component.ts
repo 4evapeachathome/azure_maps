@@ -44,7 +44,7 @@ export class LoginPageComponent  implements OnInit {
     private cookieService: CookieService,
     private analytics:PageTitleService,
     private router: Router,
-    sessionActivityService:SessionActivityService,
+    private sessionActivityService:SessionActivityService,
     private loggingService: LoggingService,
     private deviceService: DeviceDetectorService,
     private toastController: ToastController,
