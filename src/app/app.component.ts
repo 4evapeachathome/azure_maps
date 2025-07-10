@@ -382,7 +382,7 @@ async loadApiKeysAndScripts() {
 
     const googleMapsApiKey = configMap['googleMapsAPIKey'];
     const recaptchaApiKey = configMap['googleCaptchaAPIKey'];
-    //const googleAnalyticsId = configMap['googleAnalyticsId'];
+    const googleAnalyticsId = configMap['googleAnalyticsId'];
     // Inject Google Maps
     const mapsScript = document.createElement('script');
     mapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=marker,places&language=en&callback=Function.prototype&loading=async`;
@@ -396,28 +396,25 @@ async loadApiKeysAndScripts() {
     recaptchaScript.defer = true;
     document.head.appendChild(recaptchaScript);
 
-//     if (!Capacitor.isNativePlatform()) {
-// const gtagScript = document.createElement('script');
-// gtagScript.async = true;
-// gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`;
-
-// gtagScript.onload = () => {
-//   window['dataLayer'] = window['dataLayer'] || [];
-//   window['gtag'] = function () {
-//     if (window['dataLayer']) {
-//       window['dataLayer'].push(arguments);
-//     }
-//   };
-
-//   window['gtag']('js', new Date().toISOString());
-//   window['gtag']('config', googleAnalyticsId);
-
-//   // ✅ Now it's safe to send events
-//   window['gtag']('event', 'login', { method: 'Google' });
-// };
-
-// document.head.appendChild(gtagScript);
-// }  
+    if (!Capacitor.isNativePlatform() && googleAnalyticsId) {
+      const existing = document.querySelector(`script[src*="gtag/js?id=${googleAnalyticsId}"]`);
+      if (!existing) {
+        const gtagScript = document.createElement('script');
+        gtagScript.async = true;
+        gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`;
+        gtagScript.onload = () => {
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () {
+            if (window.dataLayer) {
+              window.dataLayer.push(arguments);
+            }
+          };
+          window.gtag('js', new Date().toISOString());
+          window.gtag('config', googleAnalyticsId);
+        };
+        document.head.appendChild(gtagScript);
+      }
+    }
   } catch (error) {
     console.error('Failed to load encrypted API keys:', error);
   }
