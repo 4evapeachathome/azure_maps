@@ -391,7 +391,7 @@ export class UsaMapComponent {
     private deviceService: DeviceDetectorService,
      private platform: Platform) 
      { 
-    this.deviceService = this.device.getDeviceInfo();
+    this.device = this.deviceService.getDeviceInfo();
     this.isMobile = this.platform.is('android') || this.platform.is('ios');
     this.getUSLawsbystateData();
   }
