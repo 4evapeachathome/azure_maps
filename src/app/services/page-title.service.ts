@@ -41,17 +41,20 @@ export class PageTitleService {
   }
 
   private async safeTrack(eventName: string, params: any = {}) {
-    if (this.isWeb && typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', eventName, params);
-    } else {
-      try {
-        await FirebaseAnalytics.logEvent({ name: eventName, params });
-      } catch (err) {
-        console.warn('Analytics skipped (native fallback failed):', eventName, params);
-      }
-    }
+  if (this.isWeb && typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    window.gtag('event', eventName, params);
+    return;
   }
 
+  // Native fallback only
+  if (!this.isWeb) {
+    try {
+      await FirebaseAnalytics.logEvent({ name: eventName, params });
+    } catch (err) {
+      console.warn('Analytics skipped (native fallback failed):', eventName, params, err);
+    }
+  }
+}
   trackPageView(path: string, title: string, module?: string, deviceType?: string) {
   this.safeTrack('page_view', {
     page_path: path,
