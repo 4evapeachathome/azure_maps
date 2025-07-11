@@ -1,11 +1,8 @@
+export {};
+
 declare global {
   interface Window {
-    Capacitor?: {
-      isNativePlatform?: () => boolean;
-    };
+    gtag: (...args: any[]) => void;
     dataLayer?: any[];
-    gtag: (command: string, targetId: string, params?: any) => void;
   }
 }
-
-export {};
