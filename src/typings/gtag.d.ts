@@ -1,7 +1,8 @@
-export {}; // Make this file an external module
+export {};
 
 declare global {
   interface Window {
-    gtag: (command: string, targetId: string, params?: any) => void;
+    dataLayer?: any[];
+    gtag: (...args: any[]) => void;
   }
 }

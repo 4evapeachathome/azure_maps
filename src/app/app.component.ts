@@ -409,7 +409,7 @@ async loadApiKeysAndScripts() {
               window.dataLayer.push(arguments);
             }
           };
-          window.gtag('js', new Date().toISOString());
+          window.gtag('js', new Date());
           window.gtag('config', googleAnalyticsId);
         };
         document.head.appendChild(gtagScript);
