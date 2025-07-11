@@ -123,6 +123,8 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
   routeReady$ = new BehaviorSubject<boolean>(false);
   showSessionWarning = false;
   isMenuOpen = true;
+  gtagReady!: Promise<void>;
+private gtagReadyResolver!: () => void;
   public readonly endPoint : string = APIEndpoints.supportService;
   private initializedToggle: boolean = false;
   private readonly riskRoutes = [
@@ -149,6 +151,9 @@ export class AppComponent implements OnInit,OnDestroy,AfterViewInit  {
     private pageService: PageTitleService,
     private sessionActivityService: SessionActivityService,
   ) {
+     this.gtagReady = new Promise((resolve) => {
+    this.gtagReadyResolver = resolve;
+  });
   }
 
   stayLoggedIn() {
@@ -411,6 +416,8 @@ async loadApiKeysAndScripts() {
           };
           window.gtag('js', new Date());
           window.gtag('config', googleAnalyticsId);
+          this.gtagReadyResolver();
+          
         };
         document.head.appendChild(gtagScript);
       }
