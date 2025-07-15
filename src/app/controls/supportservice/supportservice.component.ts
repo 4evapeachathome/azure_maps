@@ -137,6 +137,18 @@ export class SupportserviceComponent  implements OnInit{
 
 
   constructor(private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
+    const cache = sessionStorage.getItem('placeSearchCache');
+  if (cache) {
+    try {
+      const parsed = JSON.parse(cache);
+      this.searchCache = new Map<string, Place[]>(
+        Object.entries(parsed) as [string, Place[]][]
+      );
+    } catch (e) {
+      console.warn('Failed to parse cache:', e);
+      this.searchCache = new Map();
+    }
+  }
   }
 
  
@@ -195,7 +207,7 @@ setupSearchDebounce() {
   ).subscribe(searchText => {
     const trimmed = searchText.trim();
 
-    if ([3, 5, 7].includes(trimmed.length)) {
+    if ([3, 6, 9].includes(trimmed.length)) {
       this.updateSearchResults(trimmed);
     } else if (trimmed.length < 3) {
       this.autocompleteItems = []; // Clear if too short
@@ -231,6 +243,7 @@ setupSearchDebounce() {
   if (searchText.length > 2) {
     // Check cache first
     if (this.searchCache.has(searchText)) {
+      debugger;
       this.autocompleteItems = this.searchCache.get(searchText) || [];
       return;
     }
@@ -251,7 +264,11 @@ setupSearchDebounce() {
       (predictions: Place[], status: string) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           this.autocompleteItems = predictions;
-          this.searchCache.set(searchText, predictions); // Cache it
+          this.searchCache.set(searchText, predictions);
+
+          // ✅ Persist to sessionStorage
+          const plainObject = Object.fromEntries(this.searchCache);
+          sessionStorage.setItem('placeSearchCache', JSON.stringify(plainObject));
         } else {
           this.autocompleteItems = [];
         }
