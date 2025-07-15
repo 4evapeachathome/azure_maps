@@ -75,8 +75,9 @@ async ionViewWillEnter() {
     }),
     take(1)
   )
-  .subscribe(() => {
+  .subscribe(async () => {
 
+    await this.sharedDataService.googleMapsLoadedPromise;
     this.supportServiceComponent.initializeGoogleMapsServices();
     this.supportServiceComponent.setupSearchDebounce();
     this.supportServiceComponent.getCurrentPosition();

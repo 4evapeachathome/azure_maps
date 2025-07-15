@@ -390,9 +390,15 @@ async loadApiKeysAndScripts() {
     const googleAnalyticsId = configMap['googleAnalyticsId'];
     // Inject Google Maps
     const mapsScript = document.createElement('script');
-    mapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=marker,places&language=en&callback=Function.prototype&loading=async`;
-    mapsScript.async = true;
-    document.head.appendChild(mapsScript);
+mapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places&language=en&region=US`;
+mapsScript.type = 'module'; // ✅ Load as module
+mapsScript.async = true;
+
+mapsScript.onload = () => {
+  this.sharedDataService.resolveGoogleMapsLoaded(); // ✅ Notify others
+};
+
+document.head.appendChild(mapsScript);
 
     // Inject reCAPTCHA
     const recaptchaScript = document.createElement('script');
