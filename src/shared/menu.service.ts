@@ -21,14 +21,6 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class MenuService {
-
-  constructor(
-    private alertController: AlertController,
-    private cookieService: CookieService,
-    private router: Router,
-    private analytics: PageTitleService // Replace with actual analytics service type
-  ) {}
-  
   private readonly storageKey = 'menuItems';
 
   private filterOptionsSubject = new BehaviorSubject<any[]>([]);
@@ -43,25 +35,21 @@ export class MenuService {
   private contentHeightSubject = new BehaviorSubject<number>(0);
   contentHeight$ = this.contentHeightSubject.asObservable();
 
-  setContentHeight(height: number) {
-    this.contentHeightSubject.next(height);
-  }
-
-  //Config
+    //Config
   private configSubject = new BehaviorSubject<any>(null);
   config$ = this.configSubject.asObservable();
 
-setConfig(config: any) {
-  this.configSubject.next(config);
-}
-
-  private ratsAssessmentData: RatsAssessmentData | null = null;
+   private ratsAssessmentData: RatsAssessmentData | null = null;
   private ssripaDataSubject = new BehaviorSubject<any[] | null>(null);
 
   private showAdditionalMenusSource = new BehaviorSubject<{ show: boolean, sectionTitle: string | null }>({
     show: false,
     sectionTitle: null
   });
+
+  private menuLoadedSubject = new BehaviorSubject<boolean>(false);
+menuLoaded$ = this.menuLoadedSubject.asObservable();
+
   
   showAdditionalMenus$ = this.showAdditionalMenusSource.asObservable();
   
@@ -74,6 +62,41 @@ setConfig(config: any) {
   set lastExpandedSection(value: string | null) {
     this._lastExpandedSection = value;
   }
+
+      private dataLoadedSubject = new BehaviorSubject<boolean>(false);
+dataLoaded$ = this.dataLoadedSubject.asObservable();
+
+
+      private hitsAssessmentData: HitsAssessmentData | null = null;
+
+      googleMapsLoadedPromise!: Promise<void>;
+private googleMapsResolver!: () => void;
+googleMapsReady = false;
+
+  constructor(
+    private alertController: AlertController,
+    private cookieService: CookieService,
+    private router: Router,
+    private analytics: PageTitleService // Replace with actual analytics service type
+  ) {
+     this.googleMapsLoadedPromise = new Promise<void>((resolve) => {
+    this.googleMapsResolver = resolve;
+  });
+  }
+  
+
+
+  setContentHeight(height: number) {
+    this.contentHeightSubject.next(height);
+  }
+
+
+
+setConfig(config: any) {
+  this.configSubject.next(config);
+}
+
+ 
 
 toggleAdditionalMenus(show: boolean, sectionTitle: string | null = null) {
   // Prevent re-emitting the same section
@@ -128,9 +151,6 @@ clearMenuItems(): void {
     set hasAppLoadedOnce(value: boolean) {
       sessionStorage.setItem('appLoadedOnce', value ? 'true' : 'false');
     }
-
-    
-    private hitsAssessmentData: HitsAssessmentData | null = null;
     
     setHitsAssessment(data: HitsAssessmentData) {
       this.hitsAssessmentData = data;
@@ -188,19 +208,21 @@ clearMenuItems(): void {
       return this.stateDistancesSubject.getValue();
     }
 
-    private dataLoadedSubject = new BehaviorSubject<boolean>(false);
-dataLoaded$ = this.dataLoadedSubject.asObservable();
 
 setDataLoaded(loaded: boolean) {
   this.dataLoadedSubject.next(loaded);
 }
 
 // menu.service.ts
-private menuLoadedSubject = new BehaviorSubject<boolean>(false);
-menuLoaded$ = this.menuLoadedSubject.asObservable();
 
 setMenuLoaded(loaded: boolean) {
   this.menuLoadedSubject.next(loaded);
+}
+
+//googlemaps
+resolveGoogleMapsLoaded() {
+  this.googleMapsReady = true; // used in components
+  this.googleMapsResolver();   // resolves the Promise for `await`
 }
     
   async logout() {

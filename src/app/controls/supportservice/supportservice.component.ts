@@ -131,26 +131,35 @@ export class SupportserviceComponent  implements OnInit{
   currentState: string = '';
   searchRadius: number = DEFAULT_DISTANCE;
   firstLoad: boolean = true;
+  private searchCache = new Map<string, Place[]>();
+  googleMapsReady = false;
   
 
 
   constructor(private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
-    this.autocompleteService = new google.maps.places.AutocompleteService();
-    this.placesService = new google.maps.places.PlacesService(
-      document.createElement('div')
-    );
   }
 
  
 
-  ngOnInit() {
-  }
+  async ngOnInit() {
+  await this.sharedDataService.googleMapsLoadedPromise; // wait for script
 
-  ngAfterViewInit() {
+  this.googleMapsReady = true;
+
+  // now safe to access google.maps
+  this.autocompleteService = new google.maps.places.AutocompleteService();
+  this.placesService = new google.maps.places.PlacesService(document.createElement('div'));
+}
+
+ async ngAfterViewInit() {
+  await this.sharedDataService.googleMapsLoadedPromise; // ✅ Ensure script is loaded
+
+  if (this.map && this.map.zoomChanged) {
     this.map.zoomChanged.subscribe(() => {
       this.zoom = this.map.getZoom()!;
       this.updateMarkerLabels();
     });
+  }
 }
 
 loadFilterSupportSeviceData(){
@@ -181,18 +190,20 @@ updateMarkerLabels() {
 
 setupSearchDebounce() {
   this.searchSubject.pipe(
-    debounceTime(300),
+    debounceTime(600),
     distinctUntilChanged()
   ).subscribe(searchText => {
-    if (searchText) {
-      this.updateSearchResults(searchText);
-    } else {
-      this.autocompleteItems = [];
+    const trimmed = searchText.trim();
+
+    if ([3, 5, 7].includes(trimmed.length)) {
+      this.updateSearchResults(trimmed);
+    } else if (trimmed.length < 3) {
+      this.autocompleteItems = []; // Clear if too short
     }
   });
 }
-
-  initializeGoogleMapsServices() {
+  async initializeGoogleMapsServices() {
+      await this.sharedDataService.googleMapsLoadedPromise; // ✅ Ensure script is loaded
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(
       document.createElement('div')
@@ -216,35 +227,40 @@ setupSearchDebounce() {
     return new google.maps.Size(width, height);
   }
 
-  updateSearchResults(searchText: string) {
-    if (searchText.length > 2) {
- if (!this.rateLimiter.canMakeRequest()) {
+ updateSearchResults(searchText: string) {
+  if (searchText.length > 2) {
+    // Check cache first
+    if (this.searchCache.has(searchText)) {
+      this.autocompleteItems = this.searchCache.get(searchText) || [];
+      return;
+    }
+
+    if (!this.rateLimiter.canMakeRequest()) {
       console.warn('Rate limit exceeded. Please try again later.');
-       alert(
-      'Rate limit exceeded. Please try again later.'
-    );
+      alert('Rate limit exceeded. Please try again later.');
       return;
     }
 
     this.rateLimiter.recordRequest();
 
-      this.autocompleteService.getPlacePredictions(
-        {
-          input: searchText,
-          componentRestrictions: { country: 'us' },
-        },
-        (predictions: Place[], status: string) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            this.autocompleteItems = predictions;
-          } else {
-            this.autocompleteItems = [];
-          }
+    this.autocompleteService.getPlacePredictions(
+      {
+        input: searchText,
+        componentRestrictions: { country: 'us' },
+      },
+      (predictions: Place[], status: string) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          this.autocompleteItems = predictions;
+          this.searchCache.set(searchText, predictions); // Cache it
+        } else {
+          this.autocompleteItems = [];
         }
-      );
-    } else {
-      this.autocompleteItems = [];
-    }
+      }
+    );
+  } else {
+    this.autocompleteItems = [];
   }
+}
 
   selectSearchResult(item: Place) {  
     this.searchQuery = item.description;
