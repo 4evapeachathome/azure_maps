@@ -3,8 +3,9 @@ import { Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, Sim
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
-import { filter } from 'rxjs';
+import { filter, firstValueFrom, take } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
+import { MenuService } from 'src/shared/menu.service';
 import { presentToast } from 'src/shared/utility';
 
 @Component({
@@ -37,6 +38,7 @@ export class SetPasswordComponent implements OnInit {
     private fb: FormBuilder,
     private apiService: ApiService,
     private router: Router,
+    private sharedDataService: MenuService,
     private ngZone: NgZone,
     private route: ActivatedRoute,
     private toastController: ToastController,
@@ -60,10 +62,17 @@ export class SetPasswordComponent implements OnInit {
     );
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+        await this.sharedDataService.googleMapsLoadedPromise;
+
     if (!this.hasFetchedLogins) {
       this.resetFormAndFetchUsers();
-      this.renderReCaptcha();
+       this.sharedDataService.dataLoaded$.pipe(
+  filter(ready => ready),
+  take(1) // Only the first true value
+).subscribe(() => {
+  this.renderReCaptcha(); // Run only when config is ready
+});
       this.hasFetchedLogins = true;
       // this.flowType = this.route.snapshot.queryParamMap.get('flow');
     }
@@ -83,7 +92,12 @@ export class SetPasswordComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedLogins) {
       this.resetFormAndFetchUsers();
-      this.renderReCaptcha();
+       this.sharedDataService.dataLoaded$.pipe(
+        filter(ready => ready),
+        take(1) // Only the first true value
+      ).subscribe(() => {
+        this.renderReCaptcha(); // Run only when config is ready
+      });
       this.hasFetchedLogins = true;
       this.flowType = this.route.snapshot.queryParamMap.get('flow');
 
@@ -99,32 +113,35 @@ export class SetPasswordComponent implements OnInit {
     await presentToast(this.toastController, message, duration, position);
   }
 
-  renderReCaptcha() {
-    if (
-      typeof window !== 'undefined' &&
-      (window as any).grecaptcha &&
-      typeof (window as any).grecaptcha.render === 'function'
-    ) {
-      this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement?.nativeElement, {
-        sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-        callback: (response: string) => {
-          this.ngZone.run(() => {
-            this.captchaToken = response;
-            this.isCaptchaVerified = true;
-          });
-        },
-        'expired-callback': () => {
-          this.ngZone.run(() => {
-            this.isCaptchaVerified = false;
-            this.captchaToken = '';
-          });
-        }
-      });
+   async renderReCaptcha(retryCount = 0) {
+  const configMap = await firstValueFrom(this.sharedDataService.config$);
+  const captchaKey = configMap['googleCaptchaAPIKey']; // or 'sessionTimeoutValue'
+
+  if (!captchaKey || typeof window === 'undefined' || !(window as any).grecaptcha || !(window as any).grecaptcha.render) {
+    if (retryCount < 10) {
+      setTimeout(() => this.renderReCaptcha(retryCount + 1), 500); // Wait and retry
     } else {
-      // If grecaptcha or render is not available, try again in 500ms
-      setTimeout(() => this.renderReCaptcha(), 500);
+      console.error("reCAPTCHA failed to load after 10 attempts.");
     }
+    return;
   }
+
+  this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
+    sitekey: captchaKey,
+    callback: (response: string) => {
+      this.ngZone.run(() => {
+        this.captchaToken = response;
+        this.isCaptchaVerified = true;
+      });
+    },
+    'expired-callback': () => {
+      this.ngZone.run(() => {
+        this.isCaptchaVerified = false;
+        this.captchaToken = '';
+      });
+    }
+  });
+}
 
   // getUserLogins() {
   //   this.apiService.getUserLogins().subscribe({
@@ -224,12 +241,12 @@ export class SetPasswordComponent implements OnInit {
     });
   }
 
+  
   resetCaptcha() {
+  if ((window as any).grecaptcha && this.widgetId !== -1) {
+    (window as any).grecaptcha.reset(this.widgetId);
     this.isCaptchaVerified = false;
     this.captchaToken = '';
-    if (typeof window !== 'undefined' && (window as any).grecaptcha && this.widgetId !== -1) {
-      (window as any).grecaptcha.reset(this.widgetId);
-    }
   }
-
+}
 }

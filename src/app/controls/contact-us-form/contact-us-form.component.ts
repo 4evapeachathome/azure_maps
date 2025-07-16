@@ -4,9 +4,11 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import { filter, firstValueFrom, take } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { PageTitleService } from 'src/app/services/page-title.service';
 import { getConstant } from 'src/shared/constants';
+import { MenuService } from 'src/shared/menu.service';
 import { presentToast, validateEmail } from 'src/shared/utility';
 
 @Component({
@@ -33,10 +35,15 @@ export class ContactUsFormComponent  implements OnInit {
   @Output() showloadeder = new EventEmitter<void>();
  
 
-  constructor(private apiService: ApiService,private toastController: ToastController,private ngZone: NgZone,private analytics:PageTitleService) { }
+  constructor(private sharedDataService:MenuService,private apiService: ApiService,private toastController: ToastController,private ngZone: NgZone,private analytics:PageTitleService) { }
 
-  ngOnInit() {
-    this.renderReCaptcha();
+ async ngOnInit() {
+    this.sharedDataService.dataLoaded$.pipe(
+  filter(ready => ready),
+  take(1) // Only the first true value
+).subscribe(() => {
+  this.renderReCaptcha(); // Run only when config is ready
+});
   }
 
 
@@ -109,28 +116,35 @@ export class ContactUsFormComponent  implements OnInit {
   }
 
   //Captcha
-  renderReCaptcha() {
-    if (typeof window !== 'undefined' && (window as any).grecaptcha) {
-      this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
-        sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-        callback: (response: string) => {
-          this.ngZone.run(() => {
-            this.captchaToken = response;
-            this.isCaptchaVerified = true;
-          });
-        },
-        'expired-callback': () => {
-          this.ngZone.run(() => {
-            this.isCaptchaVerified = false;
-            this.captchaToken = '';
-          });
-        }
-      });
+ async renderReCaptcha(retryCount = 0) {
+  const configMap = await firstValueFrom(this.sharedDataService.config$);
+  const captchaKey = configMap['googleCaptchaAPIKey']; // or 'sessionTimeoutValue'
+
+  if (!captchaKey || typeof window === 'undefined' || !(window as any).grecaptcha || !(window as any).grecaptcha.render) {
+    if (retryCount < 10) {
+      setTimeout(() => this.renderReCaptcha(retryCount + 1), 500); // Wait and retry
     } else {
-      // If grecaptcha is not available, try again in 500ms
-      setTimeout(() => this.renderReCaptcha(), 500);
+      console.error("reCAPTCHA failed to load after 10 attempts.");
     }
+    return;
   }
+
+  this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
+    sitekey: captchaKey,
+    callback: (response: string) => {
+      this.ngZone.run(() => {
+        this.captchaToken = response;
+        this.isCaptchaVerified = true;
+      });
+    },
+    'expired-callback': () => {
+      this.ngZone.run(() => {
+        this.isCaptchaVerified = false;
+        this.captchaToken = '';
+      });
+    }
+  });
+}
 
   isFormEmpty(): boolean {
     const isFormDataEmpty = (
@@ -142,11 +156,12 @@ export class ContactUsFormComponent  implements OnInit {
   }
 
   resetCaptcha() {
+  if ((window as any).grecaptcha && this.widgetId !== -1) {
+    (window as any).grecaptcha.reset(this.widgetId);
     this.isCaptchaVerified = false;
     this.captchaToken = '';
-    if (typeof window !== 'undefined' && (window as any).grecaptcha && this.widgetId !== -1) {
-      (window as any).grecaptcha.reset(this.widgetId);
-    }
   }
+}
+
 
 }
