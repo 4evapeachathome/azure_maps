@@ -7,12 +7,13 @@ import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 import { MenuService } from 'src/shared/menu.service';
 import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { PageTitleService } from 'src/app/services/page-title.service';
 
 declare var google: any;
 
@@ -131,26 +132,47 @@ export class SupportserviceComponent  implements OnInit{
   currentState: string = '';
   searchRadius: number = DEFAULT_DISTANCE;
   firstLoad: boolean = true;
+  private searchCache = new Map<string, Place[]>();
+  googleMapsReady = false;
   
 
 
-  constructor(private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
-    this.autocompleteService = new google.maps.places.AutocompleteService();
-    this.placesService = new google.maps.places.PlacesService(
-      document.createElement('div')
-    );
+  constructor(private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone,private sharedService:PageTitleService) { 
+    const cache = sessionStorage.getItem('placeSearchCache');
+  if (cache) {
+    try {
+      const parsed = JSON.parse(cache);
+      this.searchCache = new Map<string, Place[]>(
+        Object.entries(parsed) as [string, Place[]][]
+      );
+    } catch (e) {
+      console.warn('Failed to parse cache:', e);
+      this.searchCache = new Map();
+    }
+  }
   }
 
  
 
-  ngOnInit() {
-  }
+  async ngOnInit() {
+  await this.sharedDataService.googleMapsLoadedPromise; // wait for script
 
-  ngAfterViewInit() {
+  this.googleMapsReady = true;
+
+  // now safe to access google.maps
+  this.autocompleteService = new google.maps.places.AutocompleteService();
+  this.placesService = new google.maps.places.PlacesService(document.createElement('div'));
+}
+
+ async ngAfterViewInit() {
+  await this.sharedDataService.googleMapsLoadedPromise; // ✅ Ensure script is loaded
+
+  if (this.map && this.map.zoomChanged) {
     this.map.zoomChanged.subscribe(() => {
       this.zoom = this.map.getZoom()!;
       this.updateMarkerLabels();
     });
+  }
 }
 
 loadFilterSupportSeviceData(){
@@ -181,18 +203,20 @@ updateMarkerLabels() {
 
 setupSearchDebounce() {
   this.searchSubject.pipe(
-    debounceTime(300),
+    debounceTime(600),
     distinctUntilChanged()
   ).subscribe(searchText => {
-    if (searchText) {
-      this.updateSearchResults(searchText);
-    } else {
-      this.autocompleteItems = [];
+    const trimmed = searchText.trim();
+
+    if ([3, 6, 9].includes(trimmed.length)) {
+      this.updateSearchResults(trimmed);
+    } else if (trimmed.length < 3) {
+      this.autocompleteItems = []; // Clear if too short
     }
   });
 }
-
-  initializeGoogleMapsServices() {
+  async initializeGoogleMapsServices() {
+      await this.sharedDataService.googleMapsLoadedPromise; // ✅ Ensure script is loaded
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(
       document.createElement('div')
@@ -216,35 +240,44 @@ setupSearchDebounce() {
     return new google.maps.Size(width, height);
   }
 
-  updateSearchResults(searchText: string) {
-    if (searchText.length > 2) {
- if (!this.rateLimiter.canMakeRequest()) {
+ updateSearchResults(searchText: string) {
+  if (searchText.length > 2) {
+    // Check cache first
+    if (this.searchCache.has(searchText)) {
+      this.autocompleteItems = this.searchCache.get(searchText) || [];
+      return;
+    }
+
+    if (!this.rateLimiter.canMakeRequest()) {
       console.warn('Rate limit exceeded. Please try again later.');
-       alert(
-      'Rate limit exceeded. Please try again later.'
-    );
+      alert('Rate limit exceeded. Please try again later.');
       return;
     }
 
     this.rateLimiter.recordRequest();
+    this.sharedService.trackGoogleMapsApiHit('autosuggest');
+    this.autocompleteService.getPlacePredictions(
+      {
+        input: searchText,
+        componentRestrictions: { country: 'us' },
+      },
+      (predictions: Place[], status: string) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          this.autocompleteItems = predictions;
+          this.searchCache.set(searchText, predictions);
 
-      this.autocompleteService.getPlacePredictions(
-        {
-          input: searchText,
-          componentRestrictions: { country: 'us' },
-        },
-        (predictions: Place[], status: string) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            this.autocompleteItems = predictions;
-          } else {
-            this.autocompleteItems = [];
-          }
+          // ✅ Persist to sessionStorage
+          const plainObject = Object.fromEntries(this.searchCache);
+          sessionStorage.setItem('placeSearchCache', JSON.stringify(plainObject));
+        } else {
+          this.autocompleteItems = [];
         }
-      );
-    } else {
-      this.autocompleteItems = [];
-    }
+      }
+    );
+  } else {
+    this.autocompleteItems = [];
   }
+}
 
   selectSearchResult(item: Place) {  
     this.searchQuery = item.description;
@@ -259,7 +292,7 @@ setupSearchDebounce() {
     }
 
     this.rateLimiter.recordRequest();
-  
+    this.sharedService.trackGoogleMapsApiHit('geocoding');
     this.placesService.getDetails(
       { placeId: item.place_id },
       (placeDetails: any, status: string) => {
@@ -400,7 +433,7 @@ setupSearchDebounce() {
     }
 
     this.rateLimiter.recordRequest();
-
+      this.sharedService.trackGoogleMapsApiHit('geocoding');
       geocoder.geocode(
         {
           componentRestrictions: {
@@ -436,7 +469,7 @@ setupSearchDebounce() {
     }
 
     this.rateLimiter.recordRequest();
-
+      this.sharedService.trackGoogleMapsApiHit('geocoding');
       geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
         if (status === 'OK' && results[0]) {
           const location = results[0].geometry.location;
@@ -551,29 +584,44 @@ onSearchClear() {
 
   async getCurrentPosition() {
   try {
-    const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${environment.findLocationAPIKey}`;
+    const cachedLocation = sessionStorage.getItem('userIPLocation');
+    if (cachedLocation) {
+      const json = JSON.parse(cachedLocation);
+      await this.processLocationData(json); // ✅ Process from cache
+      return;
+    }
+
+    const configMap = await firstValueFrom(this.sharedDataService.config$);
+    const findLocationAPIKey = configMap['findMyIpLocationAPIKey'];
+    this.sharedService.trackIPBasedLocationApi();
+    const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${findLocationAPIKey}`;
 
     this.http.get(url).subscribe(async (json: any) => {
-      const lat = Number(json.latitude);
-      const lng = Number(json.longitude);
-
-      if (!isNaN(lat) && !isNaN(lng)) {
-        this.latitude = lat;
-        this.longitude = lng;
-        this.center = { lat, lng };
-
-        this.geolocationEnabled = true;
-        this.locationcard = true;
-
-        await this.reverseGeocodeForState(this.center);
-        this.updateSearchedLocationMarker(this.center);
-        this.filterNearbySupportCenters(lat, lng);
-      } else {
-        await this.showToast('Invalid location data received.');
-      }
+      sessionStorage.setItem('userIPLocation', JSON.stringify(json)); 
+      await this.processLocationData(json); // ✅ Process from fresh API
     });
   } catch (error) {
     await this.showToast('Could not retrieve your location. Try again later.');
+  }
+}
+
+private async processLocationData(json: any) {
+  const lat = Number(json.latitude);
+  const lng = Number(json.longitude);
+
+  if (!isNaN(lat) && !isNaN(lng)) {
+    this.latitude = lat;
+    this.longitude = lng;
+    this.center = { lat, lng };
+
+    this.geolocationEnabled = true;
+    this.locationcard = true;
+
+    await this.reverseGeocodeForState(this.center);
+    this.updateSearchedLocationMarker(this.center);
+    this.filterNearbySupportCenters(lat, lng);
+  } else {
+    await this.showToast('Invalid location data received.');
   }
 }
 

@@ -12,7 +12,7 @@
          
          
           <div class="support-map-container h-100">
-            <div class="gmap-container ">
+            <div class="gmap-container " *ngIf="googleMapsReady">
           
               <google-map 
     height="100%" 
@@ -46,6 +46,7 @@
                     </ion-icon>
                   <ion-searchbar 
                     searchIcon="undefined"
+                    [minlength]="3"
                     [(ngModel)]="searchQuery"
                     (ionInput)="onSearchInput($event)"
                     (ionClear)="onSearchClear()"

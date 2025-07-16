@@ -410,16 +410,21 @@ async loadApiKeysAndScripts() {
     const googleAnalyticsId = configMap['googleAnalyticsId'];
     // Inject Google Maps
     const mapsScript = document.createElement('script');
-    mapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=marker,places&language=en&callback=Function.prototype&loading=async`;
-    mapsScript.async = true;
-    document.head.appendChild(mapsScript);
+mapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places&language=en&region=US`;
+mapsScript.type = 'module'; // ✅ Load as module
+mapsScript.async = true;
 
-    // Inject reCAPTCHA
-    const recaptchaScript = document.createElement('script');
-    recaptchaScript.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`;
-    recaptchaScript.async = true;
-    recaptchaScript.defer = true;
-    document.head.appendChild(recaptchaScript);
+mapsScript.onload = () => {
+  this.sharedDataService.resolveGoogleMapsLoaded(); // ✅ Notify others
+};
+
+document.head.appendChild(mapsScript);
+
+ const script = document.createElement('script');
+script.src = 'https://www.google.com/recaptcha/api.js'; 
+script.async = true;
+script.defer = true;
+document.head.appendChild(script);
 
     if (!Capacitor.isNativePlatform() && googleAnalyticsId) {
       const existing = document.querySelector(`script[src*="gtag/js?id=${googleAnalyticsId}"]`);
