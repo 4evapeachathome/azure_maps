@@ -1,3 +1,4 @@
+import { AzureMapsService } from './service/azure-maps.service';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, NgZone, OnInit, Output, ViewChild } from '@angular/core';
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
@@ -7,7 +8,7 @@ import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, firstValueFrom, take } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 import { MenuService } from 'src/shared/menu.service';
 import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
@@ -136,7 +137,7 @@ export class SupportserviceComponent  implements OnInit{
   
 
 
-  constructor(private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
+  constructor(private azureMapsService:AzureMapsService,private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
     const cache = sessionStorage.getItem('placeSearchCache');
   if (cache) {
     try {
@@ -207,10 +208,10 @@ setupSearchDebounce() {
   ).subscribe(searchText => {
     const trimmed = searchText.trim();
 
-    if ([3, 6, 9].includes(trimmed.length)) {
+    if ([3, 5, 7].includes(trimmed.length)) {
       this.updateSearchResults(trimmed);
     } else if (trimmed.length < 3) {
-      this.autocompleteItems = []; // Clear if too short
+      this.autocompleteItems = []; 
     }
   });
 }
@@ -243,7 +244,6 @@ setupSearchDebounce() {
   if (searchText.length > 2) {
     // Check cache first
     if (this.searchCache.has(searchText)) {
-      debugger;
       this.autocompleteItems = this.searchCache.get(searchText) || [];
       return;
     }
@@ -266,9 +266,9 @@ setupSearchDebounce() {
           this.autocompleteItems = predictions;
           this.searchCache.set(searchText, predictions);
 
-          // ✅ Persist to sessionStorage
+        // ✅ Persist to sessionStorage
           const plainObject = Object.fromEntries(this.searchCache);
-          sessionStorage.setItem('placeSearchCache', JSON.stringify(plainObject));
+          sessionStorage.setItem('placeSearchCache', JSON.stringify(plainObject)); // Cache it
         } else {
           this.autocompleteItems = [];
         }
@@ -279,86 +279,81 @@ setupSearchDebounce() {
   }
 }
 
-  selectSearchResult(item: Place) {  
-    this.searchQuery = item.description;
-    this.autocompleteItems = [];
+  async selectSearchResult(item: Place) {
+  this.searchQuery = item.description;
+  this.autocompleteItems = [];
 
-     if (!this.rateLimiter.canMakeRequest()) {
-      console.warn('Rate limit exceeded. Please try again later.');
-      alert(
-      'Rate limit exceeded. Please try again later.'
-    );
-      return;
+  try {
+    const result = await this.geocodePlace(item.description);
+    const lat = result.lat;
+    const lng = result.lng;
+
+    if (this.getSelectedFilterCount() > 0) {
+      this.filterOptions.forEach(option => option.selected = false);
+      this.filterSearchTerm = '';
     }
 
-    this.rateLimiter.recordRequest();
-  
-    this.placesService.getDetails(
-      { placeId: item.place_id },
-      (placeDetails: any, status: string) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          this.ngZone.run(async () => {
-            const lat = placeDetails.geometry.location.lat();
-            const lng = placeDetails.geometry.location.lng();
-            
-  
-            // Reset filters
-            if (this.getSelectedFilterCount() > 0) {
-              this.filterOptions.forEach(option => option.selected = false);
-              this.filterSearchTerm = '';
-            }
-  
-            // Update map center
-            this.center = { lat, lng };
-            this.updateSearchedLocationMarker(this.center);
-  
-            // Detect state and set radius
-            if (placeDetails) {
-              this.detectStateFromResult(placeDetails);
-            } else {
-              this.currentState = '';
-              this.searchRadius = DEFAULT_DISTANCE;
-            }
-  
-            // Filter and update both map markers and list
-            this.filterNearbySupportCenters(lat, lng);
-  
-            // Show location card
-            this.locationcard = true;
-  
-            // Reset selected location
-            this.selectedLocation = null;
-          });
-        } else {
-          this.ngZone.run(async () => {
-            const toast = await this.toastController.create({
-              message: 'Could not retrieve place details. Please try again.',
-              duration: 3000,
-              position: 'bottom'
-            });
-            await toast.present();
-          });
-        }
-      }
-    );
+    this.center = { lat, lng };
+    this.updateSearchedLocationMarker(this.center);
+
+    this.detectStateFromResult(result.result);
+
+    this.filterNearbySupportCenters(lat, lng);
+    this.locationcard = true;
+    this.selectedLocation = null;
+
+  } catch (error) {
+    debugger;
+    console.error('Search error:', error);
+    const toast = await this.toastController.create({
+      message: 'Could not retrieve place details. Please try again.',
+      duration: 3000,
+      position: 'bottom'
+    });
+    await toast.present();
+  }
+}
+
+private detectStateFromResult(result: any) {
+  let stateAbbr = '';
+  let stateName = '';
+
+  // ✅ Azure Maps: use full state name
+  if (result?.address?.countrySubdivisionName) {
+    stateName = result.address.countrySubdivisionName;
+    stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || result.address.countrySubdivisionCode || '';
   }
 
-  private detectStateFromResult(result: google.maps.GeocoderResult) {
-    const stateComponent = result.address_components.find(comp =>
+  // ✅ Google Maps fallback
+  else if (result?.address_components) {
+    const stateComponent = result.address_components.find((comp: any) =>
       comp.types.includes('administrative_area_level_1')
     );
-  
     if (stateComponent) {
-      const stateName = stateComponent.long_name;
-      const stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
-      this.currentState = stateName;
-      const distances = this.sharedDataService.getStateDistancesValue(); // Use MenuService
-      this.searchRadius = distances[stateAbbr] || DEFAULT_DISTANCE;
-    } else {
-      this.currentState = '';
-      this.searchRadius = DEFAULT_DISTANCE;
+      stateName = stateComponent.long_name;
+      stateAbbr = STATE_ABBREVIATIONS[stateName as keyof typeof STATE_ABBREVIATIONS] || stateComponent.short_name;
     }
   }
+
+  if (stateAbbr) {
+    this.currentState = stateAbbr;
+
+    this.sharedDataService.getStateDistances().pipe(
+      filter(distances => !!distances?.data),
+      take(1)
+    ).subscribe(distances => {
+      debugger;
+      const stateObj = distances?.data.find(d => d.Abbreviation === stateAbbr);
+      this.searchRadius = stateObj?.Miles ? Number(stateObj.Miles) : DEFAULT_DISTANCE;
+    });
+
+  } else {
+    this.currentState = '';
+    this.searchRadius = DEFAULT_DISTANCE;
+    console.warn('Could not detect state from result:', result);
+  }
+}
+
 
   async onSearch() {
     if (!this.searchQuery || this.searchQuery.trim() === '') {
@@ -410,6 +405,7 @@ setupSearchDebounce() {
       this.locationcard = true;
   
     } catch (error) {
+      debugger;
       console.error('Search error:', error);
       const toast = await this.toastController.create({
         message: 'Could not find the location. Please try a different address or zip code.',
@@ -421,69 +417,61 @@ setupSearchDebounce() {
   }
   
   // Update your geocode methods to return the full result
-  private async geocodeZipCode(zipCode: string): Promise<{ lat: number; lng: number; result: any }> {
-    return new Promise((resolve, reject) => {
-      const geocoder = new google.maps.Geocoder();
- if (!this.rateLimiter.canMakeRequest()) {
-      console.warn('Rate limit exceeded. Please try again later.');
-      alert(
-      'Rate limit exceeded. Please try again later.'
-    );
-      return;
+ private async geocodeZipCode(zipCode: string): Promise<{ lat: number; lng: number; result: any }> {
+  // if (!this.rateLimiter.canMakeRequest()) {
+  //   console.warn('Rate limit exceeded. Please try again later.');
+  //   alert('Rate limit exceeded. Please try again later.');
+  //   return;
+  // }
+
+  // this.rateLimiter.recordRequest();
+
+  try {
+    const response: any = await firstValueFrom(this.azureMapsService.getGeocodeResult(zipCode));
+
+    if (response?.results?.length > 0) {
+      const result = response.results[0];
+      return {
+        lat: result.position.lat,
+        lng: result.position.lon,
+        result
+      };
+    } else {
+      throw new Error('No results found for zip code');
     }
-
-    this.rateLimiter.recordRequest();
-
-      geocoder.geocode(
-        {
-          componentRestrictions: {
-            postalCode: zipCode,
-            country: 'US'
-          }
-        },
-        (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
-          if (status === 'OK' && results[0]) {
-            const location = results[0].geometry.location;
-            resolve({
-              lat: location.lat(),
-              lng: location.lng(),
-              result: results[0] // Return the full result
-            });
-          } else {
-            reject(`Geocoding failed for zip code: ${status}`);
-          }
-        }
-      );
-    });
+  } catch (error) {
+    throw new Error('Geocoding failed for zip code: ' + error);
   }
-  
+}
+
+
   private async geocodePlace(query: string): Promise<{ lat: number; lng: number; result: any }> {
-    return new Promise((resolve, reject) => {
-      const geocoder = new google.maps.Geocoder();
- if (!this.rateLimiter.canMakeRequest()) {
-      console.warn('Rate limit exceeded. Please try again later.');
-      alert(
-      'Rate limit exceeded. Please try again later.'
-    );
-      return;
+  // if (!this.rateLimiter.canMakeRequest()) {
+  //   console.warn('Rate limit exceeded. Please try again later.');
+  //   alert('Rate limit exceeded. Please try again later.');
+  //   return;
+  // }
+
+  //this.rateLimiter.recordRequest();
+
+  try {
+    const response: any = await firstValueFrom(this.azureMapsService.getGeocodeResult(query));
+
+    if (response?.results?.length > 0) {
+      const result = response.results[0];
+      return {
+        lat: result.position.lat,
+        lng: result.position.lon,
+        result
+      };
+    } else {
+      throw new Error('No results found for place');
     }
-
-    this.rateLimiter.recordRequest();
-
-      geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
-        if (status === 'OK' && results[0]) {
-          const location = results[0].geometry.location;
-          resolve({
-            lat: location.lat(),
-            lng: location.lng(),
-            result: results[0] // Return the full result
-          });
-        } else {
-          reject(`Geocoding failed for place: ${status}`);
-        }
-      });
-    });
+  } catch (error) {
+    throw new Error('Geocoding failed for place: ' + error);
   }
+}
+
   
 
   updateSearchedLocationMarker(position: { lat: number; lng: number }) {
