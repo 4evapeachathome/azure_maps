@@ -244,7 +244,6 @@ setupSearchDebounce() {
   if (searchText.length > 2) {
     // Check cache first
     if (this.searchCache.has(searchText)) {
-      debugger;
       this.autocompleteItems = this.searchCache.get(searchText) || [];
       return;
     }

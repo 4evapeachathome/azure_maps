@@ -68,8 +68,7 @@ export class LoginPageComponent  implements OnInit {
 
    async renderReCaptcha(retryCount = 0) {
   const configMap = await firstValueFrom(this.sharedDataService.config$);
-  debugger;
-  const captchaKey = configMap['googleCaptchaAPIKey']; // or 'sessionTimeoutValue'
+  const captchaKey = configMap['googleCaptchaAPIKey']; 
 
   if (!captchaKey || typeof window === 'undefined' || !(window as any).grecaptcha || !(window as any).grecaptcha.render) {
     if (retryCount < 10) {
