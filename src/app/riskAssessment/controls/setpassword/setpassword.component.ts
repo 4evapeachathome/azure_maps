@@ -63,8 +63,6 @@ export class SetPasswordComponent implements OnInit {
   }
 
   async ngOnInit() {
-        await this.sharedDataService.googleMapsLoadedPromise;
-
     if (!this.hasFetchedLogins) {
       this.resetFormAndFetchUsers();
        this.sharedDataService.dataLoaded$.pipe(
