@@ -7,7 +7,7 @@ import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 import { MenuService } from 'src/shared/menu.service';
 import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
@@ -584,7 +584,10 @@ onSearchClear() {
 
   async getCurrentPosition() {
   try {
-    const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${environment.findLocationAPIKey}`;
+      const configMap = await firstValueFrom(this.sharedDataService.config$); // Encrypted values
+
+    const findLocationAPIKey = configMap['findMyIpLocationAPIKey']; 
+    const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${findLocationAPIKey}`;
 
     this.http.get(url).subscribe(async (json: any) => {
       const lat = Number(json.latitude);
