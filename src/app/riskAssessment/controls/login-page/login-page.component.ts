@@ -7,9 +7,10 @@ import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/services/api.service';
 import { presentToast, Utility } from 'src/shared/utility';
 import { __await } from 'tslib';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, take } from 'rxjs';
 import { PageTitleService } from 'src/app/services/page-title.service';
 import { SessionActivityService } from 'src/app/guards/session-activity.service';
+import { MenuService } from 'src/shared/menu.service';
 @Component({
   selector: 'login-page',
   templateUrl: './login-page.component.html',
@@ -38,6 +39,7 @@ export class LoginPageComponent  implements OnInit {
     private cookieService: CookieService,
     private analytics:PageTitleService,
     private router: Router,
+    private sharedDataService: MenuService,
     private sessionActivityService:SessionActivityService,
     private toastController: ToastController,
     private ngZone: NgZone
@@ -48,63 +50,64 @@ export class LoginPageComponent  implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+
     // Fetch user logins on component initialization 
     this.loginForm.reset();
     if (!this.hasFetchedLogins) {
       //this.getUserLogins();
-      this.renderReCaptcha();
+       this.sharedDataService.dataLoaded$.pipe(
+        filter(ready => ready),
+        take(1) // Only the first true value
+      ).subscribe(() => {
+        this.renderReCaptcha(); // Run only when config is ready
+      });
       this.hasFetchedLogins = true;
     }
   }
 
-  renderReCaptcha() {
-    if (typeof window !== 'undefined' && !(window as any).grecaptcha) {
-      // Load the reCAPTCHA script if not already loaded
-      const scriptId = 'recaptcha-script';
-      if (!document.getElementById(scriptId)) {
-        const script = document.createElement('script');
-        script.id = scriptId;
-        script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
-        script.async = true;
-        script.defer = true;
-        script.onload = () => this.renderReCaptcha();
-        document.body.appendChild(script);
-      } else {
-        // Wait for the script to load
-        setTimeout(() => this.renderReCaptcha(), 500);
-      }
-      return;
-    }
-    if ((window as any).grecaptcha && typeof (window as any).grecaptcha.render === 'function') {
-    //  if (typeof window !== 'undefined' && (window as any).grecaptcha) {  
-      this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
-        sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-        callback: (response: string) => {
-          this.ngZone.run(() => {
-            this.captchaToken = response;
-            this.isCaptchaVerified = true;
-          });
-        },
-        'expired-callback': () => {
-          this.ngZone.run(() => {
-            this.isCaptchaVerified = false;
-            this.captchaToken = '';
-          });
-        }
-      });
+   async renderReCaptcha(retryCount = 0) {
+  const configMap = await firstValueFrom(this.sharedDataService.config$);
+  debugger;
+  const captchaKey = configMap['googleCaptchaAPIKey']; // or 'sessionTimeoutValue'
+
+  if (!captchaKey || typeof window === 'undefined' || !(window as any).grecaptcha || !(window as any).grecaptcha.render) {
+    if (retryCount < 10) {
+      setTimeout(() => this.renderReCaptcha(retryCount + 1), 500); // Wait and retry
     } else {
-      // If grecaptcha is not available or not ready, try again in 500ms
-      setTimeout(() => this.renderReCaptcha(), 500);
+      console.error("reCAPTCHA failed to load after 10 attempts.");
     }
+    return;
   }
+
+  this.widgetId = (window as any).grecaptcha.render(this.recaptchaElement.nativeElement, {
+    sitekey: captchaKey,
+    callback: (response: string) => {
+      this.ngZone.run(() => {
+        this.captchaToken = response;
+        this.isCaptchaVerified = true;
+      });
+    },
+    'expired-callback': () => {
+      this.ngZone.run(() => {
+        this.isCaptchaVerified = false;
+        this.captchaToken = '';
+      });
+    }
+  });
+}
 
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['reloadFlag'] && changes['reloadFlag'].currentValue === true && !this.hasFetchedLogins) {
       this.loginForm.reset();
       //this.getUserLogins();
-      this.renderReCaptcha();
+       this.sharedDataService.dataLoaded$.pipe(
+  filter(ready => ready),
+  take(1) // Only the first true value
+).subscribe(() => {
+  this.renderReCaptcha(); // Run only when config is ready
+});
       this.hasFetchedLogins = true;
     }
   }
@@ -276,12 +279,13 @@ async onSubmit() {
     this.stoploader.emit();
   }
 
+ 
   resetCaptcha() {
+  if ((window as any).grecaptcha && this.widgetId !== -1) {
+    (window as any).grecaptcha.reset(this.widgetId);
     this.isCaptchaVerified = false;
     this.captchaToken = '';
-    if (typeof window !== 'undefined' && (window as any).grecaptcha && this.widgetId !== -1) {
-      (window as any).grecaptcha.reset(this.widgetId);
-    }
   }
+}
 
 }
