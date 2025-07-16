@@ -13,6 +13,7 @@ import { MenuService } from 'src/shared/menu.service';
 import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { PageTitleService } from 'src/app/services/page-title.service';
 
 declare var google: any;
 
@@ -136,7 +137,7 @@ export class SupportserviceComponent  implements OnInit{
   
 
 
-  constructor(private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone) { 
+  constructor(private rateLimiter: GoogleApiRateLimiterService,private http:HttpClient,private platform: Platform,private toastController: ToastController, private sharedDataService: MenuService, private ngZone: NgZone,private sharedService:PageTitleService) { 
     const cache = sessionStorage.getItem('placeSearchCache');
   if (cache) {
     try {
@@ -255,7 +256,7 @@ setupSearchDebounce() {
     }
 
     this.rateLimiter.recordRequest();
-
+    this.sharedService.trackGoogleMapsApiHit('autosuggest');
     this.autocompleteService.getPlacePredictions(
       {
         input: searchText,
@@ -292,7 +293,7 @@ setupSearchDebounce() {
     }
 
     this.rateLimiter.recordRequest();
-  
+    this.sharedService.trackGoogleMapsApiHit('geocoding');
     this.placesService.getDetails(
       { placeId: item.place_id },
       (placeDetails: any, status: string) => {
@@ -433,7 +434,7 @@ setupSearchDebounce() {
     }
 
     this.rateLimiter.recordRequest();
-
+      this.sharedService.trackGoogleMapsApiHit('geocoding');
       geocoder.geocode(
         {
           componentRestrictions: {
@@ -469,7 +470,7 @@ setupSearchDebounce() {
     }
 
     this.rateLimiter.recordRequest();
-
+      this.sharedService.trackGoogleMapsApiHit('geocoding');
       geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
         if (status === 'OK' && results[0]) {
           const location = results[0].geometry.location;
@@ -584,32 +585,44 @@ onSearchClear() {
 
   async getCurrentPosition() {
   try {
-      const configMap = await firstValueFrom(this.sharedDataService.config$); // Encrypted values
+    const cachedLocation = sessionStorage.getItem('userIPLocation');
+    if (cachedLocation) {
+      const json = JSON.parse(cachedLocation);
+      await this.processLocationData(json); // ✅ Process from cache
+      return;
+    }
 
-    const findLocationAPIKey = configMap['findMyIpLocationAPIKey']; 
+    const configMap = await firstValueFrom(this.sharedDataService.config$);
+    const findLocationAPIKey = configMap['findMyIpLocationAPIKey'];
+    this.sharedService.trackIPBasedLocationApi();
     const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${findLocationAPIKey}`;
 
     this.http.get(url).subscribe(async (json: any) => {
-      const lat = Number(json.latitude);
-      const lng = Number(json.longitude);
-
-      if (!isNaN(lat) && !isNaN(lng)) {
-        this.latitude = lat;
-        this.longitude = lng;
-        this.center = { lat, lng };
-
-        this.geolocationEnabled = true;
-        this.locationcard = true;
-
-        await this.reverseGeocodeForState(this.center);
-        this.updateSearchedLocationMarker(this.center);
-        this.filterNearbySupportCenters(lat, lng);
-      } else {
-        await this.showToast('Invalid location data received.');
-      }
+      sessionStorage.setItem('userIPLocation', JSON.stringify(json)); 
+      await this.processLocationData(json); // ✅ Process from fresh API
     });
   } catch (error) {
     await this.showToast('Could not retrieve your location. Try again later.');
+  }
+}
+
+private async processLocationData(json: any) {
+  const lat = Number(json.latitude);
+  const lng = Number(json.longitude);
+
+  if (!isNaN(lat) && !isNaN(lng)) {
+    this.latitude = lat;
+    this.longitude = lng;
+    this.center = { lat, lng };
+
+    this.geolocationEnabled = true;
+    this.locationcard = true;
+
+    await this.reverseGeocodeForState(this.center);
+    this.updateSearchedLocationMarker(this.center);
+    this.filterNearbySupportCenters(lat, lng);
+  } else {
+    await this.showToast('Invalid location data received.');
   }
 }
 
