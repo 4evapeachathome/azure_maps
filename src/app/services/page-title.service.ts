@@ -127,4 +127,22 @@ export class PageTitleService {
       event_label: button
     });
   }
+
+ trackGoogleMapsApiHit(apiType: 'geocoding' | 'autosuggest') {
+  this.safeTrack('google_maps_api_hit', {
+    event_category: 'Google Maps API',
+    event_label: `${apiType} request`,
+    api_type: apiType,
+    timestamp: new Date().toISOString()
+  });
+}
+
+trackIPBasedLocationApi() {
+  this.safeTrack('ip_location_api_hit', {
+    event_category: 'Location API',
+    event_label: 'IP Geolocation API called'
+  });
+}
+
+
 }
