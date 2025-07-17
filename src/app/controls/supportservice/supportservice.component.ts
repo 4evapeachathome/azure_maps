@@ -8,7 +8,7 @@ import { AppLauncher, CanOpenURLResult } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/api.service';
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { BehaviorSubject, debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, firstValueFrom, take } from 'rxjs';
 import { DEFAULT_DISTANCE, STATE_ABBREVIATIONS, STATE_NAME_TO_DISTANCE } from 'src/shared/usstateconstants';
 import { MenuService } from 'src/shared/menu.service';
 import { GoogleApiRateLimiterService } from 'src/shared/google-api-rate-limiter.service';
@@ -426,6 +426,7 @@ private detectStateFromResult(result: any) {
   // }
 
   // this.rateLimiter.recordRequest();
+  this.sharedService.trackAzureMapsApiHit('geocoding');
 
   try {
     const response: any = await firstValueFrom(this.azureMapsService.getGeocodeResult(zipCode));
@@ -456,6 +457,7 @@ private detectStateFromResult(result: any) {
   //this.rateLimiter.recordRequest();
 
   try {
+     this.sharedService.trackAzureMapsApiHit('geocoding');
     const response: any = await firstValueFrom(this.azureMapsService.getGeocodeResult(query));
 
     if (response?.results?.length > 0) {
@@ -576,7 +578,7 @@ onSearchClear() {
     const cachedLocation = sessionStorage.getItem('userIPLocation');
     if (cachedLocation) {
       const json = JSON.parse(cachedLocation);
-      await this.processLocationData(json); // âœ… Process from cache
+      await this.processLocationData(json); 
       return;
     }
 
@@ -587,7 +589,7 @@ onSearchClear() {
 
     this.http.get(url).subscribe(async (json: any) => {
       sessionStorage.setItem('userIPLocation', JSON.stringify(json)); 
-      await this.processLocationData(json); // âœ… Process from fresh API
+      await this.processLocationData(json); 
     });
   } catch (error) {
     await this.showToast('Could not retrieve your location. Try again later.');
@@ -598,23 +600,19 @@ private async processLocationData(json: any) {
   const lat = Number(json.latitude);
   const lng = Number(json.longitude);
 
-      if (!isNaN(lat) && !isNaN(lng)) {
-        this.latitude = lat;
-        this.longitude = lng;
-        this.center = { lat, lng };
+  if (!isNaN(lat) && !isNaN(lng)) {
+    this.latitude = lat;
+    this.longitude = lng;
+    this.center = { lat, lng };
 
-        this.geolocationEnabled = true;
-        this.locationcard = true;
+    this.geolocationEnabled = true;
+    this.locationcard = true;
 
-        await this.reverseGeocodeForState(this.center);
-        this.updateSearchedLocationMarker(this.center);
-        this.filterNearbySupportCenters(lat, lng);
-      } else {
-        await this.showToast('Invalid location data received.');
-      }
-    });
-  } catch (error) {
-    await this.showToast('Could not retrieve your location. Try again later.');
+    await this.reverseGeocodeForState(this.center);
+    this.updateSearchedLocationMarker(this.center);
+    this.filterNearbySupportCenters(lat, lng);
+  } else {
+    await this.showToast('Invalid location data received.');
   }
 }
 
@@ -797,12 +795,6 @@ private async showToast(message: string) {
         this.updateSupportServiceMarkers();
       }
 
-  
-      // Update search query with selected filters as comma-separated values
-      // this.searchQuery = this.filterOptions
-      //   .filter(option => option.selected)
-      //   .map(option => option.label) // Assuming 'label' is a user-friendly name
-      //   .join(', ');
   
       this.selectedLocation = null;
       this.closeFilter();

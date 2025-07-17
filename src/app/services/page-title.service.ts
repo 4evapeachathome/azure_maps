@@ -128,9 +128,9 @@ export class PageTitleService {
     });
   }
 
- trackGoogleMapsApiHit(apiType: 'geocoding' | 'autosuggest') {
-  this.safeTrack('google_maps_api_hit', {
-    event_category: 'Google Maps API',
+ trackAzureMapsApiHit(apiType: 'geocoding' | 'autosuggest') {
+  this.safeTrack('Azure_maps_api_hits', {
+    event_category: 'Azure Maps API',
     event_label: `${apiType} request`,
     api_type: apiType,
     timestamp: new Date().toISOString()
@@ -144,5 +144,14 @@ trackIPBasedLocationApi() {
   });
 }
 
+ trackGoogleMapsApiHit(apiType: 'geocoding' | 'autosuggest') {
+  this.safeTrack('Google_maps_api_hits', {
+    event_category: 'Google Maps API',
+    event_label: `${apiType} request`,
+    api_type: apiType,
+    timestamp: new Date().toISOString()
+  });
+}
+  
 
 }
