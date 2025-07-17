@@ -400,12 +400,11 @@ mapsScript.onload = () => {
 
 document.head.appendChild(mapsScript);
 
-    // Inject reCAPTCHA
-    const recaptchaScript = document.createElement('script');
-    recaptchaScript.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`;
-    recaptchaScript.async = true;
-    recaptchaScript.defer = true;
-    document.head.appendChild(recaptchaScript);
+ const script = document.createElement('script');
+script.src = 'https://www.google.com/recaptcha/api.js'; 
+script.async = true;
+script.defer = true;
+document.head.appendChild(script);
 
     if (!Capacitor.isNativePlatform() && googleAnalyticsId) {
       const existing = document.querySelector(`script[src*="gtag/js?id=${googleAnalyticsId}"]`);
