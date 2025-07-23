@@ -6,6 +6,15 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { PageTitleService } from 'src/app/services/page-title.service';
 import { environment } from 'src/environments/environment';
 
+export interface StateDistance {
+  Abbreviation: string;
+  Miles: string | number;
+}
+
+export interface StateDistanceResponse {
+  data: StateDistance[];
+  meta?: any;
+}
    //Hits Assessment
    interface HitsAssessmentData {
     questions: any[];
@@ -29,8 +38,6 @@ export class MenuService {
   filterOptions$ = this.filterOptionsSubject.asObservable();
   organizations$ = this.organizationsSubject.asObservable();
 
-  private stateDistancesSubject = new BehaviorSubject<{ [key: string]: number }>({});
- stateDistances$ = this.stateDistancesSubject.asObservable();
 
   private contentHeightSubject = new BehaviorSubject<number>(0);
   contentHeight$ = this.contentHeightSubject.asObservable();
@@ -195,19 +202,21 @@ clearMenuItems(): void {
       return this.ratsAssessmentData;
     }
 
-    setStateDistances(distances: { [key: string]: number }) {
-      this.stateDistancesSubject.next(distances);
-    }
-    
-    getStateDistances(): Observable<{ [key: string]: number }> {
-      return this.stateDistancesSubject.asObservable();
-    }
-    
-    // Optional: Synchronous access to the current value
-    getStateDistancesValue(): { [key: string]: number } {
-      return this.stateDistancesSubject.getValue();
-    }
+  private stateDistancesSubject = new BehaviorSubject<StateDistanceResponse | null>(null);
 
+stateDistances$ = this.stateDistancesSubject.asObservable();
+
+setStateDistances(distances: StateDistanceResponse) {
+  this.stateDistancesSubject.next(distances);
+}
+
+getStateDistances(): Observable<StateDistanceResponse | null> {
+  return this.stateDistancesSubject.asObservable();
+}
+
+getStateDistancesValue(): StateDistanceResponse | null {
+  return this.stateDistancesSubject.getValue();
+}
 
 setDataLoaded(loaded: boolean) {
   this.dataLoadedSubject.next(loaded);
