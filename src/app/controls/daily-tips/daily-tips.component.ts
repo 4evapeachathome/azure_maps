@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -22,6 +22,7 @@ import { getConstant } from 'src/shared/constants';
 })
 export class DailyTipsComponent implements OnInit {
   currentDate: Date;
+  @Output() loaded = new EventEmitter<void>();
   allTips: any[] = [];
   quotes: string = '';
   dailyPeaceTitle: string = '';
@@ -87,10 +88,12 @@ export class DailyTipsComponent implements OnInit {
         } else {
           this.setDefaultTip();
         }
+        this.loaded.emit();
       },
       (error) => {
         console.error('Error fetching daily tip:', error);
         this.setDefaultTip();
+        this.loaded.emit();
       }
     );
   }
