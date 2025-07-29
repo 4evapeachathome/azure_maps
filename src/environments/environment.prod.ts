@@ -1,7 +1,7 @@
 
 export const environment = {
   production: true,
-  apiHost:'https://cms.findpeaceathome.org',
+  apiHost:'https://web.vjharish.online',
   //apiHost:'http://localhost:1337',
   secretKey:'0244387ac5f95d2f5ae4b5e560e4c617f4b59857378d6579041229fdbb44dee9',
   findLocationAPIKey:'75ebf63531cd411e8d1f848ead39c63a',
